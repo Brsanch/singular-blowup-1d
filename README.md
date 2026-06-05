@@ -74,10 +74,19 @@ sub-targets and hand the closure leap off.
    see `docs/findings_houluo_physical.md`). `c_l` is **not** obtainable from
    physical DNS — the self-similar core `(T−t)^{c_l}`, `c_l>1`, goes sub-grid
    almost immediately. ⇒ need dynamic rescaling.
-3. **(next) Dynamic-rescaling gate.** Integrate the rescaled system (eq 2.4) to a
-   steady profile; recover `c_l∈(2,4.53)` and a smooth profile (gate #2 proper),
-   then the degenerate-IC singular branch `c_l→2`, `Ω̄=𝟙_{X>1}/√(X−1)`. **HARD
-   STOP** if singular-branch exponents drift under resolution refinement.
+3. **Singular steady state (Thm 2.3) — CERTIFIED.** `validate/verify_singular_steady.py`:
+   closed-form `U(X)=2√(1−X)−2 (X<1), −2 (X>1)` ⇒ **`U(1)=−2` exactly**, steady
+   residual of eq 2.4 = **2e-16** on X>1; ℝ-Hilbert tool validated vs Lorentzian
+   to 1.4e-6. Independent confirmation of arXiv:2604.01868 Thm 2.3. The ~15%
+   error in the *numeric* Hilbert of the singular profile is far-field truncation
+   of the `1/√X` tail → mapped grid / desingularization needed for stability.
+   See `docs/findings_singular_steady_verified.md`.
+4. **(next) Linear-stability spectrum** of `(Ω̄,Θ̄)` — Conjecture 2.4, the open
+   prize. Linearize eq 2.4 (closed-form `Ū` removes one singular ingredient) on a
+   mapped infinite grid; compute the spectrum / unstable-mode count.
+5. **(parallel) Dynamic-rescaling DNS** from degenerate ICs → two-stage
+   convergence to the singular profile, **HARD STOP** if exponents drift under
+   refinement. Smooth profiles `c_l∈(2,4.53)` for context.
 
 ## Layout
 
