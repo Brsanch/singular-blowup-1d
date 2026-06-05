@@ -69,11 +69,15 @@ sub-targets and hand the closure leap off.
    `ω = 4ω₀/((2−t·Hω₀)² + t²ω₀²)` to **2×10⁻¹⁰** relative `L∞` error, with
    measured `t*=2.000000`, `x*=π` exact. Spatial error saturated below the RK4
    time-floor at N=1024/2048/4096.
-2. **(next) Smooth self-similar gate.** Add dynamic rescaling; reproduce a
-   *published* smooth self-similar blowup (Hou–Luo smooth profile, CMP 2025 /
-   arXiv:2308.01528; or a gCLM `a<0` explicit singular profile from 2603.25104)
-   and recover its exponents to 3–4 digits. **HARD STOP** if the singular branch
-   exponents drift under resolution refinement → numerical artifact.
+2. **Hou–Luo physical-DNS — PARTIAL (c_ω confirmed).** `src/houluo.py` reproduces
+   finite-time focusing blowup with **`c_ω=−1` to <0.4%** (matches 2308.01528;
+   see `docs/findings_houluo_physical.md`). `c_l` is **not** obtainable from
+   physical DNS — the self-similar core `(T−t)^{c_l}`, `c_l>1`, goes sub-grid
+   almost immediately. ⇒ need dynamic rescaling.
+3. **(next) Dynamic-rescaling gate.** Integrate the rescaled system (eq 2.4) to a
+   steady profile; recover `c_l∈(2,4.53)` and a smooth profile (gate #2 proper),
+   then the degenerate-IC singular branch `c_l→2`, `Ω̄=𝟙_{X>1}/√(X−1)`. **HARD
+   STOP** if singular-branch exponents drift under resolution refinement.
 
 ## Layout
 
