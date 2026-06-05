@@ -1,0 +1,93 @@
+# singular-blowup-1d
+
+Self-similar **finite-time blowup** of 1D nonlocal active-scalar models
+(Constantin–Lax–Majda / De Gregorio / generalized-CLM / Hou–Luo), with a focus
+on the **singular-profile** scenarios discovered in 2026 and the rigorous /
+computer-assisted certification of their profiles and **linear stability**.
+
+## The bet (why this, and why now)
+
+Years of work on Navier–Stokes / SQG / Euler **global regularity** hit a hard
+math wall: every local geometric-depletion route collapses to Type-I /
+KNSS–Liouville rigidity — a statement equivalent to the conclusion, not a
+measurable gap. This repo **inverts that wall**. Instead of trying to *rule out*
+blowup on the true equation, we *certify* blowup on toy models where blowup is
+the answer. These are 1D, so extreme spatial resolution is cheap, and the
+profile ODEs are the cleanest computer-assisted-proof (CAP) / Lean targets in
+the whole program. None of the listed dead ends apply: a 1D model is not 3D
+Euler regularity, not Type-I rigidity, not undecidable.
+
+## Verified landscape (June 2026)
+
+The phenomenon class was opened in the last few months by **De Huang's group**:
+
+- **arXiv:2603.25104** (Huang, Tong, Wang — Mar 2026), *Self-similar finite-time
+  blowups with singular profiles of the generalized CLM model*. For the gCLM
+  family `ω_t + a u ω_x = u_x ω`, `u_x = H[ω]`: for `a>0`, one-scale self-similar
+  blowups with **regular** profiles (new); for `a≤0`, a **two-scale** scenario
+  whose **outer profile converges to a singular (unbounded) function**.
+  Explicit singular profiles constructed for `a<0`; the `a=0` (CLM) outer-profile
+  convergence is **proven** rigorously; inner traveling wave existence via a
+  fixed-point method.
+- **arXiv:2604.01868** (Chen, Huang, Li — Apr 2026), *Novel self-similar
+  finite-time blowups with singular profiles of the 1D Hou–Luo model and the 2D
+  Boussinesq equations: a numerical investigation*. A **two-stage** blowup
+  (local `L∞` blowup at `T̃`, then weak continuation to a local `Lᵖ` blowup at
+  `T>T̃`), with an **unbounded `(X−1)^{−1/2}` self-similar profile** and measured
+  exponents `(c_l=2, c_ω=−1, γ=2)`, `1/√X` far-field decay. **Numerical only —
+  no rigorous existence of these singular profiles.**
+
+**The gap.** Existing CAP frameworks (Chen–Hou, *Stable nearly self-similar
+blowup … II: rigorous numerics*) certify **smooth** profiles. The new **singular
+(unbounded)** profiles have, for the Hou–Luo / 2D-Boussinesq case, *no* rigorous
+existence proof and (for the whole family) *no published linear-stability
+spectrum*. Stability governs which profile is dynamically realized and how hard
+a CAP is (instability order controls viscous-perturbation feasibility — cf.
+DeepMind arXiv:2509.14185).
+
+**Honest scoop risk.** De Huang's group is driving this hard and owns the CAP
+machinery. The robust, hard-to-scoop contributions are (1) **independent
+numerical confirmation** of a ~2-month-old single-group claim, and (2) the
+**linear-stability spectra**, which the construction papers do not report.
+
+## Candidate targets (the cluster — one solver serves all)
+
+| | target | open? | scoop risk | CAP cleanliness |
+|---|---|---|---|---|
+| **A** | Hou–Luo singular `(X−1)^{−1/2}` profile: confirm + stability spectrum + desingularized profile-ODE → CAP existence | profile numerical-only; stability unpublished | **high** (freshest, Huang's turf) | needs singularity-adapted basis |
+| **B** | gCLM `a`-family: singular-profile transition + **stability spectra λ(a)** across `a` | profiles known (a<0 explicit, a=0 proven); **stability open** | medium | clean 1D profile ODE |
+| **C** | De Gregorio `a=1`: spectral gap of the linearization about `A·sin` (regularity-window sub-target) | open; headline near equivalent-to-conclusion | low | cleanest CAP target |
+
+The headline-regularity slices (De Gregorio "all smooth data", supercritical SQG)
+are **off-limits for solo closure** — stay on profile / stability / CAP
+sub-targets and hand the closure leap off.
+
+## Validation gates (no result trusted until these pass)
+
+1. **CLM exact-solution gate — `validate/validate_clm.py` — PASSED.**
+   The engine (`a=0, ν=0`, `ω₀=sin x`) reproduces the closed form
+   `ω = 4ω₀/((2−t·Hω₀)² + t²ω₀²)` to **2×10⁻¹⁰** relative `L∞` error, with
+   measured `t*=2.000000`, `x*=π` exact. Spatial error saturated below the RK4
+   time-floor at N=1024/2048/4096.
+2. **(next) Smooth self-similar gate.** Add dynamic rescaling; reproduce a
+   *published* smooth self-similar blowup (Hou–Luo smooth profile, CMP 2025 /
+   arXiv:2308.01528; or a gCLM `a<0` explicit singular profile from 2603.25104)
+   and recover its exponents to 3–4 digits. **HARD STOP** if the singular branch
+   exponents drift under resolution refinement → numerical artifact.
+
+## Layout
+
+```
+src/gclm.py          unified gCLM/De Gregorio engine (Hilbert, 2/3-dealias, RK4, adaptive dt)
+src/clm_exact.py     CLM closed-form solution + blowup-time locator (self-contained derivation)
+validate/            falsification gates (gate #1 = CLM exact, PASSED)
+results/  docs/       run outputs and notes
+```
+
+## Method
+
+Measure → mechanism → remeasure. Dynamic-rescaling measures the singular-point
+exponents; a desingularizing change of variables turns the singular profile into
+a bounded fixed point and states the exact functional-analytic obstruction the
+smooth-profile CAP framework fails at; interval-arithmetic / Lean closes it or
+hands off the obstruction at maximum resolution.

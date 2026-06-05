@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+.ipynb_checkpoints/
+# large/auxiliary run artifacts (keep small summary JSON tracked deliberately)
+results/*.npz
+results/*.npy
+results/figures/
+*.log
