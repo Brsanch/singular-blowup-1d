@@ -53,6 +53,11 @@ the stability operator):
 | Thm 2.3 singular profile certified (`U(1)=−2`, residual 2e-16) | ✅ | `validate/verify_singular_steady.py` PASS, `findings_singular_steady_verified.md` |
 | dynamic-rescaling solver + "profiles are saddles" | ✅ | `findings_dynamic_rescaling.md` |
 | stability spectrum (frozen `μ=ν=0`): resolved sector stable; leading mode = free-boundary artifact | ✅ evidence-for-stability | `findings_stability_spectrum.md` |
+| edge-condition derivation (the analytic core) — done + cross-checked 4 ways + verified | ✅ | `findings_edge_condition_derivation.md`, `validate/probe_edge_condition.py` PASS |
+| **desingularized free-boundary operator BUILT; frozen spectrum has NO genuine unstable mode** | ✅ evidence-for-Conj-2.4 | `src/stability_edge.py`, `validate/stability_edge_spectrum.py` PASS, `findings_edge_stability_operator_built.md` |
+| nonlinear cross-check: edge mode `λ=c_l−1=1` confirmed by EXACT flow (rate 1 not naive 2); shape-march inconclusive (regularization wall) | ✅ edge-mode / ⚠️ shape pending | `validate/nonlinear_crosscheck.py` PASS |
+| edge-RESOLVED operator in `z=ln(Y−1)`: clean spectrum, NO Re>0; caught+fixed spurious edge mode (inflow BC `G(z_min)=0` essential) | ✅ confirms verdict, edge-resolved | `src/stability_edge_z.py`, `validate/stability_edge_z_spectrum.py` PASS |
+| **SPECTRAL GAP exists**: Ω-shape asymptotically stable in convective weighted norm `L²(e^{−2γz}dz)`, gap `2γ` (decay rate matches to ~5%); unweighted marginal | ✅ resolves asymptotic-vs-marginal crux (frozen Ω-sector) | `validate/spectral_gap.py` PASS, `findings_spectral_gap.md` |
 
 ## File map
 
@@ -81,39 +86,74 @@ cheap (no GPU). No kernel-panic risk (no du/find/lake here).
 3. `c_l` from physical DNS — the self-similar core `(T−t)^{c_l}`, `c_l>1`, goes
    sub-grid immediately. Use dynamic-rescaling coords.
 
-## THE NEXT CHIP — desingularized free-boundary stability eigenvalue problem
+## DONE (2026-06-05): edge derivation + operator built + frozen verdict
 
-The definitive Conjecture-2.4 verdict needs the operator handled at the support
-edge `X=1`. The frozen frozen-coefficient resolved spectrum is already stable;
-the open piece is the edge mode. Formulation (derived, ready to implement):
+Read `docs/findings_edge_condition_derivation.md` then
+`docs/findings_edge_stability_operator_built.md`. The operator is **built**
+(`src/stability_edge.py`) and validated (`validate/stability_edge_spectrum.py`):
+frozen `μ=ν=0` spectrum has **NO genuine unstable mode** (0 eigenvalues with Re>0;
+no convergent profile-localized point mode; rightmost are far-field box modes =
+transport continuum ≤0; edge/`ξ` symmetry mode at `λ=1` as predicted; `Θ` marginal
+at Re=0). **Numerical evidence consistent with Conjecture 2.4 in the frozen sector.**
+NOT a proof; frozen; no nonlinear cross-check yet.
 
-- **Edge-fixed frame** `Y = X − εξ(τ)`, `ξ` = edge displacement (scalar DOF).
-  X-frame perturbations: `ω = G − ξ Ω̄'`, `θ = H − ξ Θ̄'`, with `G,H` REGULAR
-  shape perturbations. The `−ξΘ̄' = −ξ(π/2)δ(Y−1)` reproduces the delta-source
-  (edge motion), removing it from the shape equation.
-- **Velocity is well-defined:** `u = H(ω) = H(G) − ξ H(Ω̄')`, and
-  `H(Ω̄') = (H Ω̄)' = Ū_XX` (H commutes with ∂_X), which is `0` for `X>1` and
-  `−½(1−X)^{−3/2}` for `X<1` — finite as a function on the support side.
-- **Edge compatibility:** the `(X−1)^{−3/2}` coupling `u·Ω̄_X` is finite only if
-  the relevant edge combination (≈ `u(1)+μ` paired with `ξ`) cancels; this yields
-  the `ξ`-ODE. Work in the weighted space where perturbations scale like the
-  profile `(X−1)^{−1/2}` (NOT its derivative `(X−1)^{−3/2}`); the edge condition
-  is effectively `Hω(1)→0`.
-- Build `eig` of the `(G, H, ξ)` operator (closed-form `Ū` removes one singular
-  ingredient for free). **Then add the `μ,ν` scaling/symmetry modes** (the
-  normalization directions) and project them out before reading the asymptotic-
-  stability verdict.
-- **Validation targets:** (i) a known scaling/symmetry mode should appear at its
-  predicted eigenvalue; (ii) eigenvalues converge under mesh + weight refinement
-  AND are edge-resolved (low hi-k); (iii) cross-check against a complementary
-  NONLINEAR test — dynamic-rescaling DNS (`src/dynamic_rescaling.py`) from a
-  DEGENERATE IC (`ω_x(0)=θ_xx(0)=0`) with a stabilized normalization, watching
-  two-stage convergence to `Ω̄` (the paper's own method). HARD STOP if exponents
-  drift under refinement.
+## THE NEXT CHIP — complete the stability verdict
+
+Edge mode `λ=1` confirmed linearly + nonlinearly. Frozen Ω-sector verdict: no Re>0
+(two discretizations) AND a spectral GAP in the convective weighted norm (asymptotic
+stability, gap `2γ`, via semigroup decay). Remaining, priority order:
+1. **Fold in `Θ` + `μ,ν`.** Show the edge-decay weight removes the marginal `Θ` mode
+   (a constant in z ∉ `L²(e^{−2γz}dz)`); add `μ,ν` (scaling/normalization) with the
+   paper's normalization conditions; project out `{ξ@1, μ, ν}`; confirm the FULL
+   operator's gap. This completes the linear asymptotic-stability verdict.
+2. **Nonlinear shape test on the `z`-grid.** Independent confirmation: evolve a shape
+   perturbation (edge pinned / moving frame), watch convective decay. HARD STOP if
+   exponents drift under refinement.
+3. **Pin the precise weighted space / max gap; rigor.** Then interval-arithmetic/Lean
+   closure (the CAP step; scoop-risky, hard).
+
+⚠️ LESSON (this session): on the `z`-grid the edge is an INFLOW boundary; WITHOUT the
+inflow/regularity BC `G(z_min)=0` the discretization shows a SPURIOUS unstable edge
+mode at `Re~+1.7` that drifts with `z_min`. Always impose it; always check `z_min`/N
+drift before believing any Re>0 mode.
+
+---
+### Reference: corrected formulation (built in stability_edge.py / stability_edge_z.py)
+
+- **Moving (edge-fixed) frame is mandatory.** `Y = X − εξ(τ)`, keep `Ū(Y−εξ)`
+  EXACT. The fixed-X-frame `−ξΩ̄'` gives a SPURIOUS infinite edge velocity
+  (`xi(1-Y)^{-1/2}`, Taylor breakdown at the vertical-tangent edge) — that IS the
+  recorded "δ-divergent edge artifact." In the moving frame the perturbation
+  velocity is finite: `V_Y=H(g)`, `V(0)=−ξ` ⇒ `V(Y)=V_g(Y)−ξ`, `V_g(Y)=∫_0^Y H(g)`.
+- **Edge ODE (derived 4 independent ways, all agree):**
+  `ξ̇ = (c_l−1)ξ + V_g(1) + μ`,  `V_g(1)=∫_0^1 H(g)dY`. With `c_l=2`: `ξ̇=ξ+V_g(1)+μ`.
+  The coupling is to the VELOCITY `δU(1⁺)=V_g(1)−ξ`, NOT `Hω(1)`(=gradient).
+- **Shape eqs (Y>1, frozen μ=ν=0 core):**
+  `g_τ = −ā g_Y + c_ω g + h_Y − [∫_1^Y H(g)] Ω̄_Y`,  `h_τ = −ā h_Y`. The nonlocal
+  term is regular (`~ ½H(g)(1)(Y−1)^{−1/2}` at edge). `h` is a slaved transport mode.
+- **Edge BC = Robin, not Dirichlet.** Indicial: `g~(Y−1)^{−(λ+1)/2}`; weighted
+  space admits the homogeneous branch only for `Re λ≤0`. Any `Re λ>0` mode must
+  DROP the homogeneous branch and keep only the forced `(Y−1)^{−1/2}` part with
+  edge coeff `B=H(g)(1)/(2λ)`. Impose THAT, not `Hω(1)=0`.
+- **Use closed-form `Ū, Ū_X, Ū_XX`** near the edge; never discretely Hilbert the
+  singular `Ω̄'`. **Far field: NON-periodic (outflow) derivative or a mapped
+  infinite domain — NOT a circulant `D`** (the circulant periodic-wrap fighting the
+  line-Hilbert is the source of the spurious box modes at x*=40; commutator O(1)
+  there, machine-zero at the edge — see probe (B)).
+- **Symmetry modes to project out:** the pure-`ξ` mode is **predicted at
+  `λ = c_l−1 = 1`** (time-translation-type); plus the `μ,ν` (scaling/amplitude)
+  directions. Only after projecting these is the sign of `max Re λ` the verdict.
+
+- **Validation gates:** (i) the `λ=1` pure-`ξ` symmetry mode appears (concrete
+  falsifiable check); (ii) eigenvalues converge under mesh + map-parameter
+  refinement, are edge-resolved (low hi-k), with NO box modes; (iii) cross-check
+  the verdict against a NONLINEAR dynamic-rescaling DNS (`src/dynamic_rescaling.py`)
+  from a DEGENERATE IC (`ω_x(0)=θ_xx(0)=0`) with a stabilized normalization. HARD
+  STOP if exponents drift under refinement.
 
 ⚠️ This is the one place a careless discretization yields a plausible-but-WRONG
 spectrum. Validate every step; do not report an unstable λ whose eigenmode is
-edge-spiked/grid-scale or δ-dependent.
+edge-spiked/grid-scale, δ-dependent, or a box mode.
 
 ## Bryan's working preferences for this repo
 Single-agent serial; local-verify-primary; commit each gated milestone; never
