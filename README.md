@@ -81,12 +81,27 @@ sub-targets and hand the closure leap off.
    error in the *numeric* Hilbert of the singular profile is far-field truncation
    of the `1/√X` tail → mapped grid / desingularization needed for stability.
    See `docs/findings_singular_steady_verified.md`.
-4. **(next) Linear-stability spectrum** of `(Ω̄,Θ̄)` — Conjecture 2.4, the open
-   prize. Linearize eq 2.4 (closed-form `Ū` removes one singular ingredient) on a
-   mapped infinite grid; compute the spectrum / unstable-mode count.
-5. **(parallel) Dynamic-rescaling DNS** from degenerate ICs → two-stage
-   convergence to the singular profile, **HARD STOP** if exponents drift under
-   refinement. Smooth profiles `c_l∈(2,4.53)` for context.
+4. **Linear-stability spectrum (Conjecture 2.4) — PARTIAL + frontier stated.**
+   `src/stability.py`: 2N×2N linearized operator (frozen `μ=ν=0`), closed-form
+   `Ū`. No-coupling spectrum validated stable (`0,−1,−2,…`). Coupled: the
+   **resolved/physical spectrum is stable** (`max Re λ≈−0.71/−0.89` at N=1400/1900,
+   and those are far-field box modes — none on the profile) → numerical evidence
+   **consistent with stability**. The leading apparent unstable mode is a
+   **free-boundary edge artifact** (`(X−1)^{−3/2}` regularized → `δ^{−3/2}`,
+   grid-scale, δ-divergent), correctly identified by the convergence study, *not*
+   reported as an instability. Definitive verdict needs the **desingularized
+   free-boundary formulation** (edge-displacement DOF + regular shape in a
+   weighted space) — stated at max resolution in `docs/findings_stability_spectrum.md`.
+   The scaling/symmetry modes (`μ,ν`) are the other piece to add.
+5. **(parallel) Dynamic-rescaling DNS** of the nonlinear two-stage scenario from
+   degenerate ICs — the saddle structure means this needs a stabilized
+   normalization (`docs/findings_dynamic_rescaling.md`).
+
+## Dead ends recorded (don't redo)
+- Forward time-marching of eq 2.4 to reach the smooth profiles: they are saddles
+  (nonlinear via `U=H(Ω)`), forward marching diverges/decays. Use Newton/BVP.
+- Naive regularized eigenvalues of the singular operator: leading modes are
+  δ-divergent edge artifacts. Use the desingularized free-boundary formulation.
 
 ## Layout
 
