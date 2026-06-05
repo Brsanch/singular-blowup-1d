@@ -59,6 +59,7 @@ the stability operator):
 | edge-RESOLVED operator in `z=ln(Y−1)`: clean spectrum, NO Re>0; caught+fixed spurious edge mode (inflow BC `G(z_min)=0` essential) | ✅ confirms verdict, edge-resolved | `src/stability_edge_z.py`, `validate/stability_edge_z_spectrum.py` PASS |
 | **SPECTRAL GAP exists**: Ω-shape asymptotically stable in convective weighted norm `L²(e^{−2γz}dz)`, gap `2γ` (decay rate matches to ~5%); unweighted marginal | ✅ resolves asymptotic-vs-marginal crux (frozen Ω-sector) | `validate/spectral_gap.py` PASS, `findings_spectral_gap.md` |
 | **Θ + μ,ν folded in**: weighted space IS the symmetry quotient (ν=constant & dilation/edge=ξ@1 excluded by weight); full coupled (G,h) gapped, no Re>0 | ✅ complete frozen-sector verdict | `validate/theta_munu_gap.py` PASS, `findings_theta_munu_gap.md` |
+| **operator = correct linearization of trusted eq.(2.4) RHS** (rel.err ∝ ε→0); caught+fixed an upwind/central base-deriv inconsistency; weighted decay tendency <0 | ✅ nonlinear cross-check (decisive form) | `validate/nonlinear_linearization_check.py` PASS, `findings_nonlinear_linearization_check.md` |
 
 ## File map
 
@@ -105,9 +106,11 @@ resolved, no Re>0 point mode, spectral GAP `2γ` in the convective weighted norm
 scaling symmetry modes (ν=constant, dilation/edge=ξ@1) are exactly the weight-
 excluded directions. Numerical evidence consistent with Conjecture 2.4. Remaining,
 priority order:
-1. **Nonlinear shape test on the `z`-grid.** Independent confirmation: evolve a shape
-   perturbation (edge pinned / moving frame), watch convective decay. HARD STOP if
-   exponents drift under refinement. (Highest-value: independent of the linear operator.)
+1. **Long-time nonlinear shape march on a mapped (edge-resolving) grid** with a
+   stabilized normalization, watching shape decay to `Ω̄` (the equispaced march is
+   regularization-limited; the operator is already confirmed as the correct
+   linearization, so this is now confirmatory, lower priority). HARD STOP if
+   exponents drift.
 2. **Explicit `μ,ν` normalization (referee-facing).** Redo the symmetry projection
    with the paper's actual normalization conditions; confirm it agrees with the
    weighted-space quotient used here.
