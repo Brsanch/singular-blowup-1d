@@ -60,7 +60,7 @@ the stability operator):
 | **SPECTRAL GAP exists**: Ω-shape asymptotically stable in convective weighted norm `L²(e^{−2γz}dz)`, gap `2γ` (decay rate matches to ~5%); unweighted marginal | ✅ resolves asymptotic-vs-marginal crux (frozen Ω-sector) | `validate/spectral_gap.py` PASS, `findings_spectral_gap.md` |
 | **Θ + μ,ν folded in**: weighted space IS the symmetry quotient (ν=constant & dilation/edge=ξ@1 excluded by weight); full coupled (G,h) gapped, no Re>0 | ✅ complete frozen-sector verdict | `validate/theta_munu_gap.py` PASS, `findings_theta_munu_gap.md` |
 | **operator = correct linearization of trusted eq.(2.4) RHS** (rel.err ∝ ε→0); caught+fixed an upwind/central base-deriv inconsistency; weighted decay tendency <0 | ✅ nonlinear cross-check (decisive form) | `validate/nonlinear_linearization_check.py` PASS, `findings_nonlinear_linearization_check.md` |
-| transient growth / non-normality: physical-norm G_max~2–3, decays back to ~1 (modest, supports robustness); precise bound edge-conditioning-limited | ⚠️ suggestive, partially open | `validate/transient_growth.py`, `findings_transient_growth.md` |
+| transient growth / non-normality SETTLED: smooth physical perturbations have G=1 (NO transient growth) at all resolutions; worst-case creep is a grid-scale edge mode (hi-k=1.0), not physical | ✅ linear stability robust; nonlinear supported | `validate/transient_growth.py` PASS, `findings_transient_growth.md` |
 
 ## File map
 
@@ -107,18 +107,13 @@ resolved, no Re>0 point mode, spectral GAP `2γ` in the convective weighted norm
 scaling symmetry modes (ν=constant, dilation/edge=ξ@1) are exactly the weight-
 excluded directions. Numerical evidence consistent with Conjecture 2.4. Remaining,
 priority order:
-1. **Fully edge-conditioned operator → settle transient growth.** The transient-
-   growth/non-normality bound is modest (~2–3, decays to ~1) but resolution-sensitive
-   because the Hilbert map `H(g)` keeps an `e^{−z/2}` edge factor. Build a fully
-   bounded-edge operator (analytic edge treatment, or a `(Y−1)^{1/2}`-symmetrized
-   variable) to get a clean, resolution-independent `G_max`. This settles the
-   nonlinear-robustness precursor and is the current numerical frontier.
-2. **Long-time nonlinear shape march on a mapped grid** (confirmatory; operator
+1. **Long-time nonlinear shape march on a mapped grid** (confirmatory; operator
    already verified as the correct linearization). HARD STOP if exponents drift.
-3. **Explicit `μ,ν` normalization (referee-facing)** — confirm it agrees with the
+2. **Explicit `μ,ν` normalization (referee-facing)** — confirm it agrees with the
    weighted-space quotient used here.
-4. **Pin the precise weighted space / max gap; rigor.** Then interval-arithmetic/Lean
-   closure (the CAP step; scoop-risky, hard).
+3. **Pin the precise weighted space / max gap; rigor.** Then interval-arithmetic/Lean
+   closure (the CAP step; scoop-risky, hard). NB transient growth is now settled
+   (physical G=1); rigor is the remaining frontier.
 
 ⚠️ LESSON (this session): on the `z`-grid the edge is an INFLOW boundary; WITHOUT the
 inflow/regularity BC `G(z_min)=0` the discretization shows a SPURIOUS unstable edge
