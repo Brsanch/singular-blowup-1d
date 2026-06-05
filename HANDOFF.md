@@ -58,6 +58,7 @@ the stability operator):
 | nonlinear cross-check: edge mode `λ=c_l−1=1` confirmed by EXACT flow (rate 1 not naive 2); shape-march inconclusive (regularization wall) | ✅ edge-mode / ⚠️ shape pending | `validate/nonlinear_crosscheck.py` PASS |
 | edge-RESOLVED operator in `z=ln(Y−1)`: clean spectrum, NO Re>0; caught+fixed spurious edge mode (inflow BC `G(z_min)=0` essential) | ✅ confirms verdict, edge-resolved | `src/stability_edge_z.py`, `validate/stability_edge_z_spectrum.py` PASS |
 | **SPECTRAL GAP exists**: Ω-shape asymptotically stable in convective weighted norm `L²(e^{−2γz}dz)`, gap `2γ` (decay rate matches to ~5%); unweighted marginal | ✅ resolves asymptotic-vs-marginal crux (frozen Ω-sector) | `validate/spectral_gap.py` PASS, `findings_spectral_gap.md` |
+| **Θ + μ,ν folded in**: weighted space IS the symmetry quotient (ν=constant & dilation/edge=ξ@1 excluded by weight); full coupled (G,h) gapped, no Re>0 | ✅ complete frozen-sector verdict | `validate/theta_munu_gap.py` PASS, `findings_theta_munu_gap.md` |
 
 ## File map
 
@@ -99,16 +100,17 @@ NOT a proof; frozen; no nonlinear cross-check yet.
 
 ## THE NEXT CHIP — complete the stability verdict
 
-Edge mode `λ=1` confirmed linearly + nonlinearly. Frozen Ω-sector verdict: no Re>0
-(two discretizations) AND a spectral GAP in the convective weighted norm (asymptotic
-stability, gap `2γ`, via semigroup decay). Remaining, priority order:
-1. **Fold in `Θ` + `μ,ν`.** Show the edge-decay weight removes the marginal `Θ` mode
-   (a constant in z ∉ `L²(e^{−2γz}dz)`); add `μ,ν` (scaling/normalization) with the
-   paper's normalization conditions; project out `{ξ@1, μ, ν}`; confirm the FULL
-   operator's gap. This completes the linear asymptotic-stability verdict.
-2. **Nonlinear shape test on the `z`-grid.** Independent confirmation: evolve a shape
+FROZEN-SECTOR LINEAR VERDICT COMPLETE: full coupled (Ω,Θ) shape operator, edge-
+resolved, no Re>0 point mode, spectral GAP `2γ` in the convective weighted norm;
+scaling symmetry modes (ν=constant, dilation/edge=ξ@1) are exactly the weight-
+excluded directions. Numerical evidence consistent with Conjecture 2.4. Remaining,
+priority order:
+1. **Nonlinear shape test on the `z`-grid.** Independent confirmation: evolve a shape
    perturbation (edge pinned / moving frame), watch convective decay. HARD STOP if
-   exponents drift under refinement.
+   exponents drift under refinement. (Highest-value: independent of the linear operator.)
+2. **Explicit `μ,ν` normalization (referee-facing).** Redo the symmetry projection
+   with the paper's actual normalization conditions; confirm it agrees with the
+   weighted-space quotient used here.
 3. **Pin the precise weighted space / max gap; rigor.** Then interval-arithmetic/Lean
    closure (the CAP step; scoop-risky, hard).
 
