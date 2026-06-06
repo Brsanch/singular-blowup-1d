@@ -62,6 +62,7 @@ the stability operator):
 | **operator = correct linearization of trusted eq.(2.4) RHS** (rel.err ∝ ε→0); caught+fixed an upwind/central base-deriv inconsistency; weighted decay tendency <0 | ✅ nonlinear cross-check (decisive form) | `validate/nonlinear_linearization_check.py` PASS, `findings_nonlinear_linearization_check.md` |
 | transient growth / non-normality SETTLED: smooth physical perturbations have G=1 (NO transient growth) at all resolutions; worst-case creep is a grid-scale edge mode (hi-k=1.0), not physical | ✅ linear stability robust; nonlinear supported | `validate/transient_growth.py` PASS, `findings_transient_growth.md` |
 | **NONLINEAR shape march (finite amplitude, frozen base)**: convective weighted decay survives to `A=4` (4× profile scale); rate→linear gap `2γ` as `A→0` (GATE B), peak `‖·‖_w=1.000` (monotone, no transient growth), resolution-robust, edge hi-k=0; coupled (Ω,Θ) adds only a bounded `1.11` transient | ✅ extends gap to nonlinear; no surprise instability | `validate/nonlinear_shape_march.py` PASS, `findings_nonlinear_shape_march.md` |
+| **co-evolving march STARTED**: dynamic normalization (`c_l=-U(1)` edge-stagnation + `c_ω` amplitude-pin) VALIDATED — profile is an exact fixed point (`c_l=2.0000000`, `c_ω=-1.0000000`, `dU(1)` functional rel.err 7.6e-8); fixed-Y dilation gauge term quantified to diverge as `e^{-z}` at edge ⇒ MOVING frame mandatory | ✅ machinery built; ⚠️ wall = needs moving frame (next) | `validate/coevolve_march.py` PASS, `findings_coevolve_march_started.md` |
 
 ## File map
 
@@ -115,13 +116,20 @@ priority order:
    (`findings_nonlinear_shape_march.md`). The frozen-base caveat is the open part →
    item 2.
 2. **CO-EVOLVING-base dynamic-rescaling march with explicit `μ,ν` normalization**
-   (the referee-facing gold standard; subsumes the old "explicit μ,ν" item). Integrate
-   eq.(2.4) in the moving edge-fixed frame from a degenerate IC, let `c_l,c_ω` adjust
-   by the paper's normalization, confirm relaxation to `(Ω̄, c_l=2, c_ω=-1)` with NO
-   exponent drift. HARD STOP if exponents drift. ⚠️ KNOWN WALL: the forward/smooth
-   march is a saddle (dead-end #1) and long-time marching fights the edge-resolution
-   wall — needs a STABILIZED normalization (Newton/BVP-style or projected), not naive
-   forward Euler. This is the precise obstruction to state at max resolution.
+   (the referee-facing gold standard; subsumes the old "explicit μ,ν" item). STARTED
+   2026-06-06 (`findings_coevolve_march_started.md`): the dynamic normalization is
+   built + VALIDATED (`c_l=-U(1)` edge-stagnation + `c_ω` amplitude-pin → profile is an
+   exact fixed point, `c_l=2.0000000/c_ω=-1.0000000`; the `dU(1)=∫_0^1 H(δΩ)` functional
+   matches direct quadrature to 7.6e-8). WALL QUANTIFIED: in the fixed-Y frame the `c_l`
+   (dilation) gauge term `-δc_l·X·Ω̄_X` diverges as `e^{-z}` at the edge (482→3563→26330→
+   194500 as zmin -10→-16) because `X·Ω̄_X ~ (Y-1)^{-3/2}` is more singular than the
+   profile. ⇒ the MOVING edge-fixed frame is MANDATORY (the frame `M_GG` already uses).
+   REMAINING: build the moving-frame co-evolving march =
+   `nonlinear_shape_march (M_GG,M_Gh,M_hh + nonlinear N) + ξ-ODE (ξ̇=(c_l-1)ξ+V_g(1)+μ,
+   V_g(1)=∫_0^1 H(g)=the b1@G already built) + explicit μ,ν normalization`. Confirm the
+   perturbed profile relaxes to `(Ω̄,2,-1)` with NO exponent drift under refinement;
+   HARD STOP on drift. ⚠️ match the paper's explicit μ,ν conditions (referee-facing),
+   confirm they agree with the weighted-space quotient.
 3. **Pin the precise weighted space / max gap; rigor.** Then interval-arithmetic/Lean
    closure (the CAP step; scoop-risky, hard). NB transient growth (physical G=1) and
    finite-amplitude nonlinear decay are now settled; rigor + co-evolving base are the
