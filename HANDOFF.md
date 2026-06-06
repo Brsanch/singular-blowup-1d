@@ -165,6 +165,17 @@ priority order:
      M_Gh/M_hh. THE LEAP = that verified enclosure (De Huang's machinery; scoop-risky).
    NB: items 1-2 (linear, transient growth) AND the full co-evolving nonlinear program
    (finite-amplitude, self-consistent, coupled, stress-tested, paper-matched) are DONE.
+   ── RIGOR ENTRY POINT WRITTEN 2026-06-06 (`docs/rigor_energy_estimate_setup.md`): the
+   route is ANALYTICAL weighted-energy finite-codimension (à la Chen 2605.15130), NOT a
+   spectral CAP. CLOSED analytically: operator form `M_GG=-2∂_z+½Q_op` (verified 1e-11,
+   c_ω absorbed), the energy identity, the transport dissipation `-∫φ'(z)W G²` with both
+   boundary signs (inflow `G(-∞)=0` vanishes, outflow `≤0`; Rayleigh quotient -0.9998≈-2γ
+   verified), edge regularity, and the neutral subspace `𝒩={ξ@1,µ,ν}`. THE LEAP = prove
+   (★): the nonlocal forcing `F=½Q_op` and the `M_Gh=e^{-z/2}∂_z` coupling are dominated by
+   the anisotropic transport dissipation `φ'(z)W` modulo `𝒩`, in a weighted `H¹_W` energy
+   (the L² energy does NOT close — `M_Gh` needs `∂_z h` control). Single exp weight provably
+   fails (kernel needs anisotropic `φ` + explicit-kernel estimate). Numerics give `δ` + the
+   admissible subspace; the sharp estimate is Bryan's.
 
 ⚠️ LESSON (this session): on the `z`-grid the edge is an INFLOW boundary; WITHOUT the
 inflow/regularity BC `G(z_min)=0` the discretization shows a SPURIOUS unstable edge
