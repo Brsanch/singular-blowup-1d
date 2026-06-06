@@ -141,10 +141,16 @@ priority order:
    condition 1 (holds identically), the profile satisfies condition 2 (`U_x(0)=-1`) and
    exponents (2,-1), and along our march `U_x(0)→-1` (the paper's `c_omega` condition,
    satisfied asymptotically; our Θ-balance `c_omega` agrees at/near the profile).
-3. **Pin the precise weighted space / max gap; rigor.** Then interval-arithmetic/Lean
-   closure (the CAP step; scoop-risky, hard). NB transient growth (physical G=1) and
-   finite-amplitude nonlinear decay are now settled; rigor + co-evolving base are the
-   remaining frontier.
+3. **Pin the precise weighted space / max gap; rigor (CAP).** ← THE ONLY REMAINING CHIP.
+   Capstone + precise obstruction in `docs/findings_conj24_evidence_and_frontier.md`. Exact
+   statement to certify: the global nonlocal operator `L` in `L²(e^{-2γz}dz)` quotiented by
+   `span{ξ@1, μ, ν}` has `sup Re λ < 0`. Numerics see no `Re>0` mode (abscissa ~-1e-3 =
+   discretized continuum) but can't certify the sign — needs interval-arithmetic CAP (De
+   Huang's machinery; scoop-risky). Edge risk (Robin BC forces `Re λ>0` modes non-singular)
+   and transient-growth risk (`G=1`) are CLOSED; the residual risk is purely the nonlocal
+   `∫H(g)` coupling. This is the human-leap; numerics have made it well-posed + localized.
+   NB: items 1-2 (linear, transient growth) AND the full co-evolving nonlinear program
+   (finite-amplitude, self-consistent, coupled, stress-tested, paper-matched) are DONE.
 
 ⚠️ LESSON (this session): on the `z`-grid the edge is an INFLOW boundary; WITHOUT the
 inflow/regularity BC `G(z_min)=0` the discretization shows a SPURIOUS unstable edge
