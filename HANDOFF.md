@@ -23,8 +23,16 @@ classification by a 27-candidate adversarial scout (`docs/candidate-scan.md`).
   exponents `c_l=2, c_ω=−1, γ=2`. NUMERICAL ONLY — no rigorous existence, **no
   published stability spectra**. ← our hard-to-scoop target.
 
-**Scoop risk:** De Huang's group owns the CAP machinery and is driving this hard.
-Robust contributions: independent confirmation (done) + stability spectra (open).
+**Scoop risk (re-checked 2026-06-06, `findings_scoop_check_and_rigor_route.md`):** verified
+literature sweep — our STABILITY SPECTRA contribution is NOT scooped (no paper gives any
+stability analysis for these singular profiles; stability is unambiguously OPEN). Rigorous
+EXISTENCE is open/narrow (only `a=0` outer + inner-TW fixed-point inside 2603.25104) and is
+the scoop-EXPOSED part (De Huang owns numerics + special-case rigor). Jiajie Chen's May-2026
+papers (2605.15130/15149) rigorously do existence+finite-codimension-stability for 3D Euler
+`C^{1,1/3−}` (neighbor; smooth/Hölder, NOT our singular profile) — feasibility template, not
+a scoop. Robust contributions: independent confirmation (done) + stability spectra (done,
+numerical) + analytical finite-codimension stability proof (open, Bryan-led; NOT a spectral
+CAP — see rigor route below).
 
 **Target (Bryan picked):** "confirm + stability spectra, Hou–Luo lead."
 
