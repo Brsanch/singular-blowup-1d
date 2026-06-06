@@ -134,10 +134,13 @@ priority order:
    `(Ω̄,c_l=2,c_ω=-1)`: exponents converge to 6 digits, NO drift, resolution-robust across
    3 grids ⇒ the singular profile is a NONLINEAR ATTRACTOR of the dynamic-rescaling flow.
    (Diagnostic + moving-frame λ=1 gate also stand.) Coupled (Ω,Θ)-shape perturbation also
-   relaxes (no coupling-driven instability) — done 2026-06-06. REMAINING for this chip:
-   (a) match arXiv:2604.01868's explicit μ,ν conditions verbatim (referee-facing); confirm
-       agreement with the edge-stagnation + Θ-balance gauge + the weighted-space quotient.
-   Then chip #3 (weighted space / max gap; interval-arithmetic / Lean CAP closure).
+   relaxes (no coupling-driven instability); stress test (amplitude≤2, shapes: bulk/near-
+   edge/far/high-k/two-bump/Θ-dominant) finds NO counterexample. ✅ CHIP #2 COMPLETE
+   2026-06-06: paper-match done (`findings_paper_normalization_match.md`) — both anchor
+   papers (2604.01868, 2603.25104) verified real; our `c_l=-U(1)` IS the paper's eq (3.2)
+   condition 1 (holds identically), the profile satisfies condition 2 (`U_x(0)=-1`) and
+   exponents (2,-1), and along our march `U_x(0)→-1` (the paper's `c_omega` condition,
+   satisfied asymptotically; our Θ-balance `c_omega` agrees at/near the profile).
 3. **Pin the precise weighted space / max gap; rigor.** Then interval-arithmetic/Lean
    closure (the CAP step; scoop-risky, hard). NB transient growth (physical G=1) and
    finite-amplitude nonlinear decay are now settled; rigor + co-evolving base are the
