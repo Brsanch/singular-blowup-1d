@@ -4,6 +4,12 @@ Read this + `README.md` + `docs/findings_*.md` first. The next step is named at
 the bottom ("THE NEXT CHIP"). Repo: github.com/Brsanch/singular-blowup-1d (private).
 Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasure loop.
 
+➤ **NEXT SESSION:** `NEXT_SESSION.md` — plan to (A) complete the rigorous proof (lemmas
+  L1–L4) and (B) Lean-check it (Track 1 = algebraic backbone, tractable; Track 2 = the
+  analytic estimate / interval-arithmetic CAP, research-grade). The numerical
+  stability-spectra contribution (DONE, un-scooped) is written up in
+  `paper/stability_spectra_singular_houluo.md`.
+
 ## The bet (one paragraph)
 
 Certify *singular* self-similar finite-time blowup of 1D nonlocal active-scalar
