@@ -61,6 +61,7 @@ the stability operator):
 | **Θ + μ,ν folded in**: weighted space IS the symmetry quotient (ν=constant & dilation/edge=ξ@1 excluded by weight); full coupled (G,h) gapped, no Re>0 | ✅ complete frozen-sector verdict | `validate/theta_munu_gap.py` PASS, `findings_theta_munu_gap.md` |
 | **operator = correct linearization of trusted eq.(2.4) RHS** (rel.err ∝ ε→0); caught+fixed an upwind/central base-deriv inconsistency; weighted decay tendency <0 | ✅ nonlinear cross-check (decisive form) | `validate/nonlinear_linearization_check.py` PASS, `findings_nonlinear_linearization_check.md` |
 | transient growth / non-normality SETTLED: smooth physical perturbations have G=1 (NO transient growth) at all resolutions; worst-case creep is a grid-scale edge mode (hi-k=1.0), not physical | ✅ linear stability robust; nonlinear supported | `validate/transient_growth.py` PASS, `findings_transient_growth.md` |
+| **NONLINEAR shape march (finite amplitude, frozen base)**: convective weighted decay survives to `A=4` (4× profile scale); rate→linear gap `2γ` as `A→0` (GATE B), peak `‖·‖_w=1.000` (monotone, no transient growth), resolution-robust, edge hi-k=0; coupled (Ω,Θ) adds only a bounded `1.11` transient | ✅ extends gap to nonlinear; no surprise instability | `validate/nonlinear_shape_march.py` PASS, `findings_nonlinear_shape_march.md` |
 
 ## File map
 
@@ -102,18 +103,29 @@ NOT a proof; frozen; no nonlinear cross-check yet.
 
 ## THE NEXT CHIP — complete the stability verdict
 
-FROZEN-SECTOR LINEAR VERDICT COMPLETE: full coupled (Ω,Θ) shape operator, edge-
-resolved, no Re>0 point mode, spectral GAP `2γ` in the convective weighted norm;
-scaling symmetry modes (ν=constant, dilation/edge=ξ@1) are exactly the weight-
-excluded directions. Numerical evidence consistent with Conjecture 2.4. Remaining,
+FROZEN-SECTOR VERDICT COMPLETE, NOW INCLUDING FINITE-AMPLITUDE NONLINEAR: full
+coupled (Ω,Θ) shape operator, edge-resolved, no Re>0 point mode, spectral GAP `2γ`
+in the convective weighted norm; scaling symmetry modes (ν=constant, dilation/edge=
+ξ@1) are exactly the weight-excluded directions; AND the finite-amplitude frozen-base
+shape perturbation decays in that norm to `A=4` with no transient growth (`nonlinear_
+shape_march.py`). Numerical evidence consistent with Conjecture 2.4. Remaining,
 priority order:
-1. **Long-time nonlinear shape march on a mapped grid** (confirmatory; operator
-   already verified as the correct linearization). HARD STOP if exponents drift.
-2. **Explicit `μ,ν` normalization (referee-facing)** — confirm it agrees with the
-   weighted-space quotient used here.
+1. ✅ DONE (2026-06-06): nonlinear shape march on the mapped grid, FROZEN base —
+   finite-amplitude convective-weighted decay confirmed, no surprise instability
+   (`findings_nonlinear_shape_march.md`). The frozen-base caveat is the open part →
+   item 2.
+2. **CO-EVOLVING-base dynamic-rescaling march with explicit `μ,ν` normalization**
+   (the referee-facing gold standard; subsumes the old "explicit μ,ν" item). Integrate
+   eq.(2.4) in the moving edge-fixed frame from a degenerate IC, let `c_l,c_ω` adjust
+   by the paper's normalization, confirm relaxation to `(Ω̄, c_l=2, c_ω=-1)` with NO
+   exponent drift. HARD STOP if exponents drift. ⚠️ KNOWN WALL: the forward/smooth
+   march is a saddle (dead-end #1) and long-time marching fights the edge-resolution
+   wall — needs a STABILIZED normalization (Newton/BVP-style or projected), not naive
+   forward Euler. This is the precise obstruction to state at max resolution.
 3. **Pin the precise weighted space / max gap; rigor.** Then interval-arithmetic/Lean
-   closure (the CAP step; scoop-risky, hard). NB transient growth is now settled
-   (physical G=1); rigor is the remaining frontier.
+   closure (the CAP step; scoop-risky, hard). NB transient growth (physical G=1) and
+   finite-amplitude nonlinear decay are now settled; rigor + co-evolving base are the
+   remaining frontier.
 
 ⚠️ LESSON (this session): on the `z`-grid the edge is an INFLOW boundary; WITHOUT the
 inflow/regularity BC `G(z_min)=0` the discretization shows a SPURIOUS unstable edge

@@ -95,6 +95,19 @@ def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True):
     J_op = Cz @ np.diag(ym1) @ Hg_op
     forcing = np.diag(0.5 / ym1) @ J_op       # (1/2) J/(Y-1)
 
+    # Bounded form of  delta_U/(Y-1) = J/(Y-1)  acting on G (= 2*forcing), recast as
+    # the exponential-averaging convolution  int_{zmin}^{z} H(g) e^{z'-z} dz'  (weights
+    # <= 1) so the matrix entries stay O(1) at the edge instead of being the discrete
+    # small/small of diag(1/ym1)@J_op (cf. findings_transient_growth.md).  Used by the
+    # nonlinear shape march for both the (verified) linear forcing and the nonlinear
+    # self-advection term.  NOT beta-conjugated -> use at beta=0 only.
+    EA = np.zeros((N, N))
+    for i in range(1, N):
+        w_ea = np.exp(z[:i + 1] - z[i])       # e^{z'-z} <= 1 for z' <= z
+        tw = np.full(i + 1, dz); tw[0] *= 0.5; tw[i] *= 0.5   # trapezoid weights
+        EA[i, :i + 1] = w_ea * tw
+    Q_op = EA @ Hg_op                          # Q_op @ G ~= delta_U/(Y-1), bounded
+
     transport = -2.0 * Dz                     # -abar G_Y = -2 d_z (constant coeff)
     M_GG = transport + forcing
     M_hh = transport.copy()
@@ -106,9 +119,11 @@ def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True):
 
     if edge_bc:                               # G(z_min)=0, h(z_min)=0 (drop edge DOF)
         M_GG = M_GG[1:, 1:]; M_hh = M_hh[1:, 1:]; M_Gh = M_Gh[1:, 1:]
+        Dz = Dz[1:, 1:]; Hg_op = Hg_op[1:, 1:]; J_op = J_op[1:, 1:]; Q_op = Q_op[1:, 1:]
         z = z[1:]; Y = Y[1:]
 
-    return dict(M_GG=M_GG, M_hh=M_hh, M_Gh=M_Gh, z=z, Y=Y, dz=dz, beta=beta)
+    return dict(M_GG=M_GG, M_hh=M_hh, M_Gh=M_Gh, z=z, Y=Y, dz=dz, beta=beta,
+                Dz=Dz, Hg_op=Hg_op, J_op=J_op, Q_op=Q_op)
 
 
 def spectrum(M):
