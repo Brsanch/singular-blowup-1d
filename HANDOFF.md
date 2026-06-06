@@ -144,11 +144,17 @@ priority order:
 3. **Pin the precise weighted space / max gap; rigor (CAP).** ← THE ONLY REMAINING CHIP.
    Capstone + precise obstruction in `docs/findings_conj24_evidence_and_frontier.md`. Exact
    statement to certify: the global nonlocal operator `L` in `L²(e^{-2γz}dz)` quotiented by
-   `span{ξ@1, μ, ν}` has `sup Re λ < 0`. Numerics see no `Re>0` mode (abscissa ~-1e-3 =
-   discretized continuum) but can't certify the sign — needs interval-arithmetic CAP (De
-   Huang's machinery; scoop-risky). Edge risk (Robin BC forces `Re λ>0` modes non-singular)
-   and transient-growth risk (`G=1`) are CLOSED; the residual risk is purely the nonlocal
-   `∫H(g)` coupling. This is the human-leap; numerics have made it well-posed + localized.
+   `span{ξ@1, μ, ν}` has `sup Re λ < 0`. CAP SCAFFOLD DONE 2026-06-06
+   (`findings_cap_scaffold.md`, `validate/cap_scaffold.py`): determined the route.
+   - Transport + boundary CLOSED analytically (IBP: `≤ −2γ‖g‖_w²`, inflow BC + outflow sign).
+   - ENERGY/DISSIPATIVITY route RULED OUT in the convective weight: the forcing's weighted
+     numerical range DIVERGES with edge depth (`C_force=10→29→83` as zmin −10→−14) because
+     `e^{γz}` weight and the edge↔bulk Hilbert coupling don't commute — numerical range huge
+     while spectrum ~-1e-3 (strong non-normality).
+   - => CAP must be EIGENVALUE-ENCLOSURE / RESOLVENT-BOUND (non-normal-robust), in the
+     weighted space (inherits `e^{γz}` conditioning → interval arithmetic, not floats), OR a
+     non-exponential metric (open). Plus verified Hilbert-kernel + tail bounds; fold in
+     M_Gh/M_hh. THE LEAP = that verified enclosure (De Huang's machinery; scoop-risky).
    NB: items 1-2 (linear, transient growth) AND the full co-evolving nonlinear program
    (finite-amplitude, self-consistent, coupled, stress-tested, paper-matched) are DONE.
 
