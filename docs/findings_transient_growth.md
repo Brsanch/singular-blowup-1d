@@ -53,3 +53,11 @@ Not claimed: a rigorous bound on the grid-scale edge modes in a true function sp
 (they reflect the genuine operator singularity at the edge; a function-analytic
 statement would need the precise weighted space and an edge cutoff). Still numerical;
 the CAP/Lean closure remains.
+
+**UPDATE 2026-06-06 — this caveat is now CLOSED** (`findings_transient_growth_edge_conditioned.md`,
+`validate/transient_growth_edge_conditioned.py`): with the bounded-at-edge anisotropic weight +
+edge cutoff (from `energy_estimate_search.py`), the numerical abscissa (analytic-transport
+log-norm) `μ_an = λ_max(−diag(φ') + sym_W(½Q_op))` is NEGATIVE (`−0.10` at z_cut=−8, `−0.41` at
+−6) and RESOLUTION-INDEPENDENT (converges, no creep) ⇒ `‖e^{Mτ}‖_W ≤ 1` ⇒ no transient growth
+(contraction) in the energy norm. The worst-case creep `3→4` was confirmed to be the
+discretized `(Y-1)^{-1/2}` edge spike, excluded by the Robin condition.
