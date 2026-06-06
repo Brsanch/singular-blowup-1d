@@ -77,6 +77,25 @@ makes (★) hold. Our numerics certify it is TRUE (no `Re>0` mode; convective de
 amplitude + co-evolving relaxation; stress-tested) — they give the value of `δ` and the
 shape of the admissible `G`; the analytic proof of (★) is what is missing.
 
+**Numerical attack on (★) — it CLOSES IN THE BULK (`validate/energy_estimate_search.py`):**
+Computing the energy abscissa `λ_max(−diag(φ') + sym_W(½Q_op))` (transport handled exactly
+as the diagonal `−φ'(z)`, forcing via its weighted symmetric part) with a **bounded-at-edge
+anisotropic weight** (`φ'(z)=2γ·½(1+tanh((z−z₀)/s))`, ramping `0` at the edge → `2γ` in the
+bulk; `γ=0.4, z₀=−6, s=2`):
+- The global abscissa is `≈+40`, BUT the worst mode sits AT the edge node (`z*≈−11.98`) and
+  GROWS with `N` (`35.7→38.2→40.2→41.9` for `N=700→2000`) — the discretized `(Y-1)^{-1/2}`
+  edge singularity, not a converged field-of-values.
+- **Excluding a thin edge layer `z<z_cut`** (where `G→0` by the Robin condition) the BULK
+  abscissa is **negative**: `−0.019` (`z_cut=−10`), `−0.106` (`−8`), `−0.41` (`−6`), `−0.65`
+  (`−4`) — increasingly dissipative inward. So the nonlocal forcing IS dominated by the
+  anisotropic transport dissipation in the bulk, i.e. **(★) holds away from the edge.**
+
+So (★) reduces to a **matched edge-layer estimate**: a thin layer near `z=−∞` (`Y→1`) where
+`G→0` and the forcing is regular (`~½H(g)(1)(Y-1)^{-1/2}`), to be closed by explicit edge
+asymptotics + the Robin condition (Chen's region-dependent / "anisotropic" edge treatment),
+matched to the bulk coercivity above. That edge-layer estimate + the §5 `H¹` coupling are the
+**reduced** leap.
+
 ## 5. The coupling term — needs a weighted HIGHER-ORDER energy (structural)
 
 `⟨G, M_Gh h⟩_W = ∫ W G e^{-z/2} ∂_z h\,dz`. By Young, `≤ ε‖G‖_W² + (4ε)^{-1}∫ W e^{-z}(∂_z h)²dz`.
@@ -119,8 +138,15 @@ and the identification of `𝒩` (§5–§6); the regularity of `F` at the edge.
 ESTABLISHED (numerical, the quantitative guide): (★) holds with a definite `δ` — no `Re>0`
 mode (two discretizations), convective gap `2γ`, no transient growth, finite-amplitude +
 fully self-consistent co-evolving relaxation, stress-tested, paper-matched normalization.
-THE LEAP (Bryan-led, analytic): prove (★) and its derivative-level analogue — the sharp
-anisotropic-weight + explicit-kernel estimate dominating the nonlocal `Q_op` and the `M_Gh`
-coupling modulo `𝒩`. The single exponential weight provably does not suffice (§4); the
-template is Chen 2605.15130 (anisotropic weights + IBP-exploiting-the-equation-twice). Not a
-spectral CAP; not interval arithmetic.
+REDUCED LEAP (after `energy_estimate_search.py`): the BULK coercivity of (★) is numerically
+established with an explicit bounded-at-edge anisotropic weight (bulk energy abscissa `<0`).
+What remains:
+  (a) a rigorous EDGE-LAYER estimate — a thin layer at `Y→1` where `G→0` (Robin) and the
+      forcing is regular; close it by explicit edge asymptotics matched to the bulk coercivity;
+  (b) the `H¹_W` coupling closure (§5) — differentiate, control `M_Gh` and `[∂_z,F]` via the
+      same bulk+edge split (Chen's IBP-exploiting-the-equation-twice).
+These are far smaller than the original global (★). Still analytic (not a spectral CAP, not
+interval arithmetic); template Chen 2605.15130; numerics give every constant. HONEST: this is
+numerical evidence + a proof STRUCTURE with the hard balance (nonlocal vs dissipation) shown
+to close in the bulk — NOT a completed rigorous proof. The edge-layer matched asymptotic is
+the genuine remaining analytic work.

@@ -176,6 +176,15 @@ priority order:
    (the L² energy does NOT close — `M_Gh` needs `∂_z h` control). Single exp weight provably
    fails (kernel needs anisotropic `φ` + explicit-kernel estimate). Numerics give `δ` + the
    admissible subspace; the sharp estimate is Bryan's.
+   ── PROOF ATTEMPT 2026-06-06 (`validate/energy_estimate_search.py`): (★) CLOSES IN THE BULK.
+   With a bounded-at-edge anisotropic weight `φ'(z)=2γ·½(1+tanh((z−z₀)/s))` (γ=0.4,z₀=−6,s=2),
+   the energy abscissa is `+40` GLOBALLY but that is entirely the discretized `(Y−1)^{−1/2}`
+   edge layer (worst mode at the edge node, grows with N). Excluding a thin edge layer
+   `z<z_cut` (where `G→0` by Robin), the BULK abscissa is NEGATIVE (`−0.02` at z_cut=−10,
+   `−0.41` at −6, increasingly dissipative inward) ⇒ the nonlocal forcing IS dominated by the
+   anisotropic transport dissipation in the bulk. So (★) reduces to (a) a matched EDGE-LAYER
+   asymptotic + (b) the H¹ coupling — REDUCED LEAP, not a finished proof; numerical evidence
+   + structure (`docs/rigor_energy_estimate_setup.md` §4/§8).
 
 ⚠️ LESSON (this session): on the `z`-grid the edge is an INFLOW boundary; WITHOUT the
 inflow/regularity BC `G(z_min)=0` the discretization shows a SPURIOUS unstable edge
