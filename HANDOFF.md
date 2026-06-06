@@ -64,6 +64,7 @@ the stability operator):
 | **NONLINEAR shape march (finite amplitude, frozen base)**: convective weighted decay survives to `A=4` (4× profile scale); rate→linear gap `2γ` as `A→0` (GATE B), peak `‖·‖_w=1.000` (monotone, no transient growth), resolution-robust, edge hi-k=0; coupled (Ω,Θ) adds only a bounded `1.11` transient | ✅ extends gap to nonlinear; no surprise instability | `validate/nonlinear_shape_march.py` PASS, `findings_nonlinear_shape_march.md` |
 | **co-evolving march STARTED**: dynamic normalization (`c_l=-U(1)` edge-stagnation + `c_ω` amplitude-pin) VALIDATED — profile is an exact fixed point (`c_l=2.0000000`, `c_ω=-1.0000000`, `dU(1)` functional rel.err 7.6e-8); fixed-Y dilation gauge term quantified to diverge as `e^{-z}` at edge ⇒ MOVING frame mandatory | ✅ machinery built; ⚠️ wall = needs moving frame (next) | `validate/coevolve_march.py` PASS, `findings_coevolve_march_started.md` |
 | **co-evolving march MOVING frame**: λ=1 pure-ξ symmetry mode confirmed in the coupled (g,h,ξ) operator (rest Re≤0); along the stable trajectory the diagnostic exponents converge `c_l→2, c_ω→-1` with NO drift (resolution-robust), edge pinned, `‖g‖_w` decays at the gap rate; explicit forward forcing of the exponents is saddle-unstable (= dead-end #1) ⇒ needs PROJECTED normalization | ✅ λ=1 gate + diagnostic convergence; ⚠️ self-consistent forcing needs projection | `validate/coevolve_moving_frame.py` PASS, `findings_coevolve_moving_frame.md` |
+| **co-evolving march SELF-CONSISTENT (relaxes!)**: runaway localized to the Θ-amplitude h-forcing; Θ-balance normalization `c_ω=-c_l/2` removes it (`c_l+2c_ω≡0`); FULLY self-consistent march (both `c_l,c_ω` fed back) RELAXES — perturbed profile → `(Ω̄,c_l=2,c_ω=-1)`, exponents converge to 6 digits, NO drift, resolution-robust, edge pinned ⇒ singular profile is a NONLINEAR ATTRACTOR of the dynamic-rescaling flow | ✅ co-evolving relaxation (removes frozen-base + diagnostic-only caveats) | `validate/coevolve_projected.py` PASS, `findings_coevolve_self_consistent.md` |
 
 ## File map
 
@@ -125,18 +126,17 @@ priority order:
    (dilation) gauge term `-δc_l·X·Ω̄_X` diverges as `e^{-z}` at the edge (482→3563→26330→
    194500 as zmin -10→-16) because `X·Ω̄_X ~ (Y-1)^{-3/2}` is more singular than the
    profile. ⇒ the MOVING edge-fixed frame is MANDATORY (the frame `M_GG` already uses).
-   MOVING-FRAME MARCH BUILT 2026-06-06 (`findings_coevolve_moving_frame.md`,
-   `validate/coevolve_moving_frame.py`): λ=1 pure-ξ symmetry mode confirmed (rest Re≤0);
-   along the stable convectively-decaying trajectory the DIAGNOSTIC exponents converge
-   `c_l→2, c_ω→-1` with NO drift (resolution-robust across 3 grids), edge pinned via
-   `μ=-V_g(1)`, `‖g‖_w` decays at the gap rate. ⚠️ The fully self-consistent step is
-   still OPEN: explicit forward FORCING of the exponents is saddle-unstable (reproduces
-   dead-end #1, the amplitude runaway). REMAINING:
-   (a) PROJECTED / implicit normalization — project the field onto the gauge-fixed slice
-       each step (remove the amplitude mode) so the exponents can be fed back stably; then
-       the fully self-consistent co-evolving march should relax. HARD STOP on drift.
-   (b) match the paper's explicit μ,ν conditions (referee-facing); confirm agreement with
-       the weighted-space quotient + the diagnostic convergence.
+   ✅ DONE 2026-06-06 (`findings_coevolve_self_consistent.md`, `validate/coevolve_projected.py`):
+   the FULLY self-consistent co-evolving march RELAXES. The runaway was localized to the
+   Θ-amplitude h-forcing (not the Ω-amplitude); the Θ-balance normalization `c_ω=-c_l/2`
+   makes `c_l+2c_ω≡0` so that forcing vanishes. With both `c_l=-U(1)` and `c_ω=-c_l/2`
+   co-evolving and the edge pinned (`μ=-V_g(1)`), a perturbed profile relaxes to
+   `(Ω̄,c_l=2,c_ω=-1)`: exponents converge to 6 digits, NO drift, resolution-robust across
+   3 grids ⇒ the singular profile is a NONLINEAR ATTRACTOR of the dynamic-rescaling flow.
+   (Diagnostic + moving-frame λ=1 gate also stand.) REMAINING for this chip:
+   (a) match arXiv:2604.01868's explicit μ,ν conditions verbatim (referee-facing); confirm
+       agreement with the edge-stagnation + Θ-balance gauge + the weighted-space quotient.
+   (b) coupled (Ω,Θ)-shape perturbation under the co-evolving normalization (completeness).
 3. **Pin the precise weighted space / max gap; rigor.** Then interval-arithmetic/Lean
    closure (the CAP step; scoop-risky, hard). NB transient growth (physical G=1) and
    finite-amplitude nonlinear decay are now settled; rigor + co-evolving base are the
