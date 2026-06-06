@@ -133,10 +133,11 @@ priority order:
    co-evolving and the edge pinned (`μ=-V_g(1)`), a perturbed profile relaxes to
    `(Ω̄,c_l=2,c_ω=-1)`: exponents converge to 6 digits, NO drift, resolution-robust across
    3 grids ⇒ the singular profile is a NONLINEAR ATTRACTOR of the dynamic-rescaling flow.
-   (Diagnostic + moving-frame λ=1 gate also stand.) REMAINING for this chip:
+   (Diagnostic + moving-frame λ=1 gate also stand.) Coupled (Ω,Θ)-shape perturbation also
+   relaxes (no coupling-driven instability) — done 2026-06-06. REMAINING for this chip:
    (a) match arXiv:2604.01868's explicit μ,ν conditions verbatim (referee-facing); confirm
        agreement with the edge-stagnation + Θ-balance gauge + the weighted-space quotient.
-   (b) coupled (Ω,Θ)-shape perturbation under the co-evolving normalization (completeness).
+   Then chip #3 (weighted space / max gap; interval-arithmetic / Lean CAP closure).
 3. **Pin the precise weighted space / max gap; rigor.** Then interval-arithmetic/Lean
    closure (the CAP step; scoop-risky, hard). NB transient growth (physical G=1) and
    finite-amplitude nonlinear decay are now settled; rigor + co-evolving base are the

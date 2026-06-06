@@ -55,6 +55,13 @@ three grids**. (The fitted convective decay rate is `1.20 / 1.26 / 1.36` — mil
 zmin-sensitive, as weighted-convective rates are; the converged exponents and relaxation
 state are resolution-robust and the rate stays above the linear gap `2γ=1.0`.)
 
+**Coupled (Ω,Θ)-shape perturbation.** Bumping BOTH `G` and `h` (not just `G`), same
+self-consistent normalization: `c_l: 2.044→2.00001`, `c_ω: −1.022→−1.00001` (converge, no
+drift), `‖g‖_w` decays `0.108→2.9e-3` (~37×); `h` (the slaved Θ-mode, pure transport)
+convects out (`max|h|` preserved, weighted norm decays). A small bounded transient in
+`max|g|` (`0.15→0.18`) from the `M_Gh` coupling, then decay. **No coupling-driven
+instability** — the Ω-only verdict is robust to perturbing Θ as well.
+
 ## Verdict
 
 The **fully self-consistent co-evolving dynamic-rescaling march relaxes**: a perturbed
@@ -71,9 +78,9 @@ and the "diagnostic only" caveat of `findings_coevolve_moving_frame.md`.
   both structural, both exact at the profile, a legitimate self-consistent dynamic-rescaling
   gauge. Whether it matches arXiv:2604.01868's explicit `μ,ν` conditions verbatim is the
   referee-facing check still to do (it should agree, both selecting `(2,−1)`).
-- **Ω-shape perturbation.** The bump is on the Ω-shape (the crux; `h` is the slaved Θ-mode,
-  unperturbed here). A coupled (Ω,Θ)-shape perturbation under this normalization is the
-  natural extension (the fixed-exponent coupled case was bounded in `nonlinear_shape_march`).
+- **Perturbation coverage.** Both the Ω-shape alone and the coupled (Ω,Θ)-shape are now
+  tested (above); both relax with exponents → (2,−1), no drift, no coupling-driven
+  instability.
 - **Convective/weighted, numerical, not a proof.** Decay in `L²(e^{-2γz}dz)`; finite
   edge-resolved grid; ~1.5% Hilbert; RK4. No interval arithmetic / Lean.
 - The fitted convective rate is norm/domain-dependent (1.2–1.4); the robust invariants are
@@ -83,6 +90,5 @@ and the "diagnostic only" caveat of `findings_coevolve_moving_frame.md`.
 
 1. Match arXiv:2604.01868's explicit `μ,ν` normalization conditions; confirm agreement with
    the edge-stagnation + Θ-balance gauge used here and with the weighted-space quotient.
-2. Coupled (Ω,Θ)-shape perturbation under the co-evolving normalization (completeness).
-3. Pin the precise weighted space / max gap; then interval-arithmetic / Lean (CAP) closure
+2. Pin the precise weighted space / max gap; then interval-arithmetic / Lean (CAP) closure
    (scoop-risky, the remaining frontier).

@@ -63,10 +63,11 @@ def rk4_step(B, G, h, xi, dt, mode="theta_balance", **kw):
     return G, h, xi, c_l_r, c_om_r
 
 
-def march(B, A=0.15, T=4.0, mode="theta_balance", **kw):
+def march(B, A=0.15, hA=0.0, T=4.0, mode="theta_balance", **kw):
     z = B["z"]
     G = A * np.exp(-((z - 1.0) / 1.0) ** 2); G[0] = 0.0
-    h = np.zeros(B["n"]); xi = 0.0
+    h = hA * np.exp(-((z - 1.5) / 1.0) ** 2); h[0] = 0.0
+    xi = 0.0
     dt = 0.25 * B["dz"]
     taus = [0.0, 0.5, 1.0, 2.0, 3.0, 4.0]
     rows = []
@@ -127,6 +128,30 @@ def main():
         line = (f"    {Nc:<6d} {zc_:+.0f}   {rws[-1][1]:+.6f}   {rws[-1][2]:+.6f}    "
                 f"{r:+.3f}       {rws[-1][4]:.3e}") if ok else f"    {Nc:<6d} {zc_:+.0f}   BLOWS UP"
         print(line)
+
+    # ---- COUPLED (Omega,Theta)-shape perturbation (completeness) -------------------
+    print("\n  COUPLED (Omega,Theta)-shape perturbation (both G and h bumped, self-consistent):")
+    print("    tau    c_l        c_omega     ||g||_w(.5)   max|g|     max|h|")
+    z = B["z"]
+    G = 0.15 * np.exp(-((z - 1.0) / 1.0) ** 2); G[0] = 0.0
+    h = 0.15 * np.exp(-((z - 1.5) / 1.0) ** 2); h[0] = 0.0
+    xi = 0.0
+    dt = 0.25 * B["dz"]
+    tau, ti = 0.0, 0
+    taus = [0.0, 1.0, 2.0, 4.0]
+    _, c_l, c_om = gauge_of(B, G, h, "theta_balance")
+    for tgt in taus:
+        while tau < tgt - 1e-12:
+            G, h, xi, c_l, c_om = rk4_step(B, G, h, xi, min(dt, tgt - tau), mode="theta_balance")
+            tau += min(dt, tgt - tau)
+            if not np.all(np.isfinite(G)):
+                break
+        ok = np.all(np.isfinite(G))
+        print(f"    {tgt:4.1f}   {c_l:+.5f}   {c_om:+.5f}   {wnorm(B, G):.3e}    "
+              f"{np.max(np.abs(G)):.3e}   {np.max(np.abs(h)):.3e}"
+              if ok else f"    {tgt:4.1f}   BLOWS UP")
+        if not ok:
+            break
 
     print("\n" + "=" * 82)
     print("  READ: Step 1 localizes the runaway to the h-forcing (Theta-amplitude). The")
