@@ -62,6 +62,21 @@ convects out (`max|h|` preserved, weighted norm decays). A small bounded transie
 `max|g|` (`0.15→0.18`) from the `M_Gh` coupling, then decay. **No coupling-driven
 instability** — the Ω-only verdict is robust to perturbing Θ as well.
 
+## Stress test (falsification-first; `validate/coevolve_stress.py` PASS)
+
+Tried to BREAK the attractor — every case relaxes (`‖g‖_w` decays, `c_l→2`, `c_ω→−1`, no
+blowup/drift):
+- **Amplitude** `A = 0.05, 0.15, 0.3, 0.6, 1.0, 2.0` (bulk bump; `A=2` starts at
+  `‖g‖_w=1.45`): all relax; final `c_l∈[2.00000, 2.00014]`, `c_ω∈[−1.00000, −1.00007]`.
+- **Shape** (A=0.2): bulk (z=1), **near-edge (z=−4)**, far-field (z=6), **high-k oscillatory**
+  (cos 6z), sign-changing two-bump — all relax.
+- **Θ-dominant** (small Ω bump + big `h` bump 0.5): relaxes.
+- **Convergence** (A=1.0): final `‖g‖_w=1.34e-2` and `c_l=2.00005, c_ω=−1.00003` identical
+  across `(N,zmin)=(1000,−10)/(1400,−12)/(1800,−14)`.
+
+No resolution-robust blowup or exponent drift found under any amplitude or shape — the
+attractor claim survives an aggressive falsification sweep.
+
 ## Verdict
 
 The **fully self-consistent co-evolving dynamic-rescaling march relaxes**: a perturbed
