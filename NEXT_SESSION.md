@@ -120,6 +120,11 @@ every hand-assembled bound.
 - Put Track-1 lemmas in `SingularBlowup/Profile.lean` (steady state, U(1), c_ω-absorption) and
   `SingularBlowup/Energy.lean` (IBP identity, indicial roots). Keep files small (1–3k LOC,
   textbook granularity), not 100-LOC chips.
+- Adopt the proof-obligation ledger schema from day one
+  (`../references/proof_obligation_ledger_schema.md`, ported 2026-06-12 from the harvest):
+  Track-1 lemmas = LEM entries with `machine_verification: Lean`; the (★) estimate and L1–L4
+  stay `conjectured` (with the `validate/` gates as OBS evidence) until proved; the headline
+  stability claim stays `speculative` + confidence until external review.
 
 **Honest Lean verdict:** Track 1 is a real, bounded, achievable deliverable that formalizes the
 closed skeleton. Track 2 (the actual coercivity/the full theorem) is research-grade and
