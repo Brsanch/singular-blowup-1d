@@ -40,6 +40,14 @@ a scoop. Robust contributions: independent confirmation (done) + stability spect
 numerical) + analytical finite-codimension stability proof (open, Bryan-led; NOT a spectral
 CAP — see rigor route below).
 
+**Watch item (low-vis harvest 2026-06-11):** `m4rio-dev/hou-luo-1d-certification` — an
+independent third-verification attempt of the HQWW exact Hou–Luo profile (Krawczyk design;
+honest: their prototype converges OUTSIDE the admissible domain, d≈0.83<1, stated in their
+abstract). Scoop-check NEGATIVE for our deliverable (zero stability-spectra content;
+Conjecture 2.4 untouched). Watch their Phase-2 Krawczyk closure — it would affect the
+scoop-EXPOSED existence leg, not stability. Notes:
+`../ns-lowvis-harvest/findings/lowvis-m4rio-dev-hou-luo-1d-certification-20260611.md`.
+
 **Target (Bryan picked):** "confirm + stability spectra, Hou–Luo lead."
 
 ## The Hou–Luo model + the certified base state

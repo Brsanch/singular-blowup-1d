@@ -90,6 +90,26 @@ neither near-term:
   linear algebra exists in Lean/mathlib first; this is the more realistic rigorous-Lean route
   but still a project.
 
+**Worked reference architecture for the CAP/spectrum leg** (low-vis harvest deep-read
+2026-06-11/12; full notes `../ns-lowvis-harvest/findings/lowvis-taklab-org-RigorousIntegrator-higher-dim-PDEs-20260611.md`
+and `...-GC-ubs-CAP-20260611.md`): `taklab-org/RigorousIntegrator_higher_dimensional_PDEs`
+(arXiv:2402.00406, J. Sci. Comput. 2024, MATLAB+INTLAB) contains a worked stack for exactly
+the "finitely many leading eigenpairs + spectral-gap remainder" architecture: Newton–Kantorovich
+validated eigenpairs in weighted ℓ¹ (`Code_Gab/Code Steady State and Eigenvalue Problem
+Specific Fm/F_eigenpair.m` etc.) + **Gershgorin-after-similarity** + tail bound for the rest of
+the spectrum (`Gershgorin_ring.m`). Gershgorin-after-similarity is a non-normality-robust
+enclosure — i.e. the eigenvalue-enclosure route `cap_scaffold` concluded is mandatory after the
+numerical-range/energy route diverged. Companion `taklab-org/GC-ubs-CAP` (arXiv:2103.12390) is
+the certificate-pattern reference for blow-up CAP (stable-manifold radii polynomials +
+validated-Lyapunov-domain absorption + blow-up-time integral). What does NOT transfer = the
+actual new work: their bases are cosine-on-rectangles / Taylor-at-equilibria (we need the
+half-line `z`-grid with algebraic edge behavior in the `e^{−2γz}` weight), and their tail bound
+is sectorial-semigroup (`M_GG=−2∂_z+½Q_op` is transport-dominated, non-sectorial). ⚠️ Port WITH
+tests only: our deep-read found 9 rigor defects in the shipped code (sign error in a
+radii-polynomial Z2 tail; trapping radius computed with float `roots` on `mid()`-stripped
+intervals; unchecked `abs()` that would silently accept an unstable rate as decay) — re-derive
+every hand-assembled bound.
+
 **Project setup steps (next session):**
 - `mkdir lean && cd lean && lake new SingularBlowup` (or copy the lakefile/toolchain pin from
   `../sqg-lean-proofs` to match a known-good mathlib version — check its `lean-toolchain` and
