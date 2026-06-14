@@ -4,7 +4,7 @@ title: (★) The nonlocal forcing is dominated by the anisotropic transport diss
 category: LEM
 status: conjectured
 confidence: 0.60
-dependencies: [LEM-04, OBS-01, OBS-03]
+dependencies: [LEM-04, LEM-07, OBS-01, OBS-03, OBS-04]
 supports: [THR-01]
 cross_citations:
   - {label: "Chen 2026", ref: "arXiv:2605.15130", note: "finite-codimension + anisotropic + IBP-twice template"}
@@ -34,9 +34,17 @@ edge abscissa is a continuum non-normal profile-resonance carried by the g-unbou
 excluded by admissibility — but only enforced numerically, not proven.
 
 So the leap is NO LONGER an energy estimate: it is the **non-self-adjoint spectral /
-Fredholm** statement "the L²_W realization of `M_GG ⊖ 𝒩` has no `Re λ ≥ 0` spectrum",
-to be proven via a verified **resolvent bound** (cap_scaffold route 2) or the **Mellin /
-Wiener–Hopf symbol** of `½Q_op` at the edge indicial exponent `r = −(λ+1)/2`, using the
-continuum identity `H((Y-1)^{-1/2})=0` (which the discrete operator violates → numerics
-mislead). Full route table, circularity firewall, and the two concrete next computations:
-`docs/desk/edge_layer_estimate.md`. Stays `conjectured` (no-self-cert rule).
+Fredholm** statement "the L²_W realization of `M_GG ⊖ 𝒩` has no `Re λ ≥ 0` spectrum".
+
+**SHARPENED 2026-06-14 (LEM-07, `docs/desk/edge_mellin_symbol.md`).** The edge Mellin
+symbol is now computed and 4-method verified: the half-line Hilbert is the multiplier
+`𝓗(p)=cot(πp)`, and `½Q_op` is a `−1/2` Mellin ladder `c(ζ)=−tan(πζ)/(2ζ+1)`. The
+eigenvalue problem reduces to the explicit **Mellin difference equation**
+`(2s+λ)a(s)=c(s+1/2)a(s+1/2)`, and the ENTIRE remaining obligation is a single
+**Wiener–Hopf index**: show the winding/partial-index of the factorization (edge line →
+far-field line) is `0` for all `Re λ≥0` mod `𝒩`. In-strip `Re λ∈[0,1)` shows no automatic
+pole (encouraging); the decisive `Re λ≥1` needs the analytic continuation. Probably a small
+research problem (graded-lattice `cot`-symbol factorization with the `𝒩`-quotient), NOT an
+off-the-shelf lemma. Circularity firewall: `B=a(0)` must be COMPUTED from the WH product,
+never inferred from the benign spectrum. Stays `conjectured` (the index is named, not
+evaluated).

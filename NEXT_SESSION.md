@@ -46,6 +46,15 @@ bounded there) and `δ>0` with, for all `(G,h)∈H¹_W`, `G,h ⊥_W 𝒩`, edge 
   violates). ⚠️ Circularity firewall: `H(g)(1)=0` is automatic for L²_W modes — do NOT assert it
   from the benign spectrum (the NS-C6/SQG circular move). Full route table + next computations in
   the desk doc.
+  **FURTHER REDUCED 2026-06-14 (LEM-07, `docs/desk/edge_mellin_symbol.md`).** The edge Mellin
+  symbol is computed + 4-method verified: half-line Hilbert `𝓗(p)=cot(πp)`, forcing a `−½` ladder
+  `c(ζ)=−tan(πζ)/(2ζ+1)`, so `M_GG G=λG` is the Mellin difference equation
+  `(2s+λ)a(s)=c(s+½)a(s+½)`. The whole leap is now ONE **Wiener–Hopf index**: show the
+  winding/partial-index (edge line → far-field line) is `0` for all `Re λ≥0` mod `𝒩`. In-strip
+  `Re λ∈[0,1)` shows no automatic pole; decisive `Re λ≥1` needs the analytic continuation. Likely
+  a small research problem (graded-lattice cot-symbol factorization + `𝒩`-quotient). **NEXT =
+  argument-principle index in-strip, then the continued factorization.** Firewall: `B=a(0)` must be
+  COMPUTED from the WH product, never inferred from the spectrum.
 - **L3 — `H¹_W` closure of the coupling.** The `L²` energy does NOT close: `M_Gh=e^{−z/2}∂_z`
   needs `∂_z h` control. Differentiate the system, re-run L1/L2 on `(∂_z G,∂_z h)`, control
   the commutator `[∂_z,F]` and the `e^{−z/2}` factor. This is Chen's "anisotropic estimates +
