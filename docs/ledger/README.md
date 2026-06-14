@@ -20,6 +20,7 @@ review, no matter how green the lemma DAG is.
 | LEM-05 | edge indicial roots r=−(λ+1)/2; admissible ⇔ Reλ≤0 | verified | Lean |
 | LEM-06 | (★) coercivity — reduced to a Wiener–Hopf index (LEM-07) | conjectured (0.60) | validate gates (bulk only) |
 | LEM-07 | edge Mellin symbol 𝓗(p)=cot(πp); forcing −½ ladder; ⟹ Mellin difference eqn | proved-on-paper | validate/edge_mellin_symbol.py + mpmath/sympy (4 methods) |
+| LEM-08 | no Re λ≥0 POINT eigenvalue mod 𝒩 (exact integer obstruction; τ elementary) | proved-on-paper | validate/edge_pointspectrum_rigid.py (+ pole_collision, route3, firewall_audit) |
 | OBS-01 | bulk energy abscissa < 0 (anisotropic weight) | — | validate/energy_estimate_search.py |
 | OBS-02 | steady residual ~2e-16; U(1)=−2 exact | — | validate/verify_singular_steady.py |
 | OBS-03 | +40 edge abscissa = inadmissible-branch resonance (energy route dead) | — | validate/edge_layer_obstruction.py |

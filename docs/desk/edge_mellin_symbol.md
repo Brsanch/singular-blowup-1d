@@ -195,6 +195,258 @@ exactly the `𝒩`/symmetry/resonance modes. **Candidate conclusion: no `Re λ�
 adversarial determination (workflow `wf_57449c86`, residue + Pincherle + direct numerical `L²` scan +
 circularity audit); status below pending that verdict. Gate: `validate/edge_tau_construction.py`.
 
+**⚠️ CORRECTION (2026-06-14, adversarial verification): the BALANCE paragraph above has TWO bookkeeping
+errors; the conclusion survives via an *exact integer* obstruction (§5.4).** (1) The edge↔far-field
+pole assignment is **reversed**. Standard Mellin (`|ξ^{−s}|=ξ^{−Re s}`, `ξ=(Y−1)^{1/2}`) ⟹ far field
+`ξ→∞` is governed by the **right** poles — leading `ξ^{−2}` from `s=2` (`Γ(1−s/2)`), which **decays**;
+edge `ξ→0` by the **left** poles — leading the `s=0` const (`Γ(s/2)`) = the marginal `𝒩`-mode (raw
+`Ĝ_p` decays at far field `ξ^{−2}` for *every* `λ`; numerically edge-exp `≈0`, far-exp `≈−2`,
+`validate/edge_pointspectrum_rigid.py`). (2) The `sin(πs)`-type killer is **anti-periodic**
+(`sin(π(s+1))=−sin(πs)`) so it does **not** preserve `Ĝ(s+1)=R(s)Ĝ(s)`; valid `P` are 1-periodic =
+Laurent in `w=e^{2πis}` with **asymmetric** two-sided growth `e^{2πk_max|τ|}` (`τ→−∞`),
+`e^{2π|k_min||τ|}` (`τ→+∞`). The corrected count is *sharper*, not weaker — see §5.4.
+
+**Independent reproduction (2026-06-14, fresh mpmath, dps=50, no shared code).** All five construction
+claims confirmed: (a) `τ(s+1)/τ(s)−tan(πs/2) ~ 9e-51`; (b) reflection `~1e-50`; (c)
+`Ĝ_p(s+1)/Ĝ_p(s)−R(s) ~ 1e-49` over six `λ` (incl. complex) × twelve `s`; (d) the line-decay exponent
+measured by a large-`τ` difference quotient (which cancels the polynomial Stirling prefactor) is
+`−4.712330` vs `−3π/2 = −4.712389`, rel. err `1.3e-5`, converging monotonically — and `∫|Ĝ_p|²dτ`
+finite once the `s=0` pole is excised, so genuinely `L²` on the line; the `s=0` residue is `2Γ(λ)`
+(contour-verified to `~1e-48`). (e) The WH split is exact (`rgamma` pole-marking: `Γ(s/2)` left
+`{0,−2,−4,…}`, `Γ(1−s/2)` right `{2,4,6,…}`, cleanly separated by `Re s=0`); the Fox-H integrand
+reconstructed from `H^{1,3}_{3,1}[1/ξ | (1−λ,1),(−1,1),(1,½); (1,½)]` is **bitwise identical** to `Ĝ_p`
+(diff `0.0`), and the edge `ξ^{−2}` term is the `s=2` residue verified by a signed two-contour
+Mellin-Barnes inversion (`G_{c=3}−G_{c=1} = +Res_{s=2}[Ĝ_pξ^{−s}] = −18.536·ξ^{−2}`, agreement
+`3.8e-34`). **Fox-H, not Meijer-G** (two distinct B-scales 1 and ½ — the `π/sin(πs/2)` half-scale block
+is irreducible; only the `Γ(s+λ)Γ(s+2)` Pochhammer block is Meijer-reducible). No error found in (a)–(e).
+The BALANCE growth-count is also arithmetically self-consistent (`e^{−3π|τ|/2}·e^{2π|τ|}=e^{+π|τ|/2}`
+grows ⇒ not `L²`; one-sided `e^{−π|τ|/2}` still decays) — but remains heuristic for the reason the doc
+states: a period-1 `sin(π(s−s₀))` kills an entire `ℤ`-spaced class at once, and that the *minimal*
+multiplier killing exactly the two bad classes (edge spacing 2, far-field spacing 1) without re-creating
+poles or destroying the `s=0` marginal mode costs *exactly* `e^{2π|τ|}` is the unproven
+Pincherle/minimal-solution step. Gate (independent): `validate/edge_tau_independent_verify.py`.
+
+## 5.4 The point-spectrum step, made rigorous — EXACT integer obstruction (2026-06-14)
+
+The §5.3 BALANCE was heuristic *and* carried the two errors flagged above. The corrected, exact
+version (gate `validate/edge_pointspectrum_rigid.py`, all claims direct mpmath, raw magnitudes /
+`L²` integrals — no slope-sign shortcuts, which is where the heuristic hid its sign error):
+
+**The exact homogeneous freedom.** `Ĝ=Ĝ_p·P` with `P(s+1)=P(s)` *exactly* — a 1-periodic
+meromorphic factor, i.e. a function of `w=e^{2πis}`. (`sin(πs)` is anti-periodic and **invalid**: it
+solves `Ĝ(s+1)=−R(s)Ĝ(s)`.) A 1-periodic `P=Σc_k w^k` (Laurent, extreme powers `k_min≤0≤k_max`) has,
+on the line `s=c+iτ`:
+- `τ→−∞` (`w→∞`): `|P|~e^{2πk_max|τ|}`,   `τ→+∞` (`w→0`): `|P|~e^{2π|k_min||τ|}`,
+- and **exactly `d=k_max−k_min` zeros per period-strip** (roots of the degree-`d` Laurent polynomial)
+  — so killing even one pole-coset needs `d≥1`, hence growth `≥e^{2π|τ|}` on at least one side.
+
+**The two obligations.**
+- *Line `L²` (Plancherel).* `Ĝ_p` decays **symmetrically** `~e^{−(3π/2)|τ|}` (λ-independent, reproduced
+  to rel-err `~1e-5` across real/complex `λ`). `Ĝ_p·P∈L²(line)` ⟺ decays both sides ⟺
+  `2πk_max<3π/2` **and** `2π|k_min|<3π/2` ⟺ `k_max<¾` **and** `|k_min|<¾` ⟺ `k_max=k_min=0` ⟺
+  `d=0` ⟺ **`P` has no zeros.** (Verified: `∫|Ĝ_p·P|²` is `22.6` for `d=0` and astronomically
+  divergent — `~10^{1.99×10^{34}}` — for every `d≥1` killer, symmetric or asymmetric.)
+- *`L²_W` membership.* The `d=0` choice `P=1` leaves the edge `s=0` term = a nonzero **constant** at
+  `ξ→0`. A const has **infinite** weighted edge mass: `∫_{−∞}^{z_cut}W·const²dz=+∞` for any
+  bounded-at-edge `W` (`W→const`, the only admissible kind — `edge_layer_estimate.md`) over the
+  half-infinite edge interval. So `L²_W` **requires** killing `s=0`, i.e. `d≥1`.
+
+**The obstruction is `d≥1 ∧ d=0`, i.e. EMPTY.** No 1-periodic `P` makes `Ĝ_p·P` simultaneously line-`L²`
+and `s=0`-killed. Hence **no `Re λ≥0` point eigenfunction** — *unless* an `Ĝ_p` pole **coincidence**
+removes the `s=0` obligation. That happens exactly at `λ∈ℤ`: `Γ(s+λ)`'s tower merges onto the integer
+cosets, the recurrence `a_{m+1}=(m+λ)(m+2)tan(πm/2)a_m` **terminates** (`tan(πm/2)=0` at even `m`),
+`G` is a polynomial — these are precisely the `𝒩={marginal, dilation, symmetry}` modes that are
+quotiented. So the only `Re λ≥0` candidates are `λ∈{0,1,2,…}=𝒩`; **modulo `𝒩`: empty ⟹ point-stable.**
+
+**Why this beats the heuristic:** "`e^{2π}>e^{3π/2}`" is replaced by the exact integer inequality
+`k_max<¾ ⟹ k_max=0` (no non-trivial integer in `[0,¾)`). The killer's growth is **rigid** — a
+zero-free 1-periodic entire function is constant (`e^{as}` is not 1-periodic unless `a=0`), so there is
+no theta-ratio / clever-`P` escape; the degree-vs-growth law is exact.
+
+**Honest remaining gaps (this step is point-spectrum only, frozen generator):**
+1. **Essential spectrum untouched.** `R(0)=0` on `Re s=0` for every `λ` (`tan0=0`) ⟹ non-Fredholm
+   line ⟹ `Re=0` is in the essential spectrum. This point-mode argument says nothing about it; a
+   **strict** spectral gap `Re σ≤−δ` still needs the edge-*unbounded* weight (re-triggers
+   `cap_scaffold`), which is the separate open piece of `edge_layer_estimate.md`. So the earned claim
+   is "**no `Re λ≥0` point eigenvalue mod `𝒩`**," not "spectral gap."
+2. **The `L²_W`-edge-mass step** is the one conclusion-adjacent link; it is the honest content of the
+   former firewall (`B=0 ⟺ L²_W`), now *computed* from the explicit `Ĝ_p` pole at `s=0` (the const
+   has infinite half-line mass) rather than asserted — non-circular **iff** the `W→const` edge fact is
+   used (it is). Worth a clean Lean/interval statement of "bounded-at-edge `W`, const ∉ `L²_W`."
+3. **Frozen Ω-shape.** The nonlinear / co-moving-frame correction (`coevolve_*`) is a separate leg.
+
+**Net status: `reduced-to-sharp-WH-factorization` → the point-spectrum half is now an EXACT integer
+obstruction** (modulo gap 2's clean weighted-norm statement); the essential-spectrum gap (1) is the
+genuine remaining analytic object for a *strict* stability margin. Gate:
+`validate/edge_pointspectrum_rigid.py`.
+
+## 5.5 Route 1 (residue / pole-collision): the BALANCE heuristic is sharpened to a structural bound
+
+A fresh adversarial pass (2026-06-14, independent code `validate/edge_pole_collision.py`, dps=30)
+**confirmed every prior claim** and **closed two loopholes** in the §5.3 BALANCE heuristic, turning it
+from a growth-count slogan into a near-rigorous structural argument. The remaining gap is now a single
+named lemma, not a hand-wave.
+
+**Edge residue (exact, analytic).** `Res_{s=2} Ĝ_p = −2·Γ(2+λ)Γ(4)Γ(1) = −12 Γ(2+λ)`, **nonzero for
+every generic `λ`** (numeric = analytic to `~1e-30`; `λ=0.7 ⟹ −18.536`, matching the §5.3 reading). So
+with `P=1` the edge term `ξ^{−2}` genuinely diverges (`ξ→0`). With `P=1` the eigenfunction does not exist.
+
+**Pole orders (the heuristic was OPTIMISTIC).** Right poles `s=2,4,…` SIMPLE (class `{0}` mod 1); left
+`s=0` simple (marginal, in `𝒩`); **`s=−2,−4,…` are DOUBLE** (`Γ(s/2)`&`Γ(s+2)`, class `{0}`) — TRIPLE at
+integer `λ`; `s=−λ−k` simple (class `{−λ}` mod 1). The far-field leading divergence is therefore not
+`ξ^λ` (from `s=−λ`) but the **stronger `ξ^2 log ξ`** from the `s=−2` double pole — this makes the
+far-field worse, so the conclusion is more robust, not less.
+
+**Loophole 1 closed — `P` must be ENTIRE (structural theorem).** A 1-periodic meromorphic `P` has ALL
+its poles/zeros with `Re s ∈ (−½,½]` (one period). `Ĝ_p` is **zero-free** (a product of Γ's, which never
+vanish). Hence any pole of `P` lands on/beside the inversion line `Re s=0` and **survives** in `Ĝ_p·P`
+(`Re s_p = arg(w_p)/2π`, always in `(−½,½]` — verified: a real-positive `w_p` pole sits exactly at
+`Re s=0`). So no meromorphic `P` can use off-strip poles to cut its line-growth: **`P` must be an entire
+1-periodic function** `P(s)=Σ_n c_n e^{2πi n s}` (a Laurent polynomial in `w=e^{2πi s}`). This is the step
+the §5.3 heuristic silently assumed.
+
+**Loophole 2 closed — per-zero growth is exactly `π|τ|` (centered Fourier).** An entire 1-periodic `P`
+with `D` zeros per period (with multiplicity) has minimal SYMMETRIC two-sided line-growth `e^{πD|τ|}`
+(Fourier support `n∈[−D/2,D/2]`; verified: `sin(πs)` has `D=1`, slope `+π=+3.14159`).
+
+**The inequality (arithmetic on two spectrum-free exponents).** `Ĝ_p` line-decay `= −3π/2` (Stirling).
+Required killer degree: integer class `{0}` needs order `max(edge 1, far-double 2)=2`; class `{−λ}` needs
+order 1 ⟹ `D_req ≥ 3` (generic `λ`). Line-slope of `Ĝ_p·P = −3π/2 + πD_req ≥ −3π/2 + 2π = +π/2 > 0`
+(even the over-optimistic `D=2` ignoring the far double pole loses; `D=3` gives `+3π/2`). **Positive slope
+⟹ not `L²` ⟹ no eigenfunction, for every non-integer `Re λ≥0`** (numerically confirmed: `D=2` slope
+`≈+1.6`, `D=3` slope `≈+4.77`, across `Re λ∈[0.05,3.6]` incl. complex `0.5+1.5i`). A single-class (`D=1`)
+killer is `L²`-on-line but **insufficient**: `Ĝ_p·sin(πs)` leaves the `s=−λ` far-field pole alive
+(`G(ξ)~ξ^λ` at `ξ→∞`) — the eigenfunction genuinely needs BOTH ends, forcing `D≥2`.
+
+**Collision = exactly `𝒩`.** Integer `λ` merges `{−λ}` into `{0}` (one class) but the left orders go UP
+(triple) — these modes are `λ=1` (time-translation symmetry, removed by `𝒩`) and `λ` even (`tan(πζ)=0` ⟹
+REGULAR edge modes `λ≤0`). No `Re λ>0` point eigenvalue survives mod `𝒩`.
+
+**Firewall (clean).** The two exponents `−3π/2` (Stirling) and `+π`/zero (periodicity) are computed
+independently of any stability assumption; the conclusion is the **arithmetic** `D_req·π ≥ 2π > 3π/2`. No
+`L²_W ⟹ B=0` substitution is used; the "`P` entire" step comes from PERIODICITY, not from benign-spectrum.
+Audit gate `validate/edge_synthesis_firewall_audit.py`: the only conclusion-adjacent link
+(`const ∉ L²_W`) is re-expressed as "`L²_W` (= Mellin-`L²` on `Re s=0`) ⟹ no pole at `s=0`" — a
+*property of the weight* computed from `Ĝ_p`'s explicit `s=0` residue `2Γ(λ)`, NOT injected from the
+benign spectrum. The content is the **rigidity**: the 4-Gamma product cannot be simultaneously
+(i) recurrence-correct, (ii) Mellin-`L²` on the line, (iii) `s=0`-pole-free.
+
+**Remaining gap (sharply stated).** The last unproven step is the **Pincherle/minimal-solution lemma**:
+that no entire 1-periodic `P` — possibly with EXTRA zeros arranged to lower one-sided growth — can beat
+`e^{πD|τ|}` for genuine *two-sided* `L²` control. The centering argument bounds this and the `D≥2` margin
+makes the verdict robust, but until that lemma is a stated-and-proved proposition the status stays
+`reduced-to-sharp-WH-factorization` (now: **reduced-to-one-Pincherle-lemma**). Gate:
+`validate/edge_pole_collision.py`.
+
+**Candidate conclusion (earned confidence: strong-numeric + structural, NOT proof).** No `Re λ≥0` point
+eigenvalue mod `𝒩` ⟹ the Hou–Luo profile is spectrally stable at the edge — pending the one Pincherle lemma.
+
+## 5.5 The Pincherle lemma is CLOSED by Liouville (2026-06-14, Route 3 independent verification)
+
+A fresh adversarial pass (independent code, no shared helpers — gates `validate/edge_route3_L2_scan.py`,
+`edge_route3_minimal_multiplier.py`, `edge_route3_critical_line.py`, `edge_route3_periodic_correct.py`;
+dps 18–30) **independently re-derived the entire corrected chain** (both the reversed edge/far assignment
+*and* the `sin(πs)`-anti-periodicity error were re-found from scratch, then matched §5.4) and **closes the
+one named gap** — the "Pincherle/minimal-solution lemma … possibly with EXTRA zeros arranged to lower
+one-sided growth" left open in the Route-1 §5.4.
+
+**The lemma, now proved (Liouville).** Let `P` be the homogeneous freedom: `P(s+1)=P(s)` and `P` entire
+(loophole 1, §5.4: a meromorphic `P` keeps its poles in the period-strip on the line, since `Ĝ_p` is
+zero-free — so `P` MUST be entire). Then `P(s)=F(w)`, `w=e^{2πis}`, with `F` **entire** in `w∈ℂ∖{0}`.
+On the inversion line `s=σ+iτ`, `w=e^{2πiσ}e^{−2πτ}` traces the punctured ray `|w|: 0←(τ→+∞) … (τ→−∞)→∞`.
+So:
+> `P` bounded on **both** sides of the line ⟺ `F` bounded as `|w|→0` **and** `|w|→∞` ⟺ `F` extends to a
+> bounded entire function on all of `ℂ` ⟺ (Liouville) `F ≡ const` ⟺ `P` zero-free constant (`d=0`).
+
+Hence **every nonconstant entire 1-periodic `P` grows at least like `|w|^{1}=e^{2π|τ|}` on at least one
+side** — NO arrangement of extra zeros escapes (that was the open loophole). The minimal one-sided growth
+per zero is therefore the integer rate `2π`, not the half-integer-Fourier `π` the centering heuristic
+suggested (verified: a single-zero integer-Laurent `e^{2πis}−1` has max one-sided slope `+2π=6.283`, while
+the symmetric `w+w^{−1}−c` (`d=2`) grows `e^{2π|τ|}` on BOTH sides — `validate/edge_route3_periodic_correct.py`).
+
+**Consequence — the margin holds already at `d=1`.** `Ĝ_p` decays symmetrically `e^{−3π/2|τ|}`; one zero
+costs `e^{+2π|τ|}` one-sided ⟹ net `e^{+π/2|τ|}` GROWTH ⟹ not line-`L²`. So even a *single*-coset killer
+fails on the line, before the far-field double-pole counting — the `2π > 3π/2` integer inequality
+(`k_max<¾ ⟹ k_max=0`) is the whole story, and it is now backed by Liouville rather than a centered-Fourier
+bound. The two obligations remain exclusive: `s=0`-kill needs `d≥1` (else infinite weighted edge mass);
+line-`L²` needs `d=0`. **Empty ⟹ no `Re λ≥0` point eigenfunction mod `𝒩`.** Verified end-to-end: `sin(πs)`
+gives ratio `−R` (inadmissible); `Ĝ_p·sin` is line-`L²` but leaves `ξ^λ` far-blow-up (a true eigenfunction
+needs both ends); `Ĝ_p·sin·sin` and every entire `d≥1` killer grow on the line.
+
+**Status upgrade: `reduced-to-one-Pincherle-lemma` → point-spectrum half CLOSED (structural proof).** The
+Liouville step is elementary and spectrum-independent (firewall clean — it uses only periodicity + the
+`Ĝ_p` zero-freeness + Stirling decay, never a stability assumption). The THREE honest gaps from §5.4
+**remain and are unchanged**: (1) the **essential** spectrum on `Re=0` (`R(0)=0`, non-Fredholm line) is
+untouched — a *strict* gap `Re σ≤−δ` still needs the edge-unbounded weight (`cap_scaffold`); (2) the
+`const ∉ L²_W` edge-mass step deserves a clean interval/Lean statement (`W→const` at the edge over a
+half-infinite `z`); (3) frozen Ω-shape, nonlinear correction separate. So the earned claim is precisely
+**"no `Re λ≥0` POINT eigenvalue modulo `𝒩`"** — point-spectral stability of the frozen generator — not a
+strict spectral gap. THR-01 stays `speculative` on the *strict* margin; the point-spectrum obstruction is
+now a structural argument with no remaining hand-wave. Gate: `validate/edge_route3_critical_line.py`,
+`validate/edge_route3_periodic_correct.py`.
+
+## 5.6 Synthesis-judge verification (2026-06-14, `wf` synthesis pass) — point-spectrum half CONFIRMED, one inter-route discrepancy resolved
+
+A fresh independent reproduction (all gates re-run + five new adversarial probes
+`validate/edge_synthesis_*.py`, dps 25–30, no shared helpers) **confirms the construction exactly
+and the corrected point-spectrum obstruction structurally**, and resolves a numerical discrepancy
+*between* the two prior routes that did not affect the verdict.
+
+**Construction (a)–(e): reproduced to `~1e-49…1e-53`** — `τ` elementary, `Ĝ_p` 4-Gamma, recurrence,
+symmetric line-decay `3π/2` (rel-err `~1e-4` to `1e-5` across real/complex/negative `λ`), `s=0`
+residue `2Γ(λ)` (to `~1e-38`), WH split, Fox-H bitwise-identical, edge `ξ^{−2}=Res_{s=2}` to `1e-53`.
+No error in the breakthrough construction.
+
+**The π-vs-2π per-zero discrepancy is RESOLVED in favor of 2π (Route 3 §5.5 correct; Route 1 §5.4
+overstated the cheapness).** Route 1 (`edge_pole_collision.py`, step 4) claimed per-zero *symmetric*
+growth `e^{π|τ|}` (centered Fourier, citing `sin(πs)` `D=1 → π`); Route 3 (`edge_route3_periodic_correct.py`)
+and the rigid gate claimed *one-sided* `e^{2π|τ|}` (integer-Laurent). Direct measurement
+(`edge_synthesis_per_zero_growth.py`) settles it: the only object giving symmetric `π` at one zero is
+`sin(πs)`, which is **anti-periodic and inadmissible** (it solves `Ĝ(s+1)=−R(s)Ĝ(s)`, ratio/R `=−1`
+exactly). Every *admissible* (genuinely 1-periodic, `=` Laurent in `w=e^{2πis}`) single-zero killer —
+`w−1`, `w−c`, `1−w^{−1}` — has growing-side rate **exactly `2π`** and decays the other side. So
+Route 1's inequality `−3π/2 + πD_req` used an inadmissible per-zero constant; the correct
+budget is the integer one-sided rate `2π`. **The verdict is unaffected** — Route 1 still lands at
+`D=3` (positive slope), Route 3 reaches the same conclusion already at `d=1` — but Route 3's
+`2π > 3π/2` form is the correct and sharper one. (Route 1's §5.4 §"GROWTH PER ZERO = exactly `π|τ|`"
+line should be read as superseded by §5.5's `2π`.)
+
+**Pincherle "extra-zeros" loophole CLOSED, independently (`edge_synthesis_pincherle_loophole.py`).**
+An entire 1-periodic `P` is a *Laurent polynomial* in `w` (else essential singularity at `w=0` or
+`w=∞`), so any `P` with ≥1 zero has growing-side Laurent degree ≥1 ⟹ rate ≥`2π` on at least one side;
+no arrangement of extra zeros lowers the binding-side rate below `2π` (verified: `w−1`, `w−0.5`, `w−5`,
+`1−w^{−1}` all measure `2π`; the would-be `π` object `(w−1)/w^{1/2}` has a nonzero 1-periodicity
+residual `~1e3` ⟹ not 1-periodic). This is the Liouville closure of §5.5, re-derived from scratch.
+
+**Firewall audit (`edge_synthesis_firewall_audit.py` + `edge_synthesis_admissible_killer.py`): clean,
+with the honest caveat made explicit.** The logical skeleton is: recurrence-correct ⟹
+`Ĝ=Ĝ_p·P`, `P` 1-periodic entire; `L²_W` membership `≡` (ii) line-`L²` on `Re s=0` **and**
+(iii) holomorphic on the line (no `s=0` pole). The 4-Gamma rigidity forces (ii)`⟹d=0` but
+(iii)`⟹d≥1` — **empty intersection** (exhaustive integer-Laurent scan to deg 4 finds no `P`
+satisfying both; the admissible `s=0`-kill `w−1` alone breaks line-`L²` by `2π−3π/2=π/2` one-sided,
+so the far-field `ξ^λ` step in `edge_route3_critical_line.py` is *redundant* — and that script's
+`sin(πs)` "candidate eigenfunction" is logically void since `sin` is inadmissible, though it reaches
+the same place). The conclusion-adjacent fact "forced edge constant `B=2Γ(λ)≠0 ∉ L²_W`" is **computed**
+from the explicit `s=0` residue and the Mellin-Plancherel weight, *not* injected from benign spectrum
+— non-circular. **Honest framing:** items (ii)+(iii) *are* the `L²_W`-membership definition, so the
+genuine content is the **rigidity** that the explicit 4-Gamma product cannot meet both simultaneously;
+that rigidity is firewall-clean (Liouville + Laurent + `Ĝ_p` zero-freeness + Stirling, no stability
+assumption). The threshold `3π/2 < 2π` (`k<3/4 ⟹ k=0`, no positive integer below `3/4`) is **exact
+with zero slack** (`edge_synthesis_threshold.py`).
+
+**Synthesis verdict.** Construction: **sound, fully reproduced, machine-exact.** Point-spectrum
+conclusion ("no `Re λ≥0` eigenvalue mod `𝒩`"): the three routes (residue/collision, Pincherle/Liouville,
+direct numerical `L²` scan) **agree**, and after the π→2π correction the structural argument has **no
+remaining hand-wave for the point spectrum** — the rigidity is an exact integer obstruction backed by
+Liouville. It is **not** a hand-wavy growth count and does **not** re-encode the firewall (the firewall
+step is the *definitional* `const ∉ L²_W`, computed from the residue). The honest residual is what §5.4–5.5
+already state: **(1)** the **essential** spectrum on `Re=0` (`R(0)=0`, non-Fredholm) is untouched — a
+*strict* gap `Re σ≤−δ` is still open and needs the edge-unbounded weight; **(2)** the `const ∉ L²_W`
+edge fact deserves a clean Lean/interval statement; **(3)** frozen Ω-shape, nonlinear leg separate.
+**Earned status: point-spectrum half is a structural argument (strong-numeric + structural, three routes
+agree); the strict spectral gap remains open. THR-01 stays `speculative` on the strict margin.** Gates:
+`validate/edge_synthesis_{per_zero_growth,pincherle_loophole,firewall_audit,admissible_killer,threshold}.py`.
+
 ## 6. Circularity firewall (holds; read before any write-up)
 
 The symbol derivation (§1–§4) is **non-circular**: an explicit meromorphic symbol computed from

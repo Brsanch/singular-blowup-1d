@@ -65,7 +65,14 @@ step** ⟹ `dim ker = 0` for `Re λ≥0` mod `𝒩`. The genuine spectral conten
 tan-Barnes is `τ(s)=π/sin(πs/2)=Γ(s/2)Γ(1−s/2)`, so `Ĝ_p(s)=Γ(s+λ)Γ(s+2)Γ(s/2)Γ(1−s/2)` (four
 ordinary Gammas; eigenfunction = Fox‑H), with the WH split `Γ(s/2)`[left] `| Γ(1−s/2)`[right] read
 straight off. This discharges the "construct τ" piece. The point spectrum reduces to an explicit
-pole-killing-vs-`L²`-decay BALANCE whose candidate verdict is **no `Re λ≥0` eigenvalue mod `𝒩`**
-(killing both bad pole-classes costs `e^{2π|τ|}` > the `e^{3π|τ|/2}` decay, except at the `λ∈ℤ`
-collisions = `𝒩`). ⚠️ The growth-count is currently heuristic — under adversarial determination
-(workflow `wf_57449c86`); the leap is now the rigor of that balance, not the τ construction.
+pole-killing-vs-`L²`-decay BALANCE, now made RIGOROUS (LEM-08, §5.4): the exact integer obstruction
+`d=0` (line-`L²`) ∧ `d≥1` (kill the `s=0` edge-const) is empty ⟹ **no `Re λ≥0` POINT eigenvalue mod
+`𝒩`** (machine-gated, firewall-clean, 3 routes agree). 
+
+**So the POINT-spectrum half of (★) is resolved (LEM-08); LEM-06 is now the ESSENTIAL-spectrum half.**
+The genuine remaining object: the essential spectrum sits on `Re s=0` (`R(0)=0 ∀λ` ⟹ non-Fredholm
+Plancherel line), so a **strict** stability margin `Re σ≤−δ` (asymptotic stability, Conjecture 2.4)
+still requires moving it off the imaginary axis — which needs the edge-*unbounded* convective weight
+that re-triggers `cap_scaffold`'s field-of-values divergence. That is the original edge-weight wall,
+now precisely isolated as the *only* thing between point-spectral stability and a strict gap. Secondary:
+a clean Lean/interval statement of "bounded-at-edge `W` ⟹ const ∉ `L²_W`" (the computed firewall content).
