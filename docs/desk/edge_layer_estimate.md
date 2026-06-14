@@ -74,6 +74,29 @@ On the genuinely admissible (g-bounded) class the abscissa is **negative but mar
 admissibility imposed, the *energy* estimate yields only marginality, because the operator is
 **strongly non-normal** at the edge (`A_FoV − spec ≈ +40`).
 
+## 2.1 Spectral-side cross-check (2026-06-14, `validate/edge_spectrum_continuation.py`, OBS-04)
+
+The cheap discriminating run (track the rightmost `M_GG` spectrum as `z_min→−18`, `N→2800`)
+both supports stability and sharpens *why the numerics cannot close it*:
+
+- **No `Re λ > 0` eigenvalue** appears anywhere in the window (`max Re ≈ −10⁻³`, `0` modes at
+  `Re>0`), `→ 0` as `N→∞`. Positive evidence for stability.
+- **But that maximum is the MARGINAL transport essential spectrum on `Re=0`, not a gap.** It is
+  κ-stable (an edge g-mass damping `−κ·diag(e^{−z})` that crushes the `+40` abscissa to negative
+  at `κ=10⁻³`, OBS-03, does **not** move it even at `κ=10⁻²`), delocalized, conjugate-paired,
+  `→0` with `N`. So the repo-wide "benign spectrum `≈−10⁻³`" is the **marginal essential
+  spectrum**, *not* a spectral gap — and the `+40` field-of-values (κ-crushable, inadmissible
+  branch) and this essential spectrum are **distinct objects**.
+- **Consequence:** the asymptotic-stability gap (`Re spec ≤ −δ`) is irreducibly a *weighted-space*
+  property — only a weight shifts the `Re=0` essential spectrum left, and that weight is exactly
+  what diverges at the edge. **A direct eigenvalue computation cannot exhibit the gap**, which
+  confirms the leap is not a numerical question.
+- **Honest null:** the membership question `B = H(g)(1)/(2λ) = 0` is **not** settled numerically.
+  A smoothness (hi-k) filter does not robustly isolate the discrete point spectrum on this strongly
+  non-normal operator (the "rightmost point mode" flips `−0.7 ↔ −22` with the scoring convention),
+  and the edge-decay / `c₁` readouts are corrupted by oscillation + the discrete-Hilbert bias. The
+  eigenvalue method inherits the same edge ambiguity as the energy method — reinforcing §5.
+
 ## 3. Route table (6 lenses)
 
 | lens | requirement | what would close it | difficulty | verdict |

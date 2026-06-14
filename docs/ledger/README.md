@@ -22,6 +22,7 @@ review, no matter how green the lemma DAG is.
 | OBS-01 | bulk energy abscissa < 0 (anisotropic weight) | — | validate/energy_estimate_search.py |
 | OBS-02 | steady residual ~2e-16; U(1)=−2 exact | — | validate/verify_singular_steady.py |
 | OBS-03 | +40 edge abscissa = inadmissible-branch resonance (energy route dead) | — | validate/edge_layer_obstruction.py |
+| OBS-04 | no Re>0 mode, but max Re = marginal essential spectrum on Re=0 (not a gap) | — | validate/edge_spectrum_continuation.py |
 
 LEM-01..05 = the **Track-1 algebraic backbone** (Lean-verified). LEM-06 (the (★)
 leap) + the H¹_W coupling = **Track 2**, the genuine remaining analytic work; it
