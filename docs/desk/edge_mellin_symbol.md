@@ -79,6 +79,42 @@ Regime map in the `ζ = −λ/2` plane:
 - `Re λ ≥ 1` (`ζ ≤ −½`) — **outside** the strip; needs the **analytic continuation** of the symbol.
   This is the decisive regime and the genuine Wiener–Hopf content.
 
+## 5.1 The `ξ=(Y−1)^{1/2}` recurrence, and what the eigenvalue count does (and does NOT) show
+
+**Cleaner form (sympy-verified exact, workflow `wf_e6371da0`).** In `ξ=(Y−1)^{1/2}` transport is
+the Euler operator `−2∂_z = −ξ∂_ξ` and the `−½` ladder becomes a **unit shift**:
+`M_GG = −ξ∂_ξ + ξ^{−1}c(½ξ∂_ξ)`, and `M_GG G=λG` with `G=Σ a_m ξ^m` gives the unit recurrence
+`  a_{m+1} = (m+λ)(m+2)\tan(πm/2)·a_m       [= LEM-07's difference eqn at m=2ζ].`
+Every step reproduced independently by sympy, zero discrepancy. Since `cot(πp)` is exact on each
+power, this recurrence **is** the full operator inside the strip.
+
+**Argument-principle count = 0 — robust IN-STRIP corroboration, NOT the WH index**
+(`validate/edge_argprinciple_count.py`): `#eig(M_GG, edge_bc=True)` with `Re λ ≥ {0.05,0.25,0.5,1}`
+is `0` across `N∈{1400,2000}`, `z_min∈{−12,−14,−16}`, and under a g-mass penalty; the contour
+winding `(1/2πi)∮ tr((M−λ)^{−1})dλ` over `{0.1≤Re≤6,|Im|≤8}` is `0` (`Im ~1e-15`). ⚠️ **This is
+corroborating evidence, not the leap** — three caveats (verified):
+1. **Different winding.** (C) winds the spectral parameter `λ` and counts discrete matrix
+   eigenvalues; the WH index winds the symbol **exponent `s`** across the strip. "(C)=0 ⟹ WH
+   index=0" is a **category error**.
+2. **Inherits the firewall.** `edge_bc=True` drops the `z_min` node = enforces admissibility
+   (`B=0`) by hand, so "0 unstable eigenvalues" *restates* the firewall, not independent evidence.
+3. **Cannot reach `Re λ≥1`.** The discrete Hilbert violates `H[(Y−1)^{−1/2}]=0` at the edge node by
+   `−0.445·e^{−z_min/2}` (reproduced to 3 sig figs, growing with depth) — the decisive out-of-strip
+   region is uncertifiable numerically.
+
+**Termination is suggestive, not a proof.** The ratio grows super-geometrically
+(`|a_{k+1}/a_k| ~ 0.7 k²`; `|a_k| = 1, 1e15, 1e67` at `k=0,10,30`), so naive non-terminating series
+have zero radius → only terminating chains (`λ=−2ζ≤0`) are formal `L²`. BUT the first-order half-step
+equation carries a **½-periodic prefactor freedom** `A→A·P`; the line-growth argument kills
+nonconstant `P` only at the **edge** end, and a genuine eigenfunction must decay at BOTH the edge
+(`cot` strip `−1<p<0`) and far-field (causal `Re s>−1`) strips — the two-ended matching IS the index.
+And "termination ⟹ `λ≤0`" silently uses the firewall (`L²_W ⟹ B=0`) to drop the `λ=+2,+4`
+homogeneous branches the indicial equation alone permits.
+
+**Net (status unchanged):** cleanest recurrence form + robust in-strip corroboration + a sharper
+statement of the remaining object — but **no advance past `reduced-to-sharp-WH-factorization`**.
+(Minor: `\tan(πw) → +i` as `Im w→+∞`, so the growth is super-geometric `~m²`, not literally factorial.)
+
 ## 6. Circularity firewall (holds; read before any write-up)
 
 The symbol derivation (§1–§4) is **non-circular**: an explicit meromorphic symbol computed from
