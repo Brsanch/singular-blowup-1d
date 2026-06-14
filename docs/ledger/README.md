@@ -18,10 +18,18 @@ review, no matter how green the lemma DAG is.
 | LEM-03 | c_ω-absorption: transport+c_ω ⇒ −2∂_z | verified | Lean (+1e-11 gate) |
 | LEM-04 | weighted IBP transport-dissipation identity | verified | Lean |
 | LEM-05 | edge indicial roots r=−(λ+1)/2; admissible ⇔ Reλ≤0 | verified | Lean |
-| LEM-06 | (★) bulk coercivity of the nonlocal forcing | conjectured (0.60) | validate gate (bulk only) |
+| LEM-06 | (★) coercivity — bulk closes; edge layer is the open leap | conjectured (0.60) | validate gates (bulk only) |
 | OBS-01 | bulk energy abscissa < 0 (anisotropic weight) | — | validate/energy_estimate_search.py |
 | OBS-02 | steady residual ~2e-16; U(1)=−2 exact | — | validate/verify_singular_steady.py |
+| OBS-03 | +40 edge abscissa = inadmissible-branch resonance (energy route dead) | — | validate/edge_layer_obstruction.py |
 
 LEM-01..05 = the **Track-1 algebraic backbone** (Lean-verified). LEM-06 (the (★)
 leap) + the H¹_W coupling = **Track 2**, the genuine remaining analytic work; it
 stays `conjectured` with the OBS gates as evidence. THR-01 is `speculative`.
+
+**Edge-layer attack (2026-06-13, `../desk/edge_layer_estimate.md`):** 6-lens derive +
+18 adversarial verifies + independent numerical reproduction (OBS-03) → the edge leg of
+LEM-06 does NOT close by any weighted-energy/Schur/flux method (proven dead, not just
+undone). The leap is rescoped to a non-self-adjoint **spectral/Fredholm** bound (resolvent
+or Mellin/Wiener–Hopf symbol at `r=−(λ+1)/2`). Circularity firewall: `H(g)(1)=0` is
+automatic for L²_W modes — must NOT be asserted from the benign spectrum (NS-C6/SQG trap).

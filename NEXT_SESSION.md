@@ -31,11 +31,21 @@ bounded there) and `δ>0` with, for all `(G,h)∈H¹_W`, `G,h ⊥_W 𝒩`, edge 
   field-of-values (which diverges; `cap_scaffold`). Use the Hilbert-transform identities and
   the averaging structure of `Q_op` (`Q_op G→½H(g)(1)` at the edge, regular). This is the
   core lemma.
-- **L2 — edge-layer matched asymptotic (the NEXT concrete leg).** A thin layer `Y→1` where
-  `G→0` (Robin) and the forcing is regular (`~½H(g)(1)(Y−1)^{−1/2}`). Do the local indicial
-  analysis (`g~(Y−1)^r`, `r=−(λ+1)/2`, admissible iff `Re λ≤0`; `findings_edge_condition` §5),
-  bound the edge contribution to the energy, and match to L1's bulk estimate. Most tractable
-  starting point.
+- **L2 — edge-layer matched asymptotic — ATTACKED 2026-06-13, RESCOPED (`docs/desk/edge_layer_estimate.md`).**
+  6 independent derivation lenses + 18 adversarial verifications + independent numerical
+  reproduction (`validate/edge_layer_obstruction.py`, OBS-03). VERDICT: the edge layer does
+  **NOT** close by any weighted-energy / Schur / flux method — *proven dead*, not merely undone.
+  The nonlocal forcing inherits the base-profile `(Y−1)^{−1/2}` amplitude at the edge
+  (`A_full·e^{z_min/2}=0.099` const); the only weight that would dominate re-triggers the
+  convective field-of-values divergence (cap_scaffold). The `+40` is a continuum non-normal
+  resonance on the g-unbounded `(Y−1)^{−1/2}` branch (κ=1e-3 g-penalty crushes it to negative),
+  excluded by admissibility but only numerically. **The leap is rescoped from an energy estimate
+  to a non-self-adjoint SPECTRAL/FREDHOLM bound:** "the L²_W realization of `M_GG ⊖ 𝒩` has no
+  `Re λ≥0` spectrum", via a verified resolvent bound OR the **Mellin/Wiener–Hopf symbol of `½Q_op`
+  at `r=−(λ+1)/2`** (using the continuum identity `H((Y−1)^{−1/2})=0` the discrete operator
+  violates). ⚠️ Circularity firewall: `H(g)(1)=0` is automatic for L²_W modes — do NOT assert it
+  from the benign spectrum (the NS-C6/SQG circular move). Full route table + next computations in
+  the desk doc.
 - **L3 — `H¹_W` closure of the coupling.** The `L²` energy does NOT close: `M_Gh=e^{−z/2}∂_z`
   needs `∂_z h` control. Differentiate the system, re-run L1/L2 on `(∂_z G,∂_z h)`, control
   the commutator `[∂_z,F]` and the `e^{−z/2}` factor. This is Chen's "anisotropic estimates +
