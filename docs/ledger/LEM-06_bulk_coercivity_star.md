@@ -48,3 +48,15 @@ research problem (graded-lattice `cot`-symbol factorization with the `𝒩`-quot
 off-the-shelf lemma. Circularity firewall: `B=a(0)` must be COMPUTED from the WH product,
 never inferred from the benign spectrum. Stays `conjectured` (the index is named, not
 evaluated).
+
+**SHARPENED again 2026-06-14 (`docs/desk/edge_mellin_symbol.md` §5.1–5.2, OBS-05/06).** The
+in-strip argument-principle count = 0 (OBS-05) is robust corroboration but NOT the index (a
+different winding; inherits the firewall; can't reach `Re λ≥1`). The continuum Mellin-line run
+(OBS-06) established: (i) lattice/power-series solutions are edge-divergent for ALL λ, so the
+eigenfunctions are Mellin-line (`Ĝ_p(s)=Γ(s+λ)Γ(s+2)τ(s)`, `τ`=tan-Barnes); (ii) the symbol
+winding `W=+3/2` (`Re λ>0`)/`+½` (`Re λ<0`) is the indicial-root TAUTOLOGY, not the Fredholm
+index — the symbol VANISHES on the Plancherel line `Re s=0` (`R(0)=0 ∀λ` ⟹ non-Fredholm there),
+and even index 0 ⊅ empty kernel (**Coburn's lemma blocked** by the on-line zero). The single
+remaining object is now sharp: **construct the tan-Barnes `τ(s)` holomorphic + `L²`-decaying on
+the correct (side-resolved) inversion contour, plus a Coburn-substitute / Pincherle-non-coincidence
+step** ⟹ `dim ker = 0` for `Re λ≥0` mod `𝒩`. The genuine spectral content lives entirely in `τ(s)`.

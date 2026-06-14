@@ -115,6 +115,56 @@ homogeneous branches the indicial equation alone permits.
 statement of the remaining object — but **no advance past `reduced-to-sharp-WH-factorization`**.
 (Minor: `\tan(πw) → +i` as `Im w→+∞`, so the growth is super-geometric `~m²`, not literally factorial.)
 
+## 5.2 The Mellin-line structure — and why the winding is a tautology, not a certificate
+
+A direct run at the factorization (continuum mpmath, immune to the discrete-Hilbert bias;
+verified workflow `wf_2d8a4427`). It ruled out the lattice shortcut, gave the explicit Γ-form,
+and **corrected an overclaim** — but did NOT advance the status.
+
+**Lattice solutions are edge-divergent for ALL λ ⟹ the eigenfunctions are Mellin-line.** The
+terminating-up power series `G(ξ)=Σ a_m ξ^m` (top power `M=−λ` from `R(M)=0`, infinite down-tail)
+blows up at the edge `ξ→0` like `exp(c/√ξ)` with `c>0` **essentially λ-independent** (checked
+`λ=0.7,2.5,0.5+1.5i,−0.7`; the same form for both signs of `Re λ`, so it does NOT discriminate
+stable/unstable). So no power-series/lattice solution is `L²_W` off `Re=0` — "termination" is the
+wrong object; the genuine eigenfunctions are **Mellin-line** integrals `Ĝ(s)`.
+
+**The Γ-form.** A particular solution of `Ĝ(s+1)=R(s)Ĝ(s)`, `R(s)=(s+λ)(s+2)tan(πs/2)`, is
+`Ĝ_p(s)=Γ(s+λ)Γ(s+2)·τ(s)` with the **tan-Barnes** `τ(s+1)/τ(s)=tan(πs/2)` (double-gamma-type).
+
+**The winding — corrected, and it is the indicial-root tautology, NOT the Fredholm index.**
+`W(λ)=(1/2π)[arg R(iτ)]_{−∞}^{+∞}` decomposes **exactly** per factor as
+`sign(Re λ)/2 + ½(s+2) + ½(tan)`, giving `W=+3/2` (`Re λ>0`, constant) and `+½` (`Re λ<0`) — a jump
+of **exactly +1** at `Re λ=0` (one `s=−λ` zero crossing the line). *(An earlier `−0.5`/jump-2 reading
+was a naive-unwrap artifact from the `s=−λ` crossing colliding with the on-line `s=0` tan-zero;
+corrected.)* This is **not** a no-eigenvalue certificate, for three reasons:
+1. **The symbol vanishes on the Plancherel line:** `R(0)=0` on `Re s=0` for *every* λ (`tan 0=0`), so
+   the operator is **non-Fredholm** there — `Re s=0` is in the essential spectrum (the same fact as
+   `edge_layer_estimate.md`: the essential spectrum sits on `Re=0`, and only an edge-unbounded weight
+   could move it — which re-triggers cap_scaffold). The index is contour-side-ambiguous by 1.
+2. **`W=3/2` is the raw symbol winding, not the index** (the `(s+λ)(s+2)` piece is the entire Γ-growth
+   factor, not a bounded Toeplitz symbol; the tan-half is a jump-at-infinity). "Index 0" is uncomputed.
+3. **Even index 0 ⊅ empty kernel.** `index = dim ker − dim coker`; the upgrade theorem is **Coburn's
+   lemma** (`min(dim ker, dim ker*)=0` for a symbol nonzero on the contour) — **blocked** here by
+   `R(0)=0`. Equivalent analytic form: prove the edge-recessive and far-field-recessive **Pincherle
+   (minimal) solutions never coincide for `Re λ>0`**.
+
+**Circularity (clean for the winding; firewall risk is elsewhere).** `W(λ)` is genuinely
+spectrum-independent — it is the tautology `Re(−λ)<0 ⟺ Re λ>0` (location of the indicial root
+`s=−λ`), computed from the explicit symbol. *Because* it is a tautology it carries no
+no-eigenvalue content; the residual no-kernel step still routes through the `L²_W ⟺ B=0` firewall
+until `τ(s)` is built. The winding also lives on the **symbol/recurrence variable**, dual-but-distinct
+from the **eigenfunction-Mellin variable** (Taylor-coeff vs Mellin-transform, caveat C1) — a separate
+bridge.
+
+**Net (status UNCHANGED): `reduced-to-sharp-WH-factorization`.** The genuine spectral content lives
+entirely in **`τ(s)`**. Sharpened remaining object:
+> Construct the tan-Barnes `τ(s)` (`τ(s+1)/τ(s)=tan(πs/2)`) holomorphic and `L²`-decaying on the
+> correct Mellin-inversion contour, with (1) the **side-choice** of the on-line zero `R(0)=0` resolved
+> (it fixes the index at the `±1` level), and (2) a **Coburn-substitute / Pincherle-non-coincidence**
+> step converting the index into `dim ker = 0` for `Re λ≥0` mod `𝒩`.
+
+Gate: `validate/edge_wh_structure.py`.
+
 ## 6. Circularity firewall (holds; read before any write-up)
 
 The symbol derivation (§1–§4) is **non-circular**: an explicit meromorphic symbol computed from

@@ -25,6 +25,7 @@ review, no matter how green the lemma DAG is.
 | OBS-03 | +40 edge abscissa = inadmissible-branch resonance (energy route dead) | — | validate/edge_layer_obstruction.py |
 | OBS-04 | no Re>0 mode, but max Re = marginal essential spectrum on Re=0 (not a gap) | — | validate/edge_spectrum_continuation.py |
 | OBS-05 | arg-principle count = 0 (in-strip corroboration; NOT the WH index) | — | validate/edge_argprinciple_count.py |
+| OBS-06 | Mellin-line: lattice solns edge-divergent ∀λ; winding = indicial tautology (NOT the index) | — | validate/edge_wh_structure.py |
 
 LEM-01..05 = the **Track-1 algebraic backbone** (Lean-verified). LEM-06 (the (★)
 leap) + the H¹_W coupling = **Track 2**, the genuine remaining analytic work; it
