@@ -6,8 +6,13 @@ bound). This doc **executes** that rescope one decisive step: it computes the ed
 Mellin symbol of `M_GG` in closed form, reduces the eigenvalue problem to an explicit
 **Mellin difference equation**, and pins the entire Conjecture-2.4 edge obligation to a
 single **Wiener–Hopf index**. Symbol + reduction are independently verified (4 methods,
-8/8 adversarial verdicts non-circular, mpmath to ~1e-10). The index is **named, not yet
-evaluated** — that is the leap.
+8/8 adversarial verdicts non-circular, mpmath to ~1e-10).
+
+> **⚑ SUPERSEDED by §5.3–5.5 (2026-06-14):** the "WH index" of §5 turned out to be the indicial-root
+> *tautology*, not a certificate (§5.2, OBS-06). The actual result is in §5.3–5.5: the tan-Barnes is
+> **elementary** (`Ĝ_p` a 4-Gamma / Fox‑H), and the **POINT spectrum is proved stable mod `𝒩`** by an
+> exact integer obstruction (LEM-08). The remaining leap is the **essential spectrum on `Re s=0`**
+> (a strict gap needs the edge-unbounded weight = `cap_scaffold`), NOT the index. Read §5.3–5.5 first.
 
 ## 1. The half-line Hilbert is a convolution in `z = log(Y−1)`
 

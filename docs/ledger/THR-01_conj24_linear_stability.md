@@ -4,7 +4,7 @@ title: The singular Hou–Luo self-similar profile (Ω̄=(Y-1)^{-1/2}, Θ̄=(π/
 category: THR
 status: speculative
 confidence: 0.70
-dependencies: [LEM-06]
+dependencies: [LEM-06, LEM-08]
 supports: []
 cross_citations:
   - {label: "Chen–Huang–Li 2026", ref: "arXiv:2604.01868 Conj. 2.4", note: "numerical-only; no rigorous stability spectrum published"}

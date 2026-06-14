@@ -4,6 +4,24 @@ Read this + `README.md` + `docs/findings_*.md` first. The next step is named at
 the bottom ("THE NEXT CHIP"). Repo: github.com/Brsanch/singular-blowup-1d (private).
 Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasure loop.
 
+> ## ⚑ LATEST MILESTONE (2026-06-14) — read the ledger (`docs/ledger/`) first; it is authoritative
+> The rigorous-proof arc has advanced far past the original "L1–L4 energy estimate" plan:
+> 1. **Lean Track 1 DONE** — 5 backbone lemmas formalized, sorry-free, zero-axiom (`lean/`, LEM-01..05).
+> 2. **Energy route PROVEN DEAD at the edge** — no bounded-at-edge weighted-energy/Schur/flux method
+>    closes it (`docs/desk/edge_layer_estimate.md`, OBS-03). Leap rescoped to a spectral/Fredholm bound.
+> 3. **Edge Mellin symbol `cot(πp)`** (4-method verified) ⟹ the eigenproblem IS a Mellin difference
+>    equation; the **tan-Barnes is ELEMENTARY** (`Ĝ_p=Γ(s+λ)Γ(s+2)Γ(s/2)Γ(1−s/2)`, Fox‑H) — LEM-07.
+> 4. **POINT-spectral stability PROVED mod 𝒩** (`LEM-08`, `proved-on-paper`): an exact integer
+>    obstruction (`d=0` line-`L²` ∧ `d≥1` to kill the `s=0` edge-const = empty) ⟹ no `Re λ≥0` point
+>    eigenvalue. Firewall-clean, 3 routes + 6 gates agree. `docs/desk/edge_mellin_symbol.md` §5.3–5.5.
+> 5. **CURRENT FRONTIER (LEM-06):** NOT yet Conjecture 2.4. A *strict* gap `Re σ≤−δ` needs the
+>    **essential spectrum on `Re s=0`** (`R(0)=0 ∀λ`, non-Fredholm line) moved off the imaginary axis —
+>    which needs the edge-*unbounded* weight that re-triggers `cap_scaffold`. That original edge-weight
+>    wall is now the *only* thing between point-stability and a strict gap. (Frozen generator; the
+>    nonlinear/co-moving leg is separate.) Secondary: Lean-formalize the LEM-08 integer obstruction.
+> The "NEXT SESSION" block below predates this arc — treat the ledger + `desk/edge_mellin_symbol.md`
+> + `desk/edge_layer_estimate.md` as the live state.
+
 ➤ **NEXT SESSION:** `NEXT_SESSION.md` — plan to (A) complete the rigorous proof (lemmas
   L1–L4) and (B) Lean-check it (Track 1 = algebraic backbone, tractable; Track 2 = the
   analytic estimate / interval-arithmetic CAP, research-grade). The numerical

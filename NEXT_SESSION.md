@@ -55,6 +55,17 @@ bounded there) and `δ>0` with, for all `(G,h)∈H¹_W`, `G,h ⊥_W 𝒩`, edge 
   a small research problem (graded-lattice cot-symbol factorization + `𝒩`-quotient). **NEXT =
   argument-principle index in-strip, then the continued factorization.** Firewall: `B=a(0)` must be
   COMPUTED from the WH product, never inferred from the spectrum.
+  **MILESTONE 2026-06-14 (LEM-08, `edge_mellin_symbol.md` §5.3–5.5).** The WH index turned out to be the
+  indicial-root *tautology* (NOT a certificate; OBS-06), but the tan-Barnes is **ELEMENTARY**
+  (`τ=π/sin(πs/2)=Γ(s/2)Γ(1−s/2)` ⟹ `Ĝ_p=Γ(s+λ)Γ(s+2)Γ(s/2)Γ(1−s/2)`, Fox‑H) and the **POINT spectrum
+  is PROVED stable mod `𝒩`** via an exact integer obstruction (`d=0` line-`L²` ∧ `d≥1` to kill the
+  `s=0` edge-const = empty; firewall-clean; 3 routes + 6 gates). **THE FRONTIER IS NOW THE ESSENTIAL
+  SPECTRUM:** a strict gap `Re σ≤−δ` (= asymptotic stability) needs the `Re s=0` essential spectrum
+  (`R(0)=0 ∀λ`, non-Fredholm) moved off the axis ⟹ the edge-*unbounded* weight that re-triggers
+  `cap_scaffold` — the original wall, now precisely isolated. **NEXT options:** (a) attack that
+  essential-spectrum/edge-weight piece; (b) Lean-formalize the LEM-08 integer obstruction; (c) the
+  nonlinear/co-moving leg. L3/L4 below are the OLD energy-route plan — superseded (energy route is
+  dead at the edge); kept for reference only.
 - **L3 — `H¹_W` closure of the coupling.** The `L²` energy does NOT close: `M_Gh=e^{−z/2}∂_z`
   needs `∂_z h` control. Differentiate the system, re-run L1/L2 on `(∂_z G,∂_z h)`, control
   the commutator `[∂_z,F]` and the `e^{−z/2}` factor. This is Chen's "anisotropic estimates +
