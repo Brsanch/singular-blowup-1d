@@ -165,6 +165,36 @@ entirely in **`τ(s)`**. Sharpened remaining object:
 
 Gate: `validate/edge_wh_structure.py`.
 
+## 5.3 The tan-Barnes `τ(s)` is ELEMENTARY — the construction (verified)
+
+The remaining object (§5.2) was "construct the tan-Barnes `τ(s)`, `τ(s+1)/τ(s)=tan(πs/2)`,
+holomorphic + `L²`-decaying on the inversion line." It is **elementary** (machine-verified to ~1e-31,
+`validate/edge_tau_construction.py`):
+`  τ(s) = π/sin(πs/2) = Γ(s/2)·Γ(1−s/2)`   (reflection),
+since `τ(s+1) = π/sin(πs/2+π/2) = π/cos(πs/2)`, so `τ(s+1)/τ(s) = sin/cos = tan(πs/2)`. Hence the
+eigenfunction's Mellin transform is an explicit **product of four ordinary Gammas**:
+`  Ĝ_p(s) = Γ(s+λ)·Γ(s+2)·Γ(s/2)·Γ(1−s/2)`,   `Ĝ_p(s+1)/Ĝ_p(s) = (s+λ)(s+2)tan(πs/2) = R(s)`
+(verified, ratio−R ~ 1e-30 at random complex `s,λ`), and `G(ξ)=(1/2πi)∫_C Ĝ_p(s)ξ^{−s}ds` is an
+explicit **Fox‑H function**. The "research-grade" transcendental was classical all along.
+
+**The Wiener–Hopf split is read straight off the four Gammas** (which Γ carries which poles):
+`Γ(s/2)` → left poles `s=0,−2,−4,…`; `Γ(1−s/2)` → right poles `s=2,4,6,…`; `Γ(s+λ)` → `s=−λ−k`;
+`Γ(s+2)` → `s=−2−k`. On the inversion line `Re s=0`, `Ĝ_p` decays `~e^{−3π|τ|/2}` (two Γ's at
+`e^{−π|τ|/2}` + two half-Γ's at `e^{−π|τ|/4}`) — so it is `L²` on the line — with a single pole at
+`s=0` (from `Γ(s/2)`) on the line = the marginal mode in `𝒩`.
+
+**The point-spectrum question is now an explicit pole-killing-vs-`L²`-decay BALANCE** (general
+solution `Ĝ=Ĝ_p·P`, `P` 1-periodic; eigenfunction needs `G` decaying at both ends): the edge `ξ→0`
+is governed by the right poles (leading `ξ^{−2}` from `s=2` ⟹ edge-divergent unless killed), the far
+field `ξ→∞` by the left poles (leading `ξ^{λ}` from `s=−λ` ⟹ divergent for `Re λ>0` unless killed).
+Killing a residue class with a `sin`-type `P` costs `e^{π|τ|}` of growth against the `e^{−3π|τ|/2}`
+decay; killing both bad classes costs `~e^{2π|τ|} > e^{3π|τ|/2}` ⟹ **no `L²` eigenfunction** — except
+where poles **collide** (`λ∈ℤ`: `Γ(s+λ)` pole at `s=−λ` meets the `Γ(s/2)`/`Γ(s+2)` poles), which are
+exactly the `𝒩`/symmetry/resonance modes. **Candidate conclusion: no `Re λ≥0` point eigenvalue mod
+`𝒩` ⟹ the profile is stable.** ⚠️ The balance/growth-count is currently **heuristic** — under
+adversarial determination (workflow `wf_57449c86`, residue + Pincherle + direct numerical `L²` scan +
+circularity audit); status below pending that verdict. Gate: `validate/edge_tau_construction.py`.
+
 ## 6. Circularity firewall (holds; read before any write-up)
 
 The symbol derivation (§1–§4) is **non-circular**: an explicit meromorphic symbol computed from

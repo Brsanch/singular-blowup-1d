@@ -60,3 +60,12 @@ and even index 0 ⊅ empty kernel (**Coburn's lemma blocked** by the on-line zer
 remaining object is now sharp: **construct the tan-Barnes `τ(s)` holomorphic + `L²`-decaying on
 the correct (side-resolved) inversion contour, plus a Coburn-substitute / Pincherle-non-coincidence
 step** ⟹ `dim ker = 0` for `Re λ≥0` mod `𝒩`. The genuine spectral content lives entirely in `τ(s)`.
+
+**τ CONSTRUCTED — ELEMENTARY (2026-06-14, `edge_mellin_symbol.md` §5.3, machine-verified).** The
+tan-Barnes is `τ(s)=π/sin(πs/2)=Γ(s/2)Γ(1−s/2)`, so `Ĝ_p(s)=Γ(s+λ)Γ(s+2)Γ(s/2)Γ(1−s/2)` (four
+ordinary Gammas; eigenfunction = Fox‑H), with the WH split `Γ(s/2)`[left] `| Γ(1−s/2)`[right] read
+straight off. This discharges the "construct τ" piece. The point spectrum reduces to an explicit
+pole-killing-vs-`L²`-decay BALANCE whose candidate verdict is **no `Re λ≥0` eigenvalue mod `𝒩`**
+(killing both bad pole-classes costs `e^{2π|τ|}` > the `e^{3π|τ|/2}` decay, except at the `λ∈ℤ`
+collisions = `𝒩`). ⚠️ The growth-count is currently heuristic — under adversarial determination
+(workflow `wf_57449c86`); the leap is now the rigor of that balance, not the τ construction.
