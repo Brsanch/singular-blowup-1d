@@ -8,3 +8,7 @@ results/*.npz
 results/*.npy
 results/figures/
 *.log
+
+# Lean: never commit the mathlib build (gigabytes). Keep lake-manifest.json
+# (the lockfile, pins exact mathlib/dep commits) tracked for reproducibility.
+lean/.lake/

@@ -53,6 +53,20 @@ Each lemma should reduce a `validate/` number to an inequality with an explicit 
 
 ## PART B — Lean-check the proof (honest scope first)
 
+> ✅ **TRACK 1 DONE (2026-06-13).** All five backbone targets are formalized,
+> sorry-free, axiom-audited (`[propext, Classical.choice, Quot.sound]` only), and
+> pass the full `lake build` + vacuity lint (0 findings). Project: `lean/`, pin
+> mathlib **v4.29.0**. Lemmas: `lean/SingularBlowup/Profile.lean`
+> (steady residual L1, edge balance L2, c_ω-absorption L3) and
+> `lean/SingularBlowup/Energy.lean` (weighted IBP L4, indicial roots L5). Ledger:
+> `docs/ledger/` (LEM-01..05 `verified`; LEM-06 (★) `conjectured`; THR-01
+> `speculative`). Gates: `CHIP_GATES.md`. Findings:
+> `docs/findings_lean_track1_backbone.md`.
+> **Next frontier = Track 2 / the analytic leap** = LEM-06: the (★) bulk-coercivity
+> kernel estimate + the H¹_W coupling closure (PART A, L1–L4). That is NOT a Lean
+> chip yet (mathlib lacks the Hilbert/weighted-Sobolev/semigroup infra) — it is the
+> analytic proof, with the `validate/` gates as the numerical guide.
+
 ⚠️ **Reality check before writing any Lean.** A full Lean formalization of L1–L4 needs
 infrastructure mathlib does **not** currently have in usable form: the line Hilbert transform
 as a bounded operator with its identities, weighted Sobolev/energy spaces, and `C₀`-semigroup

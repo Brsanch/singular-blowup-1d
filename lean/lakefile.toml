@@ -1,0 +1,24 @@
+name = "singular_blowup"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["SingularBlowup"]
+
+# Track 1 of the Conjecture-2.4 Lean program: the algebraic / finite backbone of
+# the rigorous stability proof for the singular Hou–Luo self-similar profile
+# (arXiv:2604.01868). These are self-contained real-analysis facts that need no
+# Hilbert-transform / weighted-Sobolev / C0-semigroup machinery. The continuous
+# coercivity estimate (the (★) leap) is Track 2 and is NOT formalized here — see
+# ../NEXT_SESSION.md and ../docs/rigor_energy_estimate_setup.md.
+
+[leanOptions]
+pp.unicode.fun = true        # pretty-print `fun a ↦ b`
+autoImplicit = false
+relaxedAutoImplicit = false
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.29.0"
+
+[[lean_lib]]
+name = "SingularBlowup"
