@@ -4,7 +4,7 @@ title: (★) The nonlocal forcing is dominated by the anisotropic transport diss
 category: LEM
 status: conjectured
 confidence: 0.60
-dependencies: [LEM-04, LEM-07, OBS-01, OBS-03, OBS-04]
+dependencies: [LEM-04, LEM-07, LEM-09, OBS-01, OBS-03, OBS-04]
 supports: [THR-01]
 cross_citations:
   - {label: "Chen 2026", ref: "arXiv:2605.15130", note: "finite-codimension + anisotropic + IBP-twice template"}
@@ -76,3 +76,20 @@ still requires moving it off the imaginary axis — which needs the edge-*unboun
 that re-triggers `cap_scaffold`'s field-of-values divergence. That is the original edge-weight wall,
 now precisely isolated as the *only* thing between point-spectral stability and a strict gap. Secondary:
 a clean Lean/interval statement of "bounded-at-edge `W` ⟹ const ∉ `L²_W`" (the computed firewall content).
+
+**RESCOPED AGAIN 2026-07-15 (LEM-09, `docs/desk/convective_weight_spectrum.md`) — the
+edge-weight wall is NOT a wall for the *spectral* problem.** Working directly in the convective
+space `L²_σ = L²(e^{−2σz}dz)`, `σ∈(0,½)`: (i) the ε-similarity makes `M` unitarily scale-free in
+the forcing, so the `cap_scaffold` FoV divergence was a truncation artifact *as a spectral
+diagnostic* — while the energy route stays dead for a now-PROVEN reason (the exact `w=e^{−z/4}u`
+diagonalization has a positive multiplier band at `σ+¼`, realized by the resonant tail
+`e^{(σ+¼)z}`); (ii) the far-field transport line `{Re λ = −2σ} ⊆ σ_ess` caps the gap at `2σ`
+(sup `1⁻` over the family); (iii) point spectrum right of the line is EMPTY (mod the named
+edge-bootstrap Lemma E′), `𝒩` excluded by the space; (iv) the resolvent is EXPLICIT
+(`Π_n = X/[X(·+n/2)(λ+2s+n)]`, defect-closed, index-0, machine-verified end-to-end). **The
+essential-spectrum half of LEM-06 is therefore now ONE named estimate: the uniform `L²_σ` bound
+of the defect-closed ladder resolvent on `Re λ ≥ −2σ+δ`** (≡ weak-coupling uniformity; probed by
+OBS-07). Named route: bent-contour Barnes resummation + Schur test on the explicit Gamma-ratio
+kernel (vertical contour provably diverges at rate `π/4` — the bend is mandatory). After that:
+semigroup generation + Gearhart–Prüss on the constrained domain, then the `M_Gh` coupling, then
+the nonlinear leg (all still open).
