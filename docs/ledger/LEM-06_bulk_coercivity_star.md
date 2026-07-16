@@ -4,7 +4,7 @@ title: (★) The nonlocal forcing is dominated by the anisotropic transport diss
 category: LEM
 status: conjectured
 confidence: 0.60
-dependencies: [LEM-04, LEM-07, LEM-09, OBS-01, OBS-03, OBS-04]
+dependencies: [LEM-04, LEM-07, LEM-09, OBS-01, OBS-03, OBS-04, OBS-07]
 supports: [THR-01]
 cross_citations:
   - {label: "Chen 2026", ref: "arXiv:2605.15130", note: "finite-codimension + anisotropic + IBP-twice template"}

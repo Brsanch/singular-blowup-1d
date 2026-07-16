@@ -226,9 +226,17 @@ def G0hat_line(svals, nmax=80):
 
 
 G0s = G0hat_line(S_line)
-dlt = 1e-4
-G0half = 0.5 * (complex(G0hat_line(np.array([0.5 + dlt + 0j]))[0])
-                + complex(G0hat_line(np.array([0.5 - dlt + 0j]))[0]))
+# G0hat(1/2) via the exact closed form Pi_n(1/2) = X(1/2)/[X(1/2+n/2)(lam+1+n)]
+# (odd n vanish; even n finite). A finite +-delta limit is analytically wrong at
+# depth (dps-stable garbage — see validate/edge_convective_resolvent_scan.py).
+G0half = 0.0 + 0.0j
+Xhalf = X_np(np.array([0.5 + 0j]), lamf)[0]
+for n in range(0, 60, 2):
+    sn = np.array([0.5 + n / 2.0 + 0j])
+    term = Xhalf / (X_np(sn, lamf)[0] * (lamf + 1 + n)) * complex(Fhat_batch(sn)[0])
+    G0half += term
+    if n > 6 and abs(term) < 1e-17 * (abs(G0half) + abs(term)):
+        break
 fix = G0half / (2 * np.pi * G_(1 + lamf))
 Gs = G0s - fix * X_np(S_line, lamf)
 

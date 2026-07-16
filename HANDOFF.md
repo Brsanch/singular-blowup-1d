@@ -4,7 +4,7 @@ Read this + `README.md` + `docs/findings_*.md` first. The next step is named at
 the bottom ("THE NEXT CHIP"). Repo: github.com/Brsanch/singular-blowup-1d (private).
 Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasure loop.
 
-> ## ⚑ LATEST MILESTONE (2026-06-14) — read the ledger (`docs/ledger/`) first; it is authoritative
+> ## ⚑ LATEST MILESTONE (2026-07-15) — read the ledger (`docs/ledger/`) first; it is authoritative
 > The rigorous-proof arc has advanced far past the original "L1–L4 energy estimate" plan:
 > 1. **Lean Track 1 DONE** — 5 backbone lemmas formalized, sorry-free, zero-axiom (`lean/`, LEM-01..05).
 > 2. **Energy route PROVEN DEAD at the edge** — no bounded-at-edge weighted-energy/Schur/flux method
@@ -14,13 +14,28 @@ Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasur
 > 4. **POINT-spectral stability PROVED mod 𝒩** (`LEM-08`, `proved-on-paper`): an exact integer
 >    obstruction (`d=0` line-`L²` ∧ `d≥1` to kill the `s=0` edge-const = empty) ⟹ no `Re λ≥0` point
 >    eigenvalue. Firewall-clean, 3 routes + 6 gates agree. `docs/desk/edge_mellin_symbol.md` §5.3–5.5.
-> 5. **CURRENT FRONTIER (LEM-06):** NOT yet Conjecture 2.4. A *strict* gap `Re σ≤−δ` needs the
->    **essential spectrum on `Re s=0`** (`R(0)=0 ∀λ`, non-Fredholm line) moved off the imaginary axis —
->    which needs the edge-*unbounded* weight that re-triggers `cap_scaffold`. That original edge-weight
->    wall is now the *only* thing between point-stability and a strict gap. (Frozen generator; the
->    nonlinear/co-moving leg is separate.) Secondary: Lean-formalize the LEM-08 integer obstruction.
-> The "NEXT SESSION" block below predates this arc — treat the ledger + `desk/edge_mellin_symbol.md`
-> + `desk/edge_layer_estimate.md` as the live state.
+> 5. **CONVECTIVE-WEIGHT STRUCTURE PACK (2026-07-15, LEM-09, `desk/convective_weight_spectrum.md`):**
+>    the "edge-unbounded weight re-triggers cap_scaffold" wall is NOT a wall for the *spectral*
+>    problem. On `L²_σ = L²(e^{−2σz}dz)`, `σ∈(0,½)`: ε-similarity (spectrum scale-free in the
+>    forcing; the FoV divergence was a truncation artifact *as a spectral diagnostic*); far-field
+>    transport line `{Re λ=−2σ} ⊆ σ_ess` (gap capped at `2σ`); energy no-go PROVEN artifact-free
+>    (exact `w=e^{−z/4}u` diagonalization; positive multiplier band at exponent `σ+¼`); NO point
+>    spectrum right of the line (mod named Lemma E′; `𝒩` excluded by the space); resolvent EXPLICIT
+>    (`Π_n = X/[X(·+n/2)(λ+2s+n)]`, defect-closed via the domain identity `𝒢(½)=0` ⟺ no far-field
+>    constant — the old `B=H(g)(1)` firewall IS the generator's domain condition), machine-verified
+>    end-to-end (12-check gate `validate/edge_convective_structure.py`).
+> 6. **CURRENT FRONTIER (LEM-06, essential-spectrum half):** ONE named estimate — the uniform
+>    `L²_σ` bound of the defect-closed ladder resolvent on `Re λ ≥ −2σ+δ` (≡ weak-coupling
+>    uniformity by ε-similarity). **OBS-07 (measured 2026-07-15): decisively favorable** —
+>    edge-forcing gain `∝ e^{z₀/2} = ε`, λ-uniform to dist 0.1 from the line (0.30 → 0.00187
+>    over `z₀ = −2…−14`; the operator *annihilates* edge input, matching Lemma C's `e^{|a|/2}`
+>    dissipative form), so the sup lives at bulk data where the termwise bound gives `≈1.15/dist`.
+>    Named route: bent-contour Barnes resummation + Schur test on `𝒢 = X·[C₀(s)−C₀(½)]`
+>    (vertical contour provably diverges at rate `π/4`). Then: Lemma E′ (edge bootstrap),
+>    semigroup generation + Gearhart–Prüss, the `M_Gh` coupling, the nonlinear/co-moving leg.
+>    Secondary: Lean-formalize the LEM-08 obstruction.
+> The "NEXT SESSION" block below predates this arc — treat the ledger + `desk/convective_weight_spectrum.md`
+> + `desk/edge_mellin_symbol.md` + `desk/edge_layer_estimate.md` as the live state.
 
 ➤ **NEXT SESSION:** `NEXT_SESSION.md` — plan to (A) complete the rigorous proof (lemmas
   L1–L4) and (B) Lean-check it (Track 1 = algebraic backbone, tractable; Track 2 = the

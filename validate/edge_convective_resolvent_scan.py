@@ -44,10 +44,12 @@ SHAPE = {}
 
 
 def shape(s):
+    """Transform of the bump shape: int e^{-cosh v} e^{-sv} dv = 2 K_s(1) exactly
+    (besselk is ~46x faster than tanh-sinh at dps 90 and bit-identical; the identity
+    is itself cross-checked in validate/edge_convective_structure.py-adjacent runs)."""
     key = mp.nstr(s, 25)
     if key not in SHAPE:
-        SHAPE[key] = mp.quad(lambda v: mp.e ** (-mp.cosh(v) - s * v),
-                             [-16, -8, -4, -2, 0, 2, 4, 8, 16])
+        SHAPE[key] = 2 * mp.besselk(s, 1)
     return SHAPE[key]
 
 
@@ -88,15 +90,25 @@ def G0hat(s, lam, z0, nmax=400):
 FIX = {}
 
 
-def defect_fix(lam, z0):
-    """G0hat(1/2)/X(1/2) by symmetric limit — s=1/2 is a removable zero-x-pole point
-    (odd-n ladder terms vanish, even-n have finite c(1)c(3/2)-type limits)."""
+def defect_fix(lam, z0, nmax=800):
+    """G0hat(1/2)/X(1/2) via the EXACT closed form Pi_n(1/2) = X(1/2)/[X(1/2+n/2)(lam+1+n)]
+    (odd n vanish through the Gamma(1-s) pole of X at integers; even n finite).
+    NEVER use a finite +-delta limit here: at depth the ladder's curvature near s=1/2 is
+    ~e^{(3/2) n* ln n*}, so a delta-limit is dps-STABLE GARBAGE (the 2026-07-15 scan bug —
+    it produced spurious 1e12-1e15 gains at z0 <= -12 that passed every precision check)."""
     key = (mp.nstr(lam, 20), mp.nstr(z0, 10))
     if key not in FIX:
-        d = mp.mpf('1e-8')
-        gp, _, _ = G0hat(mp.mpf('0.5') + d, lam, z0)
-        gm, _, _ = G0hat(mp.mpf('0.5') - d, lam, z0)
-        FIX[key] = ((gp + gm) / 2) / (2 * mp.pi * mp.gamma(1 + lam))
+        tol = mp.mpf(10) ** (-(DPS - 10))
+        half = mp.mpf('0.5')
+        Xhalf = X(half, lam)
+        total = mp.mpf(0)
+        for n in range(0, nmax, 2):
+            term = Xhalf / (X(half + mp.mpf(n) / 2, lam) * (lam + 1 + n)) \
+                * shape(half + mp.mpf(n) / 2) * mp.e ** (-(half + mp.mpf(n) / 2) * z0)
+            total += term
+            if n > 6 and abs(term) < tol * (abs(total) + abs(term)):
+                break
+        FIX[key] = total / (2 * mp.pi * mp.gamma(1 + lam))
     return FIX[key]
 
 

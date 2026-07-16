@@ -168,10 +168,16 @@ residual at quadrature accuracy ~4e−4 across the line, `λ = 0.3`, `z₀ = −
 far-field constant of `G` vanishing automatically (§4 residue⇔value identity; measured
 `4.5e−5 ≈ 0`). The homogeneous freedom is exactly one constant (`P = const`, by §5(iii));
 one freedom ↔ one defect condition: **index-0 closure, no cokernel obstruction on the dense
-class**. ⚠️ Subtlety (cost a bug): `s = ½` is a removable zero×pole point of the ladder —
-odd-`n` terms vanish (`c(1) = 0`) but even-`n` terms have finite `c(1)c(3/2)`-type limits
-(`−1/12` at `n=2`); `𝒢₀(½)` must be evaluated as a limit
-(naive value `14.25` vs true `4.30` in the test case).
+class**. ⚠️ Subtlety (cost two bugs): `s = ½` is a removable zero×pole point of the ladder —
+odd-`n` terms vanish (`c(1) = 0` ⟺ the `Γ(1−s)` pole of `X` at integers) but even-`n` terms
+have finite `c(1)c(3/2)`-type limits (`−1/12` at `n=2`), so the naive evaluation at exactly
+`½` is wrong (`14.25` vs true `4.30` in the test case) — **and a finite `±δ` limit is *also*
+wrong at depth**: the ladder's curvature near `½` grows like the peak `e^{(3/2)n_*\ln n_*}`
+(`n_* ≈ e^{|z₀|/3}`), so the `δ²`-error swamps the true value for `z₀ ≲ −12` while being
+**dps-stable** (it is an analytic error — it passed a 90/160/260-digit consistency test and
+produced spurious `1e12–1e15` gains; the line-equation self-check is blind to the fix constant
+since both `𝒢₀` and `X` solve the line equation). The only safe evaluation is the **exact
+closed form** `Π_n(½) = X(½)/[X(½+n/2)(λ+1+n)]` summed over even `n`.
 
 So: **`λ ∈ ρ(M|_{L²_σ})` for `Re λ > −2σ` ⟺ the map `F ↦ G` above is `L²_σ`-bounded on the
 dense class** (surjectivity then follows by closedness, injectivity by §5). The whole strict-gap
@@ -187,13 +193,45 @@ huge and alternating; **this cancellation is also why any termwise/triangle-ineq
 must fail at depth, and why the analytic route needs the §8 resummation.**
 Gate: `validate/edge_convective_resolvent_scan.py` (quick mode default; `--deep` = this grid).
 
-RESULTS: <!-- filled from the deep scan output -->
+RESULTS (2026-07-15, dps 90, cancellations up to `10^67` handled with ~23-digit margin;
+`gain(0.3, −6) = 0.08173` independently reproduced by the float64 numpy implementation and
+PDE-verified there):
+
+| `z₀`   | −2          | −6            | −10     | −12     | −14     |
+|--------|-------------|---------------|---------|---------|---------|
+| gain   | 0.303–0.370 | 0.0817–0.0852 | 0.01337–0.01350 | 0.00503–0.00505 | 0.001868–0.001871 |
+
+across all six λ (real from `0.3` down to `−0.7` = dist 0.1 from the line, plus `0.3+1.5i`).
+Successive-depth log-slopes: `−0.327, −0.454, −0.490, −0.494` → the asymptotic law is
+
+> **`gain(λ, z₀) ∝ e^{z₀/2} = ε`, λ-uniform** — the response to edge forcing *vanishes
+> linearly in the weak coupling*; it does not merely stay bounded.
+
+Reading: (i) the resolvent-bound question is decided *favorably on the edge-forcing family
+with large margin* — the sup of `‖R(λ)F‖/‖F‖` lives at bulk-scale forcing, where the termwise
+bound already gives `≈1.15/dist` (§8); together this is strong (numerical, not proof) support
+for `σ(M|_{L²_σ}) = {Re λ = −2σ}` with `‖R(λ)‖ ~ C/dist`. (ii) The mechanism matches Lemma C:
+the K-form on edge-localized structures is dissipative with the `e^{|a|/2}`-large coefficient —
+the operator *annihilates* edge input. (iii) A genuine singular-perturbation discontinuity:
+`lim_{ε→0}‖R_{A+εK}F₀‖ = 0 ≠ ‖R_A F₀‖` — the naive weak-coupling expansion around pure
+transport is invalid on fixed data (at depth the ladder is dominated by high `X`-shaped rungs
+and `C₀(line) ≈ C₀(½)` to 15+ digits; the transport component is exponentially subdominant).
+(iv) ⚠️ Numerics lesson recorded in §6: the first run of this scan produced dps-STABLE garbage
+(`1e12–1e15` gains at `z₀ ≤ −12`) from a `±δ` defect-constant evaluation — an *analytic*
+error no precision test catches; only the closed-form `Π_n(½)` evaluation is safe.
 
 ## 8. The sharpened remaining object (the leap, updated)
 
 The strict gap `Re σ(M|_{L²_σ}) ≤ −2σ + δ`-half of LEM-06 is now exactly:
 
 > **Bound the defect-closed ladder resolvent uniformly on `L²_σ`, `Re λ ≥ −2σ + δ`.**
+> Its most compact exact form: with `C₀(s) := Σ_n 𝓕(s+n/2)/[X(s+n/2)(λ+2s+n)]` (which
+> satisfies the coboundary relation `C₀(s) − C₀(s+½) = 𝓕(s)/[X(s)(λ+2s)]` exactly),
+> the solution is
+> **`𝒢(s) = X(s)·[C₀(s) − C₀(½)]`** —
+> at depth `C₀` is huge but nearly ½-periodic (its defect from periodicity is the single
+> `n=0` term), and the resolvent is `X` times the *deviation* `C₀(s) − C₀(½)`; the analytic
+> work is bounding that deviation (the "two-stage cancellation" the numerics exhibit).
 > Named route (new this session): the closed form makes `𝒢₀/X` a Barnes-type sum
 > `Σ_n 𝓕(s+n/2)/[X(s+n/2)(λ+2s+n)]`; rotate it to a contour integral (resummation kills the
 > cancellation problem) and Schur-test the resulting explicit Gamma-ratio kernel. ⚠️ The
@@ -205,11 +243,30 @@ The strict gap `Re σ(M|_{L²_σ}) ≤ −2σ + δ`-half of LEM-06 is now exactl
 > (`1/Γ(1−s−ν/2)`'s reflection factor). This is a bounded, classical-flavored computation —
 > graded Mellin–Barnes asymptotics — not an open-ended search.
 
+Quantitative anchors for that work: (i) the termwise line-sup constants
+`M_n(λ) = sup_τ |Π_n(σ+iτ)|` are tame — `Σ_n M_n ≈ 1.15/dist(λ, line)` uniformly (measured
+`1.02/0.909`, `3.75/3.33`, `11.5/10.0` at dist `1.1/0.3/0.1`): the K-dressing of the *termwise*
+bound is a ~15% overhead on pure transport, which proves the two-space estimate on the
+superexponential-edge class outright and suggests the full `L²_σ` bound carries the same
+`C/dist` shape. (ii) The weak-coupling limit is NOT the naive transport resolvent: the
+ε-scaled homogeneous solution is `X_ε(s) = ε^{−2s}X(s)` (i.e. `X` translated to the forcing
+depth), so the defect-fix term never becomes relatively small — the constrained resolvent
+converges to a *constrained* transport problem. The scan (§7) shows the fix in fact
+*suppresses* the response on edge data.
+
 Also still open, named: **Lemma E′** (edge bootstrap / boundary regularity of eigenfunctions
 and of the maximal domain — the continuum version of the inflow BC); **semigroup generation**
 on the constrained domain + Gearhart–Prüss to convert resolvent bounds into
 `‖e^{tM}‖_σ ≤ Ce^{(−2σ+δ)t}`; then the `M_Gh` coupling (same `e^{−z/2}`-ladder structure) and
 the nonlinear/co-moving leg (unchanged).
+
+Classical anchors (context, not off-the-shelf solutions — our edge end has *no* limit operator;
+the ε-similarity replaces that role): exponential weights for convective stability go back to
+Sattinger (Adv. Math. 22, 1976); the essential-vs-absolute spectrum frame is Sandstede–Scheel
+(Physica D 145, 2000) — their Fredholm-border machinery is ODE-based and does not apply verbatim
+to the `½`-shift ladder; resolvent-to-semigroup is Gearhart–Prüss (Engel–Nagel, *One-Parameter
+Semigroups*, Thm V.1.11); the Barnes/Mellin factorization toolkit is Gohberg–Krein-adjacent but
+the graded `½`-shift with the `𝒩`-defect appears genuinely nonstandard (as LEM-07 §8 flagged).
 
 **What this doc changes in the LEM-06 frame:** the essential-spectrum half was "move the
 `Re s = 0` line off the axis ⟹ needs the edge-unbounded weight ⟹ re-triggers cap_scaffold" —
