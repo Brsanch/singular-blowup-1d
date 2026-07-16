@@ -18,7 +18,7 @@ review, no matter how green the lemma DAG is.
 | LEM-03 | c_ω-absorption: transport+c_ω ⇒ −2∂_z | verified | Lean (+1e-11 gate) |
 | LEM-04 | weighted IBP transport-dissipation identity | verified | Lean |
 | LEM-05 | edge indicial roots r=−(λ+1)/2; admissible ⇔ Reλ≤0 | verified | Lean |
-| LEM-06 | (★) — point half CLOSED (LEM-08); essential half = ONE estimate: uniform L²_σ ladder-resolvent bound on Re λ ≥ −2σ+δ (route: bent-contour Barnes on 𝒢 = X·[C₀(s)−C₀(½)]) | conjectured (0.70) | LEM-09 structure gate + OBS-07 scan |
+| LEM-06 | (★) — point half CLOSED (LEM-08); essential half: PROOF SKELETON COMPLETE via the slit-plane Plemelj representation 𝒢 = X·[D(w(s))−D(1)] + dressed-Schur (π-margin, all quadrants); remaining = W1 write-up, W2 Lemma E′, W3 generation+GP | conjectured (0.75) | LEM-09 gate + OBS-07/08 + edge_slitplane_representation.py |
 | LEM-07 | edge Mellin symbol 𝓗(p)=cot(πp); forcing −½ ladder; ⟹ Mellin difference eqn | proved-on-paper | validate/edge_mellin_symbol.py + mpmath/sympy (4 methods) |
 | LEM-08 | no Re λ≥0 POINT eigenvalue mod 𝒩 (exact integer obstruction; τ elementary) | proved-on-paper | validate/edge_pointspectrum_rigid.py (+ pole_collision, route3, firewall_audit) |
 | LEM-09 | convective-weight structure pack: ε-similarity; transport line ⊆ σ_ess; energy no-go w/ exact σ+¼-band mechanism; rank-one defect = domain condition; closed-form defect-closed ladder resolvent (index-0) | proved-on-paper (E-part mod Lemma E′) | validate/edge_convective_structure.py (12 checks) |
@@ -29,6 +29,7 @@ review, no matter how green the lemma DAG is.
 | OBS-05 | arg-principle count = 0 (in-strip corroboration; NOT the WH index) | — | validate/edge_argprinciple_count.py |
 | OBS-06 | Mellin-line: lattice solns edge-divergent ∀λ; winding = indicial tautology (NOT the index) | — | validate/edge_wh_structure.py |
 | OBS-07 | edge-forcing resolvent gain ∝ e^{z₀/2} = ε, λ-uniform (edge input annihilated; supports σ(M|_σ) = transport line, ‖R‖~C/dist) | measured (0.85) | validate/edge_convective_resolvent_scan.py |
+| OBS-08 | high-frequency corner benign: dressing → 1 with |Ω| at every depth (the ex-corner of the crude Schur; coupling c(σ+iΩ)~1/(2|Ω|)) | measured (0.85) | validate/edge_slitplane_representation.py (P3) |
 
 LEM-01..05 = the **Track-1 algebraic backbone** (Lean-verified). LEM-06 (the (★)
 leap) + the H¹_W coupling = **Track 2**, the genuine remaining analytic work; it

@@ -3,8 +3,8 @@ id: LEM-06
 title: (★) The nonlocal forcing is dominated by the anisotropic transport dissipation — ⟨G, ½Q_op G⟩_W ≤ ∫φ'WG² − δ‖G‖²_W for G ⊥_W 𝒩 with G(−∞)=0, for some anisotropic weight W=e^{-φ} (φ'→2γ in the bulk) and δ>0.
 category: LEM
 status: conjectured
-confidence: 0.60
-dependencies: [LEM-04, LEM-07, LEM-09, OBS-01, OBS-03, OBS-04, OBS-07]
+confidence: 0.75
+dependencies: [LEM-04, LEM-07, LEM-09, OBS-01, OBS-03, OBS-04, OBS-07, OBS-08]
 supports: [THR-01]
 cross_citations:
   - {label: "Chen 2026", ref: "arXiv:2605.15130", note: "finite-codimension + anisotropic + IBP-twice template"}
@@ -77,7 +77,23 @@ that re-triggers `cap_scaffold`'s field-of-values divergence. That is the origin
 now precisely isolated as the *only* thing between point-spectral stability and a strict gap. Secondary:
 a clean Lean/interval statement of "bounded-at-edge `W` ⟹ const ∉ `L²_W`" (the computed firewall content).
 
-**RESCOPED AGAIN 2026-07-15 (LEM-09, `docs/desk/convective_weight_spectrum.md`) — the
+**PROOF SKELETON COMPLETE 2026-07-16 (desk §10, gate
+`validate/edge_slitplane_representation.py`).** The §8 Barnes route is superseded by a cleaner
+classical reduction: in `w = e^{4πis}` the coboundary is an additive **Plemelj jump problem on
+a slit ray**; the split-regularized (Muskhelishvili) Cauchy transform gives
+`𝒢 = X·[D(w(s)) − D(1)]`, machine-certified ≡ the ladder to rel 1e−22, and — decisively —
+consuming only LINE values of `𝓕` (solution formula for arbitrary `L²_σ` data; the
+minus-Hardy wall is gone). The dressed two-weight Schur bound closes in ALL four quadrants at
+rate `e^{−π|τ−τ'|}` (the `4π−3π` margin; the former corner failure was the unsubtracted kernel
+on the wrong wing), envelopes machine-checked with slack; the rank-one defect functional has
+an explicitly decaying kernel; OBS-08 probes the ex-corner (high-frequency edge forcing) and
+finds dressing → 1. **Remaining for the linear strict gap — technical execution, no missing
+idea: (W1)** rigorous Plemelj/Stirling write-up, **(W2)** Lemma E′ (edge bootstrap,
+uniqueness), **(W3)** semigroup generation + Gearhart–Prüss. Then `M_Gh` + nonlinear
+(separate). Status stays `conjectured` per ledger discipline until (W1)–(W2) are written and
+adversarially checked; confidence 0.60 → 0.75.
+
+**RESCOPED 2026-07-15 (LEM-09, `docs/desk/convective_weight_spectrum.md`) — the
 edge-weight wall is NOT a wall for the *spectral* problem.** Working directly in the convective
 space `L²_σ = L²(e^{−2σz}dz)`, `σ∈(0,½)`: (i) the ε-similarity makes `M` unitarily scale-free in
 the forcing, so the `cap_scaffold` FoV divergence was a truncation artifact *as a spectral

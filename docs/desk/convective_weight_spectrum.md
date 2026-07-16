@@ -277,7 +277,63 @@ multiplier, §3) and bypassed (resolvent, §6); the gap question is one explicit
 bounded weight is simply the `σ → 0⁺` end of the family — nothing needs to "move"; one works
 at `σ ∈ (0,½)` from the start where the transport line sits at `−2σ`.
 
-## 9. Circularity firewall
+## 10. EXECUTED 2026-07-16 — the slit-plane Plemelj representation closes the Schur bound (proof skeleton complete)
+
+Gate: `validate/edge_slitplane_representation.py` (3 checks, PASS). This section executes §8's
+program one large step: the bent-contour Barnes idea is **superseded by a cleaner classical
+reduction** that avoids ν-contours entirely.
+
+**(a) The jump problem.** Under `w = e^{4πis}` the strip `[σ, σ+½]` maps onto `ℂ*` slit along
+the ray `arg w = 4πσ` (the two strip boundaries land on the two sides of the slit), and the
+coboundary `C(s) − C(s+½) = Φ(s)`, `Φ = 𝓕/[X·(λ+2·)]`, becomes an **additive Plemelj jump
+problem** across the ray. The solution is the **split-regularized Cauchy transform** (plain
+kernel on the `w'→0` wing, one subtraction on the `∞` wing — Muskhelishvili class-h
+bookkeeping forced by the density growth `|Φ| ~ e^{5π|τ'|/2}` from `1/X`), and slit-plane
+Laurent rigidity (growth `< |w|`) gives `C₀ = D + const`, so the defect-closed resolvent is
+constant-free:
+
+> **`𝒢(s) = X(s)·[D(e^{4πis}) − D(1)]`, `D` = split-regularized Cauchy transform of `Φ`.**
+> Machine-certified ≡ the ladder solution at strip-interior points to **rel 1e−22** (jump
+> orientation `D₋ − D₊ = Φ` in the τ'-parametrization). Crucially the formula consumes ONLY
+> line values of `𝓕` — it defines the solution for **arbitrary `L²_σ` data**; the
+> minus-Hardy wall has an explicit classical solution formula.
+
+**(b) The dressed-Schur closure.** The `L²(line) → L²(line)` bound of `𝓕 ↦ 𝒢` reduces to the
+two-weight Cauchy kernel `|X(τ)|/|X(τ')|·ker(τ,τ')/|λ+2s'|` with `ker` the split kernel. The
+earlier "corner failure" (input `|τ'| ≫ |τ|`, both negative) evaporates: **it used the
+unsubtracted kernel on the wrong wing** — the subtraction supplies exactly the missing
+`e^{−4π(τ−τ')}` there. All four quadrants then decay at rate `≥ e^{−π|τ−τ'|}` (the `4π − 3π`
+margin — the same ¾-ratio as LEM-08's integer obstruction), machine-checked:
+`dressed × e^{+π|τ−τ'|}` = 0.117→0.022 (former corner), 3.4e−4→5.4e−21, 1.3e−16→2.8e−33
+(others) — bounded and *decaying*, so the polynomial Stirling prefactors have strict
+exponential slack. The diagonal band `|τ−τ'| ≤ 1` has weight-ratio `≤ e^{3π+}` and reduces to
+local Riesz-projection boundedness + the `½Φ` Plemelj term; the rank-one defect functional
+`𝓕 ↦ C₀(½)` has an explicitly decaying kernel (`~e^{−3π|τ'|/2}`). λ-dependence: `1/dist`
+from `(λ+2s')^{−1}`, with `δ`-dependent prefactors as `Re λ ↓ −2σ+δ` (the `Γ(2s+λ)` pole
+approaching the line).
+
+**(c) OBS-08 — the high-frequency corner probed and benign.** For
+`F = e^{−cosh(z−z₀)}e^{iΩz}` (spectrum at `τ ≈ Ω` — the region OBS-07 never probed):
+dressing = gain/transport-gain **rises monotonically to 1** with `|Ω|` at every depth
+(z₀=−2: 0.457→0.986→0.9996→1.0000 at Ω=0/−5/−15/−40; z₀=−6: 0.123→0.888→0.9968→0.9999;
+z₀=−10: 0.020→0.441→0.959→0.9985; ±Ω symmetric). High-frequency edge forcing feels the
+weakened coupling `c(σ+iΩ) ~ 1/(2|Ω|)` and responds as pure transport; the low-frequency
+suppression crossover matches §3's band structure. Nowhere in the probed `(z₀, Ω, λ)`-region
+does the dressing exceed ~1.
+
+**Status after this section (honest).** The uniform-resolvent-bound statement of §8 now has a
+**complete proof skeleton**: representation (machine-certified), off-diagonal Schur (exponent
+arithmetic + machine-checked envelopes with slack), diagonal band (classical Riesz), defect
+functional (explicit kernel), uniqueness (Prop E mod E′), extension to all of `L²_σ`
+(closedness of the maximal operator + bound on the dense class). It is NOT yet a proof:
+**(W1)** the rigorous write-up (Plemelj boundary-value theory application, Stirling prefactor
+bookkeeping, the operator-identity for `D`-defined solutions distributionally) — bounded,
+classical-flavored, numerically de-risked at every step; **(W2)** Lemma E′ (edge bootstrap,
+for uniqueness); **(W3)** semigroup generation + Gearhart–Prüss to convert `‖R(λ)‖ ≤ C/dist`
+into `‖e^{tM}‖_σ ≤ Ce^{(−2σ+δ)t}`. Then the `M_Gh` coupling and the nonlinear/co-moving leg.
+The *linear strict-gap wall has no missing idea left* — it is now technical execution.
+
+## 11. Circularity firewall (covers §§1–10)
 
 Nothing here asserts stability from benign numerics: Lemmas A–D and Prop. F are identities
 (machine-verified to 13–30 digits); Prop. E is structural (Liouville + Stirling + the domain
@@ -285,3 +341,7 @@ condition), conditional only on the *named* Lemma E′; §7 is labeled numerics;
 open. The firewall object `B = H(g)(1)` is *derived* as the generator's domain constraint
 (Lemma D), used nowhere as an assumption. The `𝒩`-quotient enters only through the space
 choice (§5), matching `theta_munu_gap.py`'s "the weighted space is the symmetry quotient".
+§10 adds no stability assumption anywhere: the representation identity is certified against
+the independently-verified ladder; the Schur envelopes are computed from the explicit `X` and
+kernel (spectrum never enters); OBS-08 is labeled numerics; and the section's status paragraph
+states exactly which steps remain unwritten (W1–W3) — "proof skeleton" is not "proof".

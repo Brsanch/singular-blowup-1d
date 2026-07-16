@@ -24,16 +24,19 @@ Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasur
 >    (`Π_n = X/[X(·+n/2)(λ+2s+n)]`, defect-closed via the domain identity `𝒢(½)=0` ⟺ no far-field
 >    constant — the old `B=H(g)(1)` firewall IS the generator's domain condition), machine-verified
 >    end-to-end (12-check gate `validate/edge_convective_structure.py`).
-> 6. **CURRENT FRONTIER (LEM-06, essential-spectrum half):** ONE named estimate — the uniform
->    `L²_σ` bound of the defect-closed ladder resolvent on `Re λ ≥ −2σ+δ` (≡ weak-coupling
->    uniformity by ε-similarity). **OBS-07 (measured 2026-07-15): decisively favorable** —
->    edge-forcing gain `∝ e^{z₀/2} = ε`, λ-uniform to dist 0.1 from the line (0.30 → 0.00187
->    over `z₀ = −2…−14`; the operator *annihilates* edge input, matching Lemma C's `e^{|a|/2}`
->    dissipative form), so the sup lives at bulk data where the termwise bound gives `≈1.15/dist`.
->    Named route: bent-contour Barnes resummation + Schur test on `𝒢 = X·[C₀(s)−C₀(½)]`
->    (vertical contour provably diverges at rate `π/4`). Then: Lemma E′ (edge bootstrap),
->    semigroup generation + Gearhart–Prüss, the `M_Gh` coupling, the nonlinear/co-moving leg.
->    Secondary: Lean-formalize the LEM-08 obstruction.
+> 6. **PROOF SKELETON COMPLETE for the linear strict gap (2026-07-16, desk §10, gate
+>    `edge_slitplane_representation.py`):** in `w = e^{4πis}` the coboundary is a **Plemelj
+>    jump problem on a slit ray**; the split-regularized Cauchy transform gives
+>    `𝒢 = X·[D(w(s)) − D(1)]` (≡ ladder to 1e−22, consumes only LINE values of `𝓕` — the
+>    minus-Hardy wall is gone), and the dressed two-weight Schur bound closes in ALL quadrants
+>    at rate `e^{−π|τ−τ'|}` (the `4π−3π` margin; the "corner" was the unsubtracted kernel on
+>    the wrong wing — OBS-08 confirms it benign: dressing → 1 at high frequency). OBS-07:
+>    edge-forcing gain `∝ e^{z₀/2}` (operator annihilates edge input); termwise `≈1.15/dist`
+>    at bulk. **Remaining for LEM-06's linear half — technical execution, no missing idea:
+>    (W1)** rigorous Plemelj/Stirling write-up, **(W2)** Lemma E′ (edge bootstrap /
+>    uniqueness), **(W3)** semigroup generation + Gearhart–Prüss. Then the `M_Gh` coupling and
+>    the nonlinear/co-moving leg (where the next genuine unknown lives). Secondary:
+>    Lean-formalize the LEM-08 obstruction.
 > The "NEXT SESSION" block below predates this arc — treat the ledger + `desk/convective_weight_spectrum.md`
 > + `desk/edge_mellin_symbol.md` + `desk/edge_layer_estimate.md` as the live state.
 
