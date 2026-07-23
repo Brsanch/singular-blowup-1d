@@ -40,7 +40,8 @@ $L^2(e^{-2\gamma z}\,dz)$ (modulo the symmetry subspace spanned by time-translat
 $\xi$ and scaling modes $\mu,\nu$), we find:
 \begin{itemize}\setlength\itemsep{0pt}
 \item no eigenvalue of the frozen linearization with $\operatorname{Re}\lambda>0$
-      (two independent discretizations; inflow/Robin edge condition essential);
+      (edge-resolved \emph{and} equispaced desingularized builds both give
+      $\#\{\operatorname{Re}>0\}=0$; inflow/Robin edge condition essential);
 \item a convective spectral gap of size $2\gamma$ measured by semigroup decay;
 \item no transient growth for physical perturbations in the edge-conditioned energy norm;
 \item finite-amplitude frozen-base decay to amplitude $A=4$, and fully self-consistent
@@ -69,8 +70,10 @@ desingularized variables $G=(Y-1)^{1/2}g$, $h=\delta\Theta$, on $z=\ln(Y-1)$, wi
 inflow condition $G(z_{\min})=h(z_{\min})=0$.  Then, on every tested resolution:
 \begin{enumerate}
 \item \textbf{Linear.} The frozen operator $M_{GG}$ (and the block-triangular coupled
-  $(G,h)$ operator) has $\#\{\operatorname{Re}\lambda>0\}=0$.  The rightmost discrete
-  eigenvalue is the transport continuum near $\operatorname{Re}\approx -10^{-3}$.
+  $(G,h)$ operator) has $\#\{\operatorname{Re}\lambda>0\}=0$ on both the edge-resolved
+  $z$-grid (\texttt{stability\_edge\_z\_spectrum.py}) and the equispaced desingularized
+  build (\texttt{stability\_edge\_spectrum.py}).  The rightmost discrete eigenvalue on
+  the $z$-grid is the transport continuum near $\operatorname{Re}\approx -10^{-3}$.
 \item \textbf{Gap.} In $L^2(e^{-2\gamma z}\,dz)$, the semigroup decay rate of a bulk
   shape perturbation is $\approx 2\gamma$ for $\gamma\in\{0.25,0.5,0.75\}$
   (measured $+0.552/+1.057/+1.675$ vs.\ predicted $0.50/1.00/1.50$).
@@ -172,11 +175,14 @@ Unweighted norms stay nearly flat (marginal).  Full coupled $(G,h)$ inherits the
 gap by block-triangular structure~\cite{findings_theta}.
 
 \paragraph{No transient growth (physical).}
-Smooth physical perturbations have amplification factor $G=1$ at all tested
-resolutions.  In the edge-conditioned energy norm the numerical abscissa is
-negative and resolution-independent ($\mu_{\mathrm{an}}=-0.10$ at $z_{\mathrm{cut}}=-8$),
-implying $\|e^{M\tau}\|_W\le 1$~\cite{findings_tg}.  Grid-scale edge spikes that
-produce worst-case creep are excluded by the inflow BC.
+Smooth physical perturbations have amplification factor $G=1.000$ at all tested
+resolutions (\texttt{transient\_growth.py}, this session: bulk and near-edge bumps
+on four $(N,z_{\min})$ grids).  In the edge-conditioned energy norm the numerical
+abscissa is negative and resolution-independent:
+$\mu_{\mathrm{an}}=-0.10083$ at $z_{\mathrm{cut}}=-8$ and $-0.40675$ at $-6$
+($N=2000$; range across $N\in[1000,2000]$ is $[-0.106,-0.101]$ at $-8$),
+implying $\|e^{M\tau}\|_W\le 1$ (\texttt{transient\_growth\_edge\_conditioned.py}).
+Grid-scale edge spikes that produce worst-case creep are excluded by the inflow BC.
 
 %--------------------------------------------------------------------------
 \section{Nonlinear stability}
@@ -336,11 +342,14 @@ python3 paper/scripts/fig_nonlinear.py    # Fig. 4  -> paper/figures/fig_nonline
 
 \paragraph{Gates backing abstract claims (re-run this session).}
 \begin{verbatim}
-python3 validate/verify_singular_steady.py       # profile residual 2.2e-16
-python3 validate/stability_edge_z_spectrum.py    # max Re < 0, npos=0
-python3 validate/spectral_gap.py                 # rates ~ 2*gamma
-python3 validate/nonlinear_shape_march.py        # A<=4, peak=1.000
-python3 validate/coevolve_projected.py           # (c_l,c_w)->(2,-1)
+python3 validate/verify_singular_steady.py            # profile residual 2.2e-16
+python3 validate/stability_edge_z_spectrum.py         # edge-resolved: npos=0
+python3 validate/stability_edge_spectrum.py           # equispaced: npos=0 (2nd disc.)
+python3 validate/spectral_gap.py                      # rates ~ 2*gamma
+python3 validate/transient_growth.py                  # physical G=1.000
+python3 validate/transient_growth_edge_conditioned.py # mu_an < 0
+python3 validate/nonlinear_shape_march.py             # A<=4, peak=1.000
+python3 validate/coevolve_projected.py                # (c_l,c_w)->(2,-1)
 \end{verbatim}
 
 \paragraph{KEY numbers (session freeze; tol $5\%$ relative unless noted).}
@@ -350,9 +359,13 @@ python3 validate/coevolve_projected.py           # (c_l,c_w)->(2,-1)
 Quantity & Value \\
 \midrule
 steady residual $\max|R_\Omega|$ & $2.22\cdot 10^{-16}$ \\
-$\max\operatorname{Re}(M_{GG})$ (fig $N=1000$) & $-0.00143$ \\
-$\#(\operatorname{Re}>0)$ & $0$ \\
+$\max\operatorname{Re}(M_{GG})$ edge-resolved (fig $N=1000$) & $-0.00143$ \\
+$\#(\operatorname{Re}>0)$ edge-resolved & $0$ \\
+$\#(\operatorname{Re}>0)$ equispaced (\texttt{stability\_edge\_spectrum}) & $0$ \\
 gap rates $\gamma=0.25/0.5/0.75$ & $+0.552/+1.057/+1.675$ \\
+physical TG $G$ (smooth bumps, all $N$) & $1.000$ \\
+$\mu_{\mathrm{an}}$ ($z_{\mathrm{cut}}=-8$, $N=2000$) & $-0.10083$ \\
+$\mu_{\mathrm{an}}$ ($z_{\mathrm{cut}}=-6$, $N=2000$) & $-0.40675$ \\
 nonlinear peak ($A\le 4$, full gate) & $1.000$ \\
 coevolve finals $(c_l,c_\omega)$ & $(2.000006,-1.000003)$ \\
 \bottomrule
