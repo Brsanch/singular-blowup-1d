@@ -43,6 +43,14 @@ Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasur
 >    Findings: `docs/findings_session_2026_07_22_lem08_integer.md`.
 >    **NEXT still W1–W3** for the linear strict gap; LEM-08 Lean secondary is **started/closed
 >    for the integer half**.
+> 8. **W1 QUANTITATIVE SCHUR ENVELOPES (2026-07-22):** gate `validate/edge_schur_envelopes.py`
+>    + `src/schur_envelopes.py`. New constants (dual-run bit-identical): at anchor
+>    `(σ=0.4,δ=1.1)` — `S_off=0.551085`, `α_eff=3.71162` (π+0.57 former-corner slack),
+>    `C_term=1.12545`, `M_diag=10.203`; full `(σ,δ)` table; bare defect density **grows**
+>    `γ≈8.89≈3π` (desk §10 “decaying ~e^{−3π|τ|/2}” is false for `1/|X|` — W1 write-up
+>    must use the correct functional kernel). Findings:
+>    `docs/findings_session_2026_07_22_w1_schur_envelopes.md`. **NEXT: W1 write-up with
+>    corrected defect kernel, then W2 (E′), W3 (semigroup).**
 > The "NEXT SESSION" block below predates this arc — treat the ledger + `desk/convective_weight_spectrum.md`
 > + `desk/edge_mellin_symbol.md` + `desk/edge_layer_estimate.md` as the live state.
 
