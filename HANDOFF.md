@@ -49,8 +49,20 @@ Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasur
 >    `C_term=1.12545`, `M_diag=10.203`; full `(σ,δ)` table; bare defect density **grows**
 >    `γ≈8.89≈3π` (desk §10 “decaying ~e^{−3π|τ|/2}” is false for `1/|X|` — W1 write-up
 >    must use the correct functional kernel). Findings:
->    `docs/findings_session_2026_07_22_w1_schur_envelopes.md`. **NEXT: W1 write-up with
->    corrected defect kernel, then W2 (E′), W3 (semigroup).**
+>    `docs/findings_session_2026_07_22_w1_schur_envelopes.md`.
+> 9. **E′ RESIDUAL FLOOR (2026-07-22):** gate `validate/edge_eprime_probe.py`. Homogeneous
+>    trial `G~e^{−λz/2}` has residual floor `r_min=0.586` that *grows* with depth
+>    (`r(−14)/r(−6)=55.6`) — no constructible approx eigenfunction. Free-edge spurious
+>    mode `Reλ=+1.707` is homogeneous-class; edge_bc kills it. Findings:
+>    `docs/findings_session_2026_07_22_eprime_residual_floor.md`.
+> 10. **COUPLED RESOLVENT SCAN (2026-07-22):** gate `validate/edge_coupled_resolvent_scan.py`.
+>    First Θ→G / coupled gain-vs-depth table (not pure-Ω OBS-07). Pure-Ω slope `+0.393`
+>    (annihilation); **Θ→G saturates to 0.989 at z₀=−10** (slope `−0.102`, no blowup
+>    despite `M_Gh~e^{−z/2}`); coupled max Re `≈0`; combined gain O(1). Findings:
+>    `docs/findings_session_2026_07_22_coupled_resolvent.md`.
+>    **NEXT: W1 write-up (corrected defect kernel) + analytic E′; continuum coupled
+>    ladder if needed; W3 semigroup. Coupling does not reintroduce edge blowup on the
+>    discrete operator.**
 > The "NEXT SESSION" block below predates this arc — treat the ledger + `desk/convective_weight_spectrum.md`
 > + `desk/edge_mellin_symbol.md` + `desk/edge_layer_estimate.md` as the live state.
 
