@@ -2,11 +2,18 @@
 
 Goal: turn the numerical stability result for the singular Hou–Luo profile (Conjecture 2.4)
 into a rigorous proof, and formalize/verify the checkable parts in Lean. Read first:
-`HANDOFF.md` (state-of-play table), `docs/rigor_energy_estimate_setup.md` (the inequalities),
+`HANDOFF.md` (state-of-play table + **2026-07-22 LEM-08 integer Lean note**),
+`docs/desk/convective_weight_spectrum.md` (live linear-gap skeleton W1–W3),
+`docs/findings_session_2026_07_22_lem08_integer.md` (integer obstruction closed in Lean+gate),
+`docs/rigor_energy_estimate_setup.md` (older energy plan — superseded at the edge),
 `docs/findings_conj24_evidence_and_frontier.md` (the evidence chain),
 `docs/findings_scoop_check_and_rigor_route.md` (route = analytical finite-codimension, NOT a
 spectral CAP; template Chen arXiv:2605.15130). The draft writeup of the (done) numerical
 contribution is `paper/stability_spectra_singular_houluo.md`.
+
+**Closed this arc (2026-07-22):** LEM-08 *integer skeleton* — `lean/SingularBlowup/PointSpectrum.lean`
++ `validate/lem08_integer_obstruction.py`. Do not redo. Continuous half still paper+mpmath.
+**Next for linear strict gap:** W1 Plemelj/Stirling write-up → W2 Lemma E′ → W3 Gearhart–Prüss.
 
 What is already CLOSED (don't redo): operator form `M_GG=−2∂_z+½Q_op` (verified 1e-11);
 energy identity; transport dissipation via exact IBP (`−∫φ'(z)W G²`, inflow boundary

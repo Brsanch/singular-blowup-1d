@@ -35,8 +35,14 @@ Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasur
 >    at bulk. **Remaining for LEM-06's linear half — technical execution, no missing idea:
 >    (W1)** rigorous Plemelj/Stirling write-up, **(W2)** Lemma E′ (edge bootstrap /
 >    uniqueness), **(W3)** semigroup generation + Gearhart–Prüss. Then the `M_Gh` coupling and
->    the nonlinear/co-moving leg (where the next genuine unknown lives). Secondary:
->    Lean-formalize the LEM-08 obstruction.
+>    the nonlinear/co-moving leg (where the next genuine unknown lives).
+> 7. **LEM-08 INTEGER SKELETON LEAN + GATE (2026-07-22):** discrete obstruction formalized
+>    in `lean/SingularBlowup/PointSpectrum.lean` (sorry-free, vacuity-0); machine gate
+>    `validate/lem08_integer_obstruction.py` PASS (budget=0.75, Stirling frac=0.9507,
+>    `integer_obstruction_holds`). Continuous Gamma/Stirling half remains paper+mpmath.
+>    Findings: `docs/findings_session_2026_07_22_lem08_integer.md`.
+>    **NEXT still W1–W3** for the linear strict gap; LEM-08 Lean secondary is **started/closed
+>    for the integer half**.
 > The "NEXT SESSION" block below predates this arc — treat the ledger + `desk/convective_weight_spectrum.md`
 > + `desk/edge_mellin_symbol.md` + `desk/edge_layer_estimate.md` as the live state.
 

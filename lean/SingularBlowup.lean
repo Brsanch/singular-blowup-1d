@@ -24,3 +24,4 @@ energy coercivity, L1–L4) is Track 2 and is deliberately NOT stated as a `sorr
 -/
 import SingularBlowup.Profile
 import SingularBlowup.Energy
+import SingularBlowup.PointSpectrum

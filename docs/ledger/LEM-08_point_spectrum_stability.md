@@ -17,8 +17,8 @@ verification:
     - "corrected TWO bookkeeping errors in the heuristic (far/edge pole assignment reversed; sin(πs) anti-periodic INADMISSIBLE so per-zero growth is 2π not π) — conclusion survives, sharper (margin holds at d=1)"
     - "firewall CLEAN: the const∉L²_W link is a property of the weight (Mellin-L² ⟺ no s=0 pole), computed from Ĝ_p, not injected from the benign spectrum (validate/edge_synthesis_firewall_audit.py)"
   independent_rederivation: true
-  machine_verification: "validate/edge_pointspectrum_rigid.py (int|Ĝ_p·P|²=22.6 for d=0, divergent ∀d≥1) + edge_pole_collision.py + edge_route3_periodic_correct.py + edge_tau_independent_verify.py"
-lean_ref: none
+  machine_verification: "validate/edge_pointspectrum_rigid.py (int|Ĝ_p·P|²=22.6 for d=0, divergent ∀d≥1) + edge_pole_collision.py + edge_route3_periodic_correct.py + edge_tau_independent_verify.py + validate/lem08_integer_obstruction.py (I1–I5: budget=0.75, measured Stirling decay 4.480288 ≥ 0.92·3π/2, integer_obstruction_holds)"
+lean_ref: lean/SingularBlowup/PointSpectrum.lean (integer skeleton: only_constant_mode_l2_admissible, integer_obstruction; continuous Gamma/Stirling still paper+gate)
 tags: [track2, point-spectrum, fox-h]
 ---
 
