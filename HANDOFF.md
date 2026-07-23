@@ -4,7 +4,17 @@ Read this + `README.md` + `docs/findings_*.md` first. The next step is named at
 the bottom ("THE NEXT CHIP"). Repo: github.com/Brsanch/singular-blowup-1d (private).
 Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasure loop.
 
-> ## ⚑ LATEST MILESTONE (2026-07-15) — read the ledger (`docs/ledger/`) first; it is authoritative
+> ## ⚑ LATEST MILESTONE (2026-07-22) — **paper/ is source of truth; READY TO arXiv**
+> **External deliverable:** first stability spectra of the singular Hou–Luo profile
+> (companion to arXiv:2604.01868) packaged as
+> `paper/stability_spectra_singular_houluo.pdf` (LaTeX source `.tex`, 7 pp).
+> Four figures from real numerics (`paper/scripts/fig_*.py`); scoop re-check
+> `docs/scoop_recheck_2026_07_22_stability_spectra.md` → still un-scooped.
+> Status: **ready-to-arXiv** (not yet uploaded). Rigor of Conj.~2.4 remains open
+> (energy dead at edge; spectral/Fredholm or Chen finite-codim path).
+>
+> ---
+> ## Prior milestone notes (2026-07-15) — ledger still authoritative for proof arc
 > The rigorous-proof arc has advanced far past the original "L1–L4 energy estimate" plan:
 > 1. **Lean Track 1 DONE** — 5 backbone lemmas formalized, sorry-free, zero-axiom (`lean/`, LEM-01..05).
 > 2. **Energy route PROVEN DEAD at the edge** — no bounded-at-edge weighted-energy/Schur/flux method

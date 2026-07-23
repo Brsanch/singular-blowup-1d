@@ -1,6 +1,12 @@
 # Stability spectra of the singular self-similar profile of the 1D Hou–Luo model
 
-**Draft, 2026-06-06.** Companion to the numerical-existence papers of Chen–De Huang–Li
+> **SUPERSEDED (2026-07-22).** Publish-ready package is
+> `paper/stability_spectra_singular_houluo.tex` → **`.pdf`** (ready-to-arXiv).
+> Figures: `paper/scripts/fig_*.py`. Scoop log:
+> `docs/scoop_recheck_2026_07_22_stability_spectra.md`.
+> Keep this file as historical draft only.
+
+**Draft, 2026-06-06 (historical).** Companion to the numerical-existence papers of Chen–De Huang–Li
 (arXiv:2604.01868) and Huang–Tong–Wang (arXiv:2603.25104), which construct the singular
 (unbounded) self-similar blowup profiles but provide **no stability analysis**. This draft
 reports the first **stability spectra** for the singular Hou–Luo self-similar profile —

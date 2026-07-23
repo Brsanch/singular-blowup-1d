@@ -1,0 +1,430 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,bm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage[numbers]{natbib}
+
+\newtheorem{numthm}{Numerical Theorem}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{remark}{Remark}
+
+\title{Stability spectra of the singular self-similar profile\\
+of the 1D Hou--Luo model}
+\author{
+  Bryan Sanchez\\
+  \texttt{singular-blowup-1d} (companion numerics)\\
+  \small Draft for arXiv submission --- 2026-07-22
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We report the first \textbf{stability spectra}---linear and nonlinear, numerical---for the
+\textbf{singular unbounded} self-similar blowup profile of the 1D Hou--Luo model
+\[
+\omega_t + u\,\omega_x = \theta_x,\qquad
+\theta_t + u\,\theta_x = 0,\qquad
+u_x = H[\omega],
+\]
+constructed numerically by Chen--De~Huang--Li (arXiv:2604.01868, Thm.~2.3):
+$\bar\Omega(X)=1_{X>1}(X-1)^{-1/2}$, $\bar\Theta=(\pi/2)\,1_{X>1}$, with exponents
+$(c_l,c_\omega)=(2,-1)$.  Those existence papers provide \textbf{no} stability analysis.
+
+In the edge-resolving coordinate $z=\ln(Y-1)$ and the convective weighted space
+$L^2(e^{-2\gamma z}\,dz)$ (modulo the symmetry subspace spanned by time-translation
+$\xi$ and scaling modes $\mu,\nu$), we find:
+\begin{itemize}\setlength\itemsep{0pt}
+\item no eigenvalue of the frozen linearization with $\operatorname{Re}\lambda>0$
+      (two independent discretizations; inflow/Robin edge condition essential);
+\item a convective spectral gap of size $2\gamma$ measured by semigroup decay;
+\item no transient growth for physical perturbations in the edge-conditioned energy norm;
+\item finite-amplitude frozen-base decay to amplitude $A=4$, and fully self-consistent
+      co-evolving relaxation of a perturbed profile back to
+      $(\bar\Omega,c_l=2,c_\omega=-1)$.
+\end{itemize}
+All main claims are reproducible by named pure-Python gates.  This is
+\textbf{numerical evidence}, not a proof.  Bounded-at-edge energy methods fail at the
+edge; the open rigor path is a finite-codimension anisotropic estimate
+(cf.\ Chen, arXiv:2605.15130) or a spectral/Fredholm bound on the convective-weight
+realization.
+\end{abstract}
+
+\tableofcontents
+\vspace{0.5em}
+
+%--------------------------------------------------------------------------
+\section{Main claim}
+%--------------------------------------------------------------------------
+
+\begin{numthm}[Singular Hou--Luo profile: convective stability spectra]
+\label{numthm:main}
+Let $\bar\Omega,\bar\Theta$ be the singular steady state of arXiv:2604.01868, Thm.~2.3,
+in dynamic-rescaling coordinates~\eqref{eq:dyn}.  Write perturbations in the
+desingularized variables $G=(Y-1)^{1/2}g$, $h=\delta\Theta$, on $z=\ln(Y-1)$, with the
+inflow condition $G(z_{\min})=h(z_{\min})=0$.  Then, on every tested resolution:
+\begin{enumerate}
+\item \textbf{Linear.} The frozen operator $M_{GG}$ (and the block-triangular coupled
+  $(G,h)$ operator) has $\#\{\operatorname{Re}\lambda>0\}=0$.  The rightmost discrete
+  eigenvalue is the transport continuum near $\operatorname{Re}\approx -10^{-3}$.
+\item \textbf{Gap.} In $L^2(e^{-2\gamma z}\,dz)$, the semigroup decay rate of a bulk
+  shape perturbation is $\approx 2\gamma$ for $\gamma\in\{0.25,0.5,0.75\}$
+  (measured $+0.552/+1.057/+1.675$ vs.\ predicted $0.50/1.00/1.50$).
+\item \textbf{Symmetries.} The amplitude ($\nu$) and dilation/edge ($\mu$) modes are
+  excluded by the weight; the pure-$\xi$ mode sits at $\lambda=c_l-1=1$.
+\item \textbf{Nonlinear.} Finite-amplitude frozen-base perturbations decay for
+  $A\le 4$ with peak $\|\cdot\|_w/\|\cdot\|_0=1.000$.  Fully self-consistent co-evolving
+  marches relax to $(c_l,c_\omega)=(2.000006,-1.000003)$ with no drift.
+\end{enumerate}
+\textbf{Function space:} asymptotic stability is claimed only in the convective
+weighted sense $L^2(e^{-2\gamma z}\,dz)$ modulo $\{\xi,\mu,\nu\}$---not absolute
+$L^2(dY)$ decay (which is marginal by convection).
+\end{numthm}
+
+\begin{conjecture}[Conjecture 2.4 of arXiv:2604.01868, convective form]
+The singular profile is asymptotically stable in $L^2(e^{-2\gamma z}\,dz)$ modulo
+symmetries, for some $\gamma\in(0,1/2)$.  Numerical Theorem~\ref{numthm:main} is
+evidence for this conjecture; a rigorous proof is open.
+\end{conjecture}
+
+%--------------------------------------------------------------------------
+\section{Setup}
+%--------------------------------------------------------------------------
+
+\paragraph{Model and dynamic rescaling.}
+Following eq.~(2.4) of~\cite{chen2026houluo}:
+\begin{equation}\label{eq:dyn}
+\begin{aligned}
+\Omega_\tau + (U+c_l X)\Omega_X &= c_\omega\Omega + \Theta_X,\\
+\Theta_\tau + (U+c_l X)\Theta_X &= (c_l+2c_\omega)\Theta,\qquad
+U_X=H(\Omega),\ U(0)=0.
+\end{aligned}
+\end{equation}
+The singular steady state (Thm.~2.3, re-certified here by
+\texttt{validate/verify\_singular\_steady.py}):
+\begin{align*}
+\bar\Omega(X)&=1_{X>1}(X-1)^{-1/2},&
+\bar\Theta&=\tfrac\pi2\,1_{X>1},&
+c_l&=2,& c_\omega&=-1,\\
+\bar U(X)&=2\sqrt{1-X}-2\ (X<1),& &-2\ (X>1),&
+U(1)&=-2.
+\end{align*}
+Steady residual with analytic $\bar U$: $\max|R_\Omega|=2.2\cdot10^{-16}$ on the
+tested bulk interval.
+
+\paragraph{Linearized operator (edge-resolved).}
+With $G=(Y-1)^{1/2}g$ and $z=\ln(Y-1)$,
+\begin{equation}\label{eq:ops}
+M_{GG}=-2\partial_z+\tfrac12 Q_{\mathrm{op}},\quad
+M_{hh}=-2\partial_z,\quad
+M_{Gh}=e^{-z/2}\partial_z,
+\end{equation}
+where $Q_{\mathrm{op}}G=\delta U/(Y-1)$ and $\delta U=\int_1^Y H(g)$.
+The edge is an inflow boundary: the homogeneous branch
+$G\sim e^{-\lambda z/2}$ is inadmissible in the weighted space for
+$\operatorname{Re}\lambda>-2\sigma$; we impose $G(z_{\min})=0$ (Robin/inflow).
+Without this BC the discretization re-admits a spurious mode with
+$\operatorname{Re}\lambda\approx +1.7$~\cite{findings_edge}.
+
+%--------------------------------------------------------------------------
+\section{Linear spectrum and gap}
+%--------------------------------------------------------------------------
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.72\textwidth]{figures/fig_spectrum.pdf}
+\caption{Eigenvalues of $M_{GG}$ and $M_{hh}$ on the edge-resolved grid
+($N=1000$, $z\in[-14,8]$, inflow BC).  KEY:
+$\max\operatorname{Re}(M_{GG})=-0.00143$, $\#(\operatorname{Re}>0)=0$.
+Gate: \texttt{validate/stability\_edge\_z\_spectrum.py};
+figure: \texttt{python3 paper/scripts/fig\_spectrum.py}.}
+\label{fig:spectrum}
+\end{figure}
+
+\paragraph{No unstable point mode.}
+Figure~\ref{fig:spectrum} shows the spectrum.  Across refinements
+$(N,z_{\min},z_{\max})\in\{1200..2200\}\times\{-14,-16\}\times\{7,10\}$ one has
+$\max\operatorname{Re}(M_{GG})\in[-0.0014,-0.0006]$ and
+$\#(\operatorname{Re}>0)=0$ (gate
+\texttt{stability\_edge\_z\_spectrum.py}, this session).  An independent
+equispaced build agrees~\cite{findings_edge_op}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.72\textwidth]{figures/fig_gap.pdf}
+\caption{Semigroup decay of a bulk bump in convective weights $L^2(e^{-2\gamma z}dz)$.
+Inset: measured decay rate vs.\ predicted gap $2\gamma$.
+KEY rates at $\gamma=0/0.25/0.5/0.75$: $+0.054/+0.552/+1.057/+1.675$
+(gate \texttt{spectral\_gap.py}; figure \texttt{fig\_gap.py}).}
+\label{fig:gap}
+\end{figure}
+
+\paragraph{Convective spectral gap.}
+Transport $-2\partial_z$ is convective: essential spectrum at $\operatorname{Re}=0$
+in the unweighted norm, and at $\operatorname{Re}=-2\gamma$ in
+$L^2(e^{-2\gamma z}\,dz)$.  Figure~\ref{fig:gap} confirms the semigroup rate
+tracks $2\gamma$ (within $\sim12\%$ at $\gamma=0.75$; tighter at $\gamma\le0.5$).
+Unweighted norms stay nearly flat (marginal).  Full coupled $(G,h)$ inherits the
+gap by block-triangular structure~\cite{findings_theta}.
+
+\paragraph{No transient growth (physical).}
+Smooth physical perturbations have amplification factor $G=1$ at all tested
+resolutions.  In the edge-conditioned energy norm the numerical abscissa is
+negative and resolution-independent ($\mu_{\mathrm{an}}=-0.10$ at $z_{\mathrm{cut}}=-8$),
+implying $\|e^{M\tau}\|_W\le 1$~\cite{findings_tg}.  Grid-scale edge spikes that
+produce worst-case creep are excluded by the inflow BC.
+
+%--------------------------------------------------------------------------
+\section{Nonlinear stability}
+%--------------------------------------------------------------------------
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_coevolve.pdf}
+\caption{Fully self-consistent co-evolving march (Theta-balance normalization
+$c_l=-U(1)$, $c_\omega=-c_l/2$).  Exponents relax to $(2,-1)$; weighted residual decays.
+KEY (figure resolution): $c_l(T)\approx 1.9997$, $c_\omega(T)\approx -0.9999$.
+Full gate (multiple grids): $c_l\to 2.000006$, $c_\omega\to -1.000003$.
+Commands: \texttt{python3 paper/scripts/fig\_coevolve.py},
+\texttt{python3 validate/coevolve\_projected.py}.}
+\label{fig:coevolve}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_nonlinear.pdf}
+\caption{\textbf{Left:} frozen-base nonlinear decay rate vs.\ amplitude $A$ at
+$\gamma=0.5$ (real quadratic $N$ from \texttt{nonlinear\_shape\_march.py}).
+Peak $\|\cdot\|_w/\|\cdot\|_0=1.000$ for $A\le 4$ (full gate).
+\textbf{Right:} resolvent gains for pure-$\Omega$ edge forcing (annihilates toward
+the edge) vs.\ $\Theta\to G$ drive via $M_{Gh}$ (saturates $O(1)$).
+Commands: \texttt{python3 paper/scripts/fig\_nonlinear.py},
+\texttt{python3 validate/nonlinear\_shape\_march.py}.}
+\label{fig:nonlinear}
+\end{figure}
+
+\paragraph{Finite amplitude, frozen base.}
+Inserting $\Omega=\bar\Omega+\delta\Omega$, $\Theta=\bar\Theta+h$ into~\eqref{eq:dyn}
+splits as $\partial_\tau = L + N$, with $L$ the verified linearization~\eqref{eq:ops}
+and $N$ the quadratic self-advection $-(\delta U)\,\partial_Y(\delta\Omega,\delta\Theta)$.
+Gate \texttt{nonlinear\_shape\_march.py} (this session): for $A\in[10^{-3},4]$,
+weighted rates at $\gamma=0.5$ stay in $[1.015,1.057]$ (linear gap $1.0$), peak
+ratio $=1.000$, edge hi-$k=0$.  Coupled $(G,h)$ excitation: rate $+0.935$, peak $1.11$.
+
+\paragraph{Co-evolving attractor.}
+With both exponents fed back by edge-stagnation $c_l=-U(1)$ and Theta-balance
+$c_\omega=-c_l/2$, a perturbed profile is a nonlinear attractor of the
+dynamic-rescaling flow (Figure~\ref{fig:coevolve}): final exponents
+$(2.000006,-1.000003)$ on three grids, no drift, edge pinned
+(\texttt{coevolve\_projected.py}).
+
+\paragraph{Coupling channel.}
+Despite $M_{Gh}\sim e^{-z/2}$ blowing at the edge, the $\Theta\to G$ resolvent gain
+saturates to $O(1)$ as the force is moved edge-ward, while pure-$\Omega$ edge forcing
+is annihilated (Figure~\ref{fig:nonlinear}, right; slope $\approx +0.39$ for $\Omega$,
+mild growth then saturation for $\Theta\to G$).  Full coupled spectrum still has
+$\max\operatorname{Re}\approx 0$~\cite{findings_coupled}.
+
+%--------------------------------------------------------------------------
+\section{Related work}
+%--------------------------------------------------------------------------
+
+\begin{table}[h]
+\centering
+\caption{Landscape relative to this paper.}
+\label{tab:related}
+\begin{tabular}{@{}llp{6.2cm}@{}}
+\toprule
+Reference & Contribution & Relation to this work \\
+\midrule
+arXiv:2604.01868 \cite{chen2026houluo} &
+  Numerical singular Hou--Luo + 2D Boussinesq profiles &
+  \textbf{Base object.} No stability spectra. \\
+arXiv:2603.25104 \cite{huang2026gclm} &
+  gCLM singular profiles; rigor for $a=0$ outer+TW &
+  Sister family; no Hou--Luo spectra. \\
+arXiv:2605.15130 \cite{chen2026euler} &
+  Rigorous existence + finite-codim stability for 3D Euler $C^{1,1/3-}$ &
+  \textbf{Method template} (anisotropic weights, finite codim); wrong model/profile. \\
+Smooth Hou--Luo stability \cite{chen2021hl,huang2023exact} &
+  Smooth asymptotically self-similar profiles &
+  Different profile class (not $(X-1)^{-1/2}$). \\
+This paper &
+  First stability spectra for the \textbf{singular} profile &
+  --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A fresh literature sweep (2026-07-22; log
+\texttt{docs/scoop\_recheck\_2026\_07\_22\_stability\_spectra.md}) finds
+\textbf{no published stability spectra} for the singular unbounded profile of
+arXiv:2604.01868.  Smooth-profile Hou--Luo stability is out of scope for our priority claim.
+
+%--------------------------------------------------------------------------
+\section{Limitations and open rigor path}
+%--------------------------------------------------------------------------
+
+\paragraph{Not a proof.}
+All claims are numerical (finite edge-resolved discretization; line-Hilbert
+quadrature $\sim 1$--$2\%$).  The rightmost eigenvalue $\operatorname{Re}\approx -10^{-3}$
+is the discretized transport continuum, not a certified spectral bound.
+
+\paragraph{Energy / CAP dead ends (named).}
+\begin{itemize}
+\item \textbf{Bounded-at-edge weighted energy fails at the edge.}  Bulk abscissa can
+  be made negative, but the edge layer inherits the profile amplitude
+  $(Y-1)^{-1/2}$; no pure exponential weight closes the edge without re-triggering
+  field-of-values divergence (\texttt{edge\_layer\_obstruction.py},
+  \texttt{cap\_scaffold.py})~\cite{findings_edge_layer,findings_cap}.
+\item \textbf{Symmetric-part / numerical-range methods} blow up under nonlocal
+  coupling $\times$ convective weight~\cite{findings_cap}.
+\end{itemize}
+
+\paragraph{Open rigor path (one paragraph).}
+Two complementary routes remain:
+(i)~\textbf{Finite-codimension anisotropic weighted energy} \`a~la
+Chen~\cite{chen2026euler}---project out $\{\xi,\mu,\nu\}$, design a direction-dependent
+weight that dominates the nonlocal forcing, and close by IBP along trajectories twice;
+(ii)~\textbf{Spectral/Fredholm} realization of $M_{GG}$ on $L^2_\sigma$: the resolvent
+is explicit as a defect-closed Mellin ladder (LEM-09 structure pack); the remaining
+analytic steps are a uniform resolvent bound (Plemelj/Schur write-up), an edge-bootstrap
+lemma (E$'$), and Gearhart--Pr\"uss for the semigroup.  Neither route is closed here.
+
+\paragraph{Scope.}
+1D Hou--Luo singular profile only.  2D Boussinesq analogue and gCLM $a$-family spectra
+are left for future work.
+
+%--------------------------------------------------------------------------
+\section{Adversarial checklist (referee attacks)}
+%--------------------------------------------------------------------------
+
+\begin{enumerate}
+\item \emph{``The unstable mode is hidden at the edge.''}
+  Without inflow BC one sees $\operatorname{Re}\approx +1.7$, but it is
+  $z_{\min}$-dependent (inadmissible homogeneous branch).  With BC and two
+  discretizations: $\#(\operatorname{Re}>0)=0$.
+\item \emph{``Only linear / frozen base.''}
+  Finite-$A$ march to $A=4$ and fully co-evolving self-consistent relaxation both pass.
+\item \emph{``Non-normal transient growth seeds nonlinear blowup.''}
+  Physical $G=1$; edge-conditioned abscissa $<0$ and resolution-independent.
+\item \emph{``Coupling $M_{Gh}$ reintroduces edge instability.''}
+  Coupled spectrum gapped; $\Theta\to G$ resolvent gain saturates $O(1)$.
+\item \emph{``Scoop: someone already has spectra.''}
+  2026-07-22 search log: none for this singular profile class
+  (\S\ref{tab:related}, \texttt{docs/scoop\_recheck\_2026\_07\_22\_stability\_spectra.md}).
+\end{enumerate}
+
+%--------------------------------------------------------------------------
+\section{Reproducibility}
+%--------------------------------------------------------------------------
+
+\textbf{Environment:} Python~3, NumPy, SciPy, Matplotlib; pure 1D, no GPU.
+Repository: \texttt{singular-blowup-1d}.
+
+\paragraph{One command per figure.}
+\begin{verbatim}
+python3 paper/scripts/fig_spectrum.py     # Fig. 1  -> paper/figures/fig_spectrum.pdf
+python3 paper/scripts/fig_gap.py          # Fig. 2  -> paper/figures/fig_gap.pdf
+python3 paper/scripts/fig_coevolve.py     # Fig. 3  -> paper/figures/fig_coevolve.pdf
+python3 paper/scripts/fig_nonlinear.py    # Fig. 4  -> paper/figures/fig_nonlinear.pdf
+\end{verbatim}
+
+\paragraph{Gates backing abstract claims (re-run this session).}
+\begin{verbatim}
+python3 validate/verify_singular_steady.py       # profile residual 2.2e-16
+python3 validate/stability_edge_z_spectrum.py    # max Re < 0, npos=0
+python3 validate/spectral_gap.py                 # rates ~ 2*gamma
+python3 validate/nonlinear_shape_march.py        # A<=4, peak=1.000
+python3 validate/coevolve_projected.py           # (c_l,c_w)->(2,-1)
+\end{verbatim}
+
+\paragraph{KEY numbers (session freeze; tol $5\%$ relative unless noted).}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Quantity & Value \\
+\midrule
+steady residual $\max|R_\Omega|$ & $2.22\cdot 10^{-16}$ \\
+$\max\operatorname{Re}(M_{GG})$ (fig $N=1000$) & $-0.00143$ \\
+$\#(\operatorname{Re}>0)$ & $0$ \\
+gap rates $\gamma=0.25/0.5/0.75$ & $+0.552/+1.057/+1.675$ \\
+nonlinear peak ($A\le 4$, full gate) & $1.000$ \\
+coevolve finals $(c_l,c_\omega)$ & $(2.000006,-1.000003)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Build this PDF.}
+\begin{verbatim}
+cd paper && pdflatex stability_spectra_singular_houluo.tex
+\end{verbatim}
+
+%--------------------------------------------------------------------------
+\section*{Acknowledgments / status}
+%--------------------------------------------------------------------------
+Ready-to-arXiv package (2026-07-22).  Not a proof of Conjecture~2.4.
+Source of truth: \texttt{paper/} in the companion repository; see \texttt{HANDOFF.md}.
+
+\begin{thebibliography}{99}
+
+\bibitem{chen2026houluo}
+B.~Chen, D.~Huang, X.~Li,
+\textit{Novel self-similar finite-time blowups with singular profiles of the 1D
+Hou--Luo model and the 2D Boussinesq equations: a numerical investigation},
+arXiv:2604.01868, 2026.
+
+\bibitem{huang2026gclm}
+D.~Huang, J.~Tong, X.~Wang,
+\textit{Self-similar finite-time blowups of the generalized Constantin--Lax--Majda
+model}, arXiv:2603.25104, 2026.
+
+\bibitem{chen2026euler}
+J.~Chen,
+\textit{Asymptotically self-similar blowup for 3D incompressible Euler with
+$C^{1,1/3-}$ velocity}, arXiv:2605.15130, 2026.
+
+\bibitem{chen2021hl}
+J.~Chen, T.Y.~Hou,
+\textit{Asymptotically self-similar blowup of the Hou--Luo model for the 3D Euler
+equations}, arXiv:2106.05422, 2021.
+
+\bibitem{huang2023exact}
+D.~Huang, J.~Tong, X.~Wang,
+\textit{Exact self-similar finite-time blowup of the Hou--Luo model}, arXiv:2308.01528, 2023.
+
+\bibitem{findings_edge}
+Companion notes: edge condition derivation and free-edge spurious mode
+(\texttt{docs/findings\_edge\_condition\_derivation.md}).
+
+\bibitem{findings_edge_op}
+Companion notes: edge stability operator
+(\texttt{docs/findings\_edge\_stability\_operator\_built.md}).
+
+\bibitem{findings_theta}
+Companion notes: $\Theta$ and $\mu,\nu$ in the weighted space
+(\texttt{docs/findings\_theta\_munu\_gap.md}).
+
+\bibitem{findings_tg}
+Companion notes: transient growth edge-conditioned
+(\texttt{docs/findings\_transient\_growth\_edge\_conditioned.md}).
+
+\bibitem{findings_edge_layer}
+Companion notes: edge-layer energy obstruction
+(\texttt{docs/desk/edge\_layer\_estimate.md}).
+
+\bibitem{findings_cap}
+Companion notes: CAP scaffold / nonlocal$\times$weight
+(\texttt{docs/findings\_cap\_scaffold.md}).
+
+\bibitem{findings_coupled}
+Companion notes: coupled resolvent scan
+(\texttt{docs/findings\_session\_2026\_07\_22\_coupled\_resolvent.md}).
+
+\end{thebibliography}
+
+\end{document}
