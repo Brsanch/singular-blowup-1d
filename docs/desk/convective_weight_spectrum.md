@@ -308,9 +308,12 @@ margin — the same ¾-ratio as LEM-08's integer obstruction), machine-checked:
 (others) — bounded and *decaying*, so the polynomial Stirling prefactors have strict
 exponential slack. The diagonal band `|τ−τ'| ≤ 1` has weight-ratio `≤ e^{3π+}` and reduces to
 local Riesz-projection boundedness + the `½Φ` Plemelj term; the rank-one defect functional
-`𝓕 ↦ C₀(½)` has an explicitly decaying kernel (`~e^{−3π|τ'|/2}`). λ-dependence: `1/dist`
-from `(λ+2s')^{−1}`, with `δ`-dependent prefactors as `Re λ ↓ −2σ+δ` (the `Γ(2s+λ)` pole
-approaching the line).
+`𝓕 ↦ C₀(½)` must be bounded via the **ladder sum / split measure**, not via bare line
+density of `1/(|X|·|λ+2s|)` — that bare density **grows** as `e^{γ|τ|}` with
+`γ≈3π` (gate `edge_schur_envelopes.py`, 2026-07-22; desk prose that claimed
+`~e^{−3π|τ'|/2}` decay is **false** for `1/|X|` and must not appear in W1).
+λ-dependence: `1/dist` from `(λ+2s')^{−1}`, with `δ`-dependent prefactors as
+`Re λ ↓ −2σ+δ` (the `Γ(2s+λ)` pole approaching the line).
 
 **(c) OBS-08 — the high-frequency corner probed and benign.** For
 `F = e^{−cosh(z−z₀)}e^{iΩz}` (spectrum at `τ ≈ Ω` — the region OBS-07 never probed):
