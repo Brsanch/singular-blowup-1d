@@ -12,8 +12,9 @@ P1  Representation: in w = e^{4 pi i s} the coboundary C(s) - C(s+1/2) = Phi(s) 
 
     == the down-ladder defect-closed solution, at strip-interior points, to ~1e-20.
     Jump orientation: D_- - D_+ = Phi in the tau'-parametrization (sign -1 below).
-    This formula consumes ONLY line values of Fhat => it defines the solution for
-    arbitrary L2_sigma data (the minus-Hardy wall has an explicit classical formula).
+    Consumes ONLY line values of Fhat: candidate formula on line data / dense test
+    class. L2_sigma boundedness of D(1) (defect functional) is W1 Claim D1 — NOT
+    this gate. Do not read P1 PASS as arbitrary-L2 solution theory.
 
 P2  Four-quadrant Schur envelope: the dressed split kernel
         |X(tau)|/|X(tau')| * ker(tau,tau') / |lam + 2 s'|

@@ -324,17 +324,18 @@ weakened coupling `c(σ+iΩ) ~ 1/(2|Ω|)` and responds as pure transport; the lo
 suppression crossover matches §3's band structure. Nowhere in the probed `(z₀, Ω, λ)`-region
 does the dressing exceed ~1.
 
-**Status after this section (honest).** The uniform-resolvent-bound statement of §8 now has a
-**complete proof skeleton**: representation (machine-certified), off-diagonal Schur (exponent
-arithmetic + machine-checked envelopes with slack), diagonal band (classical Riesz), defect
-functional (explicit kernel), uniqueness (Prop E mod E′), extension to all of `L²_σ`
-(closedness of the maximal operator + bound on the dense class). It is NOT yet a proof:
-**(W1)** the rigorous write-up (Plemelj boundary-value theory application, Stirling prefactor
-bookkeeping, the operator-identity for `D`-defined solutions distributionally) — bounded,
-classical-flavored, numerically de-risked at every step; **(W2)** Lemma E′ (edge bootstrap,
-for uniqueness); **(W3)** semigroup generation + Gearhart–Prüss to convert `‖R(λ)‖ ≤ C/dist`
-into `‖e^{tM}‖_σ ≤ Ce^{(−2σ+δ)t}`. Then the `M_Gh` coupling and the nonlinear/co-moving leg.
-The *linear strict-gap wall has no missing idea left* — it is now technical execution.
+**Status after this section (honest; refreshed 2026-07-25).** Representation
+(machine-checked on test class) + off-diagonal Schur (envelopes with slack) +
+diagonal band (classical Riesz outline) form a **skeleton**. The **defect
+functional is OPEN**: the prior “explicit decaying kernel” story was falsified
+(bare `1/|X|` grows `γ≈3π`, gate `edge_schur_envelopes.py` 2026-07-22); W1 must
+prove `D(1)=C₀(½)` bounded on `L²_σ` (ladder sum / cancelled split integral —
+see `docs/desk/w1_plemelj_stirling_writeup.md`). Uniqueness remains Prop E mod E′;
+extension to all of `L²_σ` needs the defect bound first. It is NOT yet a proof:
+**(W1)** Plemelj/Stirling write-up **including the open defect estimate**;
+**(W2)** Lemma E′; **(W3)** semigroup + Gearhart–Prüss. Retract “no missing idea
+left” until D1 has estimates — representation/Schur are technical execution;
+defect may still be leap-shaped until outlined.
 
 ## 11. Circularity firewall (covers §§1–10)
 

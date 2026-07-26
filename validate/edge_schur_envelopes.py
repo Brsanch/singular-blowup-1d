@@ -24,6 +24,10 @@ PASS (fail-able, not tautological):
 
 Novelty vs desk: S_off / M_diag / C_term tables with δ-dependence; α_eff − π slack;
 and the defect-kernel growth correction (desk prose claimed decay).
+
+NUMERIC-FORECAST only. KEY defect_growth_* pins the bare-density *obstruction*
+(growth), not an L2 defect bound. C_term is a termwise-triangle proxy — not ‖R‖.
+No ladder-sum / D(1) PASS criterion exists in this gate (that is W1 Claim D1).
 """
 from __future__ import annotations
 
