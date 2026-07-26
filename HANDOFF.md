@@ -4,13 +4,12 @@ Read this + `README.md` + `docs/findings_*.md` first. The next step is named at
 the bottom ("THE NEXT CHIP"). Repo: github.com/Brsanch/singular-blowup-1d (private).
 Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasure loop.
 
-> ## ⚑ LATEST (2026-07-25) — **magnet #4 active: W1 write-up started**
-> Portfolio magnet #4 (CAP harness / linear-gap build). Direction:
-> `../noethersolve/docs/findings/research_direction_blowup_cap_2026_07_25.md`.
-> Desk §10 defect-kernel decaying prose **struck** (bare `1/|X|` grows `γ≈3π`).
-> W1 scaffold: `docs/desk/w1_plemelj_stirling_writeup.md`. **NEXT CHIP = finish
-> W1** (Muskhelishvili + Stirling \(\alpha\ge\pi\) + ladder-sum defect), then W2 E′,
-> then W3 Gearhart–Prüss. Paper still ready-to-arXiv (numerical spectra).
+> ## ⚑ LATEST (2026-07-25) — **magnet #4 CASHED (park on W1-D1)**
+> Audit: `../noethersolve/docs/findings/blowup_linear_gap_audit_2026_07_25.md`.
+> Cashed: Lem Def-bare⊥ + Lem D-id. **Wall W1-D1:** cancelled even-ladder `L²`
+> bound on `D(1)=C₀(½)` — leap-shaped; not discharged by Schur/OBS-07. E′ named;
+> GP blocked. No INTERNAL-CAP-CERTIFIED. Paper still ready-to-arXiv. **Do not
+> grind gates as substitute for a cancellation lemma.**
 >
 > ---
 > ## Prior milestone (2026-07-22) — **paper/ is source of truth; READY TO arXiv**
