@@ -1,8 +1,9 @@
 # W1 — Plemelj / Stirling write-up (linear strict gap)
 
-**Status:** PHASE 1 CASHED WITH PARK — Lem Def-bare⊥ + Lem D-id written;
-Claim D1 (Lem Def-ladder) **OPEN / named wall** (magnet #4 cashout 2026-07-25)  
-**Does not claim:** LEM-06 · D1 bound · W2/W3 · INTERNAL-CAP-CERTIFIED · continuum PDE
+**Status:** PATH EXHAUST 2026-08-07 — absolute Lem D-id **retracted**; Claim D1 as
+prior wall **mis-targeted**. See `findings_session_2026_08_07_w1_d1_path_exhaust.md`.
+Lem Def-bare⊥ still cashed; slit \(D(1)\) CS sketch cashed; true remainder = difference-kernel Schur ink.
+**Does not claim:** LEM-06 · Conjecture 2.4 · W2/W3 · INTERNAL-CAP-CERTIFIED · continuum PDE
 
 **Tier labels:** NUMERIC-FORECAST · PROVED-ON-PAPER (mod named hyp) · OPEN / PARKED.
 
@@ -21,7 +22,7 @@ Uniform resolvent on \(L^2_\sigma\):
 | Lem Def-bare⊥ | PROVED-ON-PAPER | **Cashed** (§3.1) |
 | Lem D-id | PROVED-ON-PAPER mod R1 dense-class identity | **Cashed** (§3.3) |
 | Lem Stir-X (line growth) | PROVED-ON-PAPER (Stirling) | **Cashed** (§3.1) |
-| Claim D1 / Lem Def-ladder | OPEN | **Parked — named wall W1-D1** (§3.5) |
+| Claim D1 / Lem Def-ladder | RETRACTED as wall | Absolute D-id false (§0 path exhaust) |
 | Lem Stir-Schur / R1 full / Diag / Schur⇒op | OPEN | Dependent on D1 or independent ink |
 
 ---
@@ -186,8 +187,10 @@ OBS-07/08 never discharge D1.
 | Lem Def-bare⊥ | PROVED-ON-PAPER | Cashed |
 | Lem D-id | PROVED-ON-PAPER mod R1 | Cashed |
 | Lem Stir-X (line) | PROVED-ON-PAPER | Cashed (inside Def-bare⊥) |
-| Lem Def-ladder (D1) | OPEN | **Parked wall W1-D1** |
-| Lem R1, R2, Stir-Schur, Diag, Schur⇒op | OPEN | Deferred |
+| Lem Def-ladder (D1) | RETRACTED as wall | Absolute D-id false; ladder non-load-bearing (2026-08-07) |
+| Lem D-slit-CS | CASHED mod Stirling | Combined kernel \(K\in L^2\); path-exhaust §2 |
+| Lem Stir-Schur / Diag / difference-kernel op | OPEN / LEAP-PARK | True resolvent remainder (route F) |
+| Lem R1, R2 | OPEN | Deferred |
 
 ---
 
@@ -208,6 +211,11 @@ the sole INTERNAL-CAP-CERTIFIED instance.
 - [x] Def-bare⊥ + D-id
 - [x] D1 parked as W1-D1 with exact wall statement
 - [x] CAP decision: analytic-only / no fake cert
+- [x] 2026-08-07 reopen attempt: outlines + dual probe
+      (`docs/desk/w1_d1_cancellation_outlines.md`,
+      `docs/findings_session_2026_08_07_w1_d1_reopen.md`,
+      `validate/edge_d1_dual_probe.py`). H² dual killed for bilateral L²_σ;
+      next chip candidates: slit kernel for D(1), bent Barnes scalar, or ship paper.
 - [ ] Future: reopen only with a cancellation lemma candidate (not more OBS-07)
 
 ```bash

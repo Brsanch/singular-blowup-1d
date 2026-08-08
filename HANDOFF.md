@@ -4,7 +4,26 @@ Read this + `README.md` + `docs/findings_*.md` first. The next step is named at
 the bottom ("THE NEXT CHIP"). Repo: github.com/Brsanch/singular-blowup-1d (private).
 Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasure loop.
 
-> ## ⚑ LATEST (2026-07-25) — **magnet #4 CASHED (park on W1-D1)**
+> ## ⚑ LATEST (2026-08-07) — **W1-D1 PATH EXHAUST: structural wall collapse**
+> Final: `docs/findings_session_2026_08_07_w1_d1_path_exhaust.md`.
+> Probe: `validate/edge_d1_route_exhaust.py` (S1–S3).
+> **Extremely significant:** absolute Lem D-id is FALSE; only differences match;
+> resolvent \(\mathcal{G}\) uses \(D(w)-D(1)\) / \(C_0-C_0(\tfrac12)\) only —
+> prior W1-D1 wall (bound absolute \(D(1)=C_0(\tfrac12)\)) was mis-targeted.
+> **Terminal routes:** A/B/C KILLED; D CASHED (slit \(K\in L^2\) CS sketch);
+> absolute ladder E + difference-Schur Stirling F LEAP-PARKED (F is the true
+> LEM-06 remainder). No LEM-06 / blowup claim.
+>
+> ---
+> ## Prior (2026-08-07) — **W1-D1 reopen: outlines + dual probe**
+> Findings: `docs/findings_session_2026_08_07_w1_d1_reopen.md`. Outlines:
+> `docs/desk/w1_d1_cancellation_outlines.md`. Probe: `validate/edge_d1_dual_probe.py`.
+> **Killed:** naive H²-Cauchy dual for bilateral `L²_σ` (Cauchy recovery fails on
+> bumps; ψ∈L² is necessary but not a discharge). **Noted:** edge data can make
+> |D1|/‖F‖ large while OBS-07 resolvent gain annihilates (two-stage cancel).
+>
+> ---
+> ## Prior (2026-07-25) — **magnet #4 CASHED (park on W1-D1)**
 > Audit: `../noethersolve/docs/findings/blowup_linear_gap_audit_2026_07_25.md`.
 > Cashed: Lem Def-bare⊥ + Lem D-id. **Wall W1-D1:** cancelled even-ladder `L²`
 > bound on `D(1)=C₀(½)` — leap-shaped; not discharged by Schur/OBS-07. E′ named;
