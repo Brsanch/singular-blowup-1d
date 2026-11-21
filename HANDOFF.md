@@ -11,8 +11,8 @@ Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasur
 > **What the manuscript claims now** (`paper/stability_spectra_singular_houluo.tex`):
 > (1) numerical spectra; (2) Theorem 1: resolvent bound on vertical lines + point-spectrum
 > uniqueness for the linearization on the constrained domain \(\widehat G(\tfrac12)=0\) (W1, W2);
-> (3) Theorem 2: small-data nonlinear stability under Gauge (a), \(h\equiv0\), edge-analytic data,
-> by a direct three-block energy estimate (rate 1/8).
+> (3) Theorem 2: small-data support-interior (\(X>1\)) nonlinear stability under Gauge (a), \(h\equiv0\), edge-analytic data,
+> by a direct three-block energy estimate (rate 1/8); across \(X=1\) the global distributional \(\Omega\)-equation has point-mass defect \(\frac{\pi}{2}(B(\tau)-1)\delta(X-1)\) whenever \(B(\tau)\ne 1\) (Remark 2).
 > **Withdrawn 2026-11-21:** W3 (semigroup generation + Gearhart–Prüss), the half-plane form of
 > the W1 bound, and "proves Conjecture 2.4" (the conjecture concerns smooth degenerate data).
 > Details: `docs/desk/w3_gearhart_pruss.md` (Correction).

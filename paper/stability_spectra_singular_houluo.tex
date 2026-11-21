@@ -59,17 +59,21 @@ Because the nonlocal perturbation maps $L^2_\sigma\to L^2_{\sigma-1/2}$, bare-$L
 $C_0$-semigroup generation is not claimed from W1--W2 alone.
 
 Third, completely bypassing bare-$L^2_\sigma$ semigroup theory, we prove a \textbf{small-data
-nonlinear co-moving stability theorem} under the exact edge-stagnation gauge (\emph{Gauge~(a)}) in
-the hybrid edge-analytic space $\mathcal{X}=\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$
+nonlinear co-moving stability theorem} for the support-interior ($X>1$) reduction under the
+edge-stagnation gauge (\emph{Gauge~(a)}) in the hybrid edge-analytic space
+$\mathcal{X}=\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$
 (Theorem~\ref{thm:nonlinear_bootstrap}, Appendices~\ref{app:nonlin_est}--\ref{app:lwp}).
 Using the unconditional Plancherel bound $\|\tfrac12\widetilde{Q}_{\mathrm{op}}G\|_{L^2_{1/4}(\mathbb{R})}\le\frac{2}{5}\|G\|_{L^2_{3/4}(\mathbb{R})}$
 and discrete Hilbert coercivity on $\mathcal{H}^1(D(1,1))$, a pure direct-energy three-block
 Lyapunov functional satisfies $\dot{\mathcal{E}}\le -\frac{1}{8}\mathcal{E}+C_{\mathrm{nl}}\mathcal{E}^{3/2}$,
 yielding global existence with zero analyticity-radius shrinkage and exponential decay
-$\mathcal{E}(\tau)\le\mathcal{E}(0)e^{-\tau/16}$ and $(c_l,c_\omega,B)\to(2,-1,B_\infty)$
-(establishing the asymptotic stability asserted in Conjecture~2.4 of arXiv:2604.01868 for
-perturbations in the edge-analytic co-moving class $\mathcal{X}$, which does not contain the
-smooth degenerate initial data that the conjecture itself concerns).  Remarkably, edge analyticity is essential in Gauge~(a): without the domain
+$\mathcal{E}(\tau)\le\mathcal{E}(0)e^{-\tau/16}$ and $(c_l,c_\omega,B)\to(2,-1,B_\infty)$.
+This Gauge~(a) flow solves the rescaled system classically on $X>1$ and $X<1$ and
+distributionally for $\Theta$ on $\mathbb{R}$, but because $\dot B/B=-H[g](1)$ while the
+$(X-1)^{-1/2}$ edge amplitude is pinned at $A(\tau)\equiv 1$, the global distributional
+$\Omega$-equation across $X=1$ carries an edge point-mass defect
+$\tfrac{\pi}{2}(B(\tau)-1)\delta(X-1)$ whenever $B(\tau)\ne 1$ (Remark~\ref{rem:weak_edge_jump});
+moreover, $\mathcal{X}$ does not contain the smooth degenerate initial data of Conjecture~2.4.  Remarkably, edge analyticity is essential in Gauge~(a): without the domain
 constraint $\widehat{G}(\tfrac12)=0$, the unconstrained operator $-2\partial_z+\tfrac12\widetilde{Q}_{\mathrm{op}}$
 admits explicit $C^\infty$ eigenmodes $G_\lambda=\mathcal{M}^{-1}[X(\cdot;\lambda)]\in L^2_\sigma(\mathbb{R})$
 for every $\operatorname{Re}\lambda>-2\sigma$ whose edge Taylor series
@@ -125,10 +129,13 @@ In this paper: (i)~Numerical Theorem~\ref{numthm:main} documents linear and larg
 ($A\le 4$) convective stability numerically; (ii)~Theorem~\ref{thm:linear_gap} proves a
 linear spectral gap and uniform resolvent bound on $L^2_\sigma(\mathbb{R})$ for every
 $\sigma\in(0,1/2)$; and (iii)~Theorem~\ref{thm:nonlinear_bootstrap} proves small-data
-global nonlinear asymptotic stability for co-moving singular-edge perturbations
-$\Omega=(X-1)^{-1/2}(1+G)\mathbf{1}_{X>1}$ in the hybrid edge-analytic space
-$\mathcal{X}=\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$.
-Two questions remain open for the full smooth-data conjecture of~\cite{chen2026houluo}:
+global nonlinear asymptotic stability for the support-interior ($X>1$) Gauge-(a) co-moving
+reduction of singular-edge perturbations $\Omega=(X-1)^{-1/2}(1+G)\mathbf{1}_{X>1}$ in the
+hybrid edge-analytic space $\mathcal{X}=\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$.
+Three questions remain open for the full global smooth-data conjecture of~\cite{chen2026houluo}:
+enforcing the distributional weak-edge jump balance $B(\tau)\equiv A(\tau)^2$ across $X=1$ when
+$H[g](1)\ne 0$ (where the uncoupled $h\equiv 0$, $A\equiv 1$ Gauge-(a) flow leaves the point-mass
+defect $\tfrac{\pi}{2}(B(\tau)-1)\delta(X-1)$; Remark~\ref{rem:weak_edge_jump}),
 replacing edge analyticity $\mathcal{H}^1(D(1,1))$ by finite-order $C^k([1,2])$ regularity
 (which in Gauge~(a) encounters the explicit factorially divergent $C^\infty$ continuum modes
 $G_\lambda$ of Remark~\ref{rem:w3_scope} and therefore requires an alternative gauge or
@@ -158,7 +165,11 @@ c_l&=2,& c_\omega&=-1,\\
 U(1)&=-2.
 \end{align*}
 Steady residual with analytic $\bar U$: $\max|R_\Omega|=2.2\cdot10^{-16}$ on the
-tested bulk interval.
+tested bulk interval.  Across the support edge $X=1$ on $\mathbb{R}$, $(\bar U(1)+c_l)\bar\Theta_X=0$
+satisfies the distributional $\Theta$-equation, while in the divergence form
+$\Omega_\tau+\partial_X((U+c_l X)\Omega)-(U_X+c_l)\Omega=c_\omega\Omega+\Theta_X$ of the
+$\Omega$-equation the upper-half-plane square $(\bar\Omega+i\bar U_X)^2=(X+i0-1)^{-1}=\mathrm{p.v.}(X-1)^{-1}-i\pi\delta(X-1)$
+gives $-[\bar U_X\bar\Omega]_{\delta(X-1)}=\tfrac{\pi}{2}\delta(X-1)$, matching $\bar\Theta_X=\tfrac{\pi}{2}\delta(X-1)$.
 
 \paragraph{Linearized operator (edge-resolved).}
 With $G=(Y-1)^{1/2}g$ and $z=\ln(Y-1)$,
@@ -304,8 +315,8 @@ Smooth Hou--Luo stability \cite{chen2021hl,huang2023exact} &
   Smooth asymptotically self-similar profiles &
   Different profile class (not $(X-1)^{-1/2}$). \\
 This paper &
-  Stability spectra + linear W1--W2 gap + small-data nonlinear bootstrap in $\mathcal{X}$ &
-  Local nonlinear stability in singular-edge class $\mathcal{X}$. \\
+  Stability spectra + linear W1--W2 gap + support-interior nonlinear bootstrap in $\mathcal{X}$ &
+  Support-interior ($X>1$) nonlinear stability in $\mathcal{X}$. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -433,8 +444,14 @@ Appendix~\ref{app:w123} rather than formalized in Mathlib.
 %--------------------------------------------------------------------------
 
 Completely independent of bare-$L^2_\sigma$ semigroup theory (Remark~\ref{rem:w3_scope}), we
-close a direct-energy small-data nonlinear stability proof around the singular steady profile
-under the exact edge-stagnation gauge (\emph{Gauge~(a)}, $A(\tau)\equiv 1$, edge pinned at $X=1$):
+close a direct-energy small-data nonlinear stability proof for the support-interior ($X>1$)
+co-moving reduction around the singular steady profile.  For perturbations of the form
+\[
+\Omega(X,\tau) = (X-1)^{-1/2}\bigl(1+G(z,\tau)\bigr)\mathbf{1}_{X>1}, \quad
+\Theta(X,\tau) = B(\tau)\bigl(\tfrac{\pi}{2}+h(z,\tau)\bigr)\mathbf{1}_{X>1} \quad (z=\ln(X-1)),
+\]
+with $G(-\infty,\tau)=0$ (pinning the $(X-1)^{-1/2}$ edge amplitude at $A(\tau)\equiv 1$),
+we impose the edge-stagnation and interior edge-balance gauge (\emph{Gauge~(a)}, edge pinned at $X=1$):
 \begin{equation}\label{eq:gauge_a}
 c_l(\tau) = 2 - V_G(1), \qquad
 c_\omega(\tau) = -1 + \tfrac{1}{2}\bigl(V_G(1) - H[g](1)\bigr), \qquad
@@ -442,8 +459,9 @@ c_\omega(\tau) = -1 + \tfrac{1}{2}\bigl(V_G(1) - H[g](1)\bigr), \qquad
 \end{equation}
 where $V_G(1) = -\frac{1}{\pi}\int_{\mathbb{R}} e^{z/2}\ln(1+e^{-z})G(z)\,dz$ and
 $H[g](1) = -\frac{1}{\pi}\int_{\mathbb{R}} e^{-z/2}G(z)\,dz$.
-Under~\eqref{eq:gauge_a}, all singular $e^{-z}$ drift and inhomogeneous linear $(V_G(1), H[g](1))$
-amplitude forcings cancel identically, yielding the exact co-moving PDE
+On the support interior $X>1$ ($z\in\mathbb{R}$), under~\eqref{eq:gauge_a} all singular $e^{-z}$
+drift and inhomogeneous linear $(V_G(1), H[g](1))$ amplitude forcings in~\eqref{eq:dyn} cancel
+identically, yielding the exact co-moving PDE
 \begin{equation}\label{eq:comoving_exact}
 \begin{aligned}
 \partial_\tau G &= -2\partial_z G + \tfrac{1}{2}\widetilde{Q}_{\mathrm{op}}G + B(\tau)e^{-z/2}\partial_z h
@@ -484,6 +502,35 @@ continuation in $\mathcal{X}$ are given in Appendices~\ref{app:nonlin_est} and~\
 (for the coupled $h\not\equiv 0$ extension with augmented energy $\mathcal{E}+\mu_h\mathcal{E}_h$,
 see Remark~\ref{rem:h_sector}).
 \end{thm}
+
+\begin{remark}[Support-interior reduction vs.\ global weak-edge jump balance at $X=1$]\label{rem:weak_edge_jump}
+For any profile supported on $X\ge 1$ with leading edge behavior
+$\Omega(X,\tau)\sim A(\tau)(X-1)^{-1/2}\mathbf{1}_{X>1}$ and
+$\Theta(X,\tau)\sim B(\tau)\tfrac{\pi}{2}\mathbf{1}_{X>1}$ as $X\to 1^+$, we have
+$U_X(X,\tau)=H(\Omega)(X,\tau)\sim -A(\tau)(1-X)^{-1/2}\mathbf{1}_{X<1}+A(\tau)H[g](1)\mathbf{1}_{X>1}$,
+so squaring the upper-half-plane analytic extension $(\Omega+i U_X)(z)\sim A(\tau)(z-1)^{-1/2}$
+gives the distributional singular product $-[U_X\Omega]_{\delta(X-1)}=\tfrac{\pi}{2}A(\tau)^2\delta(X-1)$.
+In the weak divergence form $\Omega_\tau+\partial_X((U+c_l X)\Omega)-(U_X+c_l)\Omega=c_\omega\Omega+\Theta_X$
+on $\mathbb{R}$, matching this against $[\Theta_X]_{\delta(X-1)}=\tfrac{\pi}{2}B(\tau)\delta(X-1)$
+requires the Rankine--Hugoniot jump relation $B(\tau)\equiv A(\tau)^2$.
+On the support interior $X>1$, however, whenever $U(1,\tau)+c_l(\tau)=0$, $G(1^+,\tau)=0$ ($G=O(X-1)$),
+and $h\equiv 0$ ($\Theta_X\equiv 0$ on $X>1$), the leading $(X-1)^0$ balance of the $\Theta$-equation as
+$X\to 1^+$ forces $\dot B/B=c_l+2c_\omega$, whereas the leading $(X-1)^{-1/2}$ balance of the
+$\Omega$-equation (where $U_X(1^+,\tau)=A(\tau)H[g](1)$ shifts the edge velocity slope from $c_l$ to
+$c_l+A(\tau)H[g](1)$) forces $2\dot A/A=c_l+2c_\omega+A(\tau)H[g](1)$, whence
+\[
+\frac{d}{d\tau}\ln\!\left(\frac{B(\tau)}{A(\tau)^2}\right) = -A(\tau)\,H[g](1).
+\]
+Under Gauge~(a) ($A(\tau)\equiv 1$, $\dot B/B=-H[g](1)$), the solution of
+Theorem~\ref{thm:nonlinear_bootstrap} satisfies~\eqref{eq:dyn} classically on the open half-lines
+$X>1$ and $X<1$ and distributionally for $\Theta$ on $\mathbb{R}$ (since $(U(1)+c_l)\Theta_X=0$),
+but carries an uncompensated point-mass defect $\tfrac{\pi}{2}(B(\tau)-1)\delta(X-1)$ in the
+distributional $\Omega$-equation at $X=1$ whenever $B(\tau)\ne 1$ (and converges as $\tau\to\infty$
+to $(\bar\Omega,B_\infty\bar\Theta)$ with $B_\infty=B(0)\exp(-\int_0^\infty H[g](1)\,d\tau)$).
+Preserving the global weak-edge relation $B(\tau)\equiv A(\tau)^2$ across $X=1$ when $H[g](1)\ne 0$
+requires either the codimension-1 constraint $H[g](1)=0$ or an edge boundary layer in $\Theta$
+(or dynamic edge exponent) absorbing $-\tfrac12 A(\tau)^2 H[g](1)(X-1)^{-1/2}$ as $X\to 1^+$.
+\end{remark}
 
 \paragraph{Proof architecture (five pillars, zero semigroup dependence).}
 \begin{enumerate}
@@ -563,12 +610,18 @@ Section~\ref{sec:nonlin} remain numerical.
   time-dependent PDE by replacing $L^2_\sigma((-\infty,0])$ with the edge Hardy disk $\mathcal{H}^1(D(1,1))$.
 \end{itemize}
 
-\paragraph{Singular-edge perturbation class vs.\ smooth degenerate initial data.}
-Theorem~\ref{thm:nonlinear_bootstrap} establishes asymptotic stability for perturbations of the form
+\paragraph{Singular-edge perturbation class, weak-edge jump balance, and smooth initial data.}
+Theorem~\ref{thm:nonlinear_bootstrap} establishes asymptotic stability for the support-interior
+($X>1$) Gauge-(a) evolution~\eqref{eq:comoving_exact} of perturbations
 $\Omega(X,\tau)=(X-1)^{-1/2}(1+G(\ln(X-1),\tau))\mathbf{1}_{X>1}$ that already carry the
 $(X-1)^{-1/2}\mathbf{1}_{X>1}$ singular edge and have edge-analytic $G\in\mathcal{H}^1(D(1,1))$
 (cancelling the fractional-exponent $\frac{1}{2}$-loss of $\widetilde{Q}_{\mathrm{op}}$ on
-$L^2_{\sigma_-}((-\infty,0])$).  Because the unconstrained Gauge-(a) linearization admits the factorially divergent $C^\infty$
+$L^2_{\sigma_-}((-\infty,0])$).  As shown in Remark~\ref{rem:weak_edge_jump}, when $H[g](1)\ne 0$
+the uncoupled $A(\tau)\equiv 1$, $\dot B/B=-H[g](1)$ gauge solves~\eqref{eq:dyn} classically on
+$X>1$ and $X<1$ and distributionally for $\Theta$ on $\mathbb{R}$, but leaves the distributional
+point-mass defect $\tfrac{\pi}{2}(B(\tau)-1)\delta(X-1)$ in the $\Omega$-equation at $X=1$
+(with $B(\tau)\to B_\infty$); closing the global weak-edge jump relation $B(\tau)\equiv A(\tau)^2$
+across $X=1$ outside the codimension-1 manifold $H[g](1)=0$ remains open.  Because the unconstrained Gauge-(a) linearization admits the factorially divergent $C^\infty$
 eigenmodes $G_\lambda=O(v)$ of Remark~\ref{rem:w3_scope} for every $\operatorname{Re}\lambda>0$,
 the linearization has exponentially growing solutions $e^{\lambda\tau}G_\lambda$ in every finite-order
 $C^k([1,2])$ edge class within unconstrained Gauge~(a), so edge analyticity $\mathcal{H}^1(D(1,1))$
@@ -1319,7 +1372,7 @@ arXiv:2604.01868, 2026.
 \bibitem{huang2026gclm}
 D.~Huang, J.~Tong, X.~Wang,
 \textit{Self-similar finite-time blowups with singular profiles of the generalized
-Constantin--Lax--Majda model: theoretical and numerical investigations},
+Constantin--Lax--Majda model: theoretical and\allowbreak\ numerical investigations},
 arXiv:2603.25104, 2026.
 
 \bibitem{chen2026euler}

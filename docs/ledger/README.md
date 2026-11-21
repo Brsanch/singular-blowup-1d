@@ -48,7 +48,7 @@ edited on 2026-07-16 and stay as they are; this paragraph records what has chang
 
 - The manuscript (`paper/stability_spectra_singular_houluo.tex`) now states two theorems: a resolvent bound on
   vertical lines plus point-spectrum uniqueness for the linearization on the constrained domain `Ĝ(½)=0`
-  (W1, W2), and small-data nonlinear stability in the edge-analytic class under Gauge (a) with `h ≡ 0`.
+  (W1, W2), and small-data support-interior (`X > 1`) nonlinear stability in the edge-analytic class under Gauge (a) with `h ≡ 0` (leaving the distributional `Ω`-equation edge defect `(π/2)(B(τ)-1)δ(X-1)` at `X = 1` whenever `B(τ) ≠ 1`; manuscript Remark 2).
   In this ledger's taxonomy both are at most `proved-on-paper`: the written proofs are in the manuscript's
   appendices, they are not machine-checked, and they have not been independently verified (open items:
   the implicit domain of `M_σ`, the W2 gluing step, the local well-posedness appendix, the nonlinear
