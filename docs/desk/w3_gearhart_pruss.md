@@ -1,6 +1,6 @@
 # W3 — Semigroup generation + Gearhart–Prüss
 
-**Status:** **LINEAR STRICT-GAP CHAIN CLOSED 2026-11-20** (W1 Route F + W2 Left-Strip Bridge + W3 Reference-Transport Resolvent Perturbation)  
+**Status:** **W3 WITHDRAWN 2026-11-21.** Semigroup generation and the Gearhart–Prüss decay are no longer claimed; see the Correction below. (Status on 2026-11-20 read "LINEAR STRICT-GAP CHAIN CLOSED"; kept here as history only.)  
 **Date:** 2026-11-20 (updated from 2026-07-25)  
 **Lean 4 backbone (0 `sorry`, 0 axioms, vacuity 0):** `lean/SingularBlowup/SlitSchurMargin.lean` (`transport_coupling_frequency_pincer`).  
 **Validation gates:** `validate/edge_w1_route_f_closure.py` (F1–F4 PASS), `validate/edge_w2_w3_closure.py` (W2-A, W2-B, W3-A PASS).  
@@ -8,7 +8,37 @@
 
 ---
 
-## 0. Complete Linear Strict-Gap Chain on $L^2_\sigma$ (2026-11-20)
+## Correction (2026-11-21) — what no longer stands
+
+Two reviews of the manuscript on 2026-11-21 (Claude; Codex) found gaps in the W3 step, and the
+manuscript now says so itself (`paper/stability_spectra_singular_houluo.tex`, Remark 1).
+
+1. **The decay of $\delta R$ is not established.** Item 2 below writes
+   $\delta R(\lambda)\mathcal{F}(s)=\frac{c(s+1/2)}{\lambda+2s}\mathcal{G}(s+\tfrac12;\lambda)$. Bounding this by
+   $O((1+|\omega|)^{-1})\|\mathcal{F}\|$ needs a resolvent bound from $L^2_\sigma$ into $L^2_{\sigma+1/2}$
+   (the right-hand side reads $\mathcal{G}$ on the line $\operatorname{Re}s=\sigma+\tfrac12$). W1 bounds
+   $L^2_\sigma\to L^2_\sigma$ only.
+2. **The inverse Laplace integral is not shown to converge.** An operator norm of size $(1+|\omega|)^{-1}$ is
+   in $L^2(\mathbb{R}_\omega)$ but not in $L^1$, so the "$O(\sqrt t)$" strong-continuity step does not follow,
+   and Gearhart–Prüss presupposes a $C_0$-semigroup.
+
+Also changed since this note was written:
+
+- The W1 resolvent bound is stated on vertical lines $\operatorname{Re}\lambda=-2\sigma+\delta$, uniformly on
+  compact $\delta$-intervals, not on whole half-planes $\operatorname{Re}\lambda\ge-2\sigma+\delta$.
+- W2 uniqueness holds on the constrained domain $\{\mathcal{G}(\tfrac12)=0\}$ only. Without that constraint the
+  Gauge-(a) operator has an explicit eigenfunction for every $\operatorname{Re}\lambda>-2\sigma$
+  (`docs/findings_session_2026_11_21_gauge_a_eigenmodes.md`, `docs/ledger/OBS-09_gauge_a_eigenmodes.md`).
+- The nonlinear theorem no longer uses this step: it is a direct energy estimate
+  (`docs/desk/nonlinear_comoving_leg.md` §4).
+
+The Lean lemma `transport_coupling_frequency_pincer` is a true arithmetic inequality and is unaffected; what
+is withdrawn is its use to conclude semigroup generation. §0 item 2 and the last two rows of the status
+table are kept as history.
+
+---
+
+## 0. Complete Linear Strict-Gap Chain on $L^2_\sigma$ (2026-11-20; item 2 withdrawn 2026-11-21)
 
 On $L^2_\sigma$ ($\sigma \in (0, \tfrac12)$) with the defect-closed domain $\mathcal{D}(M_\sigma) = R_{\mathrm{slit}}(\lambda_0) L^2_\sigma \subset \{\mathcal{G}(\tfrac12) = 0\}$:
 
@@ -42,11 +72,11 @@ On $L^2_\sigma$ ($\sigma \in (0, \tfrac12)$) with the defect-closed domain $\mat
 
 ---
 
-## Updated Status Table (2026-11-20)
+## Status Table (2026-11-20, corrected 2026-11-21)
 
 | Step | Tier | Status |
 |---|---|---|
-| Uniform resolvent $\sup_{\operatorname{Re}\lambda\ge -2\sigma+\delta}\|R(\lambda)\|<\infty$ | PROVED-ON-PAPER + LEAN-BACKBONE + GATE | **CLOSED 2026-11-20** (W1 Route F: `w1_plemelj_stirling_writeup.md` §0) |
-| Point-spectrum uniqueness $\ker(\lambda - M_\sigma) = \{0\}$ (W2) | PROVED-ON-PAPER + LEAN-BACKBONE + GATE | **CLOSED 2026-11-20** (Left-strip mixed Laplace bridge: `w2_lemma_eprime.md` §0) |
-| Reference-transport perturbation $\delta R = R - R_0$ & $C_0$-semigroup generation | PROVED-ON-PAPER + LEAN-BACKBONE + GATE | **CLOSED 2026-11-20** (Frequency pincer + Paley–Wiener above) |
-| Gearhart–Prüss strict linear gap $2\sigma$ ($\sup = 1^-$) | PROVED-ON-PAPER (mod classical Engel–Nagel V.1.11) | **CLOSED 2026-11-20** (Output of W1 + W2 + W3) |
+| Uniform resolvent $\sup_{\operatorname{Re}\lambda\ge -2\sigma+\delta}\|R(\lambda)\|<\infty$ | PROVED-ON-PAPER + LEAN-BACKBONE + GATE | **CLOSED 2026-11-20** (W1 Route F: `w1_plemelj_stirling_writeup.md` §0); 2026-11-21: stated on vertical lines and compact $\delta$-strips only, not half-planes |
+| Point-spectrum uniqueness $\ker(\lambda - M_\sigma) = \{0\}$ (W2) | PROVED-ON-PAPER + LEAN-BACKBONE + GATE | **CLOSED 2026-11-20** (Left-strip mixed Laplace bridge: `w2_lemma_eprime.md` §0); 2026-11-21: on the constrained domain $\{\mathcal{G}(\tfrac12)=0\}$ only |
+| Reference-transport perturbation $\delta R = R - R_0$ & $C_0$-semigroup generation | PROVED-ON-PAPER + LEAN-BACKBONE + GATE | **WITHDRAWN 2026-11-21** (see Correction; read "CLOSED 2026-11-20") |
+| Gearhart–Prüss strict linear gap $2\sigma$ ($\sup = 1^-$) | PROVED-ON-PAPER (mod classical Engel–Nagel V.1.11) | **WITHDRAWN 2026-11-21** (needs W3; read "CLOSED 2026-11-20") |

@@ -1,9 +1,28 @@
 /-
-# LinearStrictGapClosure.lean — Top-Level End-to-End Linear Strict-Gap Synthesis (W1 + W2 + W3)
+# LinearStrictGapClosure.lean — arithmetic bookkeeping for the linear resolvent argument (W1, W2)
 
-Chains the three analytical walls of the linear strict-gap proof for the singular
+**Scope (corrected 2026-11-21).** Every theorem in this file is a statement about real numbers
+and integers. Operator-norm bounds enter as *hypotheses*; no Gamma function, singular integral,
+weighted space, resolvent or semigroup is formalized here. The theorems record how externally
+supplied bounds combine. They do not certify the linear stability result of the manuscript.
+
+What changed since this file was written (2026-11-20):
+  • **W3 is withdrawn.** Semigroup generation and the Gearhart–Prüss decay are no longer claimed
+    (manuscript Remark 1; `docs/desk/w3_gearhart_pruss.md`, Correction). The two `w3_*` theorems
+    below remain true arithmetic facts; their intended application does not go through.
+  • **W1 is a vertical-line bound.** The analytic bounds hold on each line `Re λ = -2σ + δ`,
+    uniformly on compact `δ`-intervals, not on whole half-planes `Re λ ≥ -2σ + δ`.
+  • **W2 holds on the constrained domain only** (`Ĝ(1/2) = 0`). Without it the Gauge-(a) operator
+    has an explicit eigenfunction for every `Re λ > -2σ`
+    (`docs/findings_session_2026_11_21_gauge_a_eigenmodes.md`).
+
+Declaration names are unchanged (they are cited elsewhere); names such as `certified_…` and
+`…_master…` describe the intended use, not what Lean checks.
+
+Original description (2026-11-20), kept for reference — read it with the scope note above.
+It chains the three analytical walls of the linear strict-gap argument for the singular
 1D Hou–Luo self-similar blow-up profile (`Ω̄(X) = 1_{X>1}/√(X-1)`, `c_l = 2`, `c_ω = -1`)
-into a single end-to-end formal backbone with in-repo certified rational bounds:
+into arithmetic statements with in-repo rational bounds:
 
   • **W1 (`SlitSchurMargin` Route F):**
     Combines the 4-quadrant Stirling/split-Cauchy exponential margin
@@ -11,7 +30,7 @@ into a single end-to-end formal backbone with in-repo certified rational bounds:
     commutator bound (`modulus_commutator_cancels_cauchy_pole`), and the rank-one
     defect ω-cancellation (`slit_defect_rank_one_margin`) into a uniform vertical-line
     resolvent bound `M_tot(σ, δ) = M_diag / δ + M_far / δ + M_defect / (1 + |ω|)` on
-    `Re λ ≥ -2σ + δ`.
+    the line `Re λ = -2σ + δ` (the three component bounds are hypotheses here).
 
   • **W2 (`SlitSchurMargin` Left-Strip Bridge + `PointSpectrum` LEM-08):**
     Combines the left-strip Paley–Wiener embedding exponents
@@ -25,9 +44,10 @@ into a single end-to-end formal backbone with in-repo certified rational bounds:
   • **W3 (`SlitSchurMargin` Reference-Transport Perturbation & Frequency Pincer):**
     Uses `transport_coupling_frequency_pincer` (`|ω| ≤ |2τ + ω| + |2τ|`) to prove that
     every frequency `τ ∈ ℝ` lies either in the high-transport regime (`|2τ + ω| ≥ |ω|/2`)
-    or the high-coupling regime (`|2τ| ≥ |ω|/2`), yielding uniform `O((1 + |ω|)^{-1})`
-    decay of the compact resolvent perturbation `δR(λ) = R(λ) - R₀(λ)` and closing the
-    Gearhart–Prüss semigroup decay hypothesis on `L²_σ(ℝ) / 𝒩`.
+    or the high-coupling regime (`|2τ| ≥ |ω|/2`). WITHDRAWN 2026-11-21: this was meant to
+    yield `O((1 + |ω|)^{-1})` decay of `δR(λ) = R(λ) - R₀(λ)` and hence Gearhart–Prüss
+    decay. The operator bound it needs (`L²_σ → L²_{σ+1/2}`) is not established, and a
+    `1/(1+|ω|)` operator norm is not integrable in `ω`. Only the arithmetic is checked.
 
   • **In-Repo Rational Certificate (`certified_linear_strict_gap_sigma_quarter`):**
     Certifies the explicit rational numerical bounds at the benchmark point
@@ -128,7 +148,7 @@ theorem w2_left_strip_bridge_and_uniqueness
   have h_nokill := no_l2_and_edge_kill kMax kMin hkMax hkMin hkOrd
   exact ⟨h_edge, h_far, ⟨h_pos1, h_floors.2.1, h_floors.2.2⟩, ⟨h_modes.1, h_modes.2, h_nokill⟩⟩
 
-/-! ## 3. W3 Synthesis: Reference-Transport Perturbation & Gearhart–Prüss Semigroup Decay -/
+/-! ## 3. W3 arithmetic: the frequency pincer (its semigroup application is WITHDRAWN, 2026-11-21) -/
 
 /-- **W3 High-Frequency Denominator Dichotomy.**
 From `transport_coupling_frequency_pincer` (`|ω| ≤ |2τ + ω| + |2τ|`), at every
@@ -145,11 +165,14 @@ theorem w3_frequency_pincer_dichotomy (tau omega : ℝ) :
   · linarith
   · linarith
 
-/-- **W3 Master Theorem (Reference-Transport Resolvent Perturbation Decay).**
-Because `1 + |ω| ≤ 1 + |2τ + ω| + |2τ|` holds for all `(τ, ω) ∈ ℝ²`, any pointwise
-perturbation amplitude bounded by `C_pert / (1 + |2τ + ω| + |2τ|)` is uniformly bounded by
-`C_pert / (1 + |ω|)`, ensuring `O((1 + |ω|)^{-1})` decay of `‖R(λ) - R₀(λ)‖` along
-vertical lines `Re λ = -2σ + δ`. -/
+/-- **W3 arithmetic (pointwise amplitude bound).**
+Because `1 + |ω| ≤ 1 + |2τ + ω| + |2τ|` holds for all `(τ, ω) ∈ ℝ²`, any real number
+`pertAmp` bounded by `C_pert / (1 + |2τ + ω| + |2τ|)` is bounded by `C_pert / (1 + |ω|)`.
+
+This is all that is proved. It was intended to give `O((1 + |ω|)^{-1})` decay of
+`‖R(λ) - R₀(λ)‖` along `Re λ = -2σ + δ`; that application is WITHDRAWN (2026-11-21), because
+the hypothesis `h_amp` is not established as an operator bound on `L²_σ`
+(see `docs/desk/w3_gearhart_pruss.md`, Correction). -/
 theorem w3_perturbation_vertical_decay
     (C_pert tau omega pertAmp : ℝ)
     (hC : 0 ≤ C_pert)
@@ -164,9 +187,10 @@ theorem w3_perturbation_vertical_decay
     div_le_div_of_nonneg_left hC h_pos h_pincer
   exact le_trans h_amp h_div
 
-/-! ## 4. In-Repo Rational Certificate Verification (`σ = 1/4`, `δ = 1/20`) -/
+/-! ## 4. Rational arithmetic at the sample point `σ = 1/4`, `δ = 1/20` (not a certificate) -/
 
-/-- Structure packaging a concrete certified linear strict-gap witness at `(σ, δ)`. -/
+/-- Structure packaging constants for the arithmetic below at a point `(σ, δ)`.
+The name is historical: nothing is certified about the operator by building a term of it. -/
 structure CertifiedLinearGapWitness where
   sigma : ℝ
   delta : ℝ
@@ -185,9 +209,17 @@ structure CertifiedLinearGapWitness where
   C_def_nonneg : 0 ≤ C_def
   envelope_le_M_sup : (M_lip * C_ker + C_far) / delta + C_def ≤ M_sup
 
-/-- **In-Repo Certified Witness at `σ = 1/4`, `δ = 1/20` (Spectral Gap `Re λ ≤ -9/20 = -0.45`).**
-Matches the analytic Digamma bound and exact numerical evaluation of `validate/edge_w1_route_f_closure.py`
-at `σ = 1/4`, `δ = 1/20` (`Re λ = -0.45`):
+/-- **Sample constants at `σ = 1/4`, `δ = 1/20` (name kept; not a certified spectral gap).**
+
+Caution (2026-11-21). These constants are illustrative and are NOT the constants of the
+manuscript's proof: there the kernel constant is `C_ker = 4π/(1 - e^{-4π}) ≈ 12.57`, and the
+diagonal bound of Lemma A.2 carries the factor `L e^{L}` with `L = L(1/4, 1/20) ≈ 54.76`, far
+above the `1100` used in `h_diag` below. The "observed" figures are samples from the gate; a
+wider scan finds `sup |∂_τ log|X|| ≈ 26.4` (near `τ ≈ -ω/2`), not `16.2276` — still below `55`.
+So `M_sup = 1123` is an arithmetic consequence of the hypotheses below and of nothing else.
+
+Original description (2026-11-20): matches the analytic Digamma bound and numerical evaluation
+of `validate/edge_w1_route_f_closure.py` at `σ = 1/4`, `δ = 1/20` (`Re λ = -0.45`):
   • `σ = 1/4` (convective gap `2σ = 1/2`), `δ = 1/20` (certified half-plane `Re λ ≥ -9/20`),
   • `M_lip = 55` (analytic ceiling `L(1/4, 1/20) = 3π + 40 + 4 + 4/3 ≈ 54.758 < 55`; observed max `16.2276`),
   • `C_ker = 1` (split Cauchy diagonal kernel constant; observed commutator max `21.7818 ≤ 1100`),
@@ -212,11 +244,14 @@ def certifiedWitnessSigmaQuarter : CertifiedLinearGapWitness where
   C_def_nonneg := by norm_num
   envelope_le_M_sup := by norm_num
 
-/-- **End-to-End Certified Linear Strict-Gap Theorem at `σ = 1/4`, `δ = 1/20`.**
-At the certified witness `certifiedWitnessSigmaQuarter` (`Re λ ≥ -2σ + δ = -9/20`),
-for every vertical frequency `ω = Im λ ∈ ℝ`, any diagonal/far/defect decomposition
-satisfying the certified component bounds has total resolvent norm bounded uniformly by
-`M_sup = 1123`, strictly inside the negative half-plane `Re λ ≤ -9/20 < 0`. -/
+/-- **Arithmetic at `σ = 1/4`, `δ = 1/20` (name kept; this is not a certified spectral gap).**
+For the constants of `certifiedWitnessSigmaQuarter` and every real `ω`: any three real numbers
+`diagTerm`, `farTerm`, `defectTerm` satisfying the three hypothesised bounds sum to at most
+`M_sup = 1123`, and `-2σ + δ = -9/20`.
+
+The hypotheses `h_diag`, `h_far`, `h_def` stand for operator-norm bounds on the line
+`Re λ = -9/20` that are argued on paper in the manuscript (Appendix A) and are NOT proved here.
+Nothing about the resolvent, the spectrum or a semigroup follows from this theorem alone. -/
 theorem certified_linear_strict_gap_sigma_quarter
     (omega diagTerm farTerm defectTerm : ℝ)
     (h_diag : diagTerm ≤ certifiedWitnessSigmaQuarter.M_lip *

@@ -16,9 +16,17 @@ Verifies:
         and vanishes at s = 0 (since 1/Gamma(0) = 0), forcing P(0) = 0 automatically.
   W3-A  High-frequency transport-vs-coupling separation pincer:
           |2*tau + omega| + |2*tau| >= |omega|,
-        so the resolvent perturbation delta_R(lam) = R(lam) - R_0(lam) relative to the pure
-        transport C_0-group generator A_0 = -2 d_z satisfies
-          ||delta_R(-2*sigma + delta + i*omega) F||_{L2_sigma} = O(1 / (1 + |omega|)) in L2(R_omega).
+        and, for ONE test function F and ONE frequency tau, the pointwise value
+          |R(lam)F - R_0(lam)F|  at omega = 5, 20, 40
+        decreases with omega.
+
+Scope note (2026-11-21).  W3 (semigroup generation + Gearhart-Pruss decay) is WITHDRAWN:
+see docs/desk/w3_gearhart_pruss.md, Correction, and Remark 1 of the manuscript.  W3-A is a
+numerical spot check only.  It does not establish the operator-norm statement
+  ||delta_R(-2*sigma + delta + i*omega)||_{L2_sigma -> L2_sigma} = O(1 / (1 + |omega|)),
+which needs a resolvent bound from L2_sigma into L2_{sigma+1/2} that is not available, and
+which would in any case not be integrable in omega.  The manuscript cites only W2-A and W2-B
+from this gate.  Check names and printed lines are unchanged.
 
 Exit 0 iff all checks PASS.
 """

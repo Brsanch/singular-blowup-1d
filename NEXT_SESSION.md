@@ -1,5 +1,11 @@
 # NEXT SESSION — complete the rigorous proof + Lean-check it
 
+> **Stale as of 2026-11-21.** This plan was last edited on 2026-07-22. Its route
+> "W1 → W2 → W3 Gearhart–Prüss" is no longer the plan: W1 and W2 are written up in the
+> manuscript, W3 is withdrawn, and the nonlinear theorem uses a direct energy estimate instead.
+> Current state and open items: `HANDOFF.md` (LATEST 2026-11-21) and `docs/ledger/README.md`
+> ("State as of 2026-11-21").
+
 Goal: turn the numerical stability result for the singular Hou–Luo profile (Conjecture 2.4)
 into a rigorous proof, and formalize/verify the checkable parts in Lean. Read first:
 `HANDOFF.md` (state-of-play table + **2026-07-22 LEM-08 integer Lean note**),

@@ -5,7 +5,7 @@ category: LEM
 status: proved-on-paper
 confidence: 0.9
 dependencies: [LEM-05]
-supports: [LEM-06, THR-01]
+supports: [LEM-06, THR-01, OBS-09]
 cross_citations:
   - {label: "Gradshteyn–Ryzhik", ref: "3.222.2", note: "pv∫_0^∞ x^{a-1}/(1-x)dx = π cot(πa); H[(Y-1)^{-1/2}]=0"}
   - {label: "Erdélyi/Tricomi", ref: "one-sided (airfoil) Hilbert of powers", note: "(1/π)pv∫_0^∞ t^p/(x-t)dt = cot(πp)x^p — literature cross-check"}

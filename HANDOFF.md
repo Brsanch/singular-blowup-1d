@@ -4,7 +4,30 @@ Read this + `README.md` + `docs/findings_*.md` first. The next step is named at
 the bottom ("THE NEXT CHIP"). Repo: github.com/Brsanch/singular-blowup-1d (private).
 Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasure loop.
 
-> ## ⚑ LATEST (2026-08-07) — **W1-D1 PATH EXHAUST: structural wall collapse**
+> ## ⚑ LATEST (2026-11-21) — **manuscript rewritten after review; W3 withdrawn; Gauge-(a) eigenmodes**
+> Everything below this block was written on or before 2026-08-07 and predates the work of
+> 2026-11-20/21 (W1–W2 write-up, nonlinear theorem, manuscript appendices, 4 new Lean files).
+> Read `docs/ledger/README.md` ("State as of 2026-11-21") first.
+> **What the manuscript claims now** (`paper/stability_spectra_singular_houluo.tex`):
+> (1) numerical spectra; (2) Theorem 1: resolvent bound on vertical lines + point-spectrum
+> uniqueness for the linearization on the constrained domain \(\widehat G(\tfrac12)=0\) (W1, W2);
+> (3) Theorem 2: small-data nonlinear stability under Gauge (a), \(h\equiv0\), edge-analytic data,
+> by a direct three-block energy estimate (rate 1/8).
+> **Withdrawn 2026-11-21:** W3 (semigroup generation + Gearhart–Prüss), the half-plane form of
+> the W1 bound, and "proves Conjecture 2.4" (the conjecture concerns smooth degenerate data).
+> Details: `docs/desk/w3_gearhart_pruss.md` (Correction).
+> **Found in review:** without \(\widehat G(\tfrac12)=0\) the Gauge-(a) operator has an explicit
+> eigenfunction for every \(\operatorname{Re}\lambda>-2\sigma\) — `docs/ledger/OBS-09_gauge_a_eigenmodes.md`,
+> `docs/findings_session_2026_11_21_gauge_a_eigenmodes.md`, probe
+> `validate/edge_gauge_a_eigenmode_check.py` (EM-1..EM-5). The truncated grid does not carry these modes.
+> **Not verified by anyone yet:** the implicit domain of \(M_\sigma\); the W2 gluing step; the local
+> well-posedness appendix; the nonlinear constants; the \(h\not\equiv0\) nonlinear terms.
+> **Lean:** the 2026-11-20/21 files check arithmetic and one ODE lemma; operator bounds are
+> hypotheses. Read the scope note at the top of `lean/SingularBlowup/LinearStrictGapClosure.lean`.
+> No LEM-06 / Conjecture 2.4 / blowup claim.
+>
+> ---
+> ## Prior (2026-08-07) — **W1-D1 PATH EXHAUST: structural wall collapse**
 > Final: `docs/findings_session_2026_08_07_w1_d1_path_exhaust.md`.
 > Probe: `validate/edge_d1_route_exhaust.py` (S1–S3).
 > **Extremely significant:** absolute Lem D-id is FALSE; only differences match;

@@ -5,6 +5,11 @@ Following the 2026-08-07 path-exhaust retraction of absolute Lem D-id (`findings
 - **Lean 4 algebraic & exponential-margin backbone (zero `sorry`, zero axioms, vacuity 0):** `lean/SingularBlowup/SlitSchurMargin.lean` (`lem_stir_schur_four_quadrant_margin`, `slit_defect_rank_one_margin`, `shifted_weight_submultiplicative`, `modulus_commutator_cancels_cauchy_pole`).
 - **Validation gate (4 checks F1–F4, all PASS):** `validate/edge_w1_route_f_closure.py`.
 - **Does not claim:** W2 (`Lemma E'` edge bootstrap) · W3 (semigroup domain generation + Gearhart–Prüss invocation) · nonlinear Conjecture 2.4 · continuum PDE finite-time blowup.
+- **Review note (2026-11-21) — read with the status line above:**
+  - *Scope of the bound.* The lemmas below bound the resolvent on a vertical line $\operatorname{Re}\lambda=-2\sigma+\delta$, uniformly in $\omega$ and on compact $\delta$-intervals. Where this note writes $\sup_{\operatorname{Re}\lambda\ge-2\sigma+\delta}$ (line 4, the $T_{\mathrm{off}}$ Schur bound, the final display), read "on vertical lines": the Stirling constants and the exponent $q=2\sigma+\tfrac32+|\delta-\tfrac12|$ are not uniform as $\delta\to\infty$. The manuscript states the vertical-line form.
+  - *What "LEAN-BACKBONE" and "GATE-VERIFIED" cover.* The Lean lemmas are elementary inequalities on real numbers (triangle margins, submultiplicativity, a pole-cancellation product bound); operator bounds enter `LinearStrictGapClosure.lean` as hypotheses. The gate checks the margins and norms numerically at sample parameters. The analytic proof is in the manuscript, Appendix A; it has not been independently verified, and the domain of $M_\sigma$ is defined only implicitly there.
+  - *Digamma bound.* $|\operatorname{Im}\psi(x+iy)|\le\frac\pi2+\frac1x$ sums to $L(\sigma,\delta)+\frac{1}{\sigma+1}$, not $L(\sigma,\delta)$. With $|\operatorname{Im}\psi(x+iy)|\le\frac\pi2+\frac1{2x}$ the sum is $\le L(\sigma,\delta)$, so $L$ and the gate constants stand (fixed in the manuscript, Lemma A.2).
+  - *Constrained domain.* The right inverse lands in $\{\mathcal{G}(\tfrac12)=0\}$ and uniqueness holds only there; see `docs/findings_session_2026_11_21_gauge_a_eigenmodes.md`.
 
 ---
 

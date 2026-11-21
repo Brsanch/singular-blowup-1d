@@ -30,6 +30,7 @@ review, no matter how green the lemma DAG is.
 | OBS-06 | Mellin-line: lattice solns edge-divergent ∀λ; winding = indicial tautology (NOT the index) | — | validate/edge_wh_structure.py |
 | OBS-07 | edge-forcing resolvent gain ∝ e^{z₀/2} = ε, λ-uniform (edge input annihilated; supports σ(M|_σ) = transport line, ‖R‖~C/dist) | measured (0.85) | validate/edge_convective_resolvent_scan.py |
 | OBS-08 | high-frequency corner benign: dressing → 1 with |Ω| at every depth (the ex-corner of the crude Schur; coupling c(σ+iΩ)~1/(2|Ω|)) | measured (0.85) | validate/edge_slitplane_representation.py (P3) |
+| OBS-09 | Gauge-(a) operator WITHOUT the domain condition Ĝ(½)=0 has an explicit eigenfunction G_λ = 𝓜⁻¹[X(·;λ)] for every Re λ > −2σ (C^∞ at the edge, O(v), not edge-analytic, H[g](1) = −2Γ(1+λ) ≠ 0); the truncated grid does not carry it | measured (0.9) | validate/edge_gauge_a_eigenmode_check.py (EM-1..EM-5) |
 
 LEM-01..05 = the **Track-1 algebraic backbone** (Lean-verified). LEM-06 (the (★)
 leap) + the H¹_W coupling = **Track 2**, the genuine remaining analytic work; it
@@ -41,3 +42,23 @@ LEM-06 does NOT close by any weighted-energy/Schur/flux method (proven dead, not
 undone). The leap is rescoped to a non-self-adjoint **spectral/Fredholm** bound (resolvent
 or Mellin/Wiener–Hopf symbol at `r=−(λ+1)/2`). Circularity firewall: `H(g)(1)=0` is
 automatic for L²_W modes — must NOT be asserted from the benign spectrum (NS-C6/SQG trap).
+
+**State as of 2026-11-21 (after independent reviews of the manuscript).** The ledger rows above were last
+edited on 2026-07-16 and stay as they are; this paragraph records what has changed around them.
+
+- The manuscript (`paper/stability_spectra_singular_houluo.tex`) now states two theorems: a resolvent bound on
+  vertical lines plus point-spectrum uniqueness for the linearization on the constrained domain `Ĝ(½)=0`
+  (W1, W2), and small-data nonlinear stability in the edge-analytic class under Gauge (a) with `h ≡ 0`.
+  In this ledger's taxonomy both are at most `proved-on-paper`: the written proofs are in the manuscript's
+  appendices, they are not machine-checked, and they have not been independently verified (open items:
+  the implicit domain of `M_σ`, the W2 gluing step, the local well-posedness appendix, the nonlinear
+  constants). **No per-claim ledger entries exist for them yet.**
+- **W3 (semigroup generation + Gearhart–Prüss) is withdrawn** — `docs/desk/w3_gearhart_pruss.md`, Correction.
+  The LEM-06 row's "remaining = … W3 generation+GP" is therefore still open, and LEM-06 stays `conjectured`.
+- The Lean files added on 2026-11-20/21 (`SlitSchurMargin`, `LinearStrictGapClosure`, `NonlinearComoving`,
+  `NonlinearBootstrap`) verify real-number and integer arithmetic and one ODE lemma. Operator bounds enter as
+  hypotheses, so none of them moves an analytic claim to `verified`.
+- OBS-09 (new) limits what LEM-08 and the firewall sentence above cover: both concern the frozen-exponent
+  operator on its constrained domain, not the Gauge-(a) operator.
+- THR-01 remains `speculative`. Conjecture 2.4 as stated by Chen–Huang–Li concerns degenerate smooth initial
+  data, which the manuscript's perturbation class does not contain.
