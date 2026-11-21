@@ -1053,15 +1053,19 @@ $\frac{4\sqrt{2}}{9}Z_{\mathrm{disk}}$.
 Adding $[-\ln 2,\infty)$ (where $\|G\|_{L^2_{3/4}([0,\infty))}^2\le\|G\|_{L^2_{1/4}([0,\infty))}^2\le X_{\mathrm{far}}$)
 gives~\eqref{eq:global_Gz}.
 
-(2) Mellin inversion on $\operatorname{Re}s=\frac{1}{4}$ (for $z\ge 0$) and $\operatorname{Re}s=\frac{3}{4}$ (for $z\le 0$,
-after crossing the simple pole at $s=\frac{1}{2}$ with residue $H[g](1)$), together with
-$\int_{\mathbb{R}}|c(\frac{1}{4}+i\tau)|^2\,d\tau=\frac{\pi}{3}$ and $\int_{\mathbb{R}}|c(\frac{3}{4}+i\tau)|^2\,d\tau=\frac{\pi}{5}$,
-gives $|Q_{\mathrm{op}}G(z)|\le\sqrt{2/3}\,e^{-z/4}\|G\|_{L^2_{1/4}}$ for $z\ge 0$ and
+(2) With $w=s+\tfrac12$, Mellin inversion of $\mathcal{M}[Q_{\mathrm{op}}G](s)=2c(w)\widehat{G}(w)$ on
+$\operatorname{Re}s=-\tfrac14$ ($\operatorname{Re}w=\tfrac14$, for $z\ge 0$) and on
+$\operatorname{Re}s=+\tfrac14$ ($\operatorname{Re}w=\tfrac34$, for $z\le 0$, after crossing the simple pole of
+$2c(s+\tfrac12)=\cot(\pi s)/(s+1)$ at $s=0$, $w=\tfrac12$ with residue $\frac{1}{\pi}\widehat{G}(\tfrac12)=-H[g](1)$),
+together with $\int_{\mathbb{R}}|c(\tfrac14+i\tau)|^2\,d\tau=\frac{\pi}{3}$ and
+$\int_{\mathbb{R}}|c(\tfrac34+i\tau)|^2\,d\tau=\frac{\pi}{5}$, gives
+$|Q_{\mathrm{op}}G(z)|\le\sqrt{2/3}\,e^{-z/4}\|G\|_{L^2_{1/4}}$ for $z\ge 0$ and
 $|\widetilde{Q}_{\mathrm{op}}G(z)|\le\sqrt{2/5}\,e^{+z/4}\|G\|_{L^2_{3/4}}$ for $z\le 0$.
 Combining with $|H[g](1)|\le\pi^{-1/2}\|G\|_{L^2_{3/4,1/4}}$ and $\pi^{-1/2}+\sqrt{2/3}<7/5$
 (Lean: \texttt{zero\_deriv\_linf\_bound\_lt\_seven\_fifths}) gives~\eqref{eq:Q_linf}.
-For~\eqref{eq:dQ_linf}, differentiating the $\operatorname{Re}s=\frac{1}{4}$ inversion formula for
-$Q_{\mathrm{op}}G(z)$ introduces the multiplier $(-\tfrac14+i\tau)c(\tfrac14+i\tau)\widehat{G}(\tfrac14+i\tau)
+For~\eqref{eq:dQ_linf}, differentiating the $\operatorname{Re}s=-\tfrac14$ ($w=\tfrac14+i\tau$) inversion formula for
+$Q_{\mathrm{op}}G(z)$ multiplies the integrand by
+$s\,c(w)\widehat{G}(w)=(-\tfrac14+i\tau)c(\tfrac14+i\tau)\widehat{G}(\tfrac14+i\tau)
 =\frac{-1/4+i\tau}{1/4+i\tau}c(\tfrac14+i\tau)\widehat{G_z}(\tfrac14+i\tau)$.
 Since $\bigl|\frac{-1/4+i\tau}{1/4+i\tau}\bigr|\equiv 1$, Cauchy--Schwarz yields~\eqref{eq:dQ_linf}.
 
@@ -1252,10 +1256,11 @@ $\|\frac{1}{m+k-1}\|_{\ell^2\to\ell^2}=\pi$ gives
 \]
 whence~\eqref{eq:Q_linf} yields
 $\|p[W^{(n-1)}]\|_{L^\infty}+\|\widetilde{Q}_{\mathrm{op}}W^{(n-1)}\|_{L^\infty}\le C\|W^{(n-1)}\|_{\mathcal{W}}$, 
-and by Lemma~\ref{lem:disk_coercive}, $p[W^{(n-1)}]$ gains one full derivative on $D(0,1)$:
-$\|p[W^{(n-1)}]\|_{\mathcal{H}^1(D(1,1))}\le C\|W^{(n-1)}\|_{\mathcal{W}}$ (since $\mathcal{H}_{1/2}:\ell^2\to\ell^2$ is bounded and
-$(m+1)^{-1}$ cancels $m$), so $\|p[W^{(n-1)}]\|_{\ell^1}\le C\|W^{(n-1)}\|_{\mathcal{W}}$, while
-$\|\partial_z G^{(n)}\|_{L^2_{1/4}(\mathbb{R})}$ and $\|G^{(n)}\|_{\mathcal{X}}$ are bounded by $\sqrt{R_0}$.
+and by Lemma~\ref{lem:disk_coercive}, $p[W^{(n-1)}]$ is bounded in $\ell^1$ directly by $\|W^{(n-1)}\|_{\mathcal{W}}$:
+$\sum_{j\ge 1}|q_j^{\mathrm{disk}}[W^{(n-1)}]|\le\frac{1}{\pi}\bigl(\sum_{j\ge 1}(j+1)^{-2}\bigr)^{1/2}\|\mathcal{H}_{1/2}w^{(n-1)}\|_{\ell^2}\le\|w^{(n-1)}\|_{\mathcal{H}^0}$
+and $\sum_{j\ge 1}|q_j^{\mathrm{far}}[W^{(n-1)}]|\le\bigl(\sum_{j\ge 1}\frac{1}{\pi(j+1)\sqrt{2j+1/2}}\bigr)\|W^{(n-1)}\|_{L^2_{1/4}}\le C\|W^{(n-1)}\|_{\mathcal{W}}$.
+By Young's inequality $\|p[W^{(n-1)}]*(k c_k^{(n)})\|_{\ell^2}\le\|p[W^{(n-1)}]\|_{\ell^1}\sqrt{Z_{\mathrm{disk}}(G^{(n)})}$, while
+$\|\partial_z G^{(n)}\|_{L^2_{1/4}(\mathbb{R})}$ and $\|G^{(n)}\|_{\mathcal{X}}$ are bounded by $C\sqrt{R_0}$.
 Hence
 \[
 \frac{d}{d\tau}\|W^{(n)}\|_{\mathcal{W}}^2 \le K(R_0)\,\|W^{(n)}\|_{\mathcal{W}}^2 + K(R_0)\,\|W^{(n-1)}\|_{\mathcal{W}}^2.
