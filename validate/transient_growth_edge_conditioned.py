@@ -14,11 +14,15 @@ KEY FACT: in a norm with weight W, the numerical abscissa (log-norm)
 bounds transient growth EXACTLY:  ||e^{M tau}||_W <= e^{mu_W tau}.  So mu_W <= 0  =>
 ||e^{M tau}||_W <= 1 for all tau  =>  NO transient growth (monotone contraction) in <.>_W.
 
-The energy abscissa = mu_W. It is +40 GLOBALLY (the discretized edge spike, grows with N) but
-NEGATIVE on the bulk (edge layer z<z_cut excluded, where G->0 by the Robin condition). So the
-EDGE-CONDITIONED operator (bulk, anisotropic-W norm) has mu_W < 0 => worst-case G <= 1,
-resolution-independent. This settles the caveat. We verify mu_W AND the actual
-sup_tau ||e^{M~ tau}||_2 directly.
+On z > z_cut with the anisotropic weight W, we compare:
+  (1) the continuum-IBP cutoff-model surrogate mu_an = lambda_max(-diag(phi') + sym_W(1/2 Q_bulk)),
+      which replaces the discrete transport symmetric part by the analytic IBP drift -phi'(z)
+      for functions vanishing at z_cut and is negative and resolution-independent (-0.101 at
+      z_cut=-8, -0.407 at z_cut=-6);
+  (2) the actual discrete principal submatrix M_b = -2 D_{z,bulk} + 1/2 Q_bulk, whose unclosed
+      centered-difference stencil at z_cut gives mu_disc = lambda_max(sym_W(M_b)) > 0 (+33.4 at
+      N=1000) and G_mat = sup_tau ||exp(M_b tau)||_W ~ 112 (so M_b is NOT a discrete matrix
+      contraction), while smooth interior Gaussian bumps have G(bulk bump) = 1.0000.
 """
 import os
 import sys
@@ -89,14 +93,14 @@ def main():
             print(f"    {N:<6d} {zmin:+.0f}   {z_cut:+.0f}    {mu:+.5f}          {mu_d:+8.2f}        {Gm:6.4f}        {Gb:6.4f}")
 
     print("\n" + "=" * 84)
-    print("  READ: UN-conditioned worst-case creeps with edge depth (the grid-scale (Y-1)^{-1/2}")
-    print("  spike). EDGE-CONDITIONED (bulk, anisotropic W-norm, ANALYTIC transport): log-norm")
-    print("  mu_an < 0 and RESOLUTION-INDEPENDENT (-0.10 at z_cut=-8, -0.41 at -6; converges in")
-    print("  N, does NOT creep) => ||e^{M tau}||_W <= e^{mu_an tau} <= 1 for ALL tau => NO")
-    print("  transient growth (monotone contraction); physical bump G=1.0000 confirms directly.")
-    print("  This closes the open caveat: the worst-case creep was the discretized edge")
-    print("  singularity; once the edge is conditioned (Robin: G->0; bounded-edge weight), the")
-    print("  operator is a contraction in the energy norm -- transient growth is SETTLED.")
+    print("  READ: UN-conditioned plain-norm worst-case creeps with edge depth (2.33 -> 3.91).")
+    print("  On z > z_cut, the continuum-IBP cutoff-model surrogate mu_an is negative and")
+    print("  resolution-independent (-0.101 at z_cut=-8, -0.407 at -6), and smooth interior")
+    print("  bumps satisfy G(bulk bump) = 1.0000. However, the discrete principal submatrix")
+    print("  M_b = -2 D_{z,bulk} + 1/2 Q_bulk has an unclosed centered-difference stencil at")
+    print("  z_cut, giving mu_disc(sym_W) > 0 (+33.4 to +67.3) and sampled matrix amplification")
+    print("  G_mat(disc) ~ 112-113 (1.033 at tau=1e-3 on the top symmetric eigenvector), so")
+    print("  mu_an is a continuum cutoff surrogate and discrete matrix contraction is not claimed.")
     print("=" * 84)
 
 

@@ -661,11 +661,15 @@ gCLM $a$-family, are left for future work.
   spurious eigenvalue near $\operatorname{Re}\approx +1.7$ (the inadmissible homogeneous branch).
   With the inflow condition, both independent discretizations give $\#(\operatorname{Re}>0)=0$.
 \item \emph{Finite amplitude and co-evolving exponents.}
-  Frozen-base marches decay up to $A=4$, and self-consistent co-evolving marches relax to
-  $(c_l,c_\omega)=(2.000006,-1.000003)$ with no secular drift.
+  Frozen-base marches decay up to $A=4$, and stage-consistent co-evolving marches with the
+  complete gauge-dependent RHS from~\eqref{eq:dyn} relax to
+  $(c_l,c_\omega)=(2.000000,-1.000000)$ with $\xi(\tau)\equiv 0$ and no secular drift.
 \item \emph{Non-normal transient growth.}
-  Physical perturbations yield $G=1.000$, and the edge-conditioned numerical abscissa is
-  strictly negative and resolution-independent.
+  Smooth physical perturbations yield $G=1.000$; on $z>z_{\mathrm{cut}}$ the continuum-IBP
+  cutoff-model surrogate $\mu_{\mathrm{an}}$ is negative and resolution-independent ($-0.101$
+  at $z_{\mathrm{cut}}=-8$), whereas the unclosed discrete principal submatrix $M_b$ has
+  $\lambda_{\max}(\operatorname{sym}_W(M_b))>0$ (sampled matrix norm $\sim 112$, short-time
+  amplification $1.033$ at $\tau=10^{-3}$) and is not a discrete matrix contraction.
 \item \emph{Coupled $(G,h)$ block.}
   The coupled spectrum retains the convective gap, and the $\Theta\to G$ resolvent gain
   saturates $O(1)$.
@@ -696,13 +700,14 @@ python3 validate/stability_edge_z_spectrum.py        # edge-resolved: npos=0
 python3 validate/stability_edge_spectrum.py          # equispaced: npos=0
 python3 validate/spectral_gap.py                     # rates ~ 2*gamma
 python3 validate/transient_growth.py                 # physical G=1.000
-python3 validate/transient_growth_edge_conditioned.py# mu_an < 0
+python3 validate/transient_growth_edge_conditioned.py# surrogate mu_an vs disc M_b
 python3 validate/nonlinear_shape_march.py            # A<=4, peak=1.000
-python3 validate/coevolve_projected.py               # (c_l,c_w)->(2,-1)
+python3 validate/coevolve_projected.py               # (c_l,c_w)->(2,-1), xi=0
 python3 validate/edge_w1_route_f_closure.py          # W1 (F1-F5 PASS)
-python3 validate/edge_w2_w3_closure.py               # W2 (W2-A/B PASS)
-python3 validate/edge_nonlinear_comoving_closure.py  # Gauge-(a) (NL-1..5 PASS)
+python3 validate/edge_w2_w3_closure.py               # W2 (W2-A..C PASS)
+python3 validate/edge_nonlinear_comoving_closure.py  # Gauge-(a) (NL-1..6 PASS)
 python3 validate/edge_nonlinear_bootstrap_closure.py # Bootstrap (NB-1..6 PASS)
+python3 validate/edge_gauge_a_eigenmode_check.py     # Eigenmodes (EM-1..5 PASS)
 \end{verbatim}
 }
 
@@ -718,10 +723,10 @@ $\#(\operatorname{Re}>0)$ edge-resolved & $0$ \\
 $\#(\operatorname{Re}>0)$ equispaced (\texttt{stability\_edge\_spectrum}) & $0$ \\
 gap rates $\gamma=0.25/0.5/0.75$ & $+0.552/+1.057/+1.675$ \\
 physical TG $G$ (smooth bumps, all $N$) & $1.000$ \\
-$\mu_{\mathrm{an}}$ ($z_{\mathrm{cut}}=-8$, $N=2000$) & $-0.10083$ \\
-$\mu_{\mathrm{an}}$ ($z_{\mathrm{cut}}=-6$, $N=2000$) & $-0.40675$ \\
+continuum-IBP surrogate $\mu_{\mathrm{an}}$ ($z_{\mathrm{cut}}=-8$, $N=2000$) & $-0.10083$ \\
+continuum-IBP surrogate $\mu_{\mathrm{an}}$ ($z_{\mathrm{cut}}=-6$, $N=2000$) & $-0.40675$ \\
 nonlinear peak ($A\le 4$, full gate) & $1.000$ \\
-coevolve finals $(c_l,c_\omega)$ & $(2.000006,-1.000003)$ \\
+coevolve finals $(c_l,c_\omega)$ ($\xi\equiv 0$) & $(2.000000,-1.000000)$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -973,21 +978,34 @@ Split $G=G_-+G_+$ with $G_-:=G\mathbf{1}_{(-\infty,0]}$ and $G_+:=G\mathbf{1}_{[
   For $z\le 0$ and $\sigma'\in[\sigma-\tfrac12,\sigma]$, $-2\sigma' z\le -2\sigma z$ (Lean: \texttt{left\_strip\_edge\_exponent\_le}),
   so $\|G_-\|_{L^2_{\sigma'}}\le\|G\|_{L^2_\sigma}<\infty$. By Paley--Wiener, $\mathcal{G}_-(s)=\int_{-\infty}^0 e^{-sz}G(z)\,dz$
   is holomorphic on $\operatorname{Re}s<\sigma$ with uniform $L^2$ norms on $[\sigma-\tfrac12,\sigma]$.
-\item \emph{Far-field half-line on the left strip:}
+\item \emph{Far-field half-line and mixed-Laplace meromorphic continuation to $[\sigma-\tfrac12,\sigma]$:}
   Because $T_c$ is bounded on $L^2_\sigma(\mathbb{R})$ (the line $\operatorname{Re}s=\sigma\in(0,\tfrac12)$ avoids all poles of $\tan(\pi s)$)
   and multiplication by $e^{-z/2}$ is an exact isometry $L^2_\sigma\to L^2_{\sigma-1/2}$ (Lean: \texttt{shift\_half\_weight\_exponent\_eq}),
   the eigenvalue equation $(2\partial_z+\lambda)G = e^{-z/2}T_c G$ implies $(2\partial_z+\lambda)G\in L^2_{\sigma-1/2}(\mathbb{R})$.
-  Since $G\in L^2_\sigma(\mathbb{R})$ and $(2\partial_z+\lambda)G\in L^2_{\sigma-1/2}(\mathbb{R})\subset L^2_{\mathrm{loc}}(\mathbb{R})$,
-  we have $G\in H^1_{\mathrm{loc}}(\mathbb{R})\subset C(\mathbb{R})$ (so $G(0)$ is well-defined) and
-  $e^{-(\sigma-1/2)z}G_+\in H^1([0,\infty))$ (so $\lim_{z\to+\infty}e^{-sz}G(z)=0$ for all $\operatorname{Re}s\ge\sigma-\tfrac12$).
+  Since $G\in L^2_\sigma(\mathbb{R})$ and $(2\partial_z+\lambda)G\in L^2_{\sigma-1/2}(\mathbb{R})$, we have
+  $e^{-\sigma z}G\in H^1(\mathbb{R})\subset C_0(\mathbb{R})$ (so $G(0)$ is well-defined, $\lim_{z\to+\infty}e^{-sz}G(z)=0$ for all
+  $\operatorname{Re}s\ge\sigma$, and $\lim_{z\to-\infty}e^{-sz}G(z)=0$ for all $\operatorname{Re}s\le\sigma$; note that when
+  $0<\operatorname{Re}\lambda+2\sigma\le 1$, $G_+$ need not belong to $L^2_{\sigma-1/2}([0,\infty))$ a priori).
   For $z\ge 0$ and $\sigma'\in[\sigma-\tfrac12,\sigma]$, $-2\sigma' z\le -2(\sigma-\tfrac12)z$ (Lean: \texttt{left\_strip\_far\_exponent\_le}),
-  so $(2\partial_z+\lambda)G_+\in L^2_{\sigma'}([0,\infty))$ across the entire left strip.
-  Integrating by parts on $[0,\infty)$ yields $\mathcal{G}_+(s)=(2G(0)+\mathcal{H}_+(s))/(2s+\lambda)$,
-  where $\mathcal{H}_+(s):=\int_0^\infty e^{-sz}(2\partial_z+\lambda)G(z)\,dz$ is holomorphic on $\operatorname{Re}s>\sigma-\tfrac12$
-  (and on $(-\infty,0]$, $(2s+\lambda)\mathcal{G}_-(s)=-2G(0)+\int_{-\infty}^0 e^{-sz}(2\partial_z+\lambda)G(z)\,dz$, so the $\pm 2G(0)$
-  boundary terms cancel in $(2s+\lambda)\widehat{G}(s)$ on $\operatorname{Re}s=\sigma-\tfrac12$).
-  Thus $\widehat{G}(s)=\mathcal{G}_-(s)+\mathcal{G}_+(s)$ extends meromorphically to the strip $\sigma-\tfrac12<\operatorname{Re}s<\sigma$
-  with at most a single simple pole at $s_*:=-\lambda/2$ (note $\operatorname{Re}s_*<\sigma$ since $\operatorname{Re}\lambda>-2\sigma$).
+  so $(2\partial_z+\lambda)G_+\in L^2_{\sigma'}([0,\infty))$ across the entire left strip, and
+  $\mathcal{H}_+(s):=\int_0^\infty e^{-sz}(2\partial_z+\lambda)G(z)\,dz$ is holomorphic on $\operatorname{Re}s>\sigma-\tfrac12$
+  with uniform $L^2(\mathbb{R}_\tau)$ norms on $[\sigma-\tfrac12,\sigma]$.
+  On the right boundary line $\operatorname{Re}s=\sigma$ (where $e^{-\sigma z}G_+\in H^1([0,\infty))$), integrating by parts on $[0,\infty)$ gives
+  $\mathcal{G}_+(\sigma+i\tau)=(2G(0)+\mathcal{H}_+(\sigma+i\tau))/(2(\sigma+i\tau)+\lambda)$ in $L^2(\mathbb{R}_\tau)$.
+  Consequently, the mixed-Laplace representation (\texttt{edge\_w2\_w3\_closure.py}, \texttt{W2-A})
+  \[
+  \widehat{G}(s) := \mathcal{G}_-(s) + \frac{2G(0)+\mathcal{H}_+(s)}{2s+\lambda}
+  \qquad (\sigma-\tfrac12\le\operatorname{Re}s\le\sigma)
+  \]
+  defines the meromorphic continuation of $\widehat{G}$ from $\operatorname{Re}s=\sigma$ across the strip
+  $\sigma-\tfrac12\le\operatorname{Re}s\le\sigma$ with at most a simple pole at $s_*=-\lambda/2$ ($\operatorname{Re}s_*<\sigma$),
+  without assuming $G_+\in L^2_{\sigma-1/2}([0,\infty))$.
+  Moreover, on $(-\infty,0]$, since $e^{-\sigma z}G_-\in H^1((-\infty,0])$ has $\lim_{z\to-\infty}e^{-sz}G(z)=0$ for all
+  $\operatorname{Re}s\le\sigma$, integration by parts holds on the left boundary line $\operatorname{Re}s=\sigma-\tfrac12$ as well,
+  giving $(2s+\lambda)\mathcal{G}_-(s)=-2G(0)+\int_{-\infty}^0 e^{-sz}(2\partial_z+\lambda)G(z)\,dz$; adding
+  $2G(0)+\mathcal{H}_+(s)$ cancels $\pm 2G(0)$ identically on $\operatorname{Re}s=\sigma-\tfrac12$, so
+  $(2s+\lambda)\widehat{G}(s)=\int_{\mathbb{R}}e^{-sz}e^{-z/2}(T_c G)(z)\,dz = c(s+\tfrac12)\widehat{G}(s+\tfrac12)$
+  holds in $L^2(\mathbb{R}_\tau)$ for $s=\sigma-\tfrac12+i\tau$ ($s+\tfrac12=\sigma+i\tau$).
 \item \emph{Pole cancellation at $s_*=-\lambda/2$, Morera gluing, and full-strip Parseval Laurent obstruction:}
   Form $P(s):=\widehat{G}(s)/X(s;\lambda)$. If $\operatorname{Re}\lambda>-2\sigma+1$, then $s_*$ lies strictly left of the strip.
   If $-2\sigma<\operatorname{Re}\lambda\le -2\sigma+1$, then $s_*\in[\sigma-\tfrac12,\sigma)$ and $2s_*+\lambda=0$, so $\Gamma(2s+\lambda)$
