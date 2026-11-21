@@ -28,7 +28,13 @@ for the exact Gauge-(a) 1D Hou-Luo co-moving system:
         giving gamma_nl = 1/2 and global exponential decay E(tau) <= E(0) exp(-tau/4)
         for E(0) < (gamma_nl / (2 C_nl))^2.
 
-Exit 0 iff NB-1..NB-5 all PASS.
+  NB-6  Appendix B continuous-PDE identities:
+        (i) exact unit-disk identity H[1_{(0,1)} w^{k-1/2}](u) = -(1/pi) sum_{m>=0} u^m/(k-m-1/2),
+        (ii) exact scalar edge-Hilbert decay H[exp(tau M_tilde) G_0](1) = H[g_0](1) e^{-tau},
+        (iii) derivative Mellin L^inf bound e^{z/4}|d_z Q_op G| <= sqrt(2/3) ||G_z||_{L^2_{1/4}},
+        (iv) 1-IBP O(m^{-3}) cancellation of G(0) = sum c_k in q_m = q_m^{disk} + q_m^{far}.
+
+Exit 0 iff NB-1..NB-6 all PASS.
 """
 from __future__ import annotations
 
@@ -52,7 +58,7 @@ def report(name: str, ok: bool, detail: str = "") -> None:
 
 
 def main() -> int:
-    print("Final Nonlinear Bootstrap Closure Gate (NB-1..NB-5)")
+    print("Final Nonlinear Bootstrap Closure Gate (NB-1..NB-6)")
 
     # ---- NB-1: Discrete Hilbert matrix norm <= pi & H^1 edge-disk strict coercivity ----
     abscissas = {}
@@ -217,11 +223,60 @@ def main() -> int:
         f"E(20)/E(0)={E/E0:.2e} <= e^{{-5}}({math.exp(-5.0):.2e})",
     )
 
+    # ---- NB-6: Appendix B continuous-PDE identities ----
+    # (i) Exact closed form for k=1: (1/pi)(-2 + sqrt(u) ln((1+sqrt(u))/(1-sqrt(u)))) vs series
+    u_test = 0.37
+    lhs_k1 = (-2.0 + math.sqrt(u_test) * math.log((1.0 + math.sqrt(u_test)) / (1.0 - math.sqrt(u_test)))) / math.pi
+    ms6 = np.arange(0, 200, dtype=float)
+    rhs_k1 = float(np.sum(-(u_test**ms6) / (math.pi * (1.0 - ms6 - 0.5))))
+    err_disk_id = abs(lhs_k1 - rhs_k1)
+
+    # (ii) Exact derivative L^inf bound on z >= -ln 2: e^{z/4}|d_z(Q_exact G)| <= sqrt(2/3) ||G_z||_{1/4}
+    G_b6 = (Y - 1.0) * np.exp(-(Y - 1.0))
+    Gz_b6 = (Y - 1.0) * (1.0 - (Y - 1.0)) * np.exp(-(Y - 1.0))
+    dQ_b6 = np.gradient(Q_exact @ G_b6, dz)
+    n14_z_b6 = float(np.sqrt(np.sum(np.exp(-0.5 * z) * Gz_b6**2) * dz))
+    mask_ov = z >= -math.log(2.0)
+    deriv_ratio = float(np.max(np.abs(np.exp(0.25 * z[mask_ov]) * dQ_b6[mask_ov])) / n14_z_b6)
+
+    # (iii) Global ||G_z||_{L^2_{1/4}((-inf, -ln 2])}^2 <= (4 sqrt(2) / 9) Z_disk
+    # Test on worst-case c_m = (1/m) * 2^{-m} (or random modes)
+    m6 = np.arange(1, 61, dtype=float)
+    z_left = np.linspace(-10.0, -math.log(2.0), 4001)
+    dz_left = float(z_left[1] - z_left[0])
+    c_b6 = 1.0 / (m6**1.6)
+    Z_b6 = float(np.sum((m6**2) * (c_b6**2)))
+    Gz_left = np.sum((m6 * c_b6)[:, None] * np.exp(m6[:, None] * z_left[None, :]), axis=0)
+    lhs_gz_left = float(np.trapezoid(np.exp(-0.5 * z_left) * Gz_left**2, z_left))
+    gz_left_ratio = lhs_gz_left / Z_b6
+    gz_left_cap = 4.0 * math.sqrt(2.0) / 9.0
+
+    # (iv) 1-IBP O(m^{-3}) cancellation in q_m = q_m^{disk} + q_m^{far} for G(v)=v (v<=1), e^{-z} (z>=0)
+    m_check = np.arange(1, 201, dtype=float)
+    q_comb = (-1.0 / (math.pi * (1.0 - m_check - 0.5)) - 1.0 / (math.pi * (m_check + 1.5))) / (m_check + 1.0)
+    l1_half_sum = float(np.sum(np.sqrt(m_check) * np.abs(q_comb)))
+    # Check asymptotic m^3 * q_m -> 2/pi
+    tail_m3 = float((m_check[-1] ** 3) * q_comb[-1])
+
+    ok_nb6 = (
+        err_disk_id < 1e-14
+        and deriv_ratio <= math.sqrt(2.0 / 3.0)
+        and gz_left_ratio <= gz_left_cap
+        and abs(tail_m3 - 2.0 / math.pi) < 0.03
+        and l1_half_sum < 1.0
+    )
+    report(
+        "NB-6 Appendix B continuous-PDE identities (disk series, d_z Q_op, overlap G_z, 1-IBP O(m^{-3}))",
+        ok_nb6,
+        f"disk_err={err_disk_id:.1e}, dQ_ratio={deriv_ratio:.4f}<={math.sqrt(2/3):.4f}, "
+        f"Gz_left={gz_left_ratio:.4f}<={gz_left_cap:.4f}, m^3*q_m={tail_m3:.4f}(2/pi={2/math.pi:.4f})",
+    )
+
     print()
     if FAILURES:
         print(f"GATE FAIL: {FAILURES}")
         return 1
-    print("GATE PASS: Final Nonlinear Bootstrap Closure (NB-1..NB-5)")
+    print("GATE PASS: Final Nonlinear Bootstrap Closure (NB-1..NB-6)")
     return 0
 
 

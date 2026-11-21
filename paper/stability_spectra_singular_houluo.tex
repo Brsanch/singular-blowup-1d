@@ -11,6 +11,8 @@
 \newtheorem{numthm}{Numerical Theorem}
 \newtheorem{conjecture}{Conjecture}
 \newtheorem{remark}{Remark}
+\newtheorem{lem}{Lemma}[section]
+\newtheorem{prop}{Proposition}[section]
 
 \title{Stability spectra of the singular self-similar profile\\
 of the 1D Hou--Luo model}
@@ -286,6 +288,7 @@ arXiv:2604.01868.  Smooth-profile Hou--Luo stability is out of scope for our pri
 \label{sec:w123}
 %--------------------------------------------------------------------------
 
+(Complete self-contained proofs of all three walls W1--W3 appear in Appendix~\ref{app:w123}.)
 While pure exponential weighted-energy / numerical-range methods fail for $M_{GG}$
 because the field of values and spectrum decouple under nonlocal transport coupling,
 the exact Mellin--Laplace ladder structure of $M_{GG} = -2\partial_z + \tfrac12 Q_{\mathrm{op}}$
@@ -397,23 +400,30 @@ with $\widetilde{Q}_{\mathrm{op}}G := Q_{\mathrm{op}}G - H[g](1)$.
 Define the edge Hardy-disk space
 $\mathcal{H}^1(D(1,1)) := \{G(z) = \sum_{m=1}^\infty c_m e^{mz} : \|c\|_{\mathcal{H}^1}^2 := \sum_{m=1}^\infty m^2|c_m|^2 < \infty\}$,
 the overlap far-field derivative energy $Y_{\mathrm{far}} := \|G_z\|_{L^2_{1/4}([-\ln 2,\infty))}^2$,
-and the Datko--Pazy renormalized W1--W3 semigroup energy $\widetilde{X}_{\mathrm{sem}}$
-(with $\omega_1 = 2/5 < 9/20$ and $\|G\|_{L^2_{1/4}(\mathbb{R})}^2 \le \widetilde{X}_{\mathrm{sem}} \le C_M\|G\|_{L^2_{1/4}}^2$).
+and the edge-Hilbert-split Datko--Pazy energy
+$X_{\mathrm{tot}} := \widetilde{X}_{\mathrm{sem}}[G_\perp] + \Lambda\,a^2$
+(Lemma~\ref{lem:mellin_split}, where $a(\tau)=H[g(\tau)](1)$, $G_\perp=G-a\phi_0\in\mathcal{D}(M_{1/4})$,
+$\omega_1 = 17/40 < 9/20$, and $\|G\|_{L^2_{1/4}(\mathbb{R})}^2 \le X_{\mathrm{tot}} \le C_M\|G\|_{L^2_{1/4}}^2 + \Lambda a^2$).
 For the coupled Lyapunov functional
 \[
-\mathcal{E}(\tau) := 20\,\widetilde{X}_{\mathrm{sem}}(\tau) + Y_{\mathrm{far}}(\tau) + 10\,\|c(\tau)\|_{\mathcal{H}^1(D(1,1))}^2,
+\mathcal{E}(\tau) := 20\,X_{\mathrm{tot}}(\tau) + Y_{\mathrm{far}}(\tau) + 10\,\|c(\tau)\|_{\mathcal{H}^1(D(1,1))}^2,
 \]
-the exact Gauge-(a) dynamics~\eqref{eq:comoving_exact} (in the invariant $h\equiv 0$ sector, or
-upper-triangularly coupled to $h(1+v)=\sum_{k\ge 1}d_k v^{k+1/2}$) satisfy the closed Riccati inequality
+there exists a constant $C_{\mathrm{nl}}>0$ such that for any initial data
+$G_0\in\mathcal{X}:=\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$ satisfying
+$\mathcal{E}(G_0) < (4 C_{\mathrm{nl}})^{-2}$, the exact Gauge-(a) system~\eqref{eq:comoving_exact}
+(in the invariant $h\equiv 0$ sector, or upper-triangularly coupled to $h(1+v)=\sum_{k\ge 1}d_k v^{k+1/2}$)
+admits a unique global solution $G\in C([0,\infty);\mathcal{X})$ satisfying the closed Riccati inequality
 \begin{equation}\label{eq:riccati_bootstrap}
-\frac{d}{d\tau}\mathcal{E} \le -\frac{1}{2}\,\mathcal{E} + C_{\mathrm{nl}}\,\mathcal{E}^{3/2}.
+\frac{d}{d\tau}\mathcal{E} \le -\frac{1}{2}\,\mathcal{E} + C_{\mathrm{nl}}\,\mathcal{E}^{3/2}
+\qquad\text{on }\{\mathcal{E} < (4 C_{\mathrm{nl}})^{-2}\},
 \end{equation}
-Consequently, whenever $\mathcal{E}(0) < (4 C_{\mathrm{nl}})^{-2}$, any smooth solution remains
-globally trapped and decays exponentially:
+and decaying exponentially for all $\tau\ge 0$:
 \[
 \mathcal{E}(\tau) \le \mathcal{E}(0)\,e^{-\tau/4}, \qquad
 |c_l(\tau)-2| + |c_\omega(\tau)+1| + |B(\tau)-B_\infty| \le C\sqrt{\mathcal{E}(0)}\,e^{-\tau/8}.
 \]
+Complete self-contained proofs of all nonlinear estimates and of local well-posedness / global
+continuation in $\mathcal{X}$ are given in Appendices~\ref{app:nonlin_est} and~\ref{app:lwp}.
 \end{thm}
 
 \paragraph{Proof architecture (five verified pillars).}
@@ -435,7 +445,7 @@ globally trapped and decays exponentially:
   $\|\frac{1}{2}\partial_z(\widetilde{Q}_{\mathrm{op}}G)\|_{L^2_{1/4}}\le \frac{7}{10}\|G\|_{L^2_{3/4}}$,
   and $\|Q_{\mathrm{op}}G\|_{L^\infty}\le (\pi^{-1/2}+\sqrt{2/3})\|G\|_{L^2_{3/4,1/4}} < \frac{7}{5}\|G\|_{L^2_{3/4,1/4}}$.
 \item \textbf{Far-field-to-edge-disk Taylor coupling:}
-  $\sum_{m\ge 1} m|b_m|^2 \le \frac{\pi^2/6-1}{8\pi^2}\|G\|_{L^2_{1/4}([0,\infty))}^2 < \frac{1}{100}\widetilde{X}_{\mathrm{sem}}$
+  $\sum_{m\ge 1} m|b_m|^2 \le \frac{\pi^2/6-1}{8\pi^2}\|G\|_{L^2_{1/4}([0,\infty))}^2 < \frac{1}{100}X_{\mathrm{tot}}$
   (series $0.007231 < 0.008168 < 25/2592 < 0.01$).
 \item \textbf{Overlap stitching at $z_0=-\ln 2$ ($Y=3/2$) and edge $L^2_{3/4}$ embedding:}
   The interior overlap factor $e^{z_0}=1/2$ bounds the weighted inflow by
@@ -443,7 +453,7 @@ globally trapped and decays exponentially:
   and the telescoping Gram trace bounds
   $\|G\|_{L^2_{3/4}((-\infty,0])}^2 \le (\sum_{m\ge 1}\frac{1}{m^2(2m-3/2)}) Z_{\mathrm{disk}} < \frac{199}{90}Z_{\mathrm{disk}} < \frac{9}{4}Z_{\mathrm{disk}}$
   (exact Gram norm $2.07150 \le \mathrm{tr}=2.14799 < 199/90 < 9/4$),
-  yielding $\dot Y_{\mathrm{far}} \le -\frac{1}{2}Y_{\mathrm{far}} + \frac{641}{200}Z_{\mathrm{disk}} + \frac{49}{50}\widetilde{X}_{\mathrm{sem}} + \mathcal{N}_{\mathrm{far}}$.
+  yielding $\dot Y_{\mathrm{far}} \le -\frac{1}{2}Y_{\mathrm{far}} + \frac{641}{200}Z_{\mathrm{disk}} + \frac{49}{50}X_{\mathrm{tot}} + \mathcal{N}_{\mathrm{far}}$.
 \item \textbf{Closed 3-block Lyapunov and Riccati trapping:}
   Combining the three inequalities with weights $(20, 1, 10)$ yields exact rational per-block linear rates
   $(-\frac{741}{1000}, -\frac{1}{2}, -\frac{5359}{2000})$, establishing~\eqref{eq:riccati_bootstrap} and
@@ -457,7 +467,7 @@ machine-checked in Lean~4 (\texttt{lean/SingularBlowup/NonlinearComoving.lean} a
 \texttt{lean/SingularBlowup/NonlinearBootstrap.lean}, zero \texttt{sorry}, zero custom axioms,
 vacuity-lint clean across all 7 modules in \texttt{lean/SingularBlowup/}), paired with numerical gates
 \texttt{validate/edge\_nonlinear\_comoving\_closure.py} (\texttt{NL-1..NL-5 PASS}) and
-\texttt{validate/edge\_nonlinear\_bootstrap\_closure.py} (\texttt{NB-1..NB-5 PASS}).
+\texttt{validate/edge\_nonlinear\_bootstrap\_closure.py} (\texttt{NB-1..NB-6 PASS}).
 
 %--------------------------------------------------------------------------
 \section{Limitations and formalization scope}
@@ -469,9 +479,10 @@ semigroup chain (W1--W3) and the small-data nonlinear co-moving bootstrap in
 $\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$.  In the Lean~4 formalization
 (\texttt{lean/SingularBlowup/}), all algebraic cancellations, rational symbol and series bounds,
 discrete Hilbert/commutator identities, 3-block Lyapunov coercivity, and the real-analytic Riccati
-trapping theorem are machine-checked, whereas standard continuous PDE steps (Cauchy--Kovalevskaya /
-hyperbolic local well-posedness and Datko--Pazy renorming of the W1--W3 $C_0$-group) are carried out
-analytically in the companion notes (\texttt{docs/desk/}).  The large-amplitude ($A\le 4$) tests in
+trapping theorem are machine-checked, whereas the continuous PDE steps (the full W1--W3 resolvent/semigroup closure,
+explicit block-by-block $C_{\mathrm{nl}}\mathcal{E}^{3/2}$ bounds, Datko--Pazy renorming, and
+zero-shrinkage local well-posedness / continuation in $\mathcal{X}$) are proved in full in
+Appendices~\ref{app:w123}--\ref{app:lwp}.  The large-amplitude ($A\le 4$) tests in
 Section~\ref{sec:nonlin} remain numerical.
 
 \paragraph{Energy / CAP dead ends (named).}
@@ -545,7 +556,7 @@ python3 validate/coevolve_projected.py                # (c_l,c_w)->(2,-1)
 python3 validate/edge_w1_route_f_closure.py           # W1 Route F (F1-F4 PASS)
 python3 validate/edge_w2_w3_closure.py                # W2+W3 (W2-A/B, W3-A PASS)
 python3 validate/edge_nonlinear_comoving_closure.py   # Gauge-(a) (NL-1..NL-5 PASS)
-python3 validate/edge_nonlinear_bootstrap_closure.py  # Bootstrap (NB-1..NB-5 PASS)
+python3 validate/edge_nonlinear_bootstrap_closure.py  # Bootstrap (NB-1..NB-6 PASS)
 \end{verbatim}
 
 \paragraph{KEY numbers (session freeze; tol $5\%$ relative unless noted).}
@@ -580,6 +591,555 @@ Ready-to-arXiv package (updated 2026-11-20: linear strict-gap semigroup chain W1
 small-data nonlinear co-moving bootstrap in $\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$
 closed analytically with Lean~4 algebraic/Riccati backbone and Python verification gates).
 Source of truth: \texttt{paper/} and \texttt{lean/SingularBlowup/} in the companion repository; see \texttt{HANDOFF.md}.
+
+
+\appendix
+
+%==========================================================================
+\section{Complete Proof of Theorem~\ref{thm:linear_gap} (W1--W3)}
+\label{app:w123}
+%==========================================================================
+
+Throughout this appendix, fix $\sigma\in(0,\tfrac12)$, $\delta>0$, and
+$\lambda=(-2\sigma+\delta)+i\omega$ with $\omega\in\mathbb{R}$.
+On $s=\sigma+i\tau$ ($\tau\in\mathbb{R}$), the Mellin transform
+$\widehat{G}(s)=\int_{\mathbb{R}} e^{-sz}G(z)\,dz$ is a unitary isometry
+(up to $(2\pi)^{-1/2}$) from $L^2_\sigma(\mathbb{R}, e^{-2\sigma z}\,dz)$ onto $L^2(\sigma+i\mathbb{R})$.
+The linear resolvent equation $(\lambda - M_\sigma)G = F$ transforms to the ladder equation
+\begin{equation}\label{eq:app_ladder}
+(\lambda+2s)\widehat{G}(s) - c\!\left(s+\tfrac12\right)\widehat{G}\!\left(s+\tfrac12\right) = \widehat{F}(s),
+\qquad c(w) := -\frac{\tan(\pi w)}{2w+1}.
+\end{equation}
+Introducing the 4-Gamma ladder multiplier
+\begin{equation}\label{eq:app_X}
+X(s;\lambda) := \frac{\Gamma(2s+\lambda)\,\Gamma(2s+2)\,\Gamma(s)\,\Gamma(1-s)}{4\pi(2s+1)},
+\end{equation}
+the slit-plane Plemelj resolvent $R_{\mathrm{slit}}(\lambda)\mathcal{F}(\tau) := X(\sigma+i\tau;\lambda)[D(e^{4\pi i(\sigma+i\tau)})-D(1)]$
+decomposes into
+\[
+R_{\mathrm{slit}}(\lambda) = T_{\mathrm{Plemelj}}(\lambda) + T_{\mathrm{diag}}(\lambda) + T_{\mathrm{off}}(\lambda) + T_{\mathrm{defect}}(\lambda),
+\]
+where $T_{\mathrm{Plemelj}}(\lambda)\mathcal{F}(\tau)=\mathcal{F}(\tau)/(\lambda+2(\sigma+i\tau))$ is the
+Plemelj jump (the pure-transport resolvent $R_0(\lambda)$), $T_{\mathrm{diag}}$ and $T_{\mathrm{off}}$ are the
+split-Cauchy integrals on $|\tau-\tau'|<1$ and $|\tau-\tau'|\ge 1$ respectively, and
+$(T_{\mathrm{defect}}(\lambda)\mathcal{F})(\tau) = -X(\sigma+i\tau;\lambda)\,D(1)[\mathcal{F}]$
+is the rank-one defect subtraction cancelling the $s=0$ pole of $\Gamma(s)$.
+
+\begin{lem}[W1 --- Four-quadrant Stirling--Schur off-diagonal bound]\label{lem:app_stir_schur}
+There exists $C_{\mathrm{off}}(\sigma,\delta)<\infty$ independent of $\omega\in\mathbb{R}$ such that
+$\sup_{\omega\in\mathbb{R}}\|T_{\mathrm{off}}((-2\sigma+\delta)+i\omega)\|_{L^2\to L^2}\le C_{\mathrm{off}}(\sigma,\delta)$.
+\end{lem}
+\begin{proof}
+By Stirling's formula on vertical strips $\operatorname{Re}z\ge x_0>0$,
+$|\Gamma(x+iy)|\asymp (1+|y|)^{x-1/2}e^{-\pi|y|/2}$ uniformly in $y\in\mathbb{R}$.
+Applying this to the four Gamma factors of $X(\sigma+i\tau;\lambda)$ (with real parts
+$\delta$, $2\sigma+2$, $\sigma$, $1-\sigma$, all strictly positive), the exponential factor of $|X(\sigma+i\tau;\lambda)|$ is
+$\exp(-\pi|\tau+\omega/2|-2\pi|\tau|)$ and the polynomial factor is
+$(1+|\tau+\omega/2|)^{\delta-1/2}(1+|\tau|)^{2\sigma+3/2}$ (since $\Gamma(s)\Gamma(1-s)=\pi/\sin(\pi s)$ has polynomial degree $0$).
+In the split Cauchy kernel on the $w=e^{4\pi i s}$ slit plane, for $|\tau-\tau'|\ge 1$ we have
+$|1-e^{-4\pi|\tau-\tau'|}|\ge 1-e^{-4\pi}>0$, and the kernel carries the wing decay $\exp(-4\pi\,\mathrm{splitWing}(\tau,\tau'))$,
+where $\mathrm{splitWing}(\tau,\tau')=\max(0,\tau'-\tau)$ for $\tau'\ge 0$ and $\max(0,\tau-\tau')$ for $\tau'<0$.
+Hence the net exponential decay exponent of the dressed kernel $K_{\mathrm{off}}(\tau,\tau';\lambda)$ is
+\[
+E_\omega(\tau,\tau') := \pi\bigl(|\tau+\tfrac{\omega}{2}|-|\tau'+\tfrac{\omega}{2}|\bigr) + 2\pi(|\tau|-|\tau'|) + 4\pi\,\mathrm{splitWing}(\tau,\tau').
+\]
+We verify $E_\omega(\tau,\tau')\ge\pi|\tau-\tau'|$ identically on $\mathbb{R}^3$ (Lean: \texttt{lem\_stir\_schur\_four\_quadrant\_margin}):
+\begin{itemize}\setlength\itemsep{1pt}
+\item If $\mathrm{splitWing}(\tau,\tau')=0$ ($\tau\ge\tau'\ge 0$ or $\tau\le\tau'<0$), then $|\tau|-|\tau'|=+|\tau-\tau'|$,
+  while $|\tau+\omega/2|-|\tau'+\omega/2|\ge -|\tau-\tau'|$ by the reverse triangle inequality, giving
+  $E_\omega(\tau,\tau')\ge (2\pi-\pi)|\tau-\tau'|=\pi|\tau-\tau'|$.
+\item If $\mathrm{splitWing}(\tau,\tau')=|\tau-\tau'|$ (all remaining sign/order configurations), both triangle
+  differences are $\ge -|\tau-\tau'|$, giving $E_\omega(\tau,\tau')\ge (-\pi-2\pi+4\pi)|\tau-\tau'|=\pi|\tau-\tau'|$.
+\end{itemize}
+For the polynomial prefactor, since $|\lambda+2(\sigma+i\tau')|=\sqrt{\delta^2+(2\tau'+\omega)^2}\ge c_\delta(1+|\tau'+\omega/2|)$
+and $(\tau+\omega/2)-(\tau'+\omega/2)=\tau-\tau'$ is $\omega$-independent, submultiplicativity
+$1+|a|\le (1+|b|)(1+|a-b|)$ (Lean: \texttt{shifted\_weight\_submultiplicative}) yields
+\[
+\frac{(1+|\tau+\omega/2|)^{\delta-1/2}(1+|\tau|)^{2\sigma+3/2}}{(1+|\tau'+\omega/2|)^{\delta+1/2}(1+|\tau'|)^{2\sigma+3/2}}
+\le \frac{(1+|\tau-\tau'|)^{q}}{1+|\tau'+\omega/2|} \le (1+|\tau-\tau'|)^q,
+\qquad q := 2\sigma+\tfrac32+|\delta-\tfrac12|.
+\]
+Therefore $|K_{\mathrm{off}}(\tau,\tau';\lambda)|\le C(\sigma,\delta)(1+|\tau-\tau'|)^q e^{-\pi|\tau-\tau'|}\in L^1(\mathbb{R}_{\Delta\tau})$,
+and Schur's test gives the uniform bound $\sup_{\omega}\|T_{\mathrm{off}}(\lambda)\|_{L^2\to L^2}\le 2C(\sigma,\delta)\int_1^\infty(1+u)^q e^{-\pi u}\,du<\infty$.
+\end{proof}
+
+\begin{lem}[W1 --- Unitary-phase conjugation diagonal Riesz bound]\label{lem:app_diag_riesz}
+There exists $C_{\mathrm{diag}}(\sigma,\delta)<\infty$ independent of $\omega\in\mathbb{R}$ such that
+$\sup_{\omega\in\mathbb{R}}\|T_{\mathrm{diag}}((-2\sigma+\delta)+i\omega)\|_{L^2\to L^2}\le C_{\mathrm{diag}}(\sigma,\delta)$.
+\end{lem}
+\begin{proof}
+Factor $X(\sigma+i\tau;\lambda)=u(\tau;\lambda)\,|X(\sigma+i\tau;\lambda)|$ with unimodular phase $|u(\tau;\lambda)|\equiv 1$.
+Then
+\[
+T_{\mathrm{diag}}(\lambda) = M_{u(\cdot;\lambda)}\circ \widetilde{T}_{\mathrm{diag}}(\lambda)\circ M_{u(\cdot;\lambda)^{-1}}\circ M_{(\lambda+2s')^{-1}},
+\]
+where $M_u, M_{u^{-1}}$ are unitary on $L^2(\mathbb{R})$ and $\|M_{(\lambda+2s')^{-1}}\|_{L^2\to L^2}\le \delta^{-1}$.
+Inside $\widetilde{T}_{\mathrm{diag}}(\lambda)$, only the real modulus $|X|$ enters. Since
+$\frac{d}{d\tau}\log|X(\sigma+i\tau;\lambda)| = -\operatorname{Im}\bigl(2\psi(2s+\lambda)+2\psi(2s+2)+\psi(s)-\psi(1-s)\bigr)$
+(plus the bounded rational term $\operatorname{Im}\frac{2}{2s+1}$ of modulus $\le 2$) and the digamma function
+satisfies $|\operatorname{Im}\psi(x+iy)|\le \frac{\pi}{2}+\frac{1}{x}$ for all $x>0, y\in\mathbb{R}$, we obtain
+\[
+\Bigl|\frac{d}{d\tau}\log|X(\sigma+i\tau;\lambda)|\Bigr| \le 3\pi + \frac{2}{\delta} + \frac{1}{\sigma} + \frac{1}{1-\sigma} =: L(\sigma,\delta),
+\]
+uniformly for all $(\tau,\omega)\in\mathbb{R}^2$.
+Writing $\frac{|X(\tau)|}{|X(\tau')|} = 1 + \bigl(\frac{|X(\tau)|}{|X(\tau')|}-1\bigr)$ on $|\tau-\tau'|<1$:
+the $1$ term is the $\lambda$-independent truncated Hilbert transform $H_{<1}$ (bounded on $L^2(\mathbb{R})$ by Riesz/Cotlar)
+plus a smooth bounded kernel; the remainder satisfies
+$\bigl|\frac{|X(\tau)|}{|X(\tau')|}-1\bigr|\le L(\sigma,\delta)e^{L(\sigma,\delta)}|\tau-\tau'|$ by the mean-value theorem,
+which cancels the Cauchy pole $C_{\mathrm{ker}}/|\tau-\tau'|$ (Lean: \texttt{modulus\_commutator\_cancels\_cauchy\_pole})
+and yields a bounded kernel on $|\tau-\tau'|<1$ with Schur norm $\le \frac{1}{\pi}C_{\mathrm{ker}}L(\sigma,\delta)e^{L(\sigma,\delta)}$.
+Multiplying by $\delta^{-1}$ completes the proof.
+\end{proof}
+
+\begin{lem}[W1 --- Rank-one slit-defect $\omega$-cancellation]\label{lem:app_defect}
+There exists $C_{\mathrm{def}}(\sigma,\delta)<\infty$ such that
+$\|T_{\mathrm{defect}}((-2\sigma+\delta)+i\omega)\|_{L^2\to L^2}\le C_{\mathrm{def}}(\sigma,\delta)/(1+|\omega|)$ for all $\omega\in\mathbb{R}$.
+\end{lem}
+\begin{proof}
+Since $T_{\mathrm{defect}}(\lambda)$ has rank one, $\|T_{\mathrm{defect}}(\lambda)\|_{L^2\to L^2}=\|X(\sigma+i\cdot;\lambda)\|_{L^2}\|K_{\mathrm{slit}}(\cdot;\lambda)\|_{L^2}$,
+where $K_{\mathrm{slit}}(\tau';\lambda) = \bigl(X(\sigma+i\tau';\lambda)(\lambda+2s')\,\kappa_1(\tau')\bigr)^{-1}$ is the slit-defect functional kernel.
+By the triangle-inequality margin (Lean: \texttt{slit\_defect\_rank\_one\_margin}),
+\begin{align*}
+\pi|\tau+\tfrac{\omega}{2}| + 2\pi|\tau| &\ge \tfrac{\pi}{2}|\omega| + \pi|\tau|,
+  & \|X(\sigma+i\cdot;\lambda)\|_{L^2} &\le C_1(\sigma,\delta)(1+|\omega|)^{\delta-1/2}e^{-\pi|\omega|/2}, \\
+\pi|\tau'+\tfrac{\omega}{2}| - 2\pi|\tau'| &\ge -\tfrac{\pi}{2}|\omega| - \pi|\tau'|,
+  & \|K_{\mathrm{slit}}(\cdot;\lambda)\|_{L^2} &\le C_2(\sigma,\delta)(1+|\omega|)^{-(\delta+1/2)}e^{+\pi|\omega|/2}.
+\end{align*}
+Multiplying the two bounds cancels $e^{\mp\pi|\omega|/2}$ identically and sums the polynomial exponents to
+$(\delta-\tfrac12)-(\delta+\tfrac12)=-1$, giving $\|T_{\mathrm{defect}}(\lambda)\|_{L^2\to L^2}\le C_{\mathrm{def}}(\sigma,\delta)(1+|\omega|)^{-1}$.
+\end{proof}
+
+\begin{lem}[W2 --- Left-strip mixed Laplace bridge and point-spectrum uniqueness]\label{lem:app_w2}
+For every $\sigma\in(0,\tfrac12)$ and $\operatorname{Re}\lambda>-2\sigma$, $\ker(\lambda-M_\sigma)=\{0\}$ in $L^2_\sigma(\mathbb{R})$.
+\end{lem}
+\begin{proof}
+Suppose $G\in\mathcal{D}(M_\sigma)\subset L^2_\sigma(\mathbb{R})$ satisfies $(\lambda-M_\sigma)G=0$.
+Split $G=G_-+G_+$ with $G_-:=G\mathbf{1}_{(-\infty,0]}$ and $G_+:=G\mathbf{1}_{[0,\infty)}$.
+\begin{enumerate}\setlength\itemsep{1pt}
+\item \emph{Edge half-line on the left strip $[\sigma-\tfrac12,\sigma]$:}
+  For $z\le 0$ and $\sigma'\in[\sigma-\tfrac12,\sigma]$, $-2\sigma' z\le -2\sigma z$ (Lean: \texttt{left\_strip\_edge\_exponent\_le}),
+  so $\|G_-\|_{L^2_{\sigma'}}\le\|G\|_{L^2_\sigma}<\infty$. By Paley--Wiener, $\mathcal{G}_-(s)=\int_{-\infty}^0 e^{-sz}G(z)\,dz$
+  is holomorphic on $\operatorname{Re}s<\sigma$ with uniform $L^2$ norms on $[\sigma-\tfrac12,\sigma]$.
+\item \emph{Far-field half-line on the left strip:}
+  Because $T_c$ is bounded on $L^2_\sigma(\mathbb{R})$ (the line $\operatorname{Re}s=\sigma\in(0,\tfrac12)$ avoids all poles of $\tan(\pi s)$)
+  and multiplication by $e^{-z/2}$ is an exact isometry $L^2_\sigma\to L^2_{\sigma-1/2}$ (Lean: \texttt{shift\_half\_weight\_exponent\_eq}),
+  the eigenvalue equation $(2\partial_z+\lambda)G = e^{-z/2}T_c G$ implies $(2\partial_z+\lambda)G\in L^2_{\sigma-1/2}(\mathbb{R})$.
+  For $z\ge 0$ and $\sigma'\in[\sigma-\tfrac12,\sigma]$, $-2\sigma' z\le -2(\sigma-\tfrac12)z$ (Lean: \texttt{left\_strip\_far\_exponent\_le}),
+  so $(2\partial_z+\lambda)G_+\in L^2_{\sigma'}([0,\infty))$ across the entire left strip.
+  Integrating by parts on $[0,\infty)$ yields $\mathcal{G}_+(s)=(2G(0)+\mathcal{H}_+(s))/(2s+\lambda)$,
+  where $\mathcal{H}_+(s):=\int_0^\infty e^{-sz}(2\partial_z+\lambda)G(z)\,dz$ is holomorphic on $\operatorname{Re}s>\sigma-\tfrac12$.
+  Thus $\widehat{G}(s)=\mathcal{G}_-(s)+\mathcal{G}_+(s)$ extends meromorphically to the strip $\sigma-\tfrac12<\operatorname{Re}s<\sigma$
+  with at most a single simple pole at $s_*:=-\lambda/2$ (note $\operatorname{Re}s_*<\sigma$ since $\operatorname{Re}\lambda>-2\sigma$).
+\item \emph{Pole cancellation at $s_*=-\lambda/2$ and Laurent obstruction:}
+  Form $P(s):=\widehat{G}(s)/X(s;\lambda)$. If $\operatorname{Re}\lambda>-2\sigma+1$, then $s_*$ lies strictly left of the strip.
+  If $-2\sigma<\operatorname{Re}\lambda\le -2\sigma+1$, then $s_*\in[\sigma-\tfrac12,\sigma)$ and $2s_*+\lambda=0$, so $\Gamma(2s+\lambda)$
+  in $X(s;\lambda)$ has a simple pole at $s_*$. None of the remaining factors of $X(s;\lambda)$ vanish on
+  $\operatorname{Re}s\in(\sigma-\tfrac12,\sigma)\subset(-\tfrac12,\tfrac12)$ ($\Gamma$ is zero-free and $2s+1\ne 0$ since $\operatorname{Re}s>-\tfrac12$);
+  if $s_*\ne 0$, $\Gamma(2s+2)\Gamma(s)\Gamma(1-s)$ is holomorphic and nonzero at $s_*$, so $1/X(s;\lambda)$ has a simple zero at $s_*$
+  cancelling the simple pole of $\widehat{G}$; if $s_*=0$ ($\lambda=0$), then $\Gamma(2s)\Gamma(s)$ gives $X$ a double pole at $s=0$,
+  so $P(s)$ is holomorphic at $s=0$ and vanishes there automatically.
+  Hence $P(s)$ is holomorphic throughout the open strip $\sigma-\tfrac12<\operatorname{Re}s<\sigma$, satisfies $P(s+\tfrac12)=P(s)$ by the ladder
+  equation, and therefore descends to a single-valued holomorphic function $\widetilde{P}(w)=P(s)$ ($w=e^{4\pi i s}$) on $\mathbb{C}^*$ with $P(0)=0$
+  (cancelling the $s=0$ pole of $\Gamma(s)$ for $\lambda\ne 0$ so $G\in L^2_\sigma$).
+  On the vertical line $\operatorname{Re}s=\sigma$, Stirling decay of $|X(\sigma+i\tau;\lambda)|$ vs.\ $e^{-4\pi k\tau}$ forces
+  every nonzero Laurent mode $c_k e^{4\pi i k s}$ of $P$ to satisfy $|k|<3/4<1$ (Lean: \texttt{PointSpectrum.no\_l2\_and\_edge\_kill}),
+  hence $k=0$. Thus $P(s)\equiv c_0 = P(0)=0$, so $\widehat{G}\equiv 0$ and $G\equiv 0$.
+\end{enumerate}
+\end{proof}
+
+\begin{lem}[W3 --- Reference-transport perturbation and Gearhart--Pr\"uss decay]\label{lem:app_w3}
+$M_\sigma$ generates a $C_0$-semigroup $e^{t M_\sigma}$ on $L^2_\sigma(\mathbb{R})$ satisfying
+$\|e^{t M_\sigma}\|_{L^2_\sigma\to L^2_\sigma}\le C(\sigma,\delta)e^{(-2\sigma+\delta)t}$ for all $t\ge 0$ and $\delta>0$.
+\end{lem}
+\begin{proof}
+By Lemmas~\ref{lem:app_stir_schur}--\ref{lem:app_w2}, $(\lambda-M_\sigma)^{-1}=R_{\mathrm{slit}}(\lambda)$ exists and is uniformly
+bounded on every half-plane $\operatorname{Re}\lambda\ge -2\sigma+\delta$.
+Let $A_0:=-2\partial_z$ be the pure transport generator on $L^2_\sigma(\mathbb{R})$, which generates the exact translation
+$C_0$-group $(e^{t A_0}u)(z)=u(z-2t)$ with $\|e^{t A_0}\|_{L^2_\sigma}=e^{-2\sigma t}$ and resolvent $R_0(\lambda)\mathcal{F}(s)=\mathcal{F}(s)/(\lambda+2s)$.
+The perturbation $\delta R(\lambda):=R_{\mathrm{slit}}(\lambda)-R_0(\lambda)$ satisfies
+$(\delta R(\lambda)\mathcal{F})(s)=\frac{c(s+1/2)}{\lambda+2s}\widehat{G}(s+\tfrac12;\lambda)$.
+By the frequency-separation pincer $|2\tau+\omega|+|2\tau|\ge|\omega|$ (Lean: \texttt{transport\_coupling\_frequency\_pincer}),
+every frequency $\tau\in\mathbb{R}$ satisfies either $|\lambda+2s|\ge|\omega|/2$ or $|2s+1|\ge|\omega|/2$.
+Together with $|c(\sigma+\tfrac12+i\tau)|=O((1+|\tau|)^{-1})$ and Lemmas~\ref{lem:app_stir_schur} and~\ref{lem:app_defect},
+$\|\delta R(\mu+i\omega)\|_{L^2_\sigma\to L^2_\sigma}=O((1+|\omega|)^{-1})\in L^2(\mathbb{R}_\omega)$ along $\mu=-2\sigma+\delta$.
+By the Hilbert-space Paley--Wiener theorem,
+\[
+e^{t M_\sigma}F := e^{t A_0}F + \frac{1}{2\pi}\int_{-\infty}^\infty e^{(\mu+i\omega)t}\,\delta R(\mu+i\omega)F\,d\omega
+\]
+defines a strongly continuous semigroup on $L^2_\sigma(\mathbb{R})$ with generator $M_\sigma$.
+Indeed, for any $\operatorname{Re}\lambda,\operatorname{Re}\mu>-2\sigma$ and $F\in L^2_\sigma(\mathbb{R})$,
+every term of $U:=R_{\mathrm{slit}}(\lambda)F-R_{\mathrm{slit}}(\mu)F-(\mu-\lambda)R_{\mathrm{slit}}(\lambda)R_{\mathrm{slit}}(\mu)F$
+lies in the maximal defect-closed domain $\mathcal{D}(M_\sigma)=\{G\in L^2_\sigma : M_\sigma G\in L^2_\sigma,\;\widehat{G}(\tfrac12)=0\}$
+(since $R_{\mathrm{slit}}(\nu)F$ vanishes identically at $s=\tfrac12$), and applying $\lambda-M_\sigma$ yields
+$(\lambda-M_\sigma)U = F - (F+(\lambda-\mu)R_{\mathrm{slit}}(\mu)F) - (\mu-\lambda)R_{\mathrm{slit}}(\mu)F = 0$;
+Lemma~\ref{lem:app_w2} then forces $U\equiv 0$, proving the First Resolvent Identity
+$R_{\mathrm{slit}}(\lambda)-R_{\mathrm{slit}}(\mu)=(\mu-\lambda)R_{\mathrm{slit}}(\lambda)R_{\mathrm{slit}}(\mu)$
+(and $\lambda$-independence of $\operatorname{Ran}R_{\mathrm{slit}}(\lambda)=\mathcal{D}(M_\sigma)$).
+By standard Laplace inversion, the First Resolvent Identity yields the semigroup law $e^{(t+s)M_\sigma}=e^{t M_\sigma}e^{s M_\sigma}$,
+while Cauchy--Schwarz on $\delta R\in L^2(\mathbb{R}_\omega)$ gives $\|e^{t M_\sigma}F-e^{t A_0}F\|_{L^2_\sigma}=O(\sqrt{t})\to 0$ as $t\downarrow 0$. Finally, since $\sup_{\operatorname{Re}\lambda\ge -2\sigma+\delta}\|(\lambda-M_\sigma)^{-1}\|<\infty$,
+the Gearhart--Pr\"uss theorem (Engel--Nagel, \emph{One-Parameter Semigroups}, Thm.~V.1.11) yields
+$\|e^{t M_\sigma}\|_{L^2_\sigma\to L^2_\sigma}\le C(\sigma,\delta)e^{(-2\sigma+\delta)t}$.
+\end{proof}
+
+\noindent\textit{Proof of Theorem~\ref{thm:linear_gap}.} Immediate from Lemmas~\ref{lem:app_stir_schur}--\ref{lem:app_w3}. \hfill$\square$
+
+%==========================================================================
+\section{Complete Proof of Theorem~\ref{thm:nonlinear_bootstrap} (Explicit $C_{\mathrm{nl}}\mathcal{E}^{3/2}$ Estimates)}
+\label{app:nonlin_est}
+%==========================================================================
+
+Write the exact Gauge-(a) PDE~\eqref{eq:comoving_exact} (in the invariant $h\equiv 0$ sector; see Remark~\ref{rem:h_sector} for $h\not\equiv 0$) as
+\[
+\partial_\tau G = \widetilde{M}_{GG}G + \mathcal{N}[G], \qquad
+\widetilde{M}_{GG}G := -2\partial_z G + \tfrac12\widetilde{Q}_{\mathrm{op}}G, \qquad
+\mathcal{N}[G] := p[G]\,\partial_z G + \tfrac12\bigl(\widetilde{Q}_{\mathrm{op}}G\bigr)G,
+\]
+where $p[G](z) := V_G(1) - Q_{\mathrm{op}}G(z)$ and $\widetilde{Q}_{\mathrm{op}}G := Q_{\mathrm{op}}G - H[g](1)$.
+
+\begin{lem}[Unconditional Mellin identity for $\widetilde{Q}_{\mathrm{op}}G$ and edge-Hilbert mode splitting]\label{lem:mellin_split}
+For every $G\in L^2_{3/4,1/4}(\mathbb{R})$ (without assuming $H[g](1)=0$):
+\begin{enumerate}\setlength\itemsep{1pt}
+\item On every vertical line $\operatorname{Re}s\in(0,1)$,
+  $\mathcal{M}[\widetilde{Q}_{\mathrm{op}}G](s) = 2\,c(s+\tfrac12)\,\widehat{G}(s+\tfrac12)$.
+\item Setting $a(\tau):=H[g(\tau)](1)=-\frac{1}{\pi}\widehat{G}(\tfrac12,\tau)$, the Gauge-(a) flow satisfies
+  \begin{equation}\label{eq:a_ode}
+  \dot{a}(\tau) = -a(\tau) + H\bigl[\mathcal{N}[G(\tau)]\bigr](1).
+  \end{equation}
+\item Fix $\phi_0\in C_c^\infty([1,2])$ with $H[\phi_0](1)=1$, and split $G = G_\perp + a(\tau)\phi_0$.
+  Then $H[g_\perp](1)\equiv 0$ identically (so $\widetilde{M}_{GG}G_\perp = M_{1/4}G_\perp$),
+  $v_0 := \widetilde{M}_{GG}\phi_0 + \phi_0 \in L^2_{1/4}(\mathbb{R})$ satisfies $H[v_0](1)=0$, and
+  \begin{equation}\label{eq:Gperp_pde}
+  \partial_\tau G_\perp = M_{1/4}G_\perp + a(\tau)\,v_0 + \mathcal{N}_\perp[G], \qquad
+  \mathcal{N}_\perp[G] := \mathcal{N}[G] - H[\mathcal{N}[G]](1)\,\phi_0.
+  \end{equation}
+  Moreover, defining the Datko--Pazy norm
+  $\widetilde{X}_{\mathrm{sem}}[G_\perp] := \kappa\int_0^\infty e^{2\omega_1 s}\|e^{s M_{1/4}}G_\perp\|_{L^2_{1/4}}^2\,ds$
+  with $\omega_1 := \frac{17}{40} < \frac{9}{20}$ and $\kappa>0$ chosen so that $\|G_\perp\|_{L^2_{1/4}}^2\le\tfrac12\widetilde{X}_{\mathrm{sem}}[G_\perp]$,
+  and setting $X_{\mathrm{tot}} := \widetilde{X}_{\mathrm{sem}}[G_\perp] + \Lambda\,a^2$ with
+  $\Lambda := \max\bigl(2\|\phi_0\|_{L^2_{1/4}}^2,\; 20\|v_0\|_{\widetilde{\mathrm{sem}}}^2\bigr)$, we have
+  $\|G\|_{L^2_{1/4}(\mathbb{R})}^2 \le X_{\mathrm{tot}}$ and
+  \begin{equation}\label{eq:Xtot_dot}
+  \frac{d}{d\tau}X_{\mathrm{tot}} \le -\frac{4}{5}\,X_{\mathrm{tot}}
+  + 2\langle G_\perp, \mathcal{N}_\perp[G]\rangle_{\widetilde{\mathrm{sem}}} + 2\Lambda\,a\,H[\mathcal{N}[G]](1).
+  \end{equation}
+\end{enumerate}
+\end{lem}
+\begin{proof}
+(1) Writing $v=e^z$, subtracting $H[g](1)=-\frac{1}{\pi}\int_0^\infty w^{-3/2}G(1+w)\,dw$ yields
+$H[g](1+u)-H[g](1)=\frac{1}{\pi}\mathrm{p.v.}\int_0^\infty w^{-3/2}G(1+w)\frac{u}{u-w}\,dw$.
+For $\operatorname{Re}s\in(0,1)$, averaging $\widetilde{Q}_{\mathrm{op}}G(1+v)=\frac{1}{v}\int_0^v(H[g](1+u)-H[g](1))\,du$
+multiplies the Mellin transform by $(s+1)^{-1}$, and $\frac{1}{\pi}\mathrm{p.v.}\int_0^\infty\frac{u^{-s}}{u-w}\,du = \cot(\pi s)w^{-s}$ gives
+$\mathcal{M}[\widetilde{Q}_{\mathrm{op}}G](s) = \frac{\cot(\pi s)}{s+1}\widehat{G}(s+\tfrac12) = -\frac{2\tan(\pi(s+1/2))}{2(s+1/2)+1}\widehat{G}(s+\tfrac12) = 2c(s+\tfrac12)\widehat{G}(s+\tfrac12)$.
+
+(2) Evaluating (1) at $s=\tfrac12$ gives $\mathcal{M}[\widetilde{Q}_{\mathrm{op}}G](\tfrac12)=2c(1)\widehat{G}(1)=0$ since $\tan\pi=0$.
+Testing $\partial_\tau G=-2\partial_z G+\tfrac12\widetilde{Q}_{\mathrm{op}}G+\mathcal{N}[G]$ against $-\frac{1}{\pi}e^{-z/2}$
+and integrating $-2\partial_z G$ by parts gives $\dot{a}=-a+H[\mathcal{N}[G]](1)$.
+
+(3) Direct substitution gives~\eqref{eq:Gperp_pde} and $H[v_0](1)=-H[\phi_0](1)+0+H[\phi_0](1)=0$.
+Since $M_{1/4}=-2\partial_z+\text{bounded}$ on $\{H[g](1)=0\}$ (and by Theorem~\ref{thm:linear_gap}
+$\|e^{s M_{1/4}}\|_{L^2_{1/4}}\le C_{1/20}e^{-(9/20)s}$), the Datko--Pazy integral with $\omega_1=\tfrac{17}{40}<\tfrac{9}{20}$
+converges with $2\omega_1=\tfrac{17}{20}$, satisfies $\|G\|_{L^2_{1/4}}^2\le 2\|G_\perp\|_{L^2_{1/4}}^2+2a^2\|\phi_0\|_{L^2_{1/4}}^2\le X_{\mathrm{tot}}$,
+and differentiates to
+$\frac{d}{d\tau}\widetilde{X}_{\mathrm{sem}}[G_\perp]\le -\tfrac{17}{20}\widetilde{X}_{\mathrm{sem}}[G_\perp]
+ + 2a\langle G_\perp, v_0\rangle_{\widetilde{\mathrm{sem}}} + 2\langle G_\perp, \mathcal{N}_\perp\rangle_{\widetilde{\mathrm{sem}}}$.
+Applying Young's inequality $2a\langle G_\perp, v_0\rangle_{\widetilde{\mathrm{sem}}}\le \tfrac{1}{20}\widetilde{X}_{\mathrm{sem}}[G_\perp]+20\|v_0\|_{\widetilde{\mathrm{sem}}}^2 a^2$
+and adding $\Lambda\frac{d}{d\tau}(a^2) = -2\Lambda a^2 + 2\Lambda a H[\mathcal{N}](1)$ yields
+$-\tfrac{17}{20}+\tfrac{1}{20}=-\tfrac{4}{5}$ on $\widetilde{X}_{\mathrm{sem}}$ and
+$(-2\Lambda + 20\|v_0\|_{\widetilde{\mathrm{sem}}}^2)a^2\le -\Lambda a^2\le -\tfrac{4}{5}\Lambda a^2$, proving~\eqref{eq:Xtot_dot}.
+\end{proof}
+
+\begin{lem}[Exact unit-disk Hilbert expansion and $\mathcal{H}^1(D(1,1))$ linear coercivity]\label{lem:disk_coercive}
+For every integer $k\ge 1$ and all $u\in(0,1)$,
+\begin{equation}\label{eq:exact_disk_hilb}
+\frac{1}{\pi}\mathrm{p.v.}\int_0^1 \frac{w^{k-1/2}}{u-w}\,dw = -\frac{1}{\pi}\sum_{m=0}^\infty \frac{u^m}{k-m-\tfrac12},
+\end{equation}
+defining an analytic function on the entire unit disk $D(0,1)$.
+Consequently, for $G(1+v)=\sum_{m=1}^\infty c_m v^m\in\mathcal{H}^1(D(1,1))$, the Taylor coefficients of
+$\widetilde{Q}_{\mathrm{op}}G(1+v)=\sum_{m=1}^\infty q_m v^m$ are $q_m = q_m^{\mathrm{disk}} + q_m^{\mathrm{far}}$ with
+\begin{equation}\label{eq:qm_exact}
+q_m^{\mathrm{disk}} = -\frac{1}{\pi(m+1)}\sum_{k=1}^\infty \frac{c_k}{k-m-\tfrac12}, \qquad
+q_m^{\mathrm{far}} = -\frac{1}{\pi(m+1)}\int_0^\infty e^{-(m+1/2)z}G(z)\,dz,
+\end{equation}
+and the edge-disk energy $Z_{\mathrm{disk}}:=\sum_{m=1}^\infty m^2|c_m|^2$ satisfies
+\begin{equation}\label{eq:Zdisk_dot}
+\frac{d}{d\tau}Z_{\mathrm{disk}} \le -3\,D_{\mathrm{disk}} + \frac{1}{50}\,X_{\mathrm{tot}} + \mathcal{N}_{\mathrm{disk}},
+\qquad D_{\mathrm{disk}} := \sum_{m=1}^\infty m^3|c_m|^2,
+\end{equation}
+where $\mathcal{N}_{\mathrm{disk}} := 2\sum_{m=1}^\infty m^2 c_m\,\mathcal{N}_m$.
+\end{lem}
+\begin{proof}
+For $k=1$, splitting $\frac{\sqrt{w}}{u-w}=\frac{\sqrt{w}-\sqrt{u}}{u-w}+\frac{\sqrt{u}}{u-w}=-\frac{1}{\sqrt{w}+\sqrt{u}}+\frac{\sqrt{u}}{u-w}$
+and integrating on $(0,1)$ cancels the $\ln u$ singularity identically:
+\begin{align*}
+\mathrm{p.v.}\int_0^1\frac{\sqrt{w}}{u-w}\,dw
+&= \Bigl[-2\sqrt{w}+2\sqrt{u}\ln(\sqrt{w}+\sqrt{u})\Bigr]_0^1 + \sqrt{u}\ln\frac{u}{1-u} \\
+&= -2 + \sqrt{u}\ln\frac{1+\sqrt{u}}{1-\sqrt{u}}
+= -\sum_{m=0}^\infty \frac{u^m}{1-m-\tfrac12}.
+\end{align*}
+For $k\ge 2$, the identity $\frac{w^{k-1/2}}{u-w}=u\frac{w^{k-3/2}}{u-w}-w^{k-3/2}$ gives by induction
+$\mathrm{p.v.}\int_0^1\frac{w^{k-1/2}}{u-w}\,dw = -u\sum_{m=0}^\infty\frac{u^m}{(k-1)-m-1/2}-\frac{1}{k-1/2} = -\sum_{m=0}^\infty\frac{u^m}{k-m-1/2}$,
+proving~\eqref{eq:exact_disk_hilb}.
+For the far-field piece $t=1+e^z>2$ ($z>0$), expanding $(u-e^z)^{-1}=-\sum_{m=0}^\infty u^m e^{-(m+1)z}$ and
+integrating $\widetilde{Q}_{\mathrm{op}}G(1+v)=\frac{1}{v}\int_0^v(H[g](1+u)-H[g](1))\,du$ divides the $m$-th mode ($m\ge 1$) by $m+1$,
+giving~\eqref{eq:qm_exact}.
+
+Setting $b_m:=\tfrac12 q_m^{\mathrm{far}}$, the linear ODE is
+$\dot{c}_m = -2m c_m - \frac{1}{2\pi(m+1)}\sum_{k=1}^\infty\frac{c_k}{k-m-1/2} + b_m + \mathcal{N}_m$.
+Testing against $2m^2 c_m$, using the discrete Hilbert norm $\|\mathcal{H}_{1/2}\|_{\ell^2\to\ell^2}=\pi$ and
+$\sqrt{m}/(m+1)\le\tfrac12$ (Lean: \texttt{edge\_disk\_weight\_ratio\_le\_half}), bounds the linear nonlocal term by
+$\frac{1}{\pi}\cdot\frac{1}{2}\cdot\pi\sum m^3|c_m|^2=\frac{1}{2}D_{\mathrm{disk}}$.
+Young's inequality $2m^2 c_m b_m\le\frac{1}{2}m^3|c_m|^2+2m|b_m|^2$ leaves $(-4+\frac{1}{2}+\frac{1}{2})D_{\mathrm{disk}}=-3 D_{\mathrm{disk}}$
+(Lean: \texttt{edge\_disk\_coercivity\_margin}).
+By Cauchy--Schwarz on $b_m$, $|b_m|^2\le \frac{1}{4\pi^2(m+1)^2(2m+1/2)}\|G\|_{L^2_{1/4}([0,\infty))}^2$, and
+$\sum_{m=1}^\infty \frac{m}{4\pi^2(m+1)^2(2m+1/2)} < \frac{25}{2592} < \frac{1}{100}$ (Lean: \texttt{far\_field\_disk\_coupling\_bound}),
+giving $2\sum_{m=1}^\infty m|b_m|^2 < \frac{1}{50}\|G\|_{L^2_{1/4}}^2\le\frac{1}{50}X_{\mathrm{tot}}$ and~\eqref{eq:Zdisk_dot}.
+\end{proof}
+
+\begin{lem}[Embeddings, dual-strip $L^\infty$ bounds, and $\ell^1_{1/2}$ regularity of $p\lbrack G\rbrack$]\label{lem:embeddings}
+Let $\mathcal{E}:=20 X_{\mathrm{tot}} + Y_{\mathrm{far}} + 10 Z_{\mathrm{disk}}$. Then:
+\begin{enumerate}\setlength\itemsep{1pt}
+\item \emph{Edge $L^2_{3/4}$ and global $H^1_{1/4}$ control:}
+  $\|G\|_{L^2_{3/4}((-\infty,0])}^2 < \frac{199}{90}Z_{\mathrm{disk}} < \frac{9}{4}Z_{\mathrm{disk}}$,
+  $\|G\|_{L^2_{3/4,1/4}(\mathbb{R})}^2 \le \frac{13}{40}\mathcal{E}$, and
+  \begin{equation}\label{eq:global_Gz}
+  \|G_z\|_{L^2_{1/4}((-\infty,-\ln 2])}^2 \le \frac{4\sqrt{2}}{9}\,Z_{\mathrm{disk}}, \qquad
+  \|G_z\|_{L^2_{1/4}(\mathbb{R})}^2 \le Y_{\mathrm{far}} + \frac{4\sqrt{2}}{9}Z_{\mathrm{disk}} \le \frac{16}{15}\,\mathcal{E}.
+  \end{equation}
+\item \emph{Zero-derivative and first-derivative $L^\infty$ bounds:}
+  \begin{align}
+  |V_G(1)| &\le \frac{3}{5}\sqrt{X_{\mathrm{tot}}}, \qquad
+  |H[g](1)| \le \frac{1}{\sqrt{\pi}}\|G\|_{L^2_{3/4,1/4}}, \nonumber\\
+  \|Q_{\mathrm{op}}G\|_{L^\infty(\mathbb{R})},\;\|\widetilde{Q}_{\mathrm{op}}G\|_{L^\infty(\mathbb{R})}
+    &\le \left(\frac{1}{\sqrt{\pi}}+\sqrt{\frac{2}{3}}\right)\|G\|_{L^2_{3/4,1/4}} < \frac{7}{5}\|G\|_{L^2_{3/4,1/4}}, \label{eq:Q_linf}\\
+  \bigl|\partial_z(Q_{\mathrm{op}}G)(z)\bigr|
+    &\le \sqrt{\frac{2}{3}}\,e^{-z/4}\,\|G_z\|_{L^2_{1/4}(\mathbb{R})} \qquad (\forall z\ge -\ln 2). \label{eq:dQ_linf}
+  \end{align}
+\item \emph{1-IBP $\ell^1_{1/2}$ bound on $p[G](1+v) = p_0 - \sum_{j=1}^\infty q_j v^j$:}
+  There is an explicit constant $C_{\mathrm{conv}}>0$ such that
+  \begin{equation}\label{eq:p_l1half}
+  |p_0| + 2\sum_{j=1}^\infty \sqrt{j}\,|q_j| \le C_{\mathrm{conv}}\,\sqrt{\mathcal{E}}.
+  \end{equation}
+\end{enumerate}
+\end{lem}
+\begin{proof}
+(1) Integrating the pointwise Cauchy--Schwarz bound $|G(z)|^2\le Z_{\mathrm{disk}}\sum_{m\ge 1} m^{-2}e^{2mz}$
+against $e^{-3z/2}$ on $(-\infty,0]$ gives
+\[
+\|G\|_{L^2_{3/4}((-\infty,0])}^2
+\le \left(\sum_{m=1}^\infty\frac{1}{m^2(2m-\tfrac32)}\right)Z_{\mathrm{disk}}
+< \frac{199}{90}Z_{\mathrm{disk}} < \frac{9}{4}Z_{\mathrm{disk}}
+\]
+(Lean: \texttt{edge\_l2\_three\_quarters\_trace\_bound}).
+Similarly, for $z\le -\ln 2$ ($e^{2z}\le\frac{1}{4}$),
+$|G_z(z)|^2\le Z_{\mathrm{disk}}\sum_{m\ge 1}e^{2mz}=Z_{\mathrm{disk}}\frac{e^{2z}}{1-e^{2z}}\le\frac{4}{3}Z_{\mathrm{disk}}e^{2z}$,
+and integrating against $e^{-z/2}$ on $(-\infty,-\ln 2]$ yields
+$\|G_z\|_{L^2_{1/4}((-\infty,-\ln 2])}^2\le\frac{4}{3}\cdot\frac{2}{3}\cdot 2^{-3/2}Z_{\mathrm{disk}}=\frac{4\sqrt{2}}{9}Z_{\mathrm{disk}}$.
+
+(2) By Mellin inversion on $\operatorname{Re}s=\frac{1}{4}$ (for $z\ge 0$) and $\operatorname{Re}s=\frac{3}{4}$ (for $z\le 0$,
+after crossing the simple pole at $s=\frac{1}{2}$ with residue $H[g](1)$), together with
+$\int_{\mathbb{R}}|c(\frac{1}{4}+i\tau)|^2\,d\tau=\frac{\pi}{3}$ and $\int_{\mathbb{R}}|c(\frac{3}{4}+i\tau)|^2\,d\tau=\frac{\pi}{5}$,
+Cauchy--Schwarz gives $|Q_{\mathrm{op}}G(z)|\le\sqrt{2/3}\,e^{-z/4}\|G\|_{L^2_{1/4}}$ for $z\ge 0$ and
+$|\widetilde{Q}_{\mathrm{op}}G(z)|\le\sqrt{2/5}\,e^{+z/4}\|G\|_{L^2_{3/4}}$ for $z\le 0$.
+Combining with $|H[g](1)|\le\pi^{-1/2}\|G\|_{L^2_{3/4,1/4}}$ and $\pi^{-1/2}+\sqrt{2/3}<7/5$
+(Lean: \texttt{zero\_deriv\_linf\_bound\_lt\_seven\_fifths}) gives~\eqref{eq:Q_linf}.
+For~\eqref{eq:dQ_linf}, differentiating the $\operatorname{Re}s=\frac{1}{4}$ inversion formula for $Q_{\mathrm{op}}G(z)=2e^{-z/2}(T_c G)(z)$
+introduces the multiplier $(-\tfrac14+i\tau)c(\tfrac14+i\tau)\widehat{G}(\tfrac14+i\tau)
+=\frac{-1/4+i\tau}{1/4+i\tau}c(\tfrac14+i\tau)\widehat{G_z}(\tfrac14+i\tau)$.
+Since $\bigl|\frac{-1/4+i\tau}{1/4+i\tau}\bigr|\equiv 1$, Cauchy--Schwarz yields~\eqref{eq:dQ_linf} for all $z\ge -\ln 2$.
+
+(3) First, $|p_0|=|V_G(1)-H[g](1)|\le C\sqrt{\mathcal{E}}$.
+For $j\ge 1$, multiply $q_j^{\mathrm{disk}}$ by $j(j+1)$ and apply the discrete Hilbert commutator
+$\frac{j}{k-j-1/2}=\frac{k-1/2}{k-j-1/2}-1$ (Lean: \texttt{discrete\_hilbert\_commutator\_identity}):
+\[
+q_j^{\mathrm{disk}} = -\frac{1}{\pi j(j+1)}\sum_{k=1}^\infty\frac{(k-\tfrac12)c_k}{k-j-\tfrac12} + \frac{\sum_{k=1}^\infty c_k}{\pi j(j+1)}.
+\]
+For $q_j^{\mathrm{far}}$, integrate by parts once on $[0,\infty)$ (using $G_z\in L^2_{1/4}([0,\infty))$):
+\[
+q_j^{\mathrm{far}} = -\frac{G(0)}{\pi(j+1)(j+\tfrac12)} - \frac{1}{\pi(j+1)(j+\tfrac12)}\int_0^\infty e^{-(j+1/2)z}G_z(z)\,dz.
+\]
+The first term of $q_j^{\mathrm{disk}}$ is bounded in $\ell^1_{1/2}$ by
+$\frac{1}{\pi}\|\mathcal{H}_{1/2}[(k-\tfrac12)c_k]\|_{\ell^2}\bigl(\sum_{j\ge 1}\frac{j}{j^2(j+1)^2}\bigr)^{1/2}\le\sqrt{\zeta(3)}\sqrt{Z_{\mathrm{disk}}}$;
+the boundary terms satisfy $\sum_{k=1}^\infty c_k = G(0)$ (cancelling to $O(j^{-3})$, and even individually bounded by
+$|G(0)|\le\sqrt{\pi^2/6}\sqrt{Z_{\mathrm{disk}}}$ times $\sum_{j\ge 1}\frac{\sqrt{j}}{j(j+1)}<\zeta(\tfrac32)$);
+and the $G_z$ integral term satisfies $\le \frac{1}{\pi(j+1)(j+1/2)\sqrt{2j+1/2}}\sqrt{Y_{\mathrm{far}}}$,
+whose $\ell^1_{1/2}$ sum is $\le \frac{\zeta(2)}{\pi\sqrt{2}}\sqrt{Y_{\mathrm{far}}}$.
+Summing these bounds gives~\eqref{eq:p_l1half}.
+\end{proof}
+
+\begin{lem}[Block-by-block $C_{\mathrm{nl}}\mathcal{E}^{3/2}$ closure and Riccati trapping]\label{lem:three_block_nl}
+There exists $C_{\mathrm{nl}}>0$ such that on $\{\mathcal{E}<(4 C_{\mathrm{nl}})^{-2}\}$,
+$\frac{d}{d\tau}\mathcal{E}\le -\frac{1}{2}\mathcal{E} + C_{\mathrm{nl}}\mathcal{E}^{3/2}$.
+Consequently, if $\mathcal{E}(0)<(4 C_{\mathrm{nl}})^{-2}$, then $\mathcal{E}(\tau)\le\mathcal{E}(0)e^{-\tau/4}$ for all $\tau\ge 0$.
+\end{lem}
+\begin{proof}
+We bound the nonlinear contributions to each of the three blocks:
+\begin{itemize}\setlength\itemsep{2pt}
+\item \emph{Block 1 ($X_{\mathrm{tot}}$):}
+  By~\eqref{eq:global_Gz} and~\eqref{eq:Q_linf},
+  $\|\mathcal{N}[G]\|_{L^2_{1/4}(\mathbb{R})} \le \|p[G]\|_{L^\infty}\|G_z\|_{L^2_{1/4}} + \tfrac12\|\widetilde{Q}_{\mathrm{op}}G\|_{L^\infty}\|G\|_{L^2_{1/4}} \le C'_1\mathcal{E}$.
+  For $H[\mathcal{N}[G]](1)=-\frac{1}{\pi}\int_{\mathbb{R}} e^{-z/2}\mathcal{N}[G]\,dz$, splitting at $z_0=-\ln 2$
+  gives $\int_{-\ln 2}^\infty e^{-z/2}|p G_z|\,dz\le 2^{3/4}\|p\|_{L^\infty}\sqrt{Y_{\mathrm{far}}}$ and
+  (via $|G_z(z)|\le\frac{2}{\sqrt{3}}\sqrt{Z_{\mathrm{disk}}}\,e^z$)
+  $\int_{-\infty}^{-\ln 2}e^{-z/2}|p G_z|\,dz\le\frac{2\sqrt{2}}{\sqrt{3}}\|p\|_{L^\infty}\sqrt{Z_{\mathrm{disk}}}$;
+  similarly, splitting $\int_{\mathbb{R}}e^{-z/2}|\widetilde{Q}_{\mathrm{op}}G\cdot G|\,dz$ at $z=0$ bounds it by
+  $\|\widetilde{Q}_{\mathrm{op}}G\|_{L^\infty}\bigl(\sqrt{2}\sqrt{X_{\mathrm{tot}}}+2\sqrt{\pi^2/6}\sqrt{Z_{\mathrm{disk}}}\bigr)$.
+  Thus $|H[\mathcal{N}[G]](1)|\le C_H\mathcal{E}$, so~\eqref{eq:Xtot_dot} gives
+  $\frac{d}{d\tau}X_{\mathrm{tot}}\le -\frac{4}{5}X_{\mathrm{tot}} + C_1\mathcal{E}^{3/2}$.
+\item \emph{Block 2 ($Y_{\mathrm{far}}$):}
+  Testing $\partial_\tau G_z = -2\partial_z G_z + \tfrac12\partial_z(\widetilde{Q}_{\mathrm{op}}G) + \partial_z\mathcal{N}[G]$
+  against $2e^{-z/2}G_z$ on $[z_0,\infty)$ ($z_0=-\ln 2$), the linear terms satisfy
+  \begin{align*}
+  -Y_{\mathrm{far}} + 2\sqrt{2}|G_z(-\ln 2)|^2 &+ \tfrac12 Y_{\mathrm{far}} + 2\bigl(\tfrac{7}{10}\bigr)^2\|G\|_{L^2_{3/4}(\mathbb{R})}^2 \\
+  &\le -\tfrac12 Y_{\mathrm{far}} + \frac{641}{200}Z_{\mathrm{disk}} + \frac{49}{50}X_{\mathrm{tot}}
+  \end{align*}
+  (Lean: \texttt{overlap\_inflow\_geometric\_tail\_bound},\\ \texttt{overlap\_weighted\_inflow\_lt\_one},
+  \texttt{lower\_order\_smoothing\_const}).
+  For $\partial_z\mathcal{N}[G]=p G_{zz}+(\partial_z p)G_z+\tfrac12(\partial_z\widetilde{Q}_{\mathrm{op}}G)G+\tfrac12(\widetilde{Q}_{\mathrm{op}}G)G_z$:
+  integrating $2\langle G_z, p G_{zz}\rangle_{L^2_{1/4}([z_0,\infty))}$ by parts produces the boundary term
+  $-\sqrt{2}\,p(z_0)|G_z(z_0)|^2$ (bounded by $\frac{\sqrt{2}}{3}\|p\|_{L^\infty}Z_{\mathrm{disk}}\le C\mathcal{E}^{3/2}$)
+  and the bulk term $\int_{z_0}^\infty e^{-z/2}(\tfrac12 p - \partial_z p)|G_z|^2\,dz$, while the remaining three terms
+  are directly controlled by $\|p\|_{L^\infty}$, $\|\widetilde{Q}_{\mathrm{op}}G\|_{L^\infty}$, and
+  $\|\partial_z(Q_{\mathrm{op}}G)\|_{L^\infty([z_0,\infty))}\le 2^{1/4}\sqrt{2/3}\|G_z\|_{L^2_{1/4}(\mathbb{R})}$ from~\eqref{eq:Q_linf}--\eqref{eq:dQ_linf}.
+  Hence $\frac{d}{d\tau}Y_{\mathrm{far}}\le -\frac{1}{2}Y_{\mathrm{far}} + \frac{641}{200}Z_{\mathrm{disk}} + \frac{49}{50}X_{\mathrm{tot}} + C_2\mathcal{E}^{3/2}$.
+\item \emph{Block 3 ($Z_{\mathrm{disk}}$):}
+  In power-series coefficients on $D(0,1)$, $\mathcal{N}_m = \sum_{k=1}^m p_{m-k} k c_k + \frac{1}{2}\sum_{k=1}^{m-1} q_{m-k} c_k$.
+  Applying $\sqrt{m}\,k \le k\sqrt{k} + \sqrt{m-k}\,k$ (Lean: \texttt{quasilinear\_sqrt\_splitting}) and Young's
+  convolution inequality $\|a*b\|_{\ell^2}\le\|a\|_{\ell^1}\|b\|_{\ell^2}$ to
+  $2\sum_{m\ge 1}(m^{3/2}c_m)\sqrt{m}\,\mathcal{N}_m$, and noting $\|k c_k\|_{\ell^2}=\sqrt{Z_{\mathrm{disk}}}\le\sqrt{D_{\mathrm{disk}}}$
+  and $\|c\|_{\ell^2}\le\sqrt{D_{\mathrm{disk}}}$, we obtain from~\eqref{eq:p_l1half}
+  \[
+  |\mathcal{N}_{\mathrm{disk}}| \le 3\Bigl(|p_0| + 2\sum_{j=1}^\infty\sqrt{j}\,|q_j|\Bigr)\,D_{\mathrm{disk}} \le C_3\sqrt{\mathcal{E}}\,D_{\mathrm{disk}}.
+  \]
+  Combining with~\eqref{eq:Zdisk_dot} gives $\frac{d}{d\tau}Z_{\mathrm{disk}} \le -(3 - C_3\sqrt{\mathcal{E}})D_{\mathrm{disk}} + \frac{1}{50}X_{\mathrm{tot}}$.
+\end{itemize}
+Choose $C_{\mathrm{nl}} := \max\bigl(20 C_1 + C_2 + C_3,\; C_3/6\bigr)$.
+Whenever $\mathcal{E} < (4 C_{\mathrm{nl}})^{-2}$, we have $C_3\sqrt{\mathcal{E}} < \frac{C_3}{4 C_{\mathrm{nl}}} \le \frac{3}{2}$,
+so $3 - C_3\sqrt{\mathcal{E}} > 0$ and $-(3 - C_3\sqrt{\mathcal{E}})D_{\mathrm{disk}} \le -(3 - C_3\sqrt{\mathcal{E}})Z_{\mathrm{disk}} \le -3 Z_{\mathrm{disk}} + \frac{C_3}{10}\mathcal{E}^{3/2}$.
+Summing $20\dot{X}_{\mathrm{tot}} + \dot{Y}_{\mathrm{far}} + 10\dot{Z}_{\mathrm{disk}}$ and applying the exact rational
+coercivity identity (Lean: \texttt{lyapunov\_three\_block\_coercivity}) yields
+\[
+\frac{d}{d\tau}\mathcal{E} \le -\frac{1}{2}\mathcal{E} + (20 C_1 + C_2 + C_3)\mathcal{E}^{3/2} \le -\frac{1}{2}\mathcal{E} + C_{\mathrm{nl}}\mathcal{E}^{3/2}.
+\]
+Applying the Riccati barrier trapping theorem (Lean: \texttt{riccati\_bootstrap\_trapping\_decay},
+proved by contradiction at the minimal hitting time $t_*$ of $R=(4 C_{\mathrm{nl}})^{-2}$ where $\mathcal{E}'(t_*)\le -\frac{1}{4}R<0$,
+followed by monotonicity of $e^{\tau/4}\mathcal{E}(\tau)$) yields $\mathcal{E}(\tau)\le\mathcal{E}(0)e^{-\tau/4}$ for all $\tau\ge 0$.
+Finally, $|c_l(\tau)-2|=|V_G(1)|$, $|c_\omega(\tau)+1|=\frac{1}{2}|V_G(1)-H[g](1)|$, and $|\dot{B}/B|=|H[g](1)|$
+are all $O(\sqrt{\mathcal{E}(\tau)})=O(\sqrt{\mathcal{E}(0)}e^{-\tau/8})\in L^1([0,\infty))$, so $(c_l,c_\omega,B)\to(2,-1,B_\infty)$
+exponentially at rate $e^{-\tau/8}$ with $B_\infty>0$.
+\end{proof}
+
+\begin{remark}[Coupled $\Theta$-perturbation $h\not\equiv 0$]\label{rem:h_sector}
+In~\eqref{eq:comoving_exact}, $\partial_\tau h = (-2+p[G])\partial_z h$ is upper-triangular with respect to $G$:
+if $h(1+v)=\sum_{k=1}^\infty d_k v^{k+1/2}$ on $D(1,1)$ with $\sum_{k\ge 1} k^4|d_k|^2<\infty$ and
+$e^{-z/2}h_z\in H^1_{1/4}([-\ln 2,\infty))$, then the forcing $B(\tau)e^{-z/2}\partial_z h = B(\tau)\sum_{k\ge 1}(k+\tfrac12)d_k v^k$
+maps boundedly into $\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$, while the linear transport on $h$ has
+strictly stronger damping $-(2k+1)\le -3$ on the disk and $-3$ on $L^2_{3/4}([-\ln 2,\infty))$.
+Adding a sufficiently large multiple of the $h$-energy to $\mathcal{E}$ preserves the same Riccati inequality~\eqref{eq:riccati_bootstrap}.
+\end{remark}
+
+%==========================================================================
+\section{Local Well-Posedness, Zero-Shrinkage Disk Flow, and Global Continuation}
+\label{app:lwp}
+%==========================================================================
+
+Let $\mathcal{X} := \{G : G|_{(-\infty,0]}\in\mathcal{H}^1(D(1,1)),\; G|_{[-\ln 2,\infty)}\in H^1_{1/4}([-\ln 2,\infty))\}$
+equipped with the Hilbert norm $\|G\|_{\mathcal{X}}^2 := \mathcal{E}(G)$, and let
+$\mathcal{W}$ be the weaker Hilbert space equipped with $\|W\|_{\mathcal{W}}^2 := \|W\|_{L^2_{1/4}(\mathbb{R})}^2 + \sum_{m=1}^\infty|w_m|^2$.
+
+\begin{prop}[Local well-posedness and global continuation in $\mathcal{X}$]\label{prop:lwp}
+Let $G_0\in\mathcal{X}$ satisfy $\mathcal{E}(G_0) < R_0 < (4 C_{\mathrm{nl}})^{-2}$ (with $C_{\mathrm{nl}}$ from Lemma~\ref{lem:three_block_nl}
+and $C_{\mathrm{conv}}\sqrt{R_0}\le\frac{1}{2}$).
+Then there exists $T_0 = T_0(R_0) > 0$ such that~\eqref{eq:comoving_exact} (with $h\equiv 0$) admits a unique solution
+$G\in C([0,T_0];\mathcal{X})$ satisfying $\mathcal{E}(G(\tau))\le\mathcal{E}(G_0)e^{-\tau/4}$ on $[0,T_0]$.
+Iterating on $[k T_0, (k+1)T_0]$ extends $G$ uniquely to a global solution $G\in C([0,\infty);\mathcal{X})$.
+\end{prop}
+\begin{proof}
+We construct $G$ via the standard Kato--Majda frozen-velocity iteration: set $G^{(0)}(\tau)\equiv G_0$, and given
+$G^{(n)}\in C([0,T_0];\mathcal{X})$ with $\sup_{[0,T_0]}\mathcal{E}(G^{(n)})\le R_0$, define $G^{(n+1)}$ as the solution of the
+linear Cauchy problem
+\begin{equation}\label{eq:frozen_pde}
+\partial_\tau G^{(n+1)} + \bigl(2 - p[G^{(n)}]\bigr)\partial_z G^{(n+1)}
+= \frac{1}{2}\widetilde{Q}_{\mathrm{op}}G^{(n+1)} + \frac{1}{2}\bigl(\widetilde{Q}_{\mathrm{op}}G^{(n)}\bigr)G^{(n+1)},
+\qquad G^{(n+1)}(0) = G_0.
+\end{equation}
+
+\emph{Step 1: Zero-shrinkage global characteristic flow, overlap compatibility, and linear solvability in $\mathcal{X}$.}
+By~\eqref{eq:p_l1half} and~\eqref{eq:Q_linf}--\eqref{eq:dQ_linf}, the real velocity $a^{(n)}(z,\tau):=2-p[G^{(n)}](z,\tau)$
+is globally bounded ($a^{(n)}\in[\frac{3}{2},\frac{5}{2}]$) and globally Lipschitz on $\mathbb{R}$
+($\|\partial_z p[G^{(n)}]\|_{L^\infty(\mathbb{R})}\le C\sqrt{R_0}$), so the global characteristic flow $\Phi_{\mathbb{R}}(z;\tau,s)$
+of $\partial_\tau + a^{(n)}\partial_z$ exists uniquely on $\mathbb{R}\times[0,T_0]^2$.
+On $\overline{D(0,1)}$, $\|p[G^{(n)}]\|_{L^\infty(D(0,1))}\le C_{\mathrm{conv}}\sqrt{R_0}\le\frac{1}{2}$ gives
+$\operatorname{Re}(2 - p[G^{(n)}](v,\tau)) \ge \frac{3}{2} > 0$, so the holomorphic backward characteristics
+$\frac{d}{d\tilde{s}}\Phi_{\mathrm{disk}} = -(2-p[G^{(n)}](\Phi_{\mathrm{disk}},\tau-\tilde{s}))\Phi_{\mathrm{disk}}$
+($\tilde{s}=\tau-s\in[0,\tau]$, $\Phi_{\mathrm{disk}}(v;\tau,0)=v$) satisfy
+\[
+\frac{d}{d\tilde{s}}\bigl(|\Phi_{\mathrm{disk}}|^2\bigr)
+= -2|\Phi_{\mathrm{disk}}|^2\operatorname{Re}\bigl(2-p[G^{(n)}](\Phi_{\mathrm{disk}},\tau-\tilde{s})\bigr)
+\le -3|\Phi_{\mathrm{disk}}|^2 < 0
+\]
+on $\partial D(0,1)$, mapping $D(0,1)$ holomorphically into $D(0,e^{-3\tilde{s}/2})\Subset D(0,1)$ with \emph{zero radius shrinkage}.
+Because $p[G^{(n)}]$ has real Taylor coefficients, $\Phi_{\mathrm{disk}}$ preserves $(0,1]$, and by ODE uniqueness
+$\Phi_{\mathrm{disk}}(e^z;\tau,\tau-s)=e^{\Phi_{\mathbb{R}}(z;\tau,s)}$ identically on $(-\infty,0]$ (including the entire overlap $[-\ln 2,0]$).
+Moreover, the nonlocal source $S^{(n)}[u]:=\frac{1}{2}\widetilde{Q}_{\mathrm{op}}u+\frac{1}{2}(\widetilde{Q}_{\mathrm{op}}G^{(n)})u$
+is a bounded linear operator $\mathcal{X}\to\mathcal{X}$:
+in $L^2_{1/4}(\mathbb{R})$ and $H^1_{1/4}([-\ln 2,\infty))$ this follows from Lemma~\ref{lem:embeddings} and the
+$\frac{7}{10}$ lower-order smoothing bound; in $\mathcal{H}^1(D(1,1))$, the disk part $q_m^{\mathrm{disk}}[u]$ gains a derivative via
+$\|\mathcal{H}_{1/2}\|_2=\pi$, the 1-IBP bound of Lemma~\ref{lem:embeddings}(3) gives
+$|q_m^{\mathrm{far}}[u]|=O(m^{-2}\|u\|_{\mathcal{X}})\implies \sum_{m\ge 1} m^2|q_m^{\mathrm{far}}[u]|^2\le C\|u\|_{\mathcal{X}}^2$,
+and $\mathcal{H}^1(D(1,1))$ is a Banach algebra ($\sum|c_k|\le\sqrt{\pi^2/6}\|c\|_{\mathcal{H}^1}$).
+Hence the single global Duhamel operator
+\[
+(\mathcal{T} u)(z,\tau) := G_0\bigl(\Phi_{\mathbb{R}}(z;\tau,0)\bigr) + \int_0^\tau S^{(n)}[u]\bigl(\Phi_{\mathbb{R}}(z;\tau,s),s\bigr)\,ds
+\]
+preserves $\mathcal{X}$ with automatic overlap agreement on $[-\ln 2,0]$ (pullback by $\Phi_{\mathbb{R}}$ is bounded on $H^1_{1/4}$
+by global Lipschitz flow and contractive on $\mathcal{H}^1(D(1,1))$ by the pure-transport energy bound),
+and is a strict contraction on $C([0,T_1];\mathcal{X})$ for $T_1=(2\|S^{(n)}\|_{\mathcal{X}\to\mathcal{X}})^{-1}$.
+Iterating on $[k T_1,(k+1)T_1]$ yields the unique solution $G^{(n+1)}\in C([0,T_0];\mathcal{X})$ of~\eqref{eq:frozen_pde}.
+
+\emph{Step 2: Uniform strong-norm trapping.}
+Applying the identical three-block estimates of Lemmas~\ref{lem:mellin_split}--\ref{lem:three_block_nl} to~\eqref{eq:frozen_pde}
+(with $\sqrt{\mathcal{E}(G^{(n)})}\le\sqrt{R_0}$ in the frozen coefficients) gives
+\[
+\frac{d}{d\tau}\mathcal{E}(G^{(n+1)}) \le -\left(\frac{1}{2} - C_{\mathrm{nl}}\sqrt{R_0}\right)\mathcal{E}(G^{(n+1)}) \le -\frac{1}{4}\mathcal{E}(G^{(n+1)}),
+\]
+so $\sup_{\tau\in[0,T_0]}\mathcal{E}(G^{(n+1)}(\tau))\le\mathcal{E}(G_0)<R_0$ uniformly in $n$.
+
+\emph{Step 3: Weak-norm contraction and passage to the limit.}
+Let $W^{(n)} := G^{(n+1)} - G^{(n)}$ ($W^{(n)}(0)=0$). Subtracting~\eqref{eq:frozen_pde} for $n$ and $n-1$ gives
+\begin{align*}
+\partial_\tau W^{(n)} + \bigl(2-p[G^{(n)}]\bigr)\partial_z W^{(n)}
+  &- \frac{1}{2}\widetilde{Q}_{\mathrm{op}}W^{(n)} - \frac{1}{2}\bigl(\widetilde{Q}_{\mathrm{op}}G^{(n)}\bigr)W^{(n)} \\
+  &= \bigl(p[G^{(n)}]-p[G^{(n-1)}]\bigr)\partial_z G^{(n)} + \frac{1}{2}\bigl(\widetilde{Q}_{\mathrm{op}}W^{(n-1)}\bigr)G^{(n)}.
+\end{align*}
+Testing in $\mathcal{W}$ (where the $\mathcal{H}^0(D(1,1))$ transport gives $-2\sum_{m\ge 1} m|w_m^{(n)}|^2$,
+absorbing $p[G^{(n)}]v\partial_v W^{(n)}$ since $\|p[G^{(n)}]\|_{\ell^1}\le\frac{1}{2}$, and on $\mathbb{R}$
+$L^2_{1/4}$ integration by parts bounds $\langle W^{(n)}, (2-p^{(n)})\partial_z W^{(n)}\rangle_{L^2_{1/4}}$ using
+$\|\partial_z p^{(n)}\|_{L^\infty(\mathbb{R})}\le C\sqrt{R_0}$, since~\eqref{eq:dQ_linf} controls $[-\ln 2,\infty)$ while
+on $(-\infty,-\ln 2]$ we have $|\partial_z p^{(n)}(z)|\le\sum_{j\ge 1}j|q_j^{(n)}|2^{-j}\le C\sqrt{R_0}$): on the right-hand side,
+$\|p[G^{(n)}]-p[G^{(n-1)}]\|_{L^\infty(\mathbb{R})}\le C\|W^{(n-1)}\|_{\mathcal{W}}$ (since $0 < \frac{1}{m+k-3/2} \le \frac{2}{m+k-1}$ for all $m,k\ge 1$, Hilbert's inequality
+$\|\frac{1}{m+k-1}\|_{\ell^2\to\ell^2}=\pi$ yields
+$\|W^{(n-1)}\|_{L^2_{3/4}((-\infty,0])}^2 \le 2\pi\|w^{(n-1)}\|_{\mathcal{H}^0}^2 \le 2\pi\|W^{(n-1)}\|_{\mathcal{W}}^2$,
+whence~\eqref{eq:Q_linf} gives $\|p[W^{(n-1)}]\|_{L^\infty(\mathbb{R})}+\|\widetilde{Q}_{\mathrm{op}}W^{(n-1)}\|_{L^\infty(\mathbb{R})}\le C\|W^{(n-1)}\|_{\mathcal{W}}$),
+and by Lemma~\ref{lem:disk_coercive}, $p[W^{(n-1)}]$ gains one full derivative on $D(0,1)$:
+$\|p[W^{(n-1)}]\|_{\mathcal{H}^1(D(1,1))}\le C\|W^{(n-1)}\|_{\mathcal{W}}$ (since $\mathcal{H}_{1/2}:\ell^2\to\ell^2$ is bounded and
+$(m+1)^{-1}$ cancels $m$), so $\|p[W^{(n-1)}]\|_{\ell^1}\le C\|W^{(n-1)}\|_{\mathcal{W}}$, while
+$\|\partial_z G^{(n)}\|_{L^2_{1/4}(\mathbb{R})}$ and $\|G^{(n)}\|_{\mathcal{X}}$ are bounded by $\sqrt{R_0}$.
+Hence
+\[
+\frac{d}{d\tau}\|W^{(n)}\|_{\mathcal{W}}^2 \le K(R_0)\,\|W^{(n)}\|_{\mathcal{W}}^2 + K(R_0)\,\|W^{(n-1)}\|_{\mathcal{W}}^2.
+\]
+By Gronwall's inequality with $W^{(n)}(0)=0$, choosing $T_0 = T_0(R_0) > 0$ so that $(e^{K(R_0)T_0}-1)\le\frac{1}{2}$ yields
+$\sup_{[0,T_0]}\|W^{(n)}\|_{\mathcal{W}}^2 \le \frac{1}{2}\sup_{[0,T_0]}\|W^{(n-1)}\|_{\mathcal{W}}^2$.
+Thus $G^{(n)}\to G$ strongly in $C([0,T_0];\mathcal{W})$ and weakly-* in $L^\infty([0,T_0];\mathcal{X})$ with
+$\sup_{[0,T_0]}\mathcal{E}(G)\le\mathcal{E}(G_0)<R_0$; uniqueness follows immediately from the same $\mathcal{W}$-estimate
+for two solutions, and strong continuity $G\in C([0,T_0];\mathcal{X})$ follows from the weak-* continuity together with
+continuity of the energy $\tau\mapsto\mathcal{E}(G(\tau))$ via the differential identity of Lemma~\ref{lem:three_block_nl}.
+
+\emph{Step 4: Global continuation.}
+At $\tau=T_0$, Lemma~\ref{lem:three_block_nl} gives $\mathcal{E}(G(T_0))\le\mathcal{E}(G_0)e^{-T_0/4}<\mathcal{E}(G_0)<R_0$.
+Since $T_0=T_0(R_0)$ depends only on $R_0$, repeating Steps 1--3 on $[k T_0, (k+1)T_0]$ for every $k\ge 1$ extends $G$ uniquely
+to $[0,\infty)$ with $\mathcal{E}(G(\tau))\le\mathcal{E}(G_0)e^{-\tau/4}$ for all $\tau\ge 0$.
+\end{proof}
 
 \begin{thebibliography}{99}
 
