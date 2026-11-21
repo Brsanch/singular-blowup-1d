@@ -3,12 +3,12 @@
 **Status:** **CLOSED 2026-11-20** (PROVED-ON-PAPER + LEAN-BACKBONE + GATE-VERIFIED; edge bootstrap bypassed via left-strip mixed Laplace bridge)  
 **Date:** 2026-11-20 (updated from 2026-07-25)  
 **Lean 4 backbone (0 `sorry`, 0 axioms, vacuity 0):** `lean/SingularBlowup/SlitSchurMargin.lean` (`left_strip_edge_exponent_le`, `left_strip_far_exponent_le`, `shift_half_weight_exponent_eq`, `left_strip_gamma_real_floors`).  
-**Validation gate (W2-A, W2-B PASS):** `validate/edge_w2_w3_closure.py`.  
+**Validation gate (W2-A, W2-B, W2-C PASS):** `validate/edge_w2_w3_closure.py`.  
 **Does not claim:** nonlinear Conjecture 2.4 · continuum PDE finite-time blowup · INTERNAL-CAP-CERTIFIED.  
 **Review note (2026-11-21) — read with the status line above:**
 
 - *Uniqueness holds on the constrained domain only.* The step "$KG=e^{-z/2}T_cG\in L^2_{\sigma-1/2}$" identifies the nonlocal term with $\tfrac12 Q_{\mathrm{op}}G$. For the Gauge-(a) operator $-2\partial_z+\tfrac12\widetilde{Q}_{\mathrm{op}}$ the two differ by the constant $\tfrac12H[g](1)$, whose Laplace transform on $[0,\infty)$ has a pole at $s=0$; then $P(0)\ne0$ is allowed and $P\equiv c_0\ne0$ gives a genuine eigenfunction $\mathcal{G}=c_0X$ for every $\operatorname{Re}\lambda>-2\sigma$. So the proposition is a statement about the operator restricted to $\{\mathcal{G}(\tfrac12)=0\}$ (equivalently $H[g](1)=0$, the frozen-exponent operator). Details and a numerical probe: `docs/findings_session_2026_11_21_gauge_a_eigenmodes.md`, `docs/ledger/OBS-09_gauge_a_eigenmodes.md`.
-- *What "LEAN-BACKBONE" and "GATE-VERIFIED" cover.* The Lean lemmas are exponent inequalities and an integer budget; the gate checks two identities numerically for one test function. The steps that glue $P$ across the strip boundary and bound its Laurent growth inside the strip are argued in the manuscript (Lemma A.4) and have not been independently verified.
+- *What "LEAN-BACKBONE" and "GATE-VERIFIED" cover.* The Lean lemmas are exponent inequalities and an integer budget; the gate checks two identities numerically for one test function. The Morera gluing across the strip boundary and the full-strip Parseval Laurent-orthogonality bound $\frac{1}{2}\sum_{k\in\mathbb{Z}}|c_k|^2 e^{-8\pi k\tau} = \int_{\sigma-1/2}^\sigma |P(\sigma'+i\tau)|^2\,d\sigma'$ (which eliminates single-ray cancellation across $k$) are written out in the manuscript (Lemma A.4) and spot-checked in `W2-C`.
 
 ---
 

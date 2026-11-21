@@ -114,8 +114,9 @@ inflow condition $G(z_{\min})=h(z_{\min})=0$.  Then, on every tested resolution:
 \item \textbf{Symmetries.} The amplitude ($\nu$) and dilation/edge ($\mu$) modes are
   excluded by the weight; the pure-$\xi$ mode sits at $\lambda=c_l-1=1$.
 \item \textbf{Nonlinear.} Finite-amplitude frozen-base perturbations decay for
-  $A\le 4$ with peak $\|\cdot\|_w/\|\cdot\|_0=1.000$.  Fully self-consistent co-evolving
-  marches relax to $(c_l,c_\omega)=(2.000006,-1.000003)$ with no drift.
+  $A\le 4$ with peak $\|\cdot\|_w/\|\cdot\|_0=1.000$.  Stage-consistent co-evolving
+  marches with the complete gauge-dependent RHS from~\eqref{eq:dyn} relax to
+  $(c_l,c_\omega)=(2.000000,-1.000000)$ with $\xi(\tau)\equiv 0$ and no drift.
 \end{enumerate}
 \textbf{Function space:} asymptotic stability is claimed only in the convective
 weighted sense $L^2(e^{-2\gamma z}\,dz)$ modulo $\{\xi,\mu,\nu\}$---not absolute
@@ -229,14 +230,22 @@ gap by block-triangular structure~\cite{findings_theta}.
 \paragraph{No transient growth (physical).}
 Smooth physical perturbations have amplification factor $G=1.000$ at all tested
 resolutions (\texttt{transient\_growth.py}: bulk and near-edge bumps
-on four $(N,z_{\min})$ grids).  In the edge-conditioned energy norm the numerical
-abscissa is negative and resolution-independent:
-$\mu_{\mathrm{an}}=-0.10083$ at $z_{\mathrm{cut}}=-8$ and $-0.40675$ at $-6$
-($N=2000$; range across $N\in[1000,2000]$ is $[-0.106,-0.101]$ at $-8$),
-implying $\|e^{M\tau}\|_W\le 1$ (\texttt{transient\_growth\_edge\_conditioned.py}).
-In the plain norm, grid-scale edge spikes still give a worst-case $\sup_\tau\|e^{M\tau}\|_2$ of $2.3$--$3.9$
-that grows with the edge depth $z_{\min}$ even with the inflow BC (\texttt{transient\_growth.py}); this
-creep is removed by the edge cutoff $z_{\mathrm{cut}}$ of the edge-conditioned norm, not by the BC.
+on four $(N,z_{\min})$ grids).  In the plain norm, grid-scale edge spikes give a worst-case
+$\sup_\tau\|e^{M\tau}\|_2$ of $2.33$--$3.91$ that grows with the edge depth $z_{\min}$ even with
+the inflow BC (\texttt{transient\_growth.py}).  On the truncated bulk domain $z>z_{\mathrm{cut}}$
+with the anisotropic weight $W$, the continuum-IBP cutoff-model surrogate
+$\mu_{\mathrm{an}}=\lambda_{\max}(-\operatorname{diag}(\phi')+\operatorname{sym}_W(\tfrac12 Q_{\mathrm{bulk}}))$
+(which replaces the symmetric part of the discrete transport submatrix by the continuum
+integration-by-parts drift $-\phi'(z)$ for functions vanishing at $z_{\mathrm{cut}}$ and restricts
+$Q_{\mathrm{op}}$ to $z>z_{\mathrm{cut}}$) is negative and resolution-independent:
+$\mu_{\mathrm{an}}=-0.10083$ at $z_{\mathrm{cut}}=-8$ and $-0.40675$ at $-6$ ($N=2000$; range
+$[-0.106,-0.101]$ at $-8$, \texttt{transient\_growth\_edge\_conditioned.py}).
+Because the principal submatrix $M_b=-2D_{z,\mathrm{bulk}}+\tfrac12 Q_{\mathrm{bulk}}$ has an unclosed
+centered-difference stencil at $z_{\mathrm{cut}}$ (and $z>z_{\mathrm{cut}}$ is not invariant under
+$Q_{\mathrm{op}}$), $\mu_{\mathrm{an}}$ is a continuum cutoff-model estimate rather than the discrete
+matrix logarithmic norm $\lambda_{\max}(\operatorname{sym}_W(M_b))\approx +33.4$ ($N=1000,z_{\mathrm{cut}}=-8$,
+which exhibits $\approx 3.3\%$ short-time amplification $\|e^{10^{-3}M_b}q\|_W\approx 1.033$ on its top
+symmetric eigenvector $q$ while smooth interior bumps satisfy $\sup_\tau\|e^{M_b\tau}g_{\mathrm{bump}}\|_W/\|g_{\mathrm{bump}}\|_W=1.0000$).
 
 %--------------------------------------------------------------------------
 \section{Nonlinear stability}
@@ -248,8 +257,9 @@ creep is removed by the edge cutoff $z_{\mathrm{cut}}$ of the edge-conditioned n
 \includegraphics[width=0.95\textwidth]{figures/fig_coevolve.pdf}
 \caption{Fully self-consistent co-evolving march (Theta-balance normalization
 $c_l=-U(1)$, $c_\omega=-c_l/2$).  Exponents relax to $(2,-1)$; weighted residual decays.
-KEY (figure resolution): $c_l(T)\approx 1.9997$, $c_\omega(T)\approx -0.9999$.
-Full gate (multiple grids): $c_l\to 2.000006$, $c_\omega\to -1.000003$.
+KEY (figure resolution, $N=500$): $c_l(T)\approx 1.9996$, $c_\omega(T)\approx -0.9998$.
+Full gate ($N\in\{1000,1400,1800\}$, raw-PDE RHS err $\le 2.8\cdot 10^{-15}$, stage-consistent $\xi\equiv 0$):
+$c_l\to 2.000000$, $c_\omega\to -1.000000$.
 Commands: \texttt{python3 paper/scripts/fig\_coevolve.py},
 \texttt{python3 validate/coevolve\_projected.py}.}
 \label{fig:coevolve}
@@ -277,10 +287,14 @@ weighted rates at $\gamma=0.5$ stay in $[1.015,1.057]$ (linear gap $1.0$), peak
 ratio $=1.000$, edge hi-$k=0$.  Coupled $(G,h)$ excitation: rate $+0.935$, peak $1.11$.
 
 \paragraph{Co-evolving attractor.}
-With both exponents fed back by edge-stagnation $c_l=-U(1)$ and Theta-balance
-$c_\omega=-c_l/2$, a perturbed profile is a nonlinear attractor of the
+With both exponents fed back by edge-stagnation $c_l=-U(1)=2-V_G(1)$ and Theta-balance
+$c_\omega=-c_l/2=-1+\tfrac12 V_G(1)$ into the complete gauge-dependent RHS of~\eqref{eq:dyn}
+(including the $+V_G(1)\partial_z(G,h)$ dilation transport shift and exact cancellation of
+$\pm\tfrac12 V_G(1)(1+G)$, verified against the raw PDE on $Y>1$ to $2.8\cdot 10^{-15}$)
+and stage-consistent RK4 evaluation of the pinning gauge ($\xi(\tau)\equiv 0$ preserved to
+$0.000\cdot 10^0$), a perturbed profile is a nonlinear attractor of the support-interior
 dynamic-rescaling flow (Figure~\ref{fig:coevolve}): final exponents
-$(2.000006,-1.000003)$ on three grids, no drift, edge pinned
+$(2.000000,-1.000000)$ on three grids, no drift, edge pinned
 (\texttt{coevolve\_projected.py}).
 
 \paragraph{Coupling channel.}
@@ -573,7 +587,7 @@ requires either the codimension-1 constraint $H[g](1)=0$ or an edge boundary lay
 
 \paragraph{Numerical gates and Lean~4 algebraic/ODE verification.}
 Standalone Python gates verify all nonlinear identities and constants:
-\texttt{edge\_nonlinear\_comoving\_closure.py} (\texttt{NL-1..NL-5 PASS}) and
+\texttt{edge\_nonlinear\_comoving\_closure.py} (\texttt{NL-1..NL-6 PASS}) and
 \texttt{edge\_nonlinear\_bootstrap\_closure.py} (\texttt{NB-1..NB-6 PASS}).
 The companion Lean~4 modules (\texttt{NonlinearComoving.lean} and \texttt{NonlinearBootstrap.lean};
 \texttt{0~sorry}, \texttt{0~axioms} across all 7 modules in \texttt{lean/SingularBlowup/})
@@ -959,19 +973,42 @@ Split $G=G_-+G_+$ with $G_-:=G\mathbf{1}_{(-\infty,0]}$ and $G_+:=G\mathbf{1}_{[
   where $\mathcal{H}_+(s):=\int_0^\infty e^{-sz}(2\partial_z+\lambda)G(z)\,dz$ is holomorphic on $\operatorname{Re}s>\sigma-\tfrac12$.
   Thus $\widehat{G}(s)=\mathcal{G}_-(s)+\mathcal{G}_+(s)$ extends meromorphically to the strip $\sigma-\tfrac12<\operatorname{Re}s<\sigma$
   with at most a single simple pole at $s_*:=-\lambda/2$ (note $\operatorname{Re}s_*<\sigma$ since $\operatorname{Re}\lambda>-2\sigma$).
-\item \emph{Pole cancellation at $s_*=-\lambda/2$ and Laurent obstruction:}
+\item \emph{Pole cancellation at $s_*=-\lambda/2$, Morera gluing, and full-strip Parseval Laurent obstruction:}
   Form $P(s):=\widehat{G}(s)/X(s;\lambda)$. If $\operatorname{Re}\lambda>-2\sigma+1$, then $s_*$ lies strictly left of the strip.
   If $-2\sigma<\operatorname{Re}\lambda\le -2\sigma+1$, then $s_*\in[\sigma-\tfrac12,\sigma)$ and $2s_*+\lambda=0$, so $\Gamma(2s+\lambda)$
   in~\eqref{eq:app_X} has a simple pole at $s_*$. None of the remaining factors of $X(s;\lambda)$ vanish ($\Gamma$ is zero-free);
   if $s_*\ne 0$, $\Gamma(2s+2)\Gamma(s)\Gamma(1-s)$ is holomorphic and nonzero at $s_*$ (since $\operatorname{Re}s_*\in(-\tfrac12,\tfrac12)$),
   so $1/X(s;\lambda)$ has a simple zero at $s_*$ cancelling the simple pole of $\widehat{G}$; if $s_*=0$ ($\lambda=0$),
   then $\Gamma(2s)\Gamma(s)$ gives $X$ a double pole at $s=0$, so $P(s)$ is holomorphic at $s=0$ and vanishes there automatically.
-  Hence $P(s)$ is holomorphic throughout the open strip $\sigma-\tfrac12<\operatorname{Re}s<\sigma$, satisfies $P(s+\tfrac12)=P(s)$
-  by~\eqref{eq:app_ladder}, and descends to a single-valued holomorphic function $\widetilde{P}(w)=P(s)$ ($w=e^{4\pi i s}$)
-  on $\mathbb{C}^*$ with $P(0)=0$ (for $\lambda\ne 0$, cancelling the $s=0$ pole of $\Gamma(s)$ so $G\in L^2_\sigma$).
-  On $\operatorname{Re}s=\sigma$, Stirling decay of $|X(\sigma+i\tau;\lambda)|$ vs.\ $e^{-4\pi k\tau}$ forces
-  every nonzero Laurent mode $c_k e^{4\pi i k s}$ of $P$ to satisfy $|k|<3/4<1$ (Lean: \texttt{PointSpectrum.no\_l2\_and\_edge\_kill}),
-  hence $k=0$. Thus $P(s)\equiv c_0=P(0)=0$, so $\widehat{G}\equiv 0$ and $G\equiv 0$.
+  By Plancherel on Steps~1--2, $\widehat{G}(\sigma'+i\tau)=\mathcal{G}_-(\sigma'+i\tau)+(2G(0)+\mathcal{H}_+(\sigma'+i\tau))/(2(\sigma'+i\tau)+\lambda)$
+  has $L^2_{\mathrm{loc}}(\mathbb{R}_\tau)$ boundary values on $\operatorname{Re}s=\sigma$ and $\operatorname{Re}s=\sigma-\tfrac12$
+  and satisfies the uniform full-strip tail bound
+  $M_G:=\sup_{\sigma'\in[\sigma-1/2,\sigma]}\int_{|\tau|\ge\tau_0}|\widehat{G}(\sigma'+i\tau)|^2\,d\tau<\infty$
+  ($\tau_0:=|\operatorname{Im}\lambda|+2$).
+  Because $(\lambda+2s)\widehat{G}(s)=c(s+\tfrac12)\widehat{G}(s+\tfrac12)$ and $(\lambda+2s)X(s;\lambda)=c(s+\tfrac12)X(s+\tfrac12;\lambda)$
+  give $P(\sigma-\tfrac12+i\tau)=P(\sigma+i\tau)$ a.e., Morera's theorem across the vertical boundary lines extends $P(s)$
+  to an entire $\tfrac12$-periodic function $P(s)=\sum_{k\in\mathbb{Z}}c_k e^{4\pi i k s}$ ($\widetilde{P}(w)=\sum_{k\in\mathbb{Z}}c_k w^k$
+  on $\mathbb{C}^*$, $w=e^{4\pi i s}$) with $P(0)=0$ (cancelling the $s=0$ pole of $\Gamma(s)$ so $G\in L^2_\sigma$).
+  Crucially, as $\sigma'$ traverses the fundamental strip width $[\sigma-\tfrac12,\sigma]$, $\arg w=4\pi\sigma'$ traverses a full
+  $2\pi$-period on the circle $|w|=e^{-4\pi\tau}$, so Parseval's identity eliminates any single-line cancellation between different
+  Laurent modes (\texttt{edge\_w2\_w3\_closure.py}, \texttt{W2-C}): for all $|\tau|\ge\tau_0$,
+  \[
+  \frac{1}{2}\sum_{k\in\mathbb{Z}}|c_k|^2 e^{-8\pi k\tau}
+  = \int_{\sigma-1/2}^\sigma |P(\sigma'+i\tau)|^2\,d\sigma'
+  = \int_{\sigma-1/2}^\sigma \frac{|\widehat{G}(\sigma'+i\tau)|^2}{|X(\sigma'+i\tau;\lambda)|^2}\,d\sigma'.
+  \]
+  By Stirling's formula on the compact interval $\sigma'\in[\sigma-\tfrac12,\sigma]$, there exist $c_0>0$ and
+  $p=2\sigma-\tfrac12+\operatorname{Re}\lambda$ such that $|X(\sigma'+i\tau;\lambda)|\ge c_0|\tau|^p e^{-3\pi|\tau|/2}$ for all
+  $\sigma'\in[\sigma-\tfrac12,\sigma]$ and $|\tau|\ge\tau_0$.  Multiplying Parseval's identity by $c_0^2|\tau|^{2p}e^{-3\pi|\tau|}$
+  and integrating over $|\tau|\ge\tau_0$ yields a convergent sum of non-negative terms:
+  \[
+  \frac{c_0^2}{2}\sum_{k\in\mathbb{Z}}|c_k|^2\int_{|\tau|\ge\tau_0}|\tau|^{2p}e^{-8\pi k\tau-3\pi|\tau|}\,d\tau
+  \le \int_{\sigma-1/2}^\sigma\int_{|\tau|\ge\tau_0}|\widehat{G}(\sigma'+i\tau)|^2\,d\tau\,d\sigma'
+  \le \frac{1}{2}M_G < \infty.
+  \]
+  Finiteness of each individual integral on both $\tau\ge\tau_0$ and $\tau\le -\tau_0$ requires $4\pi|k|<\frac{3\pi}{2}$,
+  so $|k|<3/4<1$ (Lean: \texttt{PointSpectrum.no\_l2\_and\_edge\_kill}), forcing $c_k=0$ for every $k\ne 0$.
+  Thus $P(s)\equiv c_0=P(0)=0$, so $\widehat{G}\equiv 0$ and $G\equiv 0$.
 \end{enumerate}
 \end{proof}
 
@@ -1351,7 +1388,7 @@ Hence
 By Gronwall's inequality with $W^{(n)}(0)=0$, choosing $T_0 = T_0(R_0) > 0$ so that $(e^{K(R_0)T_0}-1)\le\frac{1}{2}$ yields
 $\sup_{[0,T_0]}\|W^{(n)}\|_{\mathcal{W}}^2 \le \frac{1}{2}\sup_{[0,T_0]}\|W^{(n-1)}\|_{\mathcal{W}}^2$.
 Thus $G^{(n)}\to G$ strongly in $C([0,T_0];\mathcal{W})$ and weakly-* in $L^\infty([0,T_0];\mathcal{X})$ with
-$\sup_{[0,T_0]}\mathcal{E}(G)\le\mathcal{E}(G_0)<R_0$; uniqueness follows immediately from the same $\mathcal{W}$-estimate
+$\sup_{[0,T_0]}\mathcal{E}(G)\le\mathcal{E}(G_0)<R_0$; uniqueness follows immediately from the\allowbreak\ same $\mathcal{W}$-estimate
 for two solutions, and strong continuity $G\in C([0,T_0];\mathcal{X})$ follows from the weak-* continuity together with
 continuity of the energy $\tau\mapsto\mathcal{E}(G(\tau))$ via the differential identity of Lemma~\ref{lem:three_block_nl}.
 

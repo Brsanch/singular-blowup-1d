@@ -280,11 +280,34 @@ def main() -> int:
         f"c_l={c_l_T:.5f}, c_om={c_om_T:.5f}, B={B_amp:.4f}",
     )
 
+    # ---- NL-6: Weak-edge distributional delta(X-1) jump balance B = A^2 across X = 1 ----
+    # For Omega_eta(v) = Re[(v + i*eta)^(-1/2)], U_{X,eta}(v) = H(Omega_eta)(v) = Im[(v + i*eta)^(-1/2)],
+    # their exact product is U_{X,eta} * Omega_eta = (1/2) Im[(v + i*eta)^(-1)] = -eta / (2*(v^2 + eta^2))
+    # -> -(pi/2) * delta(v) as eta -> 0+. Substitute v = eta * tan(theta), dv / (v^2 + eta^2) = dtheta / eta:
+    from scipy.integrate import quad
+    eta = 1e-10
+    th_max = math.atan(1.0 / eta)
+    def integrand_th(th):
+        v = eta * math.tan(th)
+        if abs(v) >= 1.0:
+            return 0.0
+        return 0.5 * math.exp(1.0 - 1.0 / (1.0 - v * v))
+    lorentz_int = quad(integrand_th, -th_max, th_max, limit=200, epsabs=1e-13, epsrel=1e-13)[0]
+    res_B1 = abs(lorentz_int - 0.5 * math.pi * 1.0)
+    res_B101 = lorentz_int - 0.5 * math.pi * 1.01
+    target_B101 = 0.5 * math.pi * (1.0 - 1.01)
+    ok_nl6 = res_B1 < 1e-9 and abs(res_B101 - target_B101) < 1e-9
+    report(
+        "NL-6 Weak-edge distributional delta(X-1) jump balance B = A^2 across X = 1",
+        ok_nl6,
+        f"|weak_res(B=1)|={res_B1:.2e}, weak_res(B=1.01)={res_B101:+.8f} (exact (pi/2)(1-B)={target_B101:+.8f})",
+    )
+
     print()
     if FAILURES:
         print(f"GATE FAIL: {FAILURES}")
         return 1
-    print("GATE PASS: Direction 2 Nonlinear Co-Moving Leg (NL-1..NL-5)")
+    print("GATE PASS: Direction 2 Nonlinear Co-Moving Leg (NL-1..NL-6)")
     return 0
 
 

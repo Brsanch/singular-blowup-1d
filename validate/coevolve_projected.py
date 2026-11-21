@@ -51,16 +51,52 @@ def gauge_of(B, G, h, mode, use_nu=False, use_h=False, feed_cl=False):
 
 
 def rk4_step(B, G, h, xi, dt, mode="theta_balance", **kw):
-    gauge, c_l_r, c_om_r = gauge_of(B, G, h, mode, **kw)   # frozen across stages
-    a1G, a1h, a1x = rhs(B, G, h, xi, gauge)
-    a2G, a2h, a2x = rhs(B, G + 0.5 * dt * a1G, h + 0.5 * dt * a1h, xi + 0.5 * dt * a1x, gauge)
-    a3G, a3h, a3x = rhs(B, G + 0.5 * dt * a2G, h + 0.5 * dt * a2h, xi + 0.5 * dt * a2x, gauge)
-    a4G, a4h, a4x = rhs(B, G + dt * a3G, h + dt * a3h, xi + dt * a3x, gauge)
+    """Stage-consistent RK4: recomputes gauge_of at each stage so xi_dot = (c_l-1)*xi
+    preserves xi == 0 identically across all RK4 stages."""
+    g1, c_l_r, c_om_r = gauge_of(B, G, h, mode, **kw)
+    a1G, a1h, a1x = rhs(B, G, h, xi, g1)
+    G2, h2, x2 = G + 0.5 * dt * a1G, h + 0.5 * dt * a1h, xi + 0.5 * dt * a1x
+    g2, _, _ = gauge_of(B, G2, h2, mode, **kw)
+    a2G, a2h, a2x = rhs(B, G2, h2, x2, g2)
+    G3, h3, x3 = G + 0.5 * dt * a2G, h + 0.5 * dt * a2h, xi + 0.5 * dt * a2x
+    g3, _, _ = gauge_of(B, G3, h3, mode, **kw)
+    a3G, a3h, a3x = rhs(B, G3, h3, x3, g3)
+    G4, h4, x4 = G + dt * a3G, h + dt * a3h, xi + dt * a3x
+    g4, _, _ = gauge_of(B, G4, h4, mode, **kw)
+    a4G, a4h, a4x = rhs(B, G4, h4, x4, g4)
     G = G + dt / 6 * (a1G + 2 * a2G + 2 * a3G + a4G)
     h = h + dt / 6 * (a1h + 2 * a2h + 2 * a3h + a4h)
     xi = xi + dt / 6 * (a1x + 2 * a2x + 2 * a3x + a4x)
     G[0] = 0.0; h[0] = 0.0                        # inflow/edge BC
     return G, h, xi, c_l_r, c_om_r
+
+
+def check_raw_pde_rhs_consistency():
+    """Verify that rhs() under theta_balance matches raw eq. (2.4) on Y > 1 to machine precision."""
+    max_err_G, max_err_h = 0.0, 0.0
+    for Nc in (300, 600, 1000):
+        Bc = build(N=Nc, zmin=-12.0, zmax=12.0)
+        z, Y, Dz, Q_op = Bc["z"], Bc["Y"], Bc["Dz"], Bc["Q_op"]
+        G = 0.15 * np.exp(-((z - 1.0) / 1.0) ** 2); G[0] = 0.0
+        h = 0.10 * np.exp(-((z - 1.5) / 1.0) ** 2); h[0] = 0.0
+        gauge, c_l, c_om = gauge_of(Bc, G, h, "theta_balance")
+        dG, dh, dxi = rhs(Bc, G, h, 0.0, gauge)
+        Vg1 = float(Bc["b1"] @ G)
+        QG = Q_op @ G; Gz = Dz @ G; hz = Dz @ h
+        U = -2.0 + Vg1 + (Y - 1.0) * QG
+        a_phys = U + c_l * Y
+        Omega = (Y - 1.0) ** (-0.5) * (1.0 + G)
+        Omega_Y = (Y - 1.0) ** (-1.5) * (Gz - 0.5 * (1.0 + G))
+        Theta = 0.5 * np.pi + h
+        Theta_Y = (Y - 1.0) ** (-1.0) * hz
+        dG_raw = (Y - 1.0) ** 0.5 * (-a_phys * Omega_Y + c_om * Omega + Theta_Y)
+        dh_raw = -a_phys * Theta_Y + (c_l + 2.0 * c_om) * Theta
+        mask = (z > -2.0) & (z < 5.0)
+        max_err_G = max(max_err_G, float(np.max(np.abs(dG_raw[mask] - dG[mask]))))
+        max_err_h = max(max_err_h, float(np.max(np.abs(dh_raw[mask] - dh[mask]))))
+        assert abs(dxi) == 0.0, f"dxi nonzero: {dxi}"
+    assert max_err_G < 1e-13 and max_err_h < 1e-14, f"Raw PDE mismatch: {max_err_G}, {max_err_h}"
+    return max_err_G, max_err_h
 
 
 def march(B, A=0.15, hA=0.0, T=4.0, mode="theta_balance", **kw):
@@ -107,6 +143,11 @@ def main():
     print("       amplitude mode). FIX: the Theta-balance normalization c_omega=-c_l/2 makes")
     print("       c_l+2 c_omega = 0 identically, so that forcing VANISHES.")
 
+    # ---- Step 0: raw-PDE RHS consistency check --------------------------------------
+    err_G, err_h = check_raw_pde_rhs_consistency()
+    print(f"\n  STEP 0 -- RAW-PDE RHS consistency (N=300,600,1000, -2<z<5): "
+          f"max|dG_raw-dG|={err_G:.2e}, max|dh_raw-dh|={err_h:.2e} (PASS)")
+
     # ---- Step 2+3: self-consistent march via the Theta-balance normalization --------
     print("\n  STEP 2+3 -- SELF-CONSISTENT march, Theta-balance normalization")
     print("              (c_l=-U(1), c_omega=-c_l/2; h-forcing identically 0; xi pinned):")
@@ -114,6 +155,7 @@ def main():
     rows = march(B, A=0.15, T=4.0, mode="theta_balance")
     for (t, c_l, c_om, xi, nw, mg) in rows:
         print(f"    {t:4.1f}   {c_l:+.5f}   {c_om:+.5f}   {xi:+.3e}   {nw:.3e}    {mg:.3e}")
+        assert abs(xi) < 1e-14, f"Edge pin drifted: xi={xi}"
     rate = fit_rate([r[0] for r in rows], [r[4] for r in rows])
     print(f"    weighted decay rate (g=0.5) = {rate:+.3f}   (gap 2*0.5 = 1.0)")
 

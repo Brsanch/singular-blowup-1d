@@ -78,35 +78,47 @@ def normalization(B, G, h):
 
 
 def rhs(B, G, h, xi, gauge):
-    """gauge = (nu_force, h_force, c_l, xi_mu): the SHAPE forcings (nu_force in g,
-    h_force in h) are DECOUPLED from the xi-ODE multiplier xi_mu, so we can pin the
-    edge (xi_mu=-V_g(1) -> xi_dot=(c_l-1)xi, homogeneous) WITHOUT forcing the shape
-    (which is what runs away). Frozen across the RK4 stages (semi-implicit)."""
+    """gauge = (nu_force, h_force, c_l, xi_mu): exact moving-frame RHS from eq. (2.4).
+    When c_l = 2 + mu_cl differs from 2, the dilation shift mu_cl*(Y-1) in (U + c_l Y)
+    contributes -mu_cl*(G_z - (1/2)*(1+G)) to G_tau and -mu_cl*h_z to h_tau, while
+    c_omega = -1 + nu_force contributes +nu_force*(1+G) to G_tau and h_force*(1 + 2*h/pi)
+    to h_tau. Under Theta-balance (mu_cl = -V_G(1), nu_force = +V_G(1)/2, h_force = 0),
+    -(1/2)*mu_cl*(1+G) and +nu_force*(1+G) cancel identically, leaving the exact raw-PDE
+    drift +(V_G(1) - Q_op G)*G_z + (1/2)*(Q_op G)*G."""
     M_GG, M_Gh, M_hh, Q_op, Dz = B["M_GG"], B["M_Gh"], B["M_hh"], B["Q_op"], B["Dz"]
     nu_force, h_force, c_l, xi_mu = gauge
     Vg1 = float(B["b1"] @ G)
+    mu_cl = c_l - 2.0
     dU_over = Q_op @ G                          # dU/(Y-1), bounded
-    N_G = -dU_over * (Dz @ G - 0.5 * G)
-    N_h = -dU_over * (Dz @ h)
-    dG = M_GG @ G + M_Gh @ h + N_G + nu_force
-    dh = M_hh @ h + N_h + h_force
+    N_G = -dU_over * (Dz @ G - 0.5 * G) - mu_cl * (Dz @ G - 0.5 * (1.0 + G))
+    N_h = -(dU_over + mu_cl) * (Dz @ h)
+    dG = M_GG @ G + M_Gh @ h + N_G + nu_force * (1.0 + G)
+    dh = M_hh @ h + N_h + h_force * (1.0 + h / (0.5 * np.pi))
     dxi = (c_l - 1.0) * xi + Vg1 + xi_mu
     return dG, dh, dxi
 
 
-def rk4(B, G, h, xi, dt, mode="diag"):
-    """mode='diag': stable shape (no forcing), edge pinned via xi_mu=-V_g(1), exponents
-    tracked diagnostically.  mode='force': explicit forward forcing of (mu,nu) (the
-    saddle-unstable normalization, for the obstruction demonstration)."""
-    mu, nu, c_l, c_om, Vg1 = normalization(B, G, h)   # ONCE per step, frozen in stages
+def _stage_gauge(B, G, h, mode):
+    mu, nu, c_l, c_om, Vg1 = normalization(B, G, h)
     if mode == "diag":
-        gauge = (0.0, 0.0, 2.0, -Vg1)                 # shape stable; edge pinned (xi_dot=xi)
-    else:  # 'force'
-        gauge = (nu, (mu + 2.0 * nu) * (np.pi / 2.0), c_l, mu)
-    a1G, a1h, a1x = rhs(B, G, h, xi, gauge)
-    a2G, a2h, a2x = rhs(B, G + 0.5 * dt * a1G, h + 0.5 * dt * a1h, xi + 0.5 * dt * a1x, gauge)
-    a3G, a3h, a3x = rhs(B, G + 0.5 * dt * a2G, h + 0.5 * dt * a2h, xi + 0.5 * dt * a2x, gauge)
-    a4G, a4h, a4x = rhs(B, G + dt * a3G, h + dt * a3h, xi + dt * a3x, gauge)
+        return (0.0, 0.0, 2.0, -Vg1), c_l, c_om
+    return (nu, (mu + 2.0 * nu) * (np.pi / 2.0), c_l, mu), c_l, c_om
+
+
+def rk4(B, G, h, xi, dt, mode="diag"):
+    """Stage-consistent RK4: recomputes the pinning gauge at every stage so xi_dot = (c_l-1)*xi
+    preserves xi == 0 identically."""
+    g1, c_l, c_om = _stage_gauge(B, G, h, mode)
+    a1G, a1h, a1x = rhs(B, G, h, xi, g1)
+    G2, h2, x2 = G + 0.5 * dt * a1G, h + 0.5 * dt * a1h, xi + 0.5 * dt * a1x
+    g2, _, _ = _stage_gauge(B, G2, h2, mode)
+    a2G, a2h, a2x = rhs(B, G2, h2, x2, g2)
+    G3, h3, x3 = G + 0.5 * dt * a2G, h + 0.5 * dt * a2h, xi + 0.5 * dt * a2x
+    g3, _, _ = _stage_gauge(B, G3, h3, mode)
+    a3G, a3h, a3x = rhs(B, G3, h3, x3, g3)
+    G4, h4, x4 = G + dt * a3G, h + dt * a3h, xi + dt * a3x
+    g4, _, _ = _stage_gauge(B, G4, h4, mode)
+    a4G, a4h, a4x = rhs(B, G4, h4, x4, g4)
     G = G + dt / 6 * (a1G + 2 * a2G + 2 * a3G + a4G)
     h = h + dt / 6 * (a1h + 2 * a2h + 2 * a3h + a4h)
     xi = xi + dt / 6 * (a1x + 2 * a2x + 2 * a3x + a4x)

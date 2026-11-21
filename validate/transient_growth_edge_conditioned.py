@@ -58,12 +58,14 @@ def edge_conditioned(Dz, Qop, z, dz, z_cut):
     Fb = 0.5 * Qop[np.ix_(keep, keep)]                       # bulk nonlocal forcing
     Ft = (sw[:, None] * Fb) / sw[None, :]                     # W-similarity of the forcing
     mu_an = float(np.linalg.eigvalsh(-np.diag(pp) + 0.5 * (Ft + Ft.T))[-1])
-    # physical bulk-bump transient growth (discrete semigroup, W-norm), bump in the interior
-    Mb = (-2.0 * Dz[np.ix_(keep, keep)] + Fb * 2.0 * 0.5)     # discrete bulk operator (-2 d_z + 1/2 Q)
+    # physical bulk-bump transient growth and actual discrete submatrix norm in W-norm
+    Mb = (-2.0 * Dz[np.ix_(keep, keep)] + Fb * 2.0 * 0.5)     # discrete bulk submatrix (-2 d_z + 1/2 Q)
     Mt = (sw[:, None] * Mb) / sw[None, :]
+    mu_disc = float(np.linalg.eigvalsh(0.5 * (Mt + Mt.T))[-1])
+    Gmat = max(float(np.linalg.norm(expm(Mt * t), 2)) for t in np.r_[0.001, TAUS])
     gb = np.exp(-((zk - 1.5) / 1.2) ** 2); gb = gb / np.linalg.norm(gb)
     Gbump = max(float(np.linalg.norm(expm(Mt * t) @ gb)) for t in TAUS)
-    return mu_an, Gbump
+    return mu_an, mu_disc, Gmat, Gbump
 
 
 def main():
@@ -77,15 +79,14 @@ def main():
         M, Dz, Qop, z, dz = build_bounded(N, zmin, zmax)
         print(f"    {N:<6d} {zmin:+.0f}   {worstcase_standard(M):6.2f}")
 
-    print("\n  EDGE-CONDITIONED (bulk z>z_cut, anisotropic W-norm; transport via analytic IBP):")
-    print("  log-norm mu_an = lambda_max(-diag(phi') + sym_W(1/2 Q_op)) <= 0 => no transient growth")
-    print("    N      zmin   z_cut   mu_an (log-norm)   G(bulk bump)")
+    print("\n  EDGE-CONDITIONED (bulk z>z_cut, anisotropic W-norm; continuum-IBP surrogate mu_an vs discrete submatrix):")
+    print("  mu_an = lambda_max(-diag(phi') + sym_W(1/2 Q_bulk)); G_mat = sup_tau ||exp(M_b tau)||_W")
+    print("    N      zmin   z_cut   mu_an (IBP surr)   mu_disc(sym_W)   G_mat(disc)   G(bulk bump)")
     for (N, zmin, zmax) in ((1000, -12, 8), (1400, -12, 8), (2000, -12, 8), (1600, -14, 8)):
         M, Dz, Qop, z, dz = build_bounded(N, zmin, zmax)
         for z_cut in (-8.0, -6.0):
-            mu, Gb = edge_conditioned(Dz, Qop, z, dz, z_cut)
-            flag = "  <- contraction (<=1)" if (mu <= 1e-6 and Gb <= 1.0 + 1e-3) else ""
-            print(f"    {N:<6d} {zmin:+.0f}   {z_cut:+.0f}    {mu:+.5f}          {Gb:6.4f}{flag}")
+            mu, mu_d, Gm, Gb = edge_conditioned(Dz, Qop, z, dz, z_cut)
+            print(f"    {N:<6d} {zmin:+.0f}   {z_cut:+.0f}    {mu:+.5f}          {mu_d:+8.2f}        {Gm:6.4f}        {Gb:6.4f}")
 
     print("\n" + "=" * 84)
     print("  READ: UN-conditioned worst-case creeps with edge depth (the grid-scale (Y-1)^{-1/2}")

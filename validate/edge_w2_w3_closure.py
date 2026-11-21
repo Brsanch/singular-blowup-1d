@@ -119,6 +119,28 @@ def main() -> int:
         f"recip_denom(0)={float(val_at_zero):.2e}, feq_err={mp.nstr(err_feq, 3)}, floors=({min_re1:.2f},{min_re2:.2f},{min_re3:.2f})",
     )
 
+    # ---- W2-C: Full-strip Parseval orthogonality on [sigma-1/2, sigma] kills single-ray cancellation ----
+    # On a single vertical line Re(s)=sigma=0.4, P_ray(s) = (w-1)*exp(-w-1/w) (w=exp(4*pi*i*s)) decays
+    # because cos(4*pi*sigma) > 0, but integrating |P(sigma_p + i*tau)|^2 over the full strip width
+    # sigma_p in [sigma-1/2, sigma] gives (1/2)*sum_k |c_k|^2 exp(-8*pi*k*tau) by Parseval orthogonality.
+    import numpy as np
+    tau_test = 0.25
+    sig_grid = np.linspace(float(sigma) - 0.5, float(sigma), 512, endpoint=False)
+    dsig = 0.5 / len(sig_grid)
+    w_grid = np.exp(4j * math.pi * (sig_grid + 1j * tau_test))
+    P_test = 2.0 * (w_grid - 1.0) + 0.5 * (w_grid ** 2 - 1.0)  # c_0=-2.5, c_1=2.0, c_2=0.5
+    strip_l2 = float(np.sum(np.abs(P_test) ** 2) * dsig)
+    parseval_rhs = 0.5 * (2.5 ** 2 + (2.0 ** 2) * math.exp(-8 * math.pi * tau_test) + (0.5 ** 2) * math.exp(-16 * math.pi * tau_test))
+    parseval_err = abs(strip_l2 - parseval_rhs) / parseval_rhs
+    # Single-ray cancellation function P_ray(s) = (w-1)*exp(-w-1/w): small on Re(s)=0.4, huge across strip
+    P_ray_line = abs((np.exp(4j * math.pi * (0.4 + 1j * tau_test)) - 1.0) * np.exp(-np.exp(4j * math.pi * (0.4 + 1j * tau_test)) - np.exp(-4j * math.pi * (0.4 + 1j * tau_test))))
+    P_ray_strip = float(np.sum(np.abs((w_grid - 1.0) * np.exp(-w_grid - 1.0 / w_grid)) ** 2) * dsig)
+    report(
+        "W2-C Full-strip Parseval identity on [sigma-1/2, sigma] eliminates single-ray cancellation",
+        parseval_err < 1e-12 and P_ray_strip > 1e15 and P_ray_line < 1e-2,
+        f"parseval_rel_err={parseval_err:.2e}, P_ray(|line@0.4|={P_ray_line:.2e} vs strip_L2={P_ray_strip:.2e})",
+    )
+
     # ---- W3-A: High-frequency resolvent perturbation ||(R(lam) - R_0(lam)) F||_L2 vs Im(lam) ----
     def Fhat(s, z0=mp.mpf("-4")):
         return 2 * mp.besselk(s, 1) * mp.e ** (-s * z0)
