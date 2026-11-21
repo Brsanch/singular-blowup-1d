@@ -223,7 +223,9 @@ abscissa is negative and resolution-independent:
 $\mu_{\mathrm{an}}=-0.10083$ at $z_{\mathrm{cut}}=-8$ and $-0.40675$ at $-6$
 ($N=2000$; range across $N\in[1000,2000]$ is $[-0.106,-0.101]$ at $-8$),
 implying $\|e^{M\tau}\|_W\le 1$ (\texttt{transient\_growth\_edge\_conditioned.py}).
-Grid-scale edge spikes that produce worst-case creep are excluded by the inflow BC.
+In the plain norm, grid-scale edge spikes still give a worst-case $\sup_\tau\|e^{M\tau}\|_2$ of $2.3$--$3.9$
+that grows with the edge depth $z_{\min}$ even with the inflow BC (\texttt{transient\_growth.py}); this
+creep is removed by the edge cutoff $z_{\mathrm{cut}}$ of the edge-conditioned norm, not by the BC.
 
 %--------------------------------------------------------------------------
 \section{Nonlinear stability}
