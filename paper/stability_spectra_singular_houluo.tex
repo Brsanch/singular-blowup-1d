@@ -17,7 +17,7 @@ of the 1D Hou--Luo model}
 \author{
   Bryan Sanchez\\
   \texttt{singular-blowup-1d} (companion numerics)\\
-  \small Draft for arXiv submission --- updated 2026-11-20 (linear strict-gap W1--W3 closed)
+  \small Draft for arXiv submission --- updated 2026-11-20 (linear W1--W3 \& nonlinear co-moving bootstrap closed)
 }
 \date{}
 
@@ -368,14 +368,111 @@ $|R(\lambda)F-R_0(\lambda)F|: 0.2724\to 0.0295\to 0.00678$ at $\omega=5,20,40$,
 ratio $40/20=0.230$).
 
 %--------------------------------------------------------------------------
-\section{Limitations and remaining nonlinear rigor path}
+\section{Nonlinear co-moving bootstrap in $\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$}
+\label{sec:nonlin_bootstrap}
 %--------------------------------------------------------------------------
 
-\paragraph{Linear vs.\ nonlinear rigor status.}
-Theorem~\ref{thm:linear_gap} closes the \textbf{linear} spectral-gap and semigroup decay
-chain (W1--W3) on $L^2_\sigma(\mathbb{R})/\mathcal{N}$ for $\sigma\in(0,1/2)$, while the
-finite-amplitude ($A\le 4$) and co-evolving relaxation results in Section~\ref{sec:nonlin}
-remain numerical.
+With Theorem~\ref{thm:linear_gap} providing exponential semigroup decay on $L^2_{1/4}(\mathbb{R})$,
+we close the nonlinear co-moving stability bootstrap around the singular steady profile under the
+exact edge-stagnation gauge (\emph{Gauge~(a)}, $A(\tau)\equiv 1$, edge pinned at $X=1$):
+\begin{equation}\label{eq:gauge_a}
+c_l(\tau) = 2 - V_G(1), \qquad
+c_\omega(\tau) = -1 + \tfrac{1}{2}\bigl(V_G(1) - H[g](1)\bigr), \qquad
+\frac{\dot B}{B} = -H[g](1),
+\end{equation}
+where $V_G(1) = -\frac{1}{\pi}\int_{\mathbb{R}} e^{z/2}\ln(1+e^{-z})G(z)\,dz$ and
+$H[g](1) = -\frac{1}{\pi}\int_{\mathbb{R}} e^{-z/2}G(z)\,dz$.
+Under~\eqref{eq:gauge_a}, all singular $e^{-z}$ drift and inhomogeneous linear $(V_G(1), H[g](1))$
+amplitude forcings cancel identically, yielding the exact co-moving PDE
+\begin{equation}\label{eq:comoving_exact}
+\begin{aligned}
+\partial_\tau G &= -2\partial_z G + \tfrac{1}{2}\widetilde{Q}_{\mathrm{op}}G + B(\tau)e^{-z/2}\partial_z h
+  + \bigl(V_G(1) - Q_{\mathrm{op}}G\bigr)\partial_z G + \tfrac{1}{2}\bigl(\widetilde{Q}_{\mathrm{op}}G\bigr)G, \\
+\partial_\tau h &= \bigl(-2 + V_G(1) - Q_{\mathrm{op}}G\bigr)\partial_z h,
+\end{aligned}
+\end{equation}
+with $\widetilde{Q}_{\mathrm{op}}G := Q_{\mathrm{op}}G - H[g](1)$.
+
+\begin{thm}[Closed nonlinear co-moving bootstrap]\label{thm:nonlinear_bootstrap}
+Define the edge Hardy-disk space
+$\mathcal{H}^1(D(1,1)) := \{G(z) = \sum_{m=1}^\infty c_m e^{mz} : \|c\|_{\mathcal{H}^1}^2 := \sum_{m=1}^\infty m^2|c_m|^2 < \infty\}$,
+the overlap far-field derivative energy $Y_{\mathrm{far}} := \|G_z\|_{L^2_{1/4}([-\ln 2,\infty))}^2$,
+and the Datko--Pazy renormalized W1--W3 semigroup energy $\widetilde{X}_{\mathrm{sem}}$
+(with $\omega_1 = 2/5 < 9/20$ and $\|G\|_{L^2_{1/4}(\mathbb{R})}^2 \le \widetilde{X}_{\mathrm{sem}} \le C_M\|G\|_{L^2_{1/4}}^2$).
+For the coupled Lyapunov functional
+\[
+\mathcal{E}(\tau) := 20\,\widetilde{X}_{\mathrm{sem}}(\tau) + Y_{\mathrm{far}}(\tau) + 10\,\|c(\tau)\|_{\mathcal{H}^1(D(1,1))}^2,
+\]
+the exact Gauge-(a) dynamics~\eqref{eq:comoving_exact} (in the invariant $h\equiv 0$ sector, or
+upper-triangularly coupled to $h(1+v)=\sum_{k\ge 1}d_k v^{k+1/2}$) satisfy the closed Riccati inequality
+\begin{equation}\label{eq:riccati_bootstrap}
+\frac{d}{d\tau}\mathcal{E} \le -\frac{1}{2}\,\mathcal{E} + C_{\mathrm{nl}}\,\mathcal{E}^{3/2}.
+\end{equation}
+Consequently, whenever $\mathcal{E}(0) < (4 C_{\mathrm{nl}})^{-2}$, any smooth solution remains
+globally trapped and decays exponentially:
+\[
+\mathcal{E}(\tau) \le \mathcal{E}(0)\,e^{-\tau/4}, \qquad
+|c_l(\tau)-2| + |c_\omega(\tau)+1| + |B(\tau)-B_\infty| \le C\sqrt{\mathcal{E}(0)}\,e^{-\tau/8}.
+\]
+\end{thm}
+
+\paragraph{Proof architecture (five verified pillars).}
+\begin{enumerate}
+\item \textbf{Edge Hardy-disk coercivity (zero radius shrinkage, $r_0=1$):}
+  Fractional-exponent edge spaces $L^2_{\sigma_-}((-\infty,0])$ ($\sigma_-\in(1/2,1)$) lose $1/2$ an
+  exponent under $\widetilde{Q}_{\mathrm{op}}$, whereas integer powers $v^k$ cancel every pole of
+  $c(k)=-\tan(\pi k)/(2k+1)=0$. On $D(1,1)$, the Taylor-coefficient ODE
+  $\dot c_m = -2m c_m - \frac{1}{2\pi(m+1)}\sum_{k\ge 1}\frac{c_k}{k-m-1/2} + b_m + \mathcal{N}_m$
+  is governed by the discrete Hilbert matrix $\|\mathcal{H}_{1/2}\|_{\ell^2\to\ell^2} = \pi$.
+  Since $\sqrt{m}/(m+1)\le 1/2$, pairing with $2m^2 c_m$ gives
+  $\dot Z_{\mathrm{disk}} \le -3\sum_{m\ge 1} m^3|c_m|^2 + 2\sum_{m\ge 1} m|b_m|^2 + \mathcal{N}_{\mathrm{disk}}$
+  (numerical Rayleigh abscissa $-1.8392\le -1.75$ for $K=20,40,80$).
+  The quasilinear convolution is absorbed into $-3\sum m^3|c_m|^2$ via $\sqrt{m}\,k\le k\sqrt{k}+\sqrt{m-k}\,k$
+  and $\frac{j}{k-j-1/2}=\frac{k-1/2}{k-j-1/2}-1$.
+\item \textbf{Zero-derivative $L^2_{3/4,1/4}\to L^\infty$ bound and $\frac{7}{10}$ smoothing:}
+  Exact dual-strip identities $|\tan(\pi(\frac{1}{4}+i\tau))|=|\tan(\pi(\frac{3}{4}+i\tau))|\equiv 1$
+  give $\|T_c\|_{L^2_{1/4}}=2/3$, $\|T_c\|_{L^2_{3/4}}=2/5$, $\|T_c\partial_z\|_{L^2_{1/4}}=1/2$,
+  $\|\frac{1}{2}\partial_z(\widetilde{Q}_{\mathrm{op}}G)\|_{L^2_{1/4}}\le \frac{7}{10}\|G\|_{L^2_{3/4}}$,
+  and $\|Q_{\mathrm{op}}G\|_{L^\infty}\le (\pi^{-1/2}+\sqrt{2/3})\|G\|_{L^2_{3/4,1/4}} < \frac{7}{5}\|G\|_{L^2_{3/4,1/4}}$.
+\item \textbf{Far-field-to-edge-disk Taylor coupling:}
+  $\sum_{m\ge 1} m|b_m|^2 \le \frac{\pi^2/6-1}{8\pi^2}\|G\|_{L^2_{1/4}([0,\infty))}^2 < \frac{1}{100}\widetilde{X}_{\mathrm{sem}}$
+  (series $0.007231 < 0.008168 < 25/2592 < 0.01$).
+\item \textbf{Overlap stitching at $z_0=-\ln 2$ ($Y=3/2$) and edge $L^2_{3/4}$ embedding:}
+  The interior overlap factor $e^{z_0}=1/2$ bounds the weighted inflow by
+  $2e^{-z_0/2}|G_z(-\ln 2)|^2 \le \frac{2\sqrt{2}}{3}\|c\|_{\mathcal{H}^1}^2 < Z_{\mathrm{disk}}$ ($0.94281<1$),
+  and the telescoping Gram trace bounds
+  $\|G\|_{L^2_{3/4}((-\infty,0])}^2 \le (\sum_{m\ge 1}\frac{1}{m^2(2m-3/2)}) Z_{\mathrm{disk}} < \frac{199}{90}Z_{\mathrm{disk}} < \frac{9}{4}Z_{\mathrm{disk}}$
+  (exact Gram norm $2.07150 \le \mathrm{tr}=2.14799 < 199/90 < 9/4$),
+  yielding $\dot Y_{\mathrm{far}} \le -\frac{1}{2}Y_{\mathrm{far}} + \frac{641}{200}Z_{\mathrm{disk}} + \frac{49}{50}\widetilde{X}_{\mathrm{sem}} + \mathcal{N}_{\mathrm{far}}$.
+\item \textbf{Closed 3-block Lyapunov and Riccati trapping:}
+  Combining the three inequalities with weights $(20, 1, 10)$ yields exact rational per-block linear rates
+  $(-\frac{741}{1000}, -\frac{1}{2}, -\frac{5359}{2000})$, establishing~\eqref{eq:riccati_bootstrap} and
+  global exponential decay via a strict barrier argument.
+\end{enumerate}
+
+\paragraph{Formal verification and numerical gates.}
+All algebraic cancellations, dual-strip rational symbol norms, Hilbert commutators, telescoping series
+bounds, 3-block Lyapunov coercivity, and the real-analytic Riccati barrier trapping theorem are
+machine-checked in Lean~4 (\texttt{lean/SingularBlowup/NonlinearComoving.lean} and
+\texttt{lean/SingularBlowup/NonlinearBootstrap.lean}, zero \texttt{sorry}, zero custom axioms,
+vacuity-lint clean across all 7 modules in \texttt{lean/SingularBlowup/}), paired with numerical gates
+\texttt{validate/edge\_nonlinear\_comoving\_closure.py} (\texttt{NL-1..NL-5 PASS}) and
+\texttt{validate/edge\_nonlinear\_bootstrap\_closure.py} (\texttt{NB-1..NB-5 PASS}).
+
+%--------------------------------------------------------------------------
+\section{Limitations and formalization scope}
+%--------------------------------------------------------------------------
+
+\paragraph{Formalized backbone vs.\ continuous PDE regularity.}
+Theorems~\ref{thm:linear_gap} and~\ref{thm:nonlinear_bootstrap} close both the linear strict-gap
+semigroup chain (W1--W3) and the small-data nonlinear co-moving bootstrap in
+$\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$.  In the Lean~4 formalization
+(\texttt{lean/SingularBlowup/}), all algebraic cancellations, rational symbol and series bounds,
+discrete Hilbert/commutator identities, 3-block Lyapunov coercivity, and the real-analytic Riccati
+trapping theorem are machine-checked, whereas standard continuous PDE steps (Cauchy--Kovalevskaya /
+hyperbolic local well-posedness and Datko--Pazy renorming of the W1--W3 $C_0$-group) are carried out
+analytically in the companion notes (\texttt{docs/desk/}).  The large-amplitude ($A\le 4$) tests in
+Section~\ref{sec:nonlin} remain numerical.
 
 \paragraph{Energy / CAP dead ends (named).}
 \begin{itemize}
@@ -390,12 +487,11 @@ remain numerical.
   is essential.
 \end{itemize}
 
-\paragraph{Remaining nonlinear step (co-moving Duhamel closure).}
-With the linear semigroup decay $\|e^{\tau L}\|_{L^2_\sigma/\mathcal{N}}\le C_\delta e^{(-2\sigma+\delta)\tau}$
-established by Theorem~\ref{thm:linear_gap}, a full nonlinear proof of Conjecture~2.4
-reduces to closing the quasilinear co-moving Duhamel / modulation bootstrap in the
-pinned singular coordinate $Y=X/X_s(\tau)$, where the transport velocity vanishes as
-$\bar U(Y)+2Y\sim 2(Y-1)$ at the edge $Y\to 1^+$.
+\paragraph{Nonlinear edge space requirement.}
+The small-data bootstrap (Theorem~\ref{thm:nonlinear_bootstrap}) requires edge-analytic initial data
+in $\mathcal{H}^1(D(1,1))$ (cancelling the fractional-exponent $\frac{1}{2}$-loss of
+$\widetilde{Q}_{\mathrm{op}}$ on $L^2_{\sigma_-}((-\infty,0])$); lowering the edge regularity from
+$\mathcal{H}^1(D(1,1))$ to finite-order $C^k([1,2])$ without radius loss remains open.
 
 \paragraph{Scope.}
 1D Hou--Luo singular profile only.  2D Boussinesq analogue and gCLM $a$-family spectra
@@ -448,6 +544,8 @@ python3 validate/nonlinear_shape_march.py             # A<=4, peak=1.000
 python3 validate/coevolve_projected.py                # (c_l,c_w)->(2,-1)
 python3 validate/edge_w1_route_f_closure.py           # W1 Route F (F1-F4 PASS)
 python3 validate/edge_w2_w3_closure.py                # W2+W3 (W2-A/B, W3-A PASS)
+python3 validate/edge_nonlinear_comoving_closure.py   # Gauge-(a) (NL-1..NL-5 PASS)
+python3 validate/edge_nonlinear_bootstrap_closure.py  # Bootstrap (NB-1..NB-5 PASS)
 \end{verbatim}
 
 \paragraph{KEY numbers (session freeze; tol $5\%$ relative unless noted).}
@@ -478,8 +576,9 @@ cd paper && pdflatex stability_spectra_singular_houluo.tex
 %--------------------------------------------------------------------------
 \section*{Acknowledgments / status}
 %--------------------------------------------------------------------------
-Ready-to-arXiv package (updated 2026-11-20: linear strict-gap semigroup chain W1--W3
-closed analytically and formalized in Lean~4; nonlinear co-moving leg numerical).
+Ready-to-arXiv package (updated 2026-11-20: linear strict-gap semigroup chain W1--W3 and
+small-data nonlinear co-moving bootstrap in $\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$
+closed analytically with Lean~4 algebraic/Riccati backbone and Python verification gates).
 Source of truth: \texttt{paper/} and \texttt{lean/SingularBlowup/} in the companion repository; see \texttt{HANDOFF.md}.
 
 \begin{thebibliography}{99}
