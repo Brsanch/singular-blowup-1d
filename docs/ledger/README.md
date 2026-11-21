@@ -62,3 +62,8 @@ edited on 2026-07-16 and stay as they are; this paragraph records what has chang
   operator on its constrained domain, not the Gauge-(a) operator.
 - THR-01 remains `speculative`. Conjecture 2.4 as stated by Chen–Huang–Li concerns degenerate smooth initial
   data, which the manuscript's perturbation class does not contain.
+- **Adversarial review of `0dbf217` (2026-11-21):** `docs/findings_session_2026_11_21_adversarial_review.md`, probe
+  `validate/adversarial_review_2026_11_21_probe.py`. Relevant to this ledger: `{H[g](1) = 0}` is not invariant
+  (`d/dτ H[g](1) = −H[g](1) − c₁/3`), so the weak edge relation `B = A²` is not kept by any nontrivial solution in the
+  manuscript's ansatz at linear order; and the weighted-norm transient of `M_GG` grows with edge depth (peak 12.7 at
+  γ = 0.75, `z_min = −14`), which the OBS rows above do not record. No ledger status changes.

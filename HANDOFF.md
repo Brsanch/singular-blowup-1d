@@ -20,6 +20,12 @@ Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasur
 > eigenfunction for every \(\operatorname{Re}\lambda>-2\sigma\) — `docs/ledger/OBS-09_gauge_a_eigenmodes.md`,
 > `docs/findings_session_2026_11_21_gauge_a_eigenmodes.md`, probe
 > `validate/edge_gauge_a_eigenmode_check.py` (EM-1..EM-5). The truncated grid does not carry these modes.
+> **Adversarial review (2026-11-21, of commit `0dbf217`):**
+> `docs/findings_session_2026_11_21_adversarial_review.md`; probe
+> `validate/adversarial_review_2026_11_21_probe.py` (R1–R3). No false statement found inside either
+> theorem; two numerical-evidence claims are wrong (E1 weighted-norm peak, E2 edge-conditioned growth);
+> no nontrivial solution of Theorem 2 is shown to solve the system across \(X=1\) (N1); five proof
+> steps are unsupported as written (P1, P2, L1, L2, N2).
 > **Not verified by anyone yet:** the implicit domain of \(M_\sigma\); the W2 gluing step; the local
 > well-posedness appendix; the nonlinear constants; the \(h\not\equiv0\) nonlinear terms.
 > **Lean:** the 2026-11-20/21 files check arithmetic and one ODE lemma; operator bounds are
