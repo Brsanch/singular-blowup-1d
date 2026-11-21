@@ -471,12 +471,13 @@ Standalone Python gates verify the W1--W2 estimates numerically:
 \texttt{validate/edge\_w1\_route\_f\_closure.py} (\texttt{F1--F5 PASS} at sample anchor $\sigma=0.4,\delta=1.1$, $\operatorname{Re}\lambda=+0.30$, and $\sigma=1/4,\lambda=0.3$ for \texttt{F5}:
 $\min E_\omega/(\pi|\Delta\tau|)=1.000000$, $\max\|T_{\mathrm{off}}\|_{\mathrm{Schur}}=0.06775$,
 sampled $\max|\partial_\tau\log|X||=9.3587\le 15.4096$, $\|X\|_2\|K_{\mathrm{slit}}\|_2:\approx 0.34\to 0.041$)
-and \texttt{validate/edge\_w2\_w3\_closure.py} (\texttt{W2-A, W2-B PASS}: left-strip boundary
-residuals $\le 2.2\times 10^{-31}$, functional-equation residual $9.24\times 10^{-33}$).
+and \texttt{validate/edge\_w2\_w3\_closure.py} (\texttt{W2-A..C PASS}: left-strip boundary
+residuals $\le 2.2\times 10^{-31}$, functional-equation residual $9.24\times 10^{-33}$,
+full-strip Parseval error $1.42\times 10^{-16}$, and $|X|^2$ Stirling decay rate $18.8498$ vs.\ $6\pi=18.8496$).
 The companion Lean~4 modules (\texttt{PointSpectrum.lean}, \texttt{SlitSchurMargin.lean},
 \texttt{LinearStrictGapClosure.lean}; \texttt{0~sorry}, \texttt{0~axioms}) machine-check the
-elementary exponent inequalities, four-quadrant triangle margins, integer Laurent budget
-($3\pi/2 < 2\pi$), and rational arithmetic combinations of externally supplied operator bounds;
+elementary exponent inequalities, four-quadrant triangle margins, Laurent/Stirling exponent margins,
+and rational arithmetic combinations of externally supplied operator bounds;
 Gamma functions, singular integrals, and $L^2_\sigma$ operator norms are proved analytically in
 Appendix~\ref{app:w123} rather than formalized in Mathlib.
 
@@ -532,9 +533,9 @@ $\mathcal{E}(G_0) < (16 C_{\mathrm{nl}})^{-2}$, the exact Gauge-(a) system~\eqre
 admits a unique global solution $G\in C([0,\infty);\mathcal{X})$ (unique in $\{\mathcal{E}<(16 C_{\mathrm{nl}})^{-2}\}$, understood in the mild/Duhamel sense of Proposition~\ref{prop:lwp}) satisfying the closed Riccati inequality
 \begin{equation}\label{eq:riccati_bootstrap}
 \frac{d}{d\tau}\mathcal{E} \le -\frac{1}{8}\,\mathcal{E} + C_{\mathrm{nl}}\,\mathcal{E}^{3/2}
-\qquad\text{on }\{\mathcal{E} < (16 C_{\mathrm{nl}})^{-2}\},
+\qquad\text{on }\{\mathcal{E} < (16 C_{\mathrm{nl}})^{-2}\}
 \end{equation}
-and decaying exponentially for all $\tau\ge 0$:
+(in differential form on the truncated/mollified approximations of Proposition~\ref{prop:lwp} and in the integrated form $\mathcal{E}(\tau)-\mathcal{E}(s)\le\int_s^\tau(-\frac18\mathcal{E}+C_{\mathrm{nl}}\mathcal{E}^{3/2})\,d\tau'\le -\frac{1}{16}\int_s^\tau\mathcal{E}\,d\tau'$ for all $0\le s\le\tau<\infty$), and decaying exponentially for all $\tau\ge 0$:
 \[
 \mathcal{E}(\tau) \le \mathcal{E}(0)\,e^{-\tau/16}, \qquad
 |c_l(\tau)-2| + |c_\omega(\tau)+1| + |B(\tau)-B_\infty| \le C\sqrt{\mathcal{E}(0)}\,e^{-\tau/32}.
@@ -1269,9 +1270,9 @@ Summing gives~\eqref{eq:p_l1half}.
 \end{proof}
 
 \begin{lem}[Direct-energy 3-block $C_{\mathrm{nl}}\mathcal{E}^{3/2}$ closure and Riccati trapping]\label{lem:three_block_nl}
-There exists $C_{\mathrm{nl}}>0$ such that on $\{\mathcal{E}<(16 C_{\mathrm{nl}})^{-2}\}$,
+There exists $C_{\mathrm{nl}}>0$ such that for any smooth (or finite-mode disk-truncated and spatially Friedrichs-mollified, as in Proposition~\ref{prop:lwp}) trajectory on $\{\mathcal{E}<(16 C_{\mathrm{nl}})^{-2}\}$,
 $\frac{d}{d\tau}\mathcal{E}\le -\frac{1}{8}\mathcal{E} + C_{\mathrm{nl}}\mathcal{E}^{3/2}$.
-Consequently, if $\mathcal{E}(0)<(16 C_{\mathrm{nl}})^{-2}$, then $\mathcal{E}(\tau)\le\mathcal{E}(0)e^{-\tau/16}$ for all $\tau\ge 0$.
+Consequently, if $\mathcal{E}(0)<(16 C_{\mathrm{nl}})^{-2}$, then $\mathcal{E}(\tau)\le\mathcal{E}(s)e^{-(\tau-s)/16}\le\mathcal{E}(0)e^{-\tau/16}$ for all $0\le s\le\tau<\infty$.
 \end{lem}
 \begin{proof}
 We bound each of the three direct-energy blocks (with zero semigroup or Datko--Pazy dependence):
@@ -1458,7 +1459,7 @@ and by Lemma~\ref{lem:disk_coercive}, $p[W^{(n-1)}]$ is bounded in $\ell^1$ dire
 \sum_{j\ge 1}\bigl|q_j^{\mathrm{far}}[W^{(n-1)}]\bigr|
   &\le \sum_{j\ge 1}\frac{\|W^{(n-1)}\|_{L^2_{1/4}}}{\pi(j+1)\sqrt{2j+1/2}} \le C\|W^{(n-1)}\|_{\mathcal{W}}.
 \end{align*}
-By Young's inequality $\|p[W^{(n-1)}]*(k c_k^{(n)})\|_{\ell^2}\le\|p[W^{(n-1)}]\|_{\ell^1}\sqrt{Z_{\mathrm{disk}}(G^{(n)})}$, while
+By Young's inequality, $\|p[W^{(n-1)}]*(k c_k^{(n)})\|_{\ell^2}\le\|p[W^{(n-1)}]\|_{\ell^1}\sqrt{Z_{\mathrm{disk}}(G^{(n)})}$, while both
 $\|\partial_z G^{(n)}\|_{L^2_{1/4}(\mathbb{R})}$ and $\|G^{(n)}\|_{\mathcal{X}}$ are bounded by $C\sqrt{R_0}$.
 Hence
 \[
@@ -1468,11 +1469,10 @@ By Gronwall's inequality with $W^{(n)}(0)=0$, choosing $T_0 = T_0(R_0) > 0$ so t
 $\sup_{[0,T_0]}\|W^{(n)}\|_{\mathcal{W}}^2 \le \frac{1}{2}\sup_{[0,T_0]}\|W^{(n-1)}\|_{\mathcal{W}}^2$.
 Thus $G^{(n)}\to G$ strongly in $C([0,T_0];\mathcal{W})$ and weakly-* in $L^\infty([0,T_0];\mathcal{X})$ with
 $\sup_{[0,T_0]}\mathcal{E}(G)\le\mathcal{E}(G_0)<R_0$; uniqueness follows immediately from the\allowbreak\ same $\mathcal{W}$-estimate
-for two solutions, passing to the limit $n\to\infty$ in the Duhamel equation~\eqref{eq:frozen_pde} shows that $G$ satisfies the
+for two solutions. Passing to the limit $n\to\infty$ in the Duhamel equation~\eqref{eq:frozen_pde} shows that $G$ satisfies the
 mild characteristic equation $G(\tau)=G_0(\Phi_{\mathbb{R}}(\cdot;\tau,0))+\int_0^\tau S[G](\Phi_{\mathbb{R}}(\cdot;\tau,s),s)\,ds$,
 from which strong continuity $G\in C([0,T_0];\mathcal{X})$ follows directly (since $S[G]\in L^\infty([0,T_0];\mathcal{X})$ and
-characteristic pullback is strongly continuous on $\mathcal{X}$ by density of smooth cores), and lower semicontinuity of $\mathcal{E}$
-on $\mathcal{W}$-convergent sequences gives $\mathcal{E}(G(\tau))\le\mathcal{E}(G_0)e^{-\tau/16}$ on $[0,T_0]$.
+characteristic pullback is strongly continuous on $\mathcal{X}$ by density of smooth cores). Applying the finite-mode disk truncation $M$ and spatial Friedrichs mollifier $J_\varepsilon$ of Step~2 directly to the limit equation for $G\in C([0,T_0];\mathcal{X})$ (with its own velocity $p[G]$) and passing to the limit $M\to\infty$, $\varepsilon\downarrow 0$ yields the integrated Riccati inequality $\mathcal{E}(G(\tau))-\mathcal{E}(G(s))\le\int_s^\tau(-\frac18\mathcal{E}(G(\tau'))+C_{\mathrm{nl}}\mathcal{E}(G(\tau'))^{3/2})\,d\tau'\le -\frac{1}{16}\int_s^\tau\mathcal{E}(G(\tau'))\,d\tau'$ and $\mathcal{E}(G(\tau))\le\mathcal{E}(G(s))e^{-(\tau-s)/16}\le\mathcal{E}(G_0)e^{-\tau/16}$ for all $0\le s\le\tau\le T_0$.
 
 \emph{Step 4: Global continuation.}
 At $\tau=T_0$, Lemma~\ref{lem:three_block_nl} gives $\mathcal{E}(G(T_0))\le\mathcal{E}(G_0)e^{-T_0/16}<\mathcal{E}(G_0)<R_0$.
