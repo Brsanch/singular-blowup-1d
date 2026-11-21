@@ -43,9 +43,11 @@ First, in the edge-resolving coordinate $z=\ln(Y-1)$ and convective weighted spa
 $L^2_\gamma(\mathbb{R}, e^{-2\gamma z}\,dz)$, we compute numerical stability spectra
 (Numerical Theorem~\ref{numthm:main}): $\#\{\operatorname{Re}\lambda>0\}=0$ across two
 independent discretizations (edge-resolved $z$-grid with inflow BC $G(z_{\min})=0$ and cell-centered
-equispaced build), a convective decay rate $\approx 2\gamma$, no transient amplification for smooth
-interior bumps ($G=1.000$) and a negative continuum-IBP cutoff surrogate ($\mu_{\mathrm{an}}<0$,
-whereas the unclosed discrete principal submatrix is non-contractive), finite-amplitude decay up to
+equispaced build), a convective decay rate $\approx 2\gamma$, no transient amplification for the tested smooth bumps in the unweighted $L^2(dz)$ and cutoff-$W$
+norms on $\tau\in[0,6]$ ($G=1.000$, whereas in $L^2_\gamma$ on $z\ge z_{\min}$ the nonzero edge
+trace $Q_{\mathrm{op}}G\to H[g](1)\ne 0$ drives a short-time weighted transient peak $\approx 1.17$
+at $\gamma=0.5$ before the $2\gamma$ decay), a negative continuum-IBP cutoff surrogate
+($\mu_{\mathrm{an}}<0$, whereas the unclosed discrete principal submatrix is non-contractive), finite-amplitude decay up to
 $A=4$, and stage-consistent co-evolving relaxation under Theta-balance ($c_\omega=-c_l/2$) to
 $(\bar\Omega,c_l=2,c_\omega=-1)$.
 
@@ -71,8 +73,8 @@ and discrete Hilbert coercivity on $\mathcal{H}^1(D(1,1))$, a pure direct-energy
 Lyapunov functional satisfies $\dot{\mathcal{E}}\le -\frac{1}{8}\mathcal{E}+C_{\mathrm{nl}}\mathcal{E}^{3/2}$,
 yielding global existence with zero analyticity-radius shrinkage and exponential decay
 $\mathcal{E}(\tau)\le\mathcal{E}(0)e^{-\tau/16}$ and $(c_l,c_\omega,B)\to(2,-1,B_\infty)$.
-This Gauge~(a) flow solves the rescaled system classically on $X>1$ and $X<1$ and
-distributionally for $\Theta$ on $\mathbb{R}$, but because $\dot B/B=-H[g](1)$ while the
+This Gauge~(a) flow solves the rescaled system in the mild/strong Sobolev sense on $X>1$ (and trivially
+on $X<1$) and distributionally for $\Theta$ on $\mathbb{R}$, but because $\dot B/B=-H[g](1)$ while the
 $(X-1)^{-1/2}$ edge amplitude is pinned at $A(\tau)\equiv 1$, the global distributional
 $\Omega$-equation across $X=1$ carries an edge point-mass defect
 $\tfrac{\pi}{2}(B(\tau)-1)\delta(X-1)$ whenever $B(\tau)\ne 1$ (Remark~\ref{rem:weak_edge_jump});
@@ -119,8 +121,9 @@ interior nodes $Y_j>1$ on the equispaced build).  Then, on every tested resoluti
 \item \textbf{Nonlinear.} Finite-amplitude frozen-base perturbations decay for
   $A\le 4$ at rate $\approx 2\gamma$ on $\tau\in[0.5,2.5]$ (with unweighted $\gamma=0$ and
   coarse-grid $\tau\ge 0.5$ peak ratio $1.000$; on a fine time grid $\tau\in[0,0.2]$, the
-  weighted $L^2_\gamma$ norm has a short-time edge-tail transient peak $\approx 1.17$ at
-  $\gamma=0.5$ and $\approx 12.7$ at $\gamma=0.75,z_{\min}=-14$ before decaying).
+  weighted $L^2_\gamma$ norm has a short-time transient peak $\approx 1.17$ at
+  $\gamma=0.5$ and $\approx 12.7$ at $\gamma=0.75,z_{\min}=-14$ driven by the nonzero edge limit
+  $Q_{\mathrm{op}}G\to H[g](1)\ne 0$ before decaying).
   Under the Theta-balance normalization ($c_l=-U(1)$, $c_\omega=-c_l/2$), stage-consistent
   co-evolving marches relax to $(c_l,c_\omega)=(2.000000,-1.000000)$ from $\xi(0)=0$.
 \end{enumerate}
@@ -242,9 +245,11 @@ Unweighted norms stay nearly flat (marginal).  Full coupled $(G,h)$ inherits the
 gap by block-triangular structure~\cite{findings_theta}.
 
 \paragraph{No transient growth (physical).}
-Smooth physical perturbations have amplification factor $G=1.000$ at all tested
-resolutions (\texttt{transient\_growth.py}: bulk and near-edge bumps
-on four $(N,z_{\min})$ grids).  In the plain norm, grid-scale edge spikes give a worst-case
+In the unweighted $L^2(dz)$ norm on $\tau\in[0,6]$, the tested smooth bulk and near-edge Gaussian bumps
+have amplification factor $G=1.000$ at all tested resolutions (\texttt{transient\_growth.py}, four
+$(N,z_{\min})$ grids; in the convective weighted norm $L^2_\gamma$ on $z\ge z_{\min}$, the nonzero edge
+trace $Q_{\mathrm{op}}G\to H[g](1)\ne 0$ produces the short-time weighted transient peak of Section~\ref{sec:nonlin}
+before the $2\gamma$ decay).  In the plain norm, grid-scale edge spikes give a worst-case
 $\sup_\tau\|e^{M\tau}\|_2$ of $2.33$--$3.91$ that grows with the edge depth $z_{\min}$ even with
 the inflow BC (\texttt{transient\_growth.py}).  On the truncated bulk domain $z>z_{\mathrm{cut}}$
 with the anisotropic weight $W$, the continuum-IBP cutoff-model surrogate
@@ -299,9 +304,10 @@ and $N$ the quadratic self-advection $-(\delta U)\,\partial_Y(\delta\Omega,\delt
 Gate \texttt{nonlinear\_shape\_march.py}: for $A\in[10^{-3},4]$,
 weighted decay rates fit on $\tau\in[0.5,2.5]$ at $\gamma=0.5$ stay in $[1.015,1.057]$
 (linear gap $1.0$), with unweighted ($\gamma=0$) and coarse-sample ($\tau\in\{0.5,\dots,3.0\}$)
-peak ratio $=1.000$ and edge hi-$k=0$ (on a fine time grid $\tau\in[0,0.2]$, the $O(e^z)$
-edge tail of $Q_{\mathrm{op}}G$ weighted by $e^{-\gamma z}$ produces a short-time $L^2_\gamma$
-transient peak $\approx 1.17$ at $\gamma=0.5$ and $\approx 12.7$ at $\gamma=0.75,z_{\min}=-14$
+peak ratio $=1.000$ and edge hi-$k=0$ (on a fine time grid $\tau\in[0,0.2]$, because $M_{GG}=-2\partial_z+\tfrac12 Q_{\mathrm{op}}$ uses the
+unsubtracted operator $Q_{\mathrm{op}}G=H[g](1)+\widetilde{Q}_{\mathrm{op}}G\to H[g](1)\ne 0$ as $z\to -\infty$,
+the $O(1)$ edge trace $H[g](1)$ weighted by $e^{-\gamma z}$ on $z\in[z_{\min},0]$ produces a short-time
+$L^2_\gamma$ transient peak $\approx 1.17$ at $\gamma=0.5$ and $\approx 12.7$ at $\gamma=0.75,z_{\min}=-14$
 before the $2\gamma$ decay; \texttt{adversarial\_review\_2026\_11\_21\_probe.py}, \texttt{R1}).
 Coupled $(G,h)$ excitation: rate $+0.935$, unweighted peak $1.11$.
 
@@ -562,7 +568,7 @@ Theorem~\ref{thm:nonlinear_bootstrap} satisfies~\eqref{eq:dyn} in $C([0,\infty);
 but carries an uncompensated point-mass defect $\tfrac{\pi}{2}(B(\tau)-1)\delta(X-1)$ in the
 distributional $\Omega$-equation at $X=1$ whenever $B(\tau)\ne 1$ (and converges as $\tau\to\infty$
 to $(\bar\Omega,B_\infty\bar\Theta)$ with $B_\infty=B(0)\exp(-\int_0^\infty H[g](1)\,d\tau)$).
-Moreover, the subspace $\{H[g](1)=0\}$ is \emph{not} invariant under~\eqref{eq:comoving_exact}: at linear order $\int_0^\infty v^{-3/2}\widetilde{Q}_{\mathrm{op}}G(1+v)\,dv=\tfrac{2\pi}{3}c_1$ ($c_1=G_v(0)$) gives $\frac{d}{d\tau}H[g](1)=-H[g](1)-\tfrac13 c_1$ (and iteratively $\dot F_m=-(2m+1)F_m+\frac{\pi}{2m+3}c_{m+1}$ for the higher regularized moments $F_m=\mathrm{f.p.}\int_0^\infty w^{-m-3/2}G(1+w)\,dw$, so $H[g](1,\tau)\equiv 0$ forces $G\equiv 0$ at linear order; \texttt{adversarial\_review\_2026\_11\_21\_probe.py}, \texttt{R3}). Thus no nontrivial solution in the fixed-exponent $h\equiv 0$ ansatz preserves $B(\tau)\equiv A(\tau)^2$ across $X=1$ (and $(\bar\Omega,B_\infty\bar\Theta)$ with $B_\infty\ne 1$ is a support-interior steady state rather than a global weak steady state on $\mathbb{R}$); preserving $B(\tau)\equiv A(\tau)^2$ globally across $X=1$ requires an edge boundary layer in $\Theta$ or a dynamic edge exponent absorbing $-\tfrac12 A(\tau)^2 H[g](1)(X-1)^{-1/2}$ as $X\to 1^+$.
+Moreover, the subspace $\{H[g](1)=0\}$ is \emph{not} invariant under~\eqref{eq:comoving_exact}: at linear order $\int_0^\infty v^{-3/2}\widetilde{Q}_{\mathrm{op}}G(1+v)\,dv=\tfrac{2\pi}{3}c_1$ ($c_1=G_v(0)$) gives $\frac{d}{d\tau}H[g](1)=-H[g](1)-\tfrac13 c_1$ (and iteratively $\dot F_m=-(2m+1)F_m+\frac{\pi}{2m+3}c_{m+1}$ for the higher regularized moments $F_m=\mathrm{f.p.}\int_0^\infty w^{-m-3/2}G(1+w)\,dw$, so $H[g](1,\tau)\equiv 0$ forces $G\equiv 0$ at linear order; \texttt{adversarial\_review\_2026\_11\_21\_probe.py}, \texttt{R3}). Thus no nontrivial solution of the linearized flow in the fixed-exponent $h\equiv 0$ ansatz preserves $B(\tau)\equiv A(\tau)^2$ across $X=1$, and no nontrivial globally compatible nonlinear solution is established within this ansatz (moreover, $(\bar\Omega,B_\infty\bar\Theta)$ with $B_\infty\ne 1$ is a support-interior steady state rather than a global weak steady state on $\mathbb{R}$); establishing global weak compatibility $B(\tau)\equiv A(\tau)^2$ across $X=1$ remains open and would require either a nonlinear cancellation or extending the edge ansatz (e.g.\ an edge boundary layer in $\Theta$ or a dynamic edge exponent absorbing $-\tfrac12 A(\tau)^2 H[g](1)(X-1)^{-1/2}$ as $X\to 1^+$).
 \end{remark}
 
 \paragraph{Proof architecture (five pillars, zero semigroup dependence).}
@@ -649,8 +655,8 @@ $\Omega(X,\tau)=(X-1)^{-1/2}(1+G(\ln(X-1),\tau))\mathbf{1}_{X>1}$ that already c
 $(X-1)^{-1/2}\mathbf{1}_{X>1}$ singular edge and have edge-analytic $G\in\mathcal{H}^1(D(1,1))$
 (cancelling the fractional-exponent $\frac{1}{2}$-loss of $\widetilde{Q}_{\mathrm{op}}$ on
 $L^2_{\sigma_-}((-\infty,0])$).  As shown in Remark~\ref{rem:weak_edge_jump}, when $H[g](1)\ne 0$
-the uncoupled $A(\tau)\equiv 1$, $\dot B/B=-H[g](1)$ gauge solves~\eqref{eq:dyn} classically on
-$X>1$ and $X<1$ and distributionally for $\Theta$ on $\mathbb{R}$, but leaves the distributional
+the uncoupled $A(\tau)\equiv 1$, $\dot B/B=-H[g](1)$ gauge solves~\eqref{eq:dyn} in the mild/strong
+Sobolev sense on $X>1$ (and trivially on $X<1$) and distributionally for $\Theta$ on $\mathbb{R}$, but leaves the distributional
 point-mass defect $\tfrac{\pi}{2}(B(\tau)-1)\delta(X-1)$ in the $\Omega$-equation at $X=1$
 (with $B(\tau)\to B_\infty$); and since $\{H[g](1)=0\}$ is not invariant ($\frac{d}{d\tau}H[g](1)=-H[g](1)-\tfrac13 c_1$ at linear order), closing the global weak-edge jump relation $B(\tau)\equiv A(\tau)^2$ across $X=1$ requires extending the ansatz at the edge and remains open.  Because the unconstrained Gauge-(a) linearization admits the factorially divergent $C^\infty$
 eigenmodes $G_\lambda=O(v)$ of Remark~\ref{rem:w3_scope} for every $\operatorname{Re}\lambda>0$,
@@ -1002,10 +1008,15 @@ Split $G=G_-+G_+$ with $G_-:=G\mathbf{1}_{(-\infty,0]}$ and $G_+:=G\mathbf{1}_{[
   Because $T_c$ is bounded on $L^2_\sigma(\mathbb{R})$ (the line $\operatorname{Re}s=\sigma\in(0,\tfrac12)$ avoids all poles of $\tan(\pi s)$)
   and multiplication by $e^{-z/2}$ is an exact isometry $L^2_\sigma\to L^2_{\sigma-1/2}$ (Lean: \texttt{shift\_half\_weight\_exponent\_eq}),
   the eigenvalue equation $(2\partial_z+\lambda)G = e^{-z/2}T_c G$ implies $(2\partial_z+\lambda)G\in L^2_{\sigma-1/2}(\mathbb{R})$.
-  Since $G\in L^2_\sigma(\mathbb{R})$ and $(2\partial_z+\lambda)G\in L^2_{\sigma-1/2}(\mathbb{R})$, we have
-  $e^{-\sigma z}G\in H^1(\mathbb{R})\subset C_0(\mathbb{R})$ (so $G(0)$ is well-defined, $\lim_{z\to+\infty}e^{-sz}G(z)=0$ for all
-  $\operatorname{Re}s\ge\sigma$, and $\lim_{z\to-\infty}e^{-sz}G(z)=0$ for all $\operatorname{Re}s\le\sigma$; note that when
-  $0<\operatorname{Re}\lambda+2\sigma\le 1$, $G_+$ need not belong to $L^2_{\sigma-1/2}([0,\infty))$ a priori).
+  Since $G\in L^2_\sigma(\mathbb{R})$ and $(2\partial_z+\lambda)G\in L^2_{\sigma-1/2}(\mathbb{R})\subset L^2_{\mathrm{loc}}(\mathbb{R})$,
+  we have $G\in H^1_{\mathrm{loc}}(\mathbb{R})\subset C(\mathbb{R})$ (so $G(0)$ is well-defined), together with the separate
+  half-line weighted Sobolev memberships:
+  on $[0,\infty)$, $(2\partial_z+\lambda)G_+\in L^2_{\sigma-1/2}([0,\infty))\subset L^2_\sigma([0,\infty))$ and $G_+\in L^2_\sigma([0,\infty))$
+  give $e^{-\sigma z}G_+\in H^1([0,\infty))\subset C_0([0,\infty))$ (so $\lim_{z\to+\infty}e^{-sz}G(z)=0$ for all $\operatorname{Re}s\ge\sigma$;
+  note that when $0<\operatorname{Re}\lambda+2\sigma\le 1$, $G_+$ need not belong to $L^2_{\sigma-1/2}([0,\infty))$ a priori), while
+  on $(-\infty,0]$, $G_-\in L^2_\sigma((-\infty,0])\subset L^2_{\sigma-1/2}((-\infty,0])$ and
+  $(2\partial_z+\lambda)G_-\in L^2_{\sigma-1/2}((-\infty,0])$ give $e^{-(\sigma-1/2)z}G_-\in H^1((-\infty,0])\subset C_0((-\infty,0])$
+  (so $\lim_{z\to-\infty}e^{-sz}G(z)=0$ for all $\operatorname{Re}s\in[\sigma-\tfrac12,\sigma]$).
   For $z\ge 0$ and $\sigma'\in[\sigma-\tfrac12,\sigma]$, $-2\sigma' z\le -2(\sigma-\tfrac12)z$ (Lean: \texttt{left\_strip\_far\_exponent\_le}),
   so $(2\partial_z+\lambda)G_+\in L^2_{\sigma'}([0,\infty))$ across the entire left strip, and
   $\mathcal{H}_+(s):=\int_0^\infty e^{-sz}(2\partial_z+\lambda)G(z)\,dz$ is holomorphic on $\operatorname{Re}s>\sigma-\tfrac12$
@@ -1020,8 +1031,8 @@ Split $G=G_-+G_+$ with $G_-:=G\mathbf{1}_{(-\infty,0]}$ and $G_+:=G\mathbf{1}_{[
   defines the meromorphic continuation of $\widehat{G}$ from $\operatorname{Re}s=\sigma$ across the strip
   $\sigma-\tfrac12\le\operatorname{Re}s\le\sigma$ with at most a simple pole at $s_*=-\lambda/2$ ($\operatorname{Re}s_*<\sigma$),
   without assuming $G_+\in L^2_{\sigma-1/2}([0,\infty))$.
-  Moreover, on $(-\infty,0]$, since $e^{-\sigma z}G_-\in H^1((-\infty,0])$ has $\lim_{z\to-\infty}e^{-sz}G(z)=0$ for all
-  $\operatorname{Re}s\le\sigma$, integration by parts holds on the left boundary line $\operatorname{Re}s=\sigma-\tfrac12$ as well,
+  Moreover, on $(-\infty,0]$, since $e^{-(\sigma-1/2)z}G_-\in H^1((-\infty,0])$ has $\lim_{z\to-\infty}e^{-sz}G(z)=0$ for all
+  $\operatorname{Re}s\in[\sigma-\tfrac12,\sigma]$, integration by parts holds on the left boundary line $\operatorname{Re}s=\sigma-\tfrac12$ as well,
   giving $(2s+\lambda)\mathcal{G}_-(s)=-2G(0)+\int_{-\infty}^0 e^{-sz}(2\partial_z+\lambda)G(z)\,dz$; adding
   $2G(0)+\mathcal{H}_+(s)$ cancels $\pm 2G(0)$ identically on $\operatorname{Re}s=\sigma-\tfrac12$, so
   $(2s+\lambda)\widehat{G}(s)=\int_{\mathbb{R}}e^{-sz}e^{-z/2}(T_c G)(z)\,dz = c(s+\tfrac12)\widehat{G}(s+\tfrac12)$
@@ -1109,9 +1120,9 @@ For every $G\in L^2_{3/4,1/4}(\mathbb{R})$ (without assuming $H[g](1)=0$):
 \item Evaluating~\eqref{eq:mellin_qtilde} on $\operatorname{Re}s=\frac{1}{4}$ yields the exact Plancherel bounds
   \begin{equation}\label{eq:qtilde_plancherel}
   \bigl\|\tfrac12\widetilde{Q}_{\mathrm{op}}G\bigr\|_{L^2_{1/4}(\mathbb{R})}
-  \le \frac{2}{5}\,\|G\|_{L^2_{3/4}(\mathbb{R})}, \qquad
+  \le \frac{2}{5}\|G\|_{L^2_{3/4}(\mathbb{R})}, \quad
   \bigl\|\tfrac12\partial_z(\widetilde{Q}_{\mathrm{op}}G)\bigr\|_{L^2_{1/4}(\mathbb{R})}
-  \le \frac{1}{2}\,\|G\|_{L^2_{3/4}(\mathbb{R})} < \frac{7}{10}\,\|G\|_{L^2_{3/4}(\mathbb{R})}.
+  \le \frac{1}{2}\|G\|_{L^2_{3/4}(\mathbb{R})} < \frac{7}{10}\|G\|_{L^2_{3/4}(\mathbb{R})}.
   \end{equation}
 \end{enumerate}
 \end{lem}
@@ -1485,7 +1496,7 @@ arXiv:2603.25104, 2026.
 
 \bibitem{chen2026euler}
 J.~Chen,
-\textit{Asymptotically self-similar blowup for 3D incompressible Euler with
+\textit{Asymptotically self-similar blowup for 3D incompressible Euler\allowbreak\ with
 $C^{1,1/3-}$ velocity II: 3D profiles, blowup, and limiting behavior},
 arXiv:2605.15130, 2026.
 
