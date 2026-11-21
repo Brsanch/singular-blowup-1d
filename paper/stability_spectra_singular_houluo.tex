@@ -997,17 +997,21 @@ Split $G=G_-+G_+$ with $G_-:=G\mathbf{1}_{(-\infty,0]}$ and $G_+:=G\mathbf{1}_{[
   = \int_{\sigma-1/2}^\sigma |P(\sigma'+i\tau)|^2\,d\sigma'
   = \int_{\sigma-1/2}^\sigma \frac{|\widehat{G}(\sigma'+i\tau)|^2}{|X(\sigma'+i\tau;\lambda)|^2}\,d\sigma'.
   \]
-  By Stirling's formula on the compact interval $\sigma'\in[\sigma-\tfrac12,\sigma]$, there exist $c_0>0$ and
-  $p=2\sigma-\tfrac12+\operatorname{Re}\lambda$ such that $|X(\sigma'+i\tau;\lambda)|\ge c_0|\tau|^p e^{-3\pi|\tau|/2}$ for all
-  $\sigma'\in[\sigma-\tfrac12,\sigma]$ and $|\tau|\ge\tau_0$.  Multiplying Parseval's identity by $c_0^2|\tau|^{2p}e^{-3\pi|\tau|}$
-  and integrating over $|\tau|\ge\tau_0$ yields a convergent sum of non-negative terms:
+  By Stirling's formula on the compact interval $\sigma'\in[\sigma-\tfrac12,\sigma]$ (since $|\Gamma(2s+\lambda)|$,
+  $|\Gamma(2s+2)|$, and $|\Gamma(s)\Gamma(1-s)|=\pi/|\sin(\pi s)|$ each decay like $e^{-\pi|\tau|}$ with polynomial exponents
+  $2\sigma'+\operatorname{Re}\lambda-\tfrac12$, $2\sigma'+\tfrac32$, and $0$), there exist $c_0>0$ and
+  $p:=4(\sigma-\tfrac12)+\operatorname{Re}\lambda+1=4\sigma+\operatorname{Re}\lambda-1$ such that
+  $|X(\sigma'+i\tau;\lambda)|\ge c_0|\tau|^p e^{-3\pi|\tau|}$ for all
+  $\sigma'\in[\sigma-\tfrac12,\sigma]$ and $|\tau|\ge\tau_0$.  Multiplying Parseval's identity by the squared Stirling lower
+  bound $c_0^2|\tau|^{2p}e^{-6\pi|\tau|}$ and integrating over $|\tau|\ge\tau_0$ yields a convergent sum of non-negative terms:
   \[
-  \frac{c_0^2}{2}\sum_{k\in\mathbb{Z}}|c_k|^2\int_{|\tau|\ge\tau_0}|\tau|^{2p}e^{-8\pi k\tau-3\pi|\tau|}\,d\tau
+  \frac{c_0^2}{2}\sum_{k\in\mathbb{Z}}|c_k|^2\int_{|\tau|\ge\tau_0}|\tau|^{2p}e^{-8\pi k\tau-6\pi|\tau|}\,d\tau
   \le \int_{\sigma-1/2}^\sigma\int_{|\tau|\ge\tau_0}|\widehat{G}(\sigma'+i\tau)|^2\,d\tau\,d\sigma'
   \le \frac{1}{2}M_G < \infty.
   \]
-  Finiteness of each individual integral on both $\tau\ge\tau_0$ and $\tau\le -\tau_0$ requires $4\pi|k|<\frac{3\pi}{2}$,
-  so $|k|<3/4<1$ (Lean: \texttt{PointSpectrum.no\_l2\_and\_edge\_kill}), forcing $c_k=0$ for every $k\ne 0$.
+  Finiteness of each individual integral on both $\tau\ge\tau_0$ and $\tau\le -\tau_0$ requires $8\pi|k|<6\pi$
+  (equivalently $2\pi|k|<\frac{3\pi}{2}$, i.e.\ $|k|<3/4<1$; Lean: \texttt{PointSpectrum.no\_l2\_and\_edge\_kill}),
+  forcing $c_k=0$ for every $k\ne 0$.
   Thus $P(s)\equiv c_0=P(0)=0$, so $\widehat{G}\equiv 0$ and $G\equiv 0$.
 \end{enumerate}
 \end{proof}

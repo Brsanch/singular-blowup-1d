@@ -135,10 +135,17 @@ def main() -> int:
     # Single-ray cancellation function P_ray(s) = (w-1)*exp(-w-1/w): small on Re(s)=0.4, huge across strip
     P_ray_line = abs((np.exp(4j * math.pi * (0.4 + 1j * tau_test)) - 1.0) * np.exp(-np.exp(4j * math.pi * (0.4 + 1j * tau_test)) - np.exp(-4j * math.pi * (0.4 + 1j * tau_test))))
     P_ray_strip = float(np.sum(np.abs((w_grid - 1.0) * np.exp(-w_grid - 1.0 / w_grid)) ** 2) * dsig)
+    # Verify Stirling decay rate of |X(sigma_p + i*tau; lam)|^2 is 6*pi*|tau| (since |X| ~ |tau|^(4*sigma_p+Re(lam)+1) e^(-3*pi*|tau|))
+    t1, t2 = mp.mpf("15.0"), mp.mpf("25.0")
+    p_exp = 4 * sigma + mp.re(lam) + 1
+    x1 = abs(X_mp(sigma + 1j * t1, lam)) / (t1 ** p_exp)
+    x2 = abs(X_mp(sigma + 1j * t2, lam)) / (t2 ** p_exp)
+    stirling_rate_sq = float(-2 * mp.log(x2 / x1) / (t2 - t1))
+    stirling_err = abs(stirling_rate_sq - 6 * math.pi) / (6 * math.pi)
     report(
-        "W2-C Full-strip Parseval identity on [sigma-1/2, sigma] eliminates single-ray cancellation",
-        parseval_err < 1e-12 and P_ray_strip > 1e15 and P_ray_line < 1e-2,
-        f"parseval_rel_err={parseval_err:.2e}, P_ray(|line@0.4|={P_ray_line:.2e} vs strip_L2={P_ray_strip:.2e})",
+        "W2-C Full-strip Parseval identity & |X|^2 ~ e^(-6*pi*|tau|) vs e^(8*pi*|k|*|tau|) Stirling rate",
+        parseval_err < 1e-12 and P_ray_strip > 1e15 and P_ray_line < 1e-2 and stirling_err < 5e-4,
+        f"parseval_err={parseval_err:.2e}, |X|^2_rate={stirling_rate_sq:.4f}(6pi={6*math.pi:.4f}), P_ray(line={P_ray_line:.2e}, strip={P_ray_strip:.2e})",
     )
 
     # ---- W3-A: High-frequency resolvent perturbation ||(R(lam) - R_0(lam)) F||_L2 vs Im(lam) ----
