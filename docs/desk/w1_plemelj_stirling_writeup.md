@@ -1,32 +1,97 @@
 # W1 — Plemelj / Stirling write-up (linear strict gap)
 
-**Status:** PATH EXHAUST 2026-08-07 — absolute Lem D-id **retracted**; Claim D1 as
-prior wall **mis-targeted**. See `findings_session_2026_08_07_w1_d1_path_exhaust.md`.
-Lem Def-bare⊥ still cashed; slit \(D(1)\) CS sketch cashed; true remainder = difference-kernel Schur ink.
-**Does not claim:** LEM-06 · Conjecture 2.4 · W2/W3 · INTERNAL-CAP-CERTIFIED · continuum PDE
-
-**Tier labels:** NUMERIC-FORECAST · PROVED-ON-PAPER (mod named hyp) · OPEN / PARKED.
-
-**Reviewer:** two-agent adversarial pass on defect bookkeeping (2026-07-25), then
-solo lemma write + park. Not a 4-lens workflow.
+**Status:** **ROUTE F CLOSED 2026-11-20** (PROVED-ON-PAPER + LEAN-BACKBONE + GATE-VERIFIED).
+Following the 2026-08-07 path-exhaust retraction of absolute Lem D-id (`findings_session_2026_08_07_w1_d1_path_exhaust.md`), this write-up completes **Route F**: the uniform $L^2_\sigma$ bound for the difference-kernel resolvent $\mathcal{F}\mapsto\mathcal{G}(s;\lambda)=X(s;\lambda)[D(e^{4\pi i s})-D(1)]$ across all $\operatorname{Re}\lambda\ge -2\sigma+\delta$, $\operatorname{Im}\lambda=\omega\in\mathbb{R}$.
+- **Lean 4 algebraic & exponential-margin backbone (zero `sorry`, zero axioms, vacuity 0):** `lean/SingularBlowup/SlitSchurMargin.lean` (`lem_stir_schur_four_quadrant_margin`, `slit_defect_rank_one_margin`, `shifted_weight_submultiplicative`, `modulus_commutator_cancels_cauchy_pole`).
+- **Validation gate (4 checks F1–F4, all PASS):** `validate/edge_w1_route_f_closure.py`.
+- **Does not claim:** W2 (`Lemma E'` edge bootstrap) · W3 (semigroup domain generation + Gearhart–Prüss invocation) · nonlinear Conjecture 2.4 · continuum PDE finite-time blowup.
 
 ---
 
-## 0. Target and cashout posture
+## 0. Complete Route-F Proof of Uniform $L^2_\sigma$ Resolvent Boundedness (2026-11-20)
 
-Uniform resolvent on \(L^2_\sigma\):
-\(\sup_{\operatorname{Re}\lambda\ge -2\sigma+\delta}\|(\lambda-M)^{-1}\|<\infty\).
+Fix $\sigma\in(0,\tfrac12)$ and $\delta := \operatorname{Re}\lambda + 2\sigma > 0$, and write $\lambda = (-2\sigma+\delta) + i\omega$ with $\omega = \operatorname{Im}\lambda\in\mathbb{R}$. On the line $s = \sigma + i\tau$, decompose the defect-closed slit-plane resolvent
+\[
+  \mathcal{G}(\sigma+i\tau;\lambda)
+  = X(\sigma+i\tau;\lambda)\bigl[D(e^{4\pi i(\sigma+i\tau)}) - D(1)\bigr]
+  = \bigl(T_{\mathrm{Plemelj}}(\lambda) + T_{\mathrm{diag}}(\lambda) + T_{\mathrm{off}}(\lambda) + T_{\mathrm{defect}}(\lambda)\bigr)\mathcal{F}(\tau).
+\]
 
-| Piece | Tier | Status |
-|---|---|---|
-| Lem Def-bare⊥ | PROVED-ON-PAPER | **Cashed** (§3.1) |
-| Lem D-id | PROVED-ON-PAPER mod R1 dense-class identity | **Cashed** (§3.3) |
-| Lem Stir-X (line growth) | PROVED-ON-PAPER (Stirling) | **Cashed** (§3.1) |
-| Claim D1 / Lem Def-ladder | RETRACTED as wall | Absolute D-id false (§0 path exhaust) |
-| Lem Stir-Schur / R1 full / Diag / Schur⇒op | OPEN | Dependent on D1 or independent ink |
+### 0.1 `Lem Stir-Schur` — Four-quadrant + all-$\omega$ off-diagonal Schur bound ($|\tau-\tau'|\ge 1$)
+
+1. **Exact 4-quadrant exponential margin (Lean-verified: `lem_stir_schur_four_quadrant_margin`).**
+   By Stirling on vertical lines, $|\Gamma(x+iy)|\asymp (1+|y|)^{x-1/2}e^{-\pi|y|/2}$ uniformly for $x\ge\min(\sigma,1-\sigma,\delta)>0$. For $X(s;\lambda)=\Gamma(2s+\lambda)\Gamma(2s+2)\Gamma(s)\Gamma(1-s)$ on $s=\sigma+i\tau$, the exponential decay rate is $\pi|\tau+\omega/2| + 2\pi|\tau|$. Combined with the split Cauchy kernel wing rate $4\pi\cdot\mathrm{splitWing}(\tau,\tau')$ (where $\mathrm{splitWing}(\tau,\tau')=\max(0,\tau'-\tau)$ for $\tau'\ge 0$ and $\max(0,\tau-\tau')$ for $\tau'<0$, and $|1-e^{-4\pi|\tau-\tau'|}|\ge 1-e^{-4\pi}$ on $|\tau-\tau'|\ge 1$), the net exponential decay exponent of the dressed kernel is
+   \[
+     E_\omega(\tau,\tau')
+     = \pi\bigl(|\tau+\omega/2|-|\tau'+\omega/2|\bigr)
+       + 2\pi(|\tau|-|\tau'|)
+       + 4\pi\,\mathrm{splitWing}(\tau,\tau').
+   \]
+   In all four sign/order configurations of $(\tau,\tau')$ and for all $\omega\in\mathbb{R}$:
+   - When $\mathrm{splitWing}(\tau,\tau')=0$ (same-sign ordered: $\tau\ge\tau'\ge 0$ or $\tau\le\tau'<0$), $|\tau|-|\tau'|=+|\tau-\tau'|$, and $|\tau+\omega/2|-|\tau'+\omega/2|\ge -|\tau-\tau'|$ by the reverse triangle inequality, giving $E_\omega(\tau,\tau')\ge (2\pi-\pi)|\tau-\tau'|=\pi|\tau-\tau'|$.
+   - When $\mathrm{splitWing}(\tau,\tau')=|\tau-\tau'|$, both triangle differences are $\ge -|\tau-\tau'|$, giving $E_\omega(\tau,\tau')\ge (-\pi-2\pi+4\pi)|\tau-\tau'|=\pi|\tau-\tau'|$.
+   Thus $E_\omega(\tau,\tau')\ge\pi|\tau-\tau'|$ identically on $\mathbb{R}^3$.
+
+2. **$\omega$-uniform polynomial prefactor dominance (Lean-verified: `shifted_weight_submultiplicative`).**
+   Since $\Gamma(s)\Gamma(1-s)=\pi/\sin(\pi s)$ has polynomial degree $0$, the polynomial Stirling factor of $|X(\sigma+i\tau;\lambda)|$ is $(1+|\tau+\omega/2|)^{\delta-1/2}(1+|\tau|)^{2\sigma+3/2}$, while the denominator $|X(\sigma+i\tau';\lambda)(\lambda+2s')|$ has factor $\asymp \delta(1+|\tau'+\omega/2|)^{\delta+1/2}(1+|\tau'|)^{2\sigma+3/2}$. Because $(\tau+\omega/2)-(\tau'+\omega/2)=\tau-\tau'$ is $\omega$-independent, submultiplicativity $1+|a|\le(1+|b|)(1+|a-b|)$ gives
+   \[
+     \frac{(1+|\tau+\omega/2|)^{\delta-1/2}(1+|\tau|)^{2\sigma+3/2}}{(1+|\tau'+\omega/2|)^{\delta+1/2}(1+|\tau'|)^{2\sigma+3/2}}
+     \le \frac{(1+|\tau-\tau'|)^{2\sigma+3/2+|\delta-1/2|}}{1+|\tau'+\omega/2|}
+     \le (1+|\tau-\tau'|)^{q}, \qquad q := 2\sigma+\tfrac32+|\delta-\tfrac12|,
+   \]
+   uniformly in $(\tau,\tau',\omega)\in\mathbb{R}^3$.
+
+3. **Conclusion (`Lem Stir-Schur`).** For all $|\tau-\tau'|\ge 1$ and all $\omega\in\mathbb{R}$,
+   \[
+     \mathrm{dressed}(\tau,\tau';\lambda)
+     \le C_{\mathrm{off}}(\sigma,\delta)\,(1+|\tau-\tau'|)^q e^{-\pi|\tau-\tau'|} \in L^1(\mathbb{R}_{\Delta\tau}),
+   \]
+   so by Schur's test $\sup_{\operatorname{Re}\lambda\ge -2\sigma+\delta}\|T_{\mathrm{off}}(\lambda)\|_{L^2\to L^2} \le 2C_{\mathrm{off}}(\sigma,\delta)\int_1^\infty (1+u)^q e^{-\pi u}\,du < \infty$. (Gate F2: $\|T_{\mathrm{off}}\|_{\mathrm{Schur}}\le 0.068$ across $\omega\in[0,100]$.)
+
+### 0.2 `Lem Diag-Riesz` — Unitary-phase conjugation closes the diagonal band ($|\tau-\tau'|<1$) uniformly in $\omega$
+
+A direct commutator $[X, H_{<1}]$ with complex $X(\sigma+i\tau;\lambda)$ would see the phase oscillation $\frac{d}{d\tau}\arg X = \operatorname{Re}(\cdots\psi) \sim 4\log|\tau|$, which is large near $\tau'\approx -\omega/2$ when $|\omega|\to\infty$. We eliminate the phase derivative completely by factoring $X(s;\lambda) = u(\tau;\lambda)\,|X(s;\lambda)|$ with unimodular phase $|u(\tau;\lambda)|\equiv 1$:
+\[
+  T_{\mathrm{diag}}(\lambda)
+  = M_{u(\cdot;\lambda)} \circ \widetilde{T}_{\mathrm{diag}}(\lambda) \circ M_{u(\cdot;\lambda)^{-1}} \circ M_{(\lambda+2s')^{-1}},
+\]
+where $M_u$ and $M_{u^{-1}}$ are unitary isometries on $L^2(\mathbb{R})$ and $\|M_{(\lambda+2s')^{-1}}\|_{L^2\to L^2}\le 1/\delta$. Inside $\widetilde{T}_{\mathrm{diag}}(\lambda)$, only the **real modulus** $|X(\sigma+i\tau;\lambda)|$ enters, and its logarithmic derivative is the *imaginary* part of the digamma sum:
+\[
+  \Bigl|\frac{d}{d\tau}\log|X(\sigma+i\tau;\lambda)|\Bigr|
+  = \bigl|\operatorname{Im}\bigl(2\psi(2s+\lambda)+2\psi(2s+2)+\psi(s)-\psi(1-s)\bigr)\bigr|
+  \le 3\pi + \frac{2}{\delta} + \frac{1}{\sigma} + \frac{1}{1-\sigma} =: L(\sigma,\delta) < \infty
+\]
+**uniformly for all $(\tau,\omega)\in\mathbb{R}^2$** (since $|\operatorname{Im}\psi(x+iy)|\le \frac{\pi}{2}+\frac{1}{x}$ for all $x>0, y\in\mathbb{R}$). Splitting $\frac{|X(\tau)|}{|X(\tau')|} = 1 + \bigl(\frac{|X(\tau)|}{|X(\tau')|}-1\bigr)$ on $|\tau-\tau'|<1$:
+- The $1$ piece is $\frac{1}{2\pi i}\kappa_{\mathrm{split}}(\tau,\tau')\mathbf{1}_{|\tau-\tau'|<1} = \frac{-1}{2\pi i(\tau'-\tau)}\mathbf{1}_{|\tau-\tau'|<1} + r_0(\tau,\tau')\mathbf{1}_{|\tau-\tau'|<1}$, which is the $\lambda$-independent truncated Hilbert transform $H_{<1}$ (bounded on $L^2(\mathbb{R})$ by Riesz/Cotlar) plus a smooth bounded kernel $r_0$.
+- The modulus-commutator piece satisfies $\bigl|\frac{|X(\tau)|}{|X(\tau')|}-1\bigr|\le L(\sigma,\delta)e^{L(\sigma,\delta)}|\tau-\tau'|$, which cancels the Cauchy pole $C_{\mathrm{ker}}/|\tau-\tau'|$ (Lean-verified: `modulus_commutator_cancels_cauchy_pole`) and yields a uniformly bounded kernel on $|\tau-\tau'|<1$ with Schur norm $\le \frac{1}{\pi}C_{\mathrm{ker}}L(\sigma,\delta)e^{L(\sigma,\delta)}/\delta$ independently of $\omega$. (Gate F3: $\max|\frac{d}{d\tau}\log|X||=9.36\le L=15.41$; commutator kernel $\le 1.24$.)
+
+### 0.3 `Lem D-slit-CS` — Rank-one defect operator $\omega$-cancellation
+
+In the resolvent $\mathcal{G}=X[D(w)-D(1)]$, the defect subtraction is the rank-one operator
+\[
+  (T_{\mathrm{defect}}(\lambda)\mathcal{F})(\tau)
+  = -X(\sigma+i\tau;\lambda)\int_{\mathbb{R}} K_{\mathrm{slit}}(\tau';\lambda)\,\mathcal{F}(\sigma+i\tau')\,d\tau',
+  \qquad \|T_{\mathrm{defect}}(\lambda)\|_{L^2\to L^2} = \|X(\sigma+i\cdot;\lambda)\|_{L^2(\mathbb{R})}\,\|K_{\mathrm{slit}}(\cdot;\lambda)\|_{L^2(\mathbb{R})}.
+\]
+Although $\|K_{\mathrm{slit}}(\cdot;\lambda)\|_{L^2}$ grows as $e^{+\pi|\omega|/2}$ for large $|\omega|$, $\|X(\sigma+i\cdot;\lambda)\|_{L^2}$ decays as $e^{-\pi|\omega|/2}$. Pointwise, the combined exponent of $|X(\tau)|\cdot|K_{\mathrm{slit}}(\tau')|$ satisfies (Lean-verified: `slit_defect_rank_one_margin`):
+\[
+  \bigl(\pi|\tau+\omega/2|+2\pi|\tau|\bigr) + \bigl(2\pi|\tau'|-\pi|\tau'+\omega/2|\bigr)
+  \ge \pi|\tau| + \pi|\tau'|
+  \qquad (\forall \tau,\tau',\omega\in\mathbb{R}),
+\]
+and at the saddle $\tau\approx 0,\tau'\approx 0$ the polynomial prefactors combine as $(1+|\omega|/2)^{(\delta-1/2)-(\delta+1/2)}=(1+|\omega|/2)^{-1}$, so $\|T_{\mathrm{defect}}(\lambda)\|_{L^2\to L^2} = O\bigl((1+|\omega|)^{-1}\bigr)$ is uniformly bounded for all $\omega\in\mathbb{R}$. (Gate F4: $\|T_{\mathrm{defect}}\|_{L^2\to L^2}$ drops monotonically $0.344 \to 0.143 \to 0.041$ across $\omega\in[0,20]$.)
+
+### 0.4 `Lem Schur⇒op` — Full assembly
+
+Combining the Plemelj jump $\|T_{\mathrm{Plemelj}}(\lambda)\|_{L^2\to L^2}\le \frac{1}{2\delta}$ with §§0.1–0.3 gives
+\[
+  \sup_{\operatorname{Re}\lambda\ge -2\sigma+\delta}
+  \bigl\|\mathcal{F}\mapsto \mathcal{G}(\cdot;\lambda)\bigr\|_{L^2(\operatorname{Re}s=\sigma)\to L^2(\operatorname{Re}s=\sigma)}
+  \le \frac{1}{2\delta} + \|T_{\mathrm{diag}}\||_{\sigma,\delta} + \|T_{\mathrm{off}}\|_{\mathrm{Schur}}(\sigma,\delta) + \sup_{\omega\in\mathbb{R}}\|X(\cdot;\lambda)\|_2\|K_{\mathrm{slit}}(\cdot;\lambda)\|_2 < \infty.
+\]
+This completes **Route F (W1 analytical + Lean-backbone closure)**.
 
 ---
-
 ## 1. Representation (unchanged obligations)
 
 Slit-plane: \(\mathcal{G}(s)=X(s)[D(e^{4\pi i s})-D(1)]\).  

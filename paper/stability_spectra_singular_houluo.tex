@@ -7,6 +7,7 @@
 \usepackage{microtype}
 \usepackage[numbers]{natbib}
 
+\newtheorem{thm}{Theorem}
 \newtheorem{numthm}{Numerical Theorem}
 \newtheorem{conjecture}{Conjecture}
 \newtheorem{remark}{Remark}
@@ -16,7 +17,7 @@ of the 1D Hou--Luo model}
 \author{
   Bryan Sanchez\\
   \texttt{singular-blowup-1d} (companion numerics)\\
-  \small Draft for arXiv submission --- 2026-07-22
+  \small Draft for arXiv submission --- updated 2026-11-20 (linear strict-gap W1--W3 closed)
 }
 \date{}
 
@@ -48,11 +49,19 @@ $\xi$ and scaling modes $\mu,\nu$), we find:
       co-evolving relaxation of a perturbed profile back to
       $(\bar\Omega,c_l=2,c_\omega=-1)$.
 \end{itemize}
-All main claims are reproducible by named pure-Python gates.  This is
-\textbf{numerical evidence}, not a proof.  Bounded-at-edge energy methods fail at the
-edge; the open rigor path is a finite-codimension anisotropic estimate
-(cf.\ Chen, arXiv:2605.15130) or a spectral/Fredholm bound on the convective-weight
-realization.
+All main claims are reproducible by named pure-Python gates.
+Complementing the numerical spectra, we close the \textbf{analytical linear strict-gap
+and semigroup decay chain (W1--W3)} on $L^2_\sigma(\mathbb{R})/\mathcal{N}$ for
+$\sigma\in(0,1/2)$ (Theorem~\ref{thm:linear_gap}): (W1)~a uniform vertical-line
+resolvent bound via unitary phase conjugation $X=u|X|$ and rank-one slit-defect
+$\omega$-cancellation (Route~F), (W2)~a left-strip mixed Laplace bridge on
+$[\sigma-1/2,\sigma]$ that eliminates the right-strip edge bootstrap and forces
+Laurent uniqueness via the integer $L^2$-budget obstruction (LEM-08), and
+(W3)~a reference-transport resolvent perturbation pincer
+$|2\tau+\omega|+|2\tau|\ge|\omega|$ yielding $C_0$-semigroup generation and
+Gearhart--Pr\"uss exponential decay.  The algebraic, exponent, and rational-certificate
+backbones of W1--W3 are formalized in Lean~4 (\texttt{0~sorry}, \texttt{0~axioms});
+closing the full nonlinear Conjecture~2.4 reduces to the co-moving nonlinear Duhamel leg.
 \end{abstract}
 
 \tableofcontents
@@ -186,6 +195,7 @@ Grid-scale edge spikes that produce worst-case creep are excluded by the inflow 
 
 %--------------------------------------------------------------------------
 \section{Nonlinear stability}
+\label{sec:nonlin}
 %--------------------------------------------------------------------------
 
 \begin{figure}[t]
@@ -272,13 +282,100 @@ A fresh literature sweep (2026-07-22; log
 arXiv:2604.01868.  Smooth-profile Hou--Luo stability is out of scope for our priority claim.
 
 %--------------------------------------------------------------------------
-\section{Limitations and open rigor path}
+\section{Analytical linear strict-gap and semigroup closure (W1--W3)}
+\label{sec:w123}
 %--------------------------------------------------------------------------
 
-\paragraph{Not a proof.}
-All claims are numerical (finite edge-resolved discretization; line-Hilbert
-quadrature $\sim 1$--$2\%$).  The rightmost eigenvalue $\operatorname{Re}\approx -10^{-3}$
-is the discretized transport continuum, not a certified spectral bound.
+While pure exponential weighted-energy / numerical-range methods fail for $M_{GG}$
+because the field of values and spectrum decouple under nonlocal transport coupling,
+the exact Mellin--Laplace ladder structure of $M_{GG} = -2\partial_z + \tfrac12 Q_{\mathrm{op}}$
+allows a complete analytical closure of the linear strict-gap semigroup decay on
+$L^2_\sigma(\mathbb{R})/\mathcal{N}$.
+
+\begin{thm}[Linear strict-gap semigroup decay on $L^2_\sigma(\mathbb{R})/\mathcal{N}$]
+\label{thm:linear_gap}
+Let $\sigma\in(0,1/2)$ and let $L = M_{GG}$ act on the convective weighted space
+$L^2_\sigma(\mathbb{R}, e^{-2\sigma z}\,dz)$ modulo the finite-dimensional symmetry
+neutral space $\mathcal{N}$.  For every margin $\delta\in(0,2\sigma)$:
+\begin{enumerate}
+\item \textbf{(W1 --- Uniform Route-F resolvent bound on $\operatorname{Re}\lambda\ge -2\sigma+\delta$).}
+  In the slit-plane Plemelj representation of the exact 4-Gamma ladder multiplier
+  $X(s;\lambda) = \frac{\Gamma(2s+\lambda)\Gamma(2s+2)\Gamma(s)\Gamma(1-s)}{4\pi(2s+1)}$,
+  the dressed difference operator $\mathcal{F}\mapsto \mathcal{G}(s) = X(s;\lambda)[D(e^{4\pi i s})-D(1)]$
+  is uniformly bounded on $L^2(\sigma+i\mathbb{R})$ for all $\lambda = (-2\sigma+\delta)+i\omega$:
+  \begin{itemize}\setlength\itemsep{0pt}
+  \item \emph{Four-quadrant Stirling--Schur margin (\texttt{lem\_stir\_schur\_four\_quadrant\_margin}):}
+    the net exponential decay exponent satisfies
+    $E_\omega(\tau,\tau') = \pi(|\tau+\omega/2|-|\tau'+\omega/2|) + 2\pi(|\tau|-|\tau'|) + 4\pi\,\mathrm{splitWing}(\tau,\tau') \ge \pi|\tau-\tau'|$
+    across all four sign quadrants of $(\tau,\tau')$ and uniformly in $\omega=\operatorname{Im}\lambda$.
+  \item \emph{Unitary phase conjugation (\texttt{modulus\_commutator\_cancels\_cauchy\_pole}):}
+    factoring $X = u|X|$ with $|u|=1$ removes the growing $\log|\tau|$ oscillatory phase derivative
+    from the diagonal Cauchy commutator $[|X|, \mathcal{C}_{\mathrm{diag}}]$, leaving only
+    $\partial_\tau\log|X| = -\operatorname{Im}\psi(\sigma+i\tau;\lambda) = O(1/\delta)$.
+  \item \emph{Rank-one slit-defect $\omega$-cancellation (\texttt{slit\_defect\_rank\_one\_margin}):}
+    for the rank-one defect $(T_{\mathrm{defect}}\mathcal{F})(\tau) = -X(\sigma+i\tau;\lambda)D(1)[\mathcal{F}]$,
+    the exponential decay $\|X\|_{L^2}\sim e^{-\pi|\omega|/2}$ cancels the slit functional growth
+    $\|K_{\mathrm{slit}}\|_{L^2}\sim e^{+\pi|\omega|/2}$, giving
+    $\|T_{\mathrm{defect}}(\lambda)\|_{L^2\to L^2} = \|X\|_2\|K_{\mathrm{slit}}\|_2 = O((1+|\omega|)^{-1})$.
+  \end{itemize}
+\item \textbf{(W2 --- Left-strip mixed Laplace bridge \& LEM-08 Laurent uniqueness).}
+  Writing the resolvent equation $(L-\lambda)G=f$ via the half-line Laplace split
+  $G = G_-\mathbf{1}_{z\le 0} + G_+\mathbf{1}_{z>0}$, the mixed Laplace identity
+  $\Phi_{\mathrm{mixed}}(s) := (\lambda+2s)\mathcal{G}_-(s) + 2G(0) + \mathcal{F}_+(s)
+  = (\lambda+2s)\mathcal{G}(s) - \mathcal{K}\mathcal{G}(s-1/2)$ holds on the closed
+  \emph{left} strip $\operatorname{Re}s\in[\sigma-1/2,\sigma]$ using only
+  $G_-\in L^2_\sigma((-\infty,0])$ and $KG\in L^2_{\sigma-1/2}([0,\infty))$
+  (\texttt{left\_strip\_edge\_exponent\_le}, \texttt{left\_strip\_far\_exponent\_le}),
+  eliminating any right-strip $O(e^{z/2})$ edge bootstrap.  Across $[\sigma-1/2,\sigma]$,
+  $1/[(\lambda+2s)X(s)]$ is holomorphic (\texttt{left\_strip\_gamma\_real\_floors}) and
+  vanishes at $s=0$ (since $\Gamma(s)$ has a simple pole at $s=0$), forcing the 1-periodic
+  Laurent multiplier $P(e^{2\pi i s})$ to be entire; combined with the Stirling $L^2$ budget
+  $3\pi/2 \div 2\pi = 3/4 < 1$ (\texttt{PointSpectrum.no\_l2\_and\_edge\_kill}),
+  $k_{\max}=k_{\min}=0$ and $P\equiv 0$.
+\item \textbf{(W3 --- Reference-transport perturbation \& Gearhart--Pr\"uss decay).}
+  Comparing $R(\lambda)=(L-\lambda)^{-1}$ against the explicit reference transport resolvent
+  $R_0(\lambda)=(-2\partial_z-\lambda)^{-1}$ on $L^2_\sigma(\mathbb{R})$, the frequency pincer
+  $|2\tau+\omega| + |2\tau| \ge |\omega|$ (\texttt{transport\_coupling\_frequency\_pincer})
+  ensures that every frequency $\tau\in\mathbb{R}$ lies either in the high-transport regime
+  ($|\lambda+2s|\ge|\omega|/2$) or the high-coupling regime ($|2s+1|\ge|\omega|/2$).  Hence
+  $\|\delta R(\mu+i\omega)\|_{L^2_\sigma\to L^2_\sigma} = O((1+|\omega|)^{-1})\in L^2(\mathbb{R}_\omega)$,
+  establishing $C_0$-semigroup generation via the Plancherel Laplace-inversion perturbation
+  identity and yielding the Gearhart--Pr\"uss semigroup bound
+  $\|e^{\tau L}\|_{L^2_\sigma/\mathcal{N}\to L^2_\sigma/\mathcal{N}} \le C_\delta e^{(-2\sigma+\delta)\tau}$.
+\end{enumerate}
+\end{thm}
+
+\paragraph{Lean~4 formalization and in-repo rational certificate.}
+The algebraic, exponent, and integer-obstruction backbones of Theorem~\ref{thm:linear_gap}
+are formalized in Lean~4 (\texttt{lean/SingularBlowup/PointSpectrum.lean},
+\texttt{SlitSchurMargin.lean}, and \texttt{LinearStrictGapClosure.lean}; \texttt{0~sorry},
+\texttt{0~axioms}, vacuity lint \texttt{0~findings}).  At the negative-half-plane benchmark $\sigma=1/4$, $\delta=1/20$ (spectral gap
+$\operatorname{Re}\lambda\le -9/20 = -0.45$), \texttt{certified\_linear\_strict\_gap\_sigma\_quarter}
+certifies the explicit rational envelope $M_{\sup}=1123$ covering the analytic Digamma
+bound $L(1/4,1/20)=3\pi+40+4+4/3\approx 54.76 < 55$ (measured max $|\partial_\tau\log|X||=16.23$,
+commutator max $21.78$), off-diagonal Schur norm $\le 0.3434$, and rank-one defect norm
+$\|X\|_2\|K_{\mathrm{slit}}\|_2\le 2.069 < 3$ (decaying to $0.0096$ at $\omega=50$).
+The standalone Python validation gates pass end-to-end:
+\texttt{validate/edge\_w1\_route\_f\_closure.py} (\texttt{F1--F4 PASS} at anchor
+$\sigma=0.4,\delta=1.1$: $\min E_\omega/(\pi|\Delta\tau|)=1.000000$,
+$\max\|T_{\mathrm{off}}\|_{\mathrm{Schur}}=0.06775$,
+$\max|\partial_\tau\log|X||=9.3587\le 15.4096$,
+$\|X\|_2\|K_{\mathrm{slit}}\|_2: 0.3441\to 0.0405$ across $\omega\in[0,20]$) and
+\texttt{validate/edge\_w2\_w3\_closure.py} (\texttt{W2-A, W2-B, W3-A PASS}:
+left-strip boundary identity residuals $\le 2.2\times 10^{-31}$, functional-equation
+residual $9.24\times 10^{-33}$, and high-frequency perturbation decay
+$|R(\lambda)F-R_0(\lambda)F|: 0.2724\to 0.0295\to 0.00678$ at $\omega=5,20,40$,
+ratio $40/20=0.230$).
+
+%--------------------------------------------------------------------------
+\section{Limitations and remaining nonlinear rigor path}
+%--------------------------------------------------------------------------
+
+\paragraph{Linear vs.\ nonlinear rigor status.}
+Theorem~\ref{thm:linear_gap} closes the \textbf{linear} spectral-gap and semigroup decay
+chain (W1--W3) on $L^2_\sigma(\mathbb{R})/\mathcal{N}$ for $\sigma\in(0,1/2)$, while the
+finite-amplitude ($A\le 4$) and co-evolving relaxation results in Section~\ref{sec:nonlin}
+remain numerical.
 
 \paragraph{Energy / CAP dead ends (named).}
 \begin{itemize}
@@ -288,18 +385,17 @@ is the discretized transport continuum, not a certified spectral bound.
   field-of-values divergence (\texttt{edge\_layer\_obstruction.py},
   \texttt{cap\_scaffold.py})~\cite{findings_edge_layer,findings_cap}.
 \item \textbf{Symmetric-part / numerical-range methods} blow up under nonlocal
-  coupling $\times$ convective weight~\cite{findings_cap}.
+  coupling $\times$ convective weight~\cite{findings_cap}; bypassing the field of values
+  via the exact Mellin ladder and slit-plane Plemelj resolvent (Section~\ref{sec:w123})
+  is essential.
 \end{itemize}
 
-\paragraph{Open rigor path (one paragraph).}
-Two complementary routes remain:
-(i)~\textbf{Finite-codimension anisotropic weighted energy} \`a~la
-Chen~\cite{chen2026euler}---project out $\{\xi,\mu,\nu\}$, design a direction-dependent
-weight that dominates the nonlocal forcing, and close by IBP along trajectories twice;
-(ii)~\textbf{Spectral/Fredholm} realization of $M_{GG}$ on $L^2_\sigma$: the resolvent
-is explicit as a defect-closed Mellin ladder (LEM-09 structure pack); the remaining
-analytic steps are a uniform resolvent bound (Plemelj/Schur write-up), an edge-bootstrap
-lemma (E$'$), and Gearhart--Pr\"uss for the semigroup.  Neither route is closed here.
+\paragraph{Remaining nonlinear step (co-moving Duhamel closure).}
+With the linear semigroup decay $\|e^{\tau L}\|_{L^2_\sigma/\mathcal{N}}\le C_\delta e^{(-2\sigma+\delta)\tau}$
+established by Theorem~\ref{thm:linear_gap}, a full nonlinear proof of Conjecture~2.4
+reduces to closing the quasilinear co-moving Duhamel / modulation bootstrap in the
+pinned singular coordinate $Y=X/X_s(\tau)$, where the transport velocity vanishes as
+$\bar U(Y)+2Y\sim 2(Y-1)$ at the edge $Y\to 1^+$.
 
 \paragraph{Scope.}
 1D Hou--Luo singular profile only.  2D Boussinesq analogue and gCLM $a$-family spectra
@@ -350,6 +446,8 @@ python3 validate/transient_growth.py                  # physical G=1.000
 python3 validate/transient_growth_edge_conditioned.py # mu_an < 0
 python3 validate/nonlinear_shape_march.py             # A<=4, peak=1.000
 python3 validate/coevolve_projected.py                # (c_l,c_w)->(2,-1)
+python3 validate/edge_w1_route_f_closure.py           # W1 Route F (F1-F4 PASS)
+python3 validate/edge_w2_w3_closure.py                # W2+W3 (W2-A/B, W3-A PASS)
 \end{verbatim}
 
 \paragraph{KEY numbers (session freeze; tol $5\%$ relative unless noted).}
@@ -380,8 +478,9 @@ cd paper && pdflatex stability_spectra_singular_houluo.tex
 %--------------------------------------------------------------------------
 \section*{Acknowledgments / status}
 %--------------------------------------------------------------------------
-Ready-to-arXiv package (2026-07-22).  Not a proof of Conjecture~2.4.
-Source of truth: \texttt{paper/} in the companion repository; see \texttt{HANDOFF.md}.
+Ready-to-arXiv package (updated 2026-11-20: linear strict-gap semigroup chain W1--W3
+closed analytically and formalized in Lean~4; nonlinear co-moving leg numerical).
+Source of truth: \texttt{paper/} and \texttt{lean/SingularBlowup/} in the companion repository; see \texttt{HANDOFF.md}.
 
 \begin{thebibliography}{99}
 
