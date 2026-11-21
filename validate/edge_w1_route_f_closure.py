@@ -229,6 +229,41 @@ def main() -> int:
         f"@om=0:{defect_norms[0.0]:.4f} -> @om=5:{defect_norms[5.0]:.4f} -> @om=20:{defect_norms[20.0]:.4f}",
     )
 
+    # ---- F5: Exact Plemelj right-inverse verification (lam - M_sigma) R_slit(lam) F = F ----
+    sig_r, lam_r, tau_r = mp.mpf("0.25"), mp.mpf("0.3"), mp.mpf("0.1")
+    s_r = sig_r + 1j * tau_r
+    X_fn = lambda w: mp.gamma(2 * w + lam_r) * mp.gamma(2 * w + 2) * mp.gamma(w) * mp.gamma(1 - w)
+    c_fn = lambda w: -mp.tan(mp.pi * w) / (2 * w + 1)
+    Ghat_fn = lambda w: (mp.mpf("0.5") - w) * mp.exp(2 * w * w)
+    Fhat_fn = lambda w: (lam_r + 2 * w) * Ghat_fn(w) - c_fn(w + mp.mpf("0.5")) * Ghat_fn(w + mp.mpf("0.5"))
+    rho_fn = lambda t: Fhat_fn(sig_r + 1j * t) / ((lam_r + 2 * (sig_r + 1j * t)) * X_fn(sig_r + 1j * t))
+
+    def ks_fn(t):
+        d = tau_r - t
+        return 4 * mp.pi / mp.expm1(-4 * mp.pi * d) if t >= 0 else 4 * mp.pi * mp.exp(-4 * mp.pi * d) / mp.expm1(-4 * mp.pi * d)
+
+    def k1_fn(t):
+        wp = mp.exp(4 * mp.pi * 1j * (sig_r + 1j * t))
+        return -4 * mp.pi * (wp if t >= 0 else 1) / (wp - 1)
+
+    integ_fn = lambda t: (ks_fn(t) - k1_fn(t)) * rho_fn(t)
+    rad = mp.mpf("0.05")
+    reg_lim = mp.diff(rho_fn, tau_r) - (2 * mp.pi + k1_fn(tau_r)) * rho_fn(tau_r)
+    sym_pair = lambda x: 2 * reg_lim if abs(x) < mp.mpf("1e-20") else integ_fn(tau_r + x) + integ_fn(tau_r - x)
+    pv_val = (
+        mp.quad(integ_fn, [-10, -6, -4, -2, -1, 0, tau_r - rad])
+        + mp.quad(sym_pair, [0, rad])
+        + mp.quad(integ_fn, [tau_r + rad, 0.5, 1, 2, 4, 6, 10])
+    )
+    cand_G = X_fn(s_r) * (rho_fn(tau_r) / 2 - pv_val / (2 * mp.pi * 1j))
+    known_G = Ghat_fn(s_r)
+    rel_err_f5 = float(abs(cand_G - known_G) / abs(known_G))
+    report(
+        "F5 Exact Plemelj right-inverse check R_slit(lam) Fhat = Ghat (eq. app_Rslit_explicit)",
+        rel_err_f5 < 1e-25,
+        f"rel_err={rel_err_f5:.2e} < 1e-25 (@sigma=1/4, lam=0.3, tau=0.1)",
+    )
+
     print()
     if FAILURES:
         print(f"GATE FAIL: {FAILURES}")

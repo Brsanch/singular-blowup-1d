@@ -27,10 +27,14 @@ blow-up profile (`docs/desk/nonlinear_comoving_leg.md` §4,
      `∑_{m=1}^N m / (4 π² (m + 1)² (2m + 1/2)) < 1/100`, certifying zero radius shrinkage
      (`r₀ = 1`) for the far-field-to-edge-disk Taylor coupling.
 
-3. **Closed 3-Block Lyapunov Functional & End-to-End Riccati Bootstrap Trapping:**
-   - `lyapunov_three_block_coercivity`: with weights `(a₀, a₁, a₂) = (20, 1, 10)`, the coupled
-     `(X_sem, Y_far, Z_disk)` linear dissipation is strictly coercive with exact rational
-     per-block rates `(-741/1000, -1/2, -5359/2000)` and overall rate `γ_nl = 1/2`.
+3. **Closed Pure-Energy 3-Block Lyapunov Functional & End-to-End Riccati Trapping:**
+   - `far_field_direct_energy_coeffs`: exact Young optimization (`ε = 2/5`) for the direct
+     `L²_{1/4}([-ln 2, ∞))` energy using the unconditional Plancherel bound
+     `‖½ Q̃_op G‖_{L²_{1/4}(ℝ)} ≤ (2/5) ‖G‖_{L²_{3/4}(ℝ)}`, giving `-1/5` damping on `X_far`
+     and `19/10` coupling from `Z_disk` (with zero W3 / Datko–Pazy semigroup dependence).
+   - `lyapunov_three_block_coercivity`: with weights `(a₀, a₁, a₂) = (20, 1, 20)`, the coupled
+     pure-energy `(X_far, Y_far, Z_disk)` linear dissipation is strictly coercive with exact
+     rational per-block rates `(-131/1000, -1/2, -3759/4000)` and overall rate `γ_nl = 1/8`.
    - `riccati_bootstrap_trapping_decay`: genuine real-analytic ODE trapping theorem proving
      that any nonnegative differentiable energy `E : ℝ → ℝ` satisfying
      `E'(t) ≤ -γ E(t) + C E(t) √(E(t))` and `E(0) < (γ / (2C))²` stays strictly trapped below
@@ -313,19 +317,28 @@ theorem far_field_disk_coupling_bound (N : ℕ) :
 
 /-! ## 3. Closed 3-Block Lyapunov Functional & End-to-End Riccati Trapping -/
 
-/-- **Closed 3-block Lyapunov coercivity (`NB-5`).**
-With `E = 20 * X_sem + Y_far + 10 * Z_disk`, the coupled linear differential inequalities
-- `Ẋ_sem ≤ -(4/5) X_sem` (Datko–Pazy renormalized W1–W3 semigroup norm, `ω₁ = 2/5 < 9/20`),
-- `Ẏ_far ≤ -(1/2) Y_far + (641/200) Z_disk + (49/50) X_sem` (overlap inflow `< 1` + `7/10`
+/-- Exact Young optimization (`ε = 2/5`) for the direct far-field `L²_{1/4}([-ln 2, ∞))` energy
+using `‖½ Q̃_op G‖_{L²_{1/4}(ℝ)} ≤ (2/5) ‖G‖_{L²_{3/4}(ℝ)}` and `‖G‖_{L²_{3/4}((-∞,0])}² ≤ (9/4) Z_disk`:
+damping on `X_far` is `-1 + 2/5 + (5/2)(4/25) = -1/5`, and coupling from `Z_disk` is
+`1 + (5/2)(4/25)(9/4) = 19/10` (completely bypassing W3 / Datko–Pazy renorming). -/
+theorem far_field_direct_energy_coeffs :
+    (-1 : ℝ) + 2 / 5 + (5 / 2) * (4 / 25) = -(1 / 5) ∧
+    (1 : ℝ) + (5 / 2) * (4 / 25) * (9 / 4) = 19 / 10 := by
+  constructor <;> norm_num
+
+/-- **Closed pure-energy 3-block Lyapunov coercivity (`NB-5`, zero W3/semigroup dependence).**
+With `E = 20 * X_far + Y_far + 20 * Z_disk`, the direct energy differential inequalities
+- `Ẋ_far ≤ -(1/5) X_far + (19/10) Z_disk` (direct `L²_{1/4}([-ln 2, ∞))` energy + Plancherel `2/5`),
+- `Ẏ_far ≤ -(1/2) Y_far + (641/200) Z_disk + (49/50) X_far` (overlap inflow `< 1` + `7/10`
   lower-order smoothing + `9/4` edge embedding),
-- `Ż_disk ≤ -3 Z_disk + (1/50) X_sem` (`-3` edge-disk coercivity + `2 * 1/100` far-field coupling),
-combine to give strict decay at rate `γ_nl = 1/2` across all three blocks simultaneously
-(exact per-block rates `-741/1000`, `-1/2`, `-5359/2000`). -/
-theorem lyapunov_three_block_coercivity {X Y Z : ℝ} (hX : 0 ≤ X) (hZ : 0 ≤ Z) :
-    20 * (-(4 / 5 : ℝ) * X)
+- `Ż_disk ≤ -3 Z_disk + (1/50) X_far` (`-3` edge-disk coercivity + `2 * 1/100` far-field coupling),
+combine to give strict decay at rate `γ_nl = 1/8` across all three blocks simultaneously
+(exact per-block rates `-131/1000`, `-1/2`, `-3759/4000`). -/
+theorem lyapunov_three_block_coercivity {X Y Z : ℝ} (hX : 0 ≤ X) (hY : 0 ≤ Y) (hZ : 0 ≤ Z) :
+    20 * (-(1 / 5 : ℝ) * X + (19 / 10 : ℝ) * Z)
       + 1 * (-(1 / 2 : ℝ) * Y + (641 / 200 : ℝ) * Z + (49 / 50 : ℝ) * X)
-      + 10 * (-3 * Z + (1 / 50 : ℝ) * X)
-    ≤ -(1 / 2 : ℝ) * (20 * X + Y + 10 * Z) := by
+      + 20 * (-3 * Z + (1 / 50 : ℝ) * X)
+    ≤ -(1 / 8 : ℝ) * (20 * X + Y + 20 * Z) := by
   linarith
 
 /-- **End-to-end Riccati / Lyapunov bootstrap trapping & exponential decay theorem.**

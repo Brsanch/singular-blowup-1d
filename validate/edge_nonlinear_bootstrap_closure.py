@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-GATE: Final Nonlinear Bootstrap Closure — Edge Hardy-Disk H^1(D(1,1)) +
-Overlap Far-Field H^1_{1/4}([-ln 2, inf)) + Global W1-W3 L^2_{1/4} Semigroup
+GATE: Final Nonlinear Bootstrap Closure — Pure Direct-Energy Edge Hardy-Disk
+H^1(D(1,1)) + Overlap Far-Field H^1_{1/4}([-ln 2, inf)) (Zero W3/Semigroup Dependence)
 (docs/desk/nonlinear_comoving_leg.md §4, 2026-11-20).
 
 Verifies the five quantitative gates (NB-1..NB-5) of the closed nonlinear bootstrap
@@ -22,11 +22,12 @@ for the exact Gauge-(a) 1D Hou-Luo co-moving system:
         2 e^{-z0/2} |G_z(-ln 2)|^2 <= (2 sqrt(2) / 3) ||c||_{H^1}^2 < ||c||_{H^1}^2,
         ||G||_{L^2_{3/4}((-inf,0])}^2 <= trace(D^{-1} Gram_{3/4} D^{-1}) ||c||_{H^1}^2
                                       < (199/90) ||c||_{H^1}^2 < (9/4) ||c||_{H^1}^2.
-  NB-5  Closed 3-block Lyapunov / Riccati bootstrap trapping:
-        Explicit weights (a0, a1, a2) = (20, 1, 10) with W1-W3 Datko-Pazy rate 2*omega_1 = 4/5
-        make the coupled (X_sem, Y_far, Z_disk) dissipation rates (-741/1000, -1/2, -5359/2000),
-        giving gamma_nl = 1/2 and global exponential decay E(tau) <= E(0) exp(-tau/4)
-        for E(0) < (gamma_nl / (2 C_nl))^2.
+  NB-5  Closed pure-energy 3-block Lyapunov / Riccati bootstrap trapping:
+        Using unconditional ||(1/2) Q_tilde G||_{L^2_{1/4}(R)} <= (2/5) ||G||_{L^2_{3/4}(R)},
+        explicit weights (a0, a1, a2) = (20, 1, 20) make the direct-energy
+        (X_far, Y_far, Z_disk) dissipation rates (-131/1000, -1/2, -3759/4000),
+        giving gamma_nl = 1/8 and global exponential decay E(tau) <= E(0) exp(-tau/16)
+        for E(0) < (gamma_nl / (2 C_nl))^2 (no W3/Datko-Pazy semigroup needed).
 
   NB-6  Appendix B continuous-PDE identities:
         (i) exact unit-disk identity H[1_{(0,1)} w^{k-1/2}](u) = -(1/pi) sum_{m>=0} u^m/(k-m-1/2),
@@ -173,29 +174,30 @@ def main() -> int:
         f"trace={trace_34:.5f} < 199/90({telescoping_cap:.5f}) < 9/4(2.25)",
     )
 
-    # ---- NB-5: Closed 3-block Lyapunov / Riccati bootstrap stability check ----
+    # ---- NB-5: Closed pure-energy 3-block Lyapunov / Riccati bootstrap (NO W3 / Datko-Pazy!) ----
     # Exact rational constants (matching Lean SingularBlowup/NonlinearBootstrap.lean):
-    #   d/dtau X_sem  <= -(4/5) X_sem + nl             [Datko-Pazy with omega_1 = 2/5 < 9/20 from W1-W3]
-    #   d/dtau Y_far  <= -(1/2) Y_far + (641/200) Z_disk + (49/50) X_sem + nl
-    #                     [inflow < 1, nonlocal 2*(7/10)^2 * ((9/4) Z_disk + X_sem)]
-    #   d/dtau Z_disk <= -3 Z_disk + (1/50) X_sem + nl [2 * (1/100) X_sem]
-    # Weights (a0, a1, a2) = (20, 1, 10):
-    a0, a1, a2 = 20.0, 1.0, 10.0
-    c_x = -(4.0 / 5.0) * a0 + (49.0 / 50.0) * a1 + (1.0 / 50.0) * a2  # -741/50 = -14.82
+    #   d/dtau X_far  <= -(1/5) X_far + (19/10) Z_disk + nl
+    #                     [inflow < 1, Young eps=2/5 on ||(1/2) Q_tilde G||_{1/4} <= (2/5)||G||_{3/4}]
+    #   d/dtau Y_far  <= -(1/2) Y_far + (641/200) Z_disk + (49/50) X_far + nl
+    #                     [inflow < 1, nonlocal 2*(7/10)^2 * ((9/4) Z_disk + X_far)]
+    #   d/dtau Z_disk <= -3 Z_disk + (1/50) X_far + nl [2 * (1/100) X_far]
+    # Weights (a0, a1, a2) = (20, 1, 20):
+    a0, a1, a2 = 20.0, 1.0, 20.0
+    c_x = -(1.0 / 5.0) * a0 + (49.0 / 50.0) * a1 + (1.0 / 50.0) * a2  # -131/50 = -2.62
     c_y = -(1.0 / 2.0) * a1                                           # -1/2 = -0.50
-    c_z = -3.0 * a2 + (641.0 / 200.0) * a1                            # -5359/200 = -26.795
-    gamma_nl = min(-c_x / a0, -c_y / a1, -c_z / a2)                   # exactly 0.50
+    c_z = -3.0 * a2 + (19.0 / 10.0) * a0 + (641.0 / 200.0) * a1       # -3759/200 = -18.795
+    min_rate = min(-c_x / a0, -c_y / a1, -c_z / a2)                   # 131/1000 = 0.131 > 1/8
+    gamma_nl = 1.0 / 8.0                                              # certified rational floor 1/8
 
     # Verify Riccati trapping ODE numerically: E' = -gamma_nl E + C_nl E^{3/2}
     # with C_nl = 10, E(0) = 0.9 * (gamma_nl / (2 C_nl))^2 => E(tau) <= E(0) exp(-(gamma_nl/2) tau)
     C_nl = 10.0
     E_crit = (gamma_nl / (2.0 * C_nl)) ** 2
     E0 = 0.9 * E_crit
-    dt = 1e-3
+    dt = 2e-3
     E = E0
     riccati_ok = True
-    for step in range(1, 20001):
-        # RK4 step on E' = -gamma_nl * E + C_nl * E^{3/2}
+    for step in range(1, 20001):  # tau up to 40
         def rhs(val: float) -> float:
             return -gamma_nl * val + C_nl * (val ** 1.5)
 
@@ -213,14 +215,14 @@ def main() -> int:
         c_x < 0
         and c_y < 0
         and c_z < 0
-        and abs(gamma_nl - 0.5) < 1e-12
+        and min_rate >= gamma_nl
         and riccati_ok
     )
     report(
-        "NB-5 Closed 3-block Lyapunov functional & Riccati trapping (gamma_nl = 1/2)",
+        "NB-5 Closed pure-energy 3-block Lyapunov & Riccati trapping (gamma_nl = 1/8, zero W3)",
         ok_nb5,
-        f"rates: x={c_x/a0:.4f}, y={c_y/a1:.4f}, z={c_z/a2:.4f} => gamma_nl={gamma_nl:.4f}, "
-        f"E(20)/E(0)={E/E0:.2e} <= e^{{-5}}({math.exp(-5.0):.2e})",
+        f"rates: x={c_x/a0:.4f}, y={c_y/a1:.4f}, z={c_z/a2:.4f} (min=-{min_rate:.4f}<=-0.125), "
+        f"E(40)/E(0)={E/E0:.2e} <= e^{{-2.5}}({math.exp(-2.5):.2e})",
     )
 
     # ---- NB-6: Appendix B continuous-PDE identities ----
@@ -258,18 +260,37 @@ def main() -> int:
     # Check asymptotic m^3 * q_m -> 2/pi
     tail_m3 = float((m_check[-1] ** 3) * q_comb[-1])
 
+    # (v) Unconditional Plancherel bound: ||(1/2) Q_tilde G||_{L^2_{1/4}(R)} <= (2/5) ||G||_{L^2_{3/4}(R)}
+    Q_tilde = Q_exact - np.outer(np.ones_like(z), h1_row)
+    W14_b6 = np.exp(-0.5 * z)
+    W34_b6 = np.exp(-1.5 * z)
+    max_qt_ratio = 0.0
+    for G_t in [
+        (Y - 1.0) * np.exp(-(Y - 1.0)),
+        (Y - 1.0) * np.exp(-(Y - 1.0) / 4.0),
+        np.exp(-((z - 2.0) / 1.0) ** 2),
+        np.exp(-((z + 2.0) / 1.0) ** 2),
+    ]:
+        h1_t = float(h1_row @ G_t)
+        Qt_t = 0.5 * (Q_tilde @ G_t)
+        tail_t = (0.5 * h1_t) ** 2 * 2.0 * math.exp(-0.5 * 10.0)
+        lhs_t = math.sqrt(float(np.sum(W14_b6 * Qt_t**2) * dz) + tail_t)
+        rhs_t = math.sqrt(float(np.sum(W34_b6 * G_t**2) * dz))
+        max_qt_ratio = max(max_qt_ratio, lhs_t / rhs_t)
+
     ok_nb6 = (
         err_disk_id < 1e-14
         and deriv_ratio <= math.sqrt(2.0 / 3.0)
         and gz_left_ratio <= gz_left_cap
         and abs(tail_m3 - 2.0 / math.pi) < 0.03
         and l1_half_sum < 1.0
+        and max_qt_ratio <= 0.40
     )
     report(
-        "NB-6 Appendix B continuous-PDE identities (disk series, d_z Q_op, overlap G_z, 1-IBP O(m^{-3}))",
+        "NB-6 Appendix B PDE identities (disk series, ||(1/2)Q_tilde||_{3/4->1/4}<=2/5, d_z Q, 1-IBP)",
         ok_nb6,
-        f"disk_err={err_disk_id:.1e}, dQ_ratio={deriv_ratio:.4f}<={math.sqrt(2/3):.4f}, "
-        f"Gz_left={gz_left_ratio:.4f}<={gz_left_cap:.4f}, m^3*q_m={tail_m3:.4f}(2/pi={2/math.pi:.4f})",
+        f"disk_err={err_disk_id:.1e}, max||(1/2)Q_tilde||/||G||_34={max_qt_ratio:.4f}<=0.40, "
+        f"dQ_ratio={deriv_ratio:.4f}<={math.sqrt(2/3):.4f}, Gz_left={gz_left_ratio:.4f}<={gz_left_cap:.4f}",
     )
 
     print()
