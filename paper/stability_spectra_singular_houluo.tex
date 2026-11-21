@@ -354,10 +354,15 @@ $L^2_\sigma(\mathbb{R})$.
 
 \begin{thm}[Linear spectral gap and uniform resolvent bound on $L^2_\sigma(\mathbb{R})$]
 \label{thm:linear_gap}
-Let $\sigma\in(0,1/2)$ and let $M_\sigma$ denote the linearized operator
-$M_\sigma G = -2\partial_z G + \tfrac12\widetilde{Q}_{\mathrm{op}}G$ on the convective weighted
-space $L^2_\sigma(\mathbb{R}, e^{-2\sigma z}\,dz)$ with defect-closed domain
-$\mathcal{D}(M_\sigma) := \{G\in L^2_\sigma(\mathbb{R}) : M_\sigma G\in L^2_\sigma(\mathbb{R}),\;\widehat{G}(\tfrac12)=0\}$.
+Let $\sigma\in(0,1/2)$ and let $M_\sigma$ denote the frozen-exponent linearized operator
+$M_\sigma G := -2\partial_z G + \tfrac12 Q_{\mathrm{op}}G = -2\partial_z G + e^{-z/2}T_c G$
+on the convective weighted space $L^2_\sigma(\mathbb{R}, e^{-2\sigma z}\,dz)$ with maximal domain
+$\mathcal{D}(M_\sigma) := \{G\in L^2_\sigma(\mathbb{R}) : M_\sigma G\in L^2_\sigma(\mathbb{R})\}$
+(since $T_c$ is a bounded multiplier on $L^2_\sigma(\mathbb{R})$ for $\sigma\in(0,1/2)$,
+$e^{-z/2}T_c G\in L^2_{\sigma-1/2}(\mathbb{R})\subset L^2_{\mathrm{loc}}(\mathbb{R})$ is well-defined for every
+$G\in L^2_\sigma(\mathbb{R})$, and on the resolvent range $R_{\mathrm{slit}}(\lambda)L^2_\sigma(\mathbb{R})$
+the analytic continuation of $\widehat{G}(s)$ across $(\sigma,\sigma+\tfrac12)$ satisfies
+$\widehat{G}(\tfrac12)=0$, where $\widetilde{Q}_{\mathrm{op}}G=Q_{\mathrm{op}}G$).
 (Note that the symmetry modes $\xi,\mu,\nu$ do not belong to $L^2_\sigma(\mathbb{R})$ for
 $\sigma\in(0,1/2)$.)  Then:
 \begin{enumerate}
@@ -850,6 +855,11 @@ and using $(\lambda+2s)X(s;\lambda)=c(s+\tfrac12)X(s+\tfrac12;\lambda)$ together
 &= (\lambda+2s)X(s;\lambda)\bigl[D_+(e^{4\pi i s})-D_-(e^{4\pi i s})\bigr] \\
 &= (\lambda+2s)X(s;\lambda)\,\rho(s;\lambda) = \widehat{F}(s).
 \end{align*}
+Because $\widehat{G}(\tfrac12)=X(\tfrac12;\lambda)[D(1)-D(1)]=0$ cancels the simple pole of $c(w)=-\tan(\pi w)/(2w+1)$
+at $w=\tfrac12\in(\sigma,\sigma+\tfrac12)$, the product $w\mapsto c(w)\widehat{G}(w)$ is holomorphic on $(\sigma,\sigma+\tfrac12)$,
+so shifting the inverse-Mellin contour of $c(s+\tfrac12)\widehat{G}(s+\tfrac12)$ from $\operatorname{Re}w=\sigma+\tfrac12$ to
+$\operatorname{Re}w=\sigma$ identifies its inverse Mellin transform with $e^{-z/2}T_c G$ in real space, showing
+$G\in\mathcal{D}(M_\sigma)$ and $(\lambda-M_\sigma)G=F$.
 Decomposing~\eqref{eq:app_Rslit_explicit} into $|\tau-\tau'|<1$ and $|\tau-\tau'|\ge 1$ gives
 \[
 R_{\mathrm{slit}}(\lambda) = T_{\mathrm{Plemelj}}(\lambda) + T_{\mathrm{diag}}(\lambda) + T_{\mathrm{off}}(\lambda) + T_{\mathrm{defect}}(\lambda),
@@ -967,10 +977,15 @@ Split $G=G_-+G_+$ with $G_-:=G\mathbf{1}_{(-\infty,0]}$ and $G_+:=G\mathbf{1}_{[
   Because $T_c$ is bounded on $L^2_\sigma(\mathbb{R})$ (the line $\operatorname{Re}s=\sigma\in(0,\tfrac12)$ avoids all poles of $\tan(\pi s)$)
   and multiplication by $e^{-z/2}$ is an exact isometry $L^2_\sigma\to L^2_{\sigma-1/2}$ (Lean: \texttt{shift\_half\_weight\_exponent\_eq}),
   the eigenvalue equation $(2\partial_z+\lambda)G = e^{-z/2}T_c G$ implies $(2\partial_z+\lambda)G\in L^2_{\sigma-1/2}(\mathbb{R})$.
+  Since $G\in L^2_\sigma(\mathbb{R})$ and $(2\partial_z+\lambda)G\in L^2_{\sigma-1/2}(\mathbb{R})\subset L^2_{\mathrm{loc}}(\mathbb{R})$,
+  we have $G\in H^1_{\mathrm{loc}}(\mathbb{R})\subset C(\mathbb{R})$ (so $G(0)$ is well-defined) and
+  $e^{-(\sigma-1/2)z}G_+\in H^1([0,\infty))$ (so $\lim_{z\to+\infty}e^{-sz}G(z)=0$ for all $\operatorname{Re}s\ge\sigma-\tfrac12$).
   For $z\ge 0$ and $\sigma'\in[\sigma-\tfrac12,\sigma]$, $-2\sigma' z\le -2(\sigma-\tfrac12)z$ (Lean: \texttt{left\_strip\_far\_exponent\_le}),
   so $(2\partial_z+\lambda)G_+\in L^2_{\sigma'}([0,\infty))$ across the entire left strip.
   Integrating by parts on $[0,\infty)$ yields $\mathcal{G}_+(s)=(2G(0)+\mathcal{H}_+(s))/(2s+\lambda)$,
-  where $\mathcal{H}_+(s):=\int_0^\infty e^{-sz}(2\partial_z+\lambda)G(z)\,dz$ is holomorphic on $\operatorname{Re}s>\sigma-\tfrac12$.
+  where $\mathcal{H}_+(s):=\int_0^\infty e^{-sz}(2\partial_z+\lambda)G(z)\,dz$ is holomorphic on $\operatorname{Re}s>\sigma-\tfrac12$
+  (and on $(-\infty,0]$, $(2s+\lambda)\mathcal{G}_-(s)=-2G(0)+\int_{-\infty}^0 e^{-sz}(2\partial_z+\lambda)G(z)\,dz$, so the $\pm 2G(0)$
+  boundary terms cancel in $(2s+\lambda)\widehat{G}(s)$ on $\operatorname{Re}s=\sigma-\tfrac12$).
   Thus $\widehat{G}(s)=\mathcal{G}_-(s)+\mathcal{G}_+(s)$ extends meromorphically to the strip $\sigma-\tfrac12<\operatorname{Re}s<\sigma$
   with at most a single simple pole at $s_*:=-\lambda/2$ (note $\operatorname{Re}s_*<\sigma$ since $\operatorname{Re}\lambda>-2\sigma$).
 \item \emph{Pole cancellation at $s_*=-\lambda/2$, Morera gluing, and full-strip Parseval Laurent obstruction:}
@@ -1053,10 +1068,12 @@ For every $G\in L^2_{3/4,1/4}(\mathbb{R})$ (without assuming $H[g](1)=0$):
   \mathcal{M}\bigl[\tfrac12\widetilde{Q}_{\mathrm{op}}G\bigr](s) = c\!\left(s+\tfrac12\right)\widehat{G}\!\left(s+\tfrac12\right),
   \qquad c(w) = -\frac{\tan(\pi w)}{2w+1}.
   \end{equation}
-\item Evaluating~\eqref{eq:mellin_qtilde} on $\operatorname{Re}s=\frac{1}{4}$ yields the exact Plancherel bound
+\item Evaluating~\eqref{eq:mellin_qtilde} on $\operatorname{Re}s=\frac{1}{4}$ yields the exact Plancherel bounds
   \begin{equation}\label{eq:qtilde_plancherel}
   \bigl\|\tfrac12\widetilde{Q}_{\mathrm{op}}G\bigr\|_{L^2_{1/4}(\mathbb{R})}
-  \le \frac{2}{5}\,\|G\|_{L^2_{3/4}(\mathbb{R})}.
+  \le \frac{2}{5}\,\|G\|_{L^2_{3/4}(\mathbb{R})}, \qquad
+  \bigl\|\tfrac12\partial_z(\widetilde{Q}_{\mathrm{op}}G)\bigr\|_{L^2_{1/4}(\mathbb{R})}
+  \le \frac{1}{2}\,\|G\|_{L^2_{3/4}(\mathbb{R})} < \frac{7}{10}\,\|G\|_{L^2_{3/4}(\mathbb{R})}.
   \end{equation}
 \end{enumerate}
 \end{lem}
@@ -1073,7 +1090,8 @@ multiplies the Mellin transform by $(s+1)^{-1}$, and $\frac{1}{\pi}\mathrm{p.v.}
 \]
 (2) On $\operatorname{Re}s=\tfrac14$, $w=s+\tfrac12=\tfrac34+i\tau$ satisfies
 $|\tan(\pi(\tfrac34+i\tau))|\equiv 1$ and $|2(\tfrac34+i\tau)+1|=\sqrt{\tfrac{25}{4}+4\tau^2}\ge\tfrac52$,
-so $|c(\tfrac34+i\tau)|\le\tfrac25$ (Lean: \texttt{symbol\_norm\_three\_quarter\_sq\_le}).
+so $|c(\tfrac34+i\tau)|\le\tfrac25$ and $|(\tfrac14+i\tau)c(\tfrac34+i\tau)|=\sqrt{(\tfrac{1}{16}+\tau^2)/(\tfrac{25}{4}+4\tau^2)}<\tfrac12<\tfrac{7}{10}$
+(Lean: \texttt{symbol\_norm\_three\_quarter\_sq\_le}, \texttt{lower\_order\_smoothing\_const}).
 Plancherel's theorem on $\operatorname{Re}s=\tfrac14$ and $\operatorname{Re}w=\tfrac34$ immediately yields~\eqref{eq:qtilde_plancherel}.
 \end{proof}
 
@@ -1365,7 +1383,7 @@ Let $W^{(n)} := G^{(n+1)} - G^{(n)}$ ($W^{(n)}(0)=0$). Subtracting~\eqref{eq:fro
   &= \bigl(p[G^{(n)}]-p[G^{(n-1)}]\bigr)\partial_z G^{(n)} + \tfrac{1}{2}\bigl(\widetilde{Q}_{\mathrm{op}}W^{(n-1)}\bigr)G^{(n)}.
 \end{align*}
 In the $\mathcal{W}$-inner product (where $\mathcal{H}^0(D(1,1))$ transport gives $-2\sum_{m\ge 1} m|w_m^{(n)}|^2$,
-absorbing $p[G^{(n)}]v\partial_v W^{(n)}$ since $\|p[G^{(n)}]\|_{\ell^1}\le\frac{1}{2}$, and on $\mathbb{R}$
+absorbing $\langle w^{(n)}, p[G^{(n)}]v\partial_v W^{(n)}\rangle_{\mathcal{H}^0}$ via $k\le\sqrt{m}\sqrt{k}$ ($1\le k\le m$) and Young's inequality since $\|p[G^{(n)}]\|_{\ell^1}\le\frac{1}{2}$, and on $\mathbb{R}$
 $L^2_{1/4}$ integration by parts bounds $\langle W^{(n)}, (2-p^{(n)})\partial_z W^{(n)}\rangle_{L^2_{1/4}}$ using
 $\|\partial_z p^{(n)}\|_{L^\infty(\mathbb{R})}\le C\sqrt{R_0}$, since~\eqref{eq:dQ_linf} controls $[-\ln 2,\infty)$ while
 on $(-\infty,-\ln 2]$ we have $|\partial_z p^{(n)}(z)|\le\sum_{j\ge 1}j|q_j^{(n)}|2^{-j}\le C\sqrt{R_0}$): on the right-hand side,
