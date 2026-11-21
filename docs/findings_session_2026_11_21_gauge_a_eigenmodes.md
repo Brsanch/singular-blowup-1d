@@ -2,8 +2,9 @@
 
 **Date:** 2026-11-21
 **Source:** independent review of `paper/stability_spectra_singular_houluo.tex` (working copy of 08:46, uncommitted on `main` at the time).
-**Probe:** `validate/edge_gauge_a_eigenmode_check.py` (exit 0 on EM-1..EM-4; ~10 s, NumPy/SciPy only).
-**Review form:** single reviewer (Claude). Not independently audited, not expert-reviewed.
+**Probe:** `validate/edge_gauge_a_eigenmode_check.py` (exit 0 on EM-1..EM-5; ~15 s, NumPy/SciPy only).
+**Review form:** EM-1..EM-4 and §§1–5 as first written: single reviewer (Claude). The contour and far-field correction below and EM-5: independent Claude verification of Codex findings. Not expert-reviewed. Nothing here machine-certifies the PDE proof.
+**Corrected 2026-11-21 (same day):** the first version allowed any contour `0 < s0 < 1` and said `G_λ → Γ(λ)` for every `Re λ > −2σ`. Both statements are wrong for `Re λ ≤ 0`: `Γ(2s+λ)` has a pole at `s = −λ/2`. Codex reported this with the counterexample `λ = −1/4`; I reproduced it (EM-5) and corrected §1–§3. The eigenmode claim itself survives on the full range `Re λ > −2σ`.
 **Does not claim:** anything about the nonlinear PDE · the frozen-exponent operator on its constrained domain · Conjecture 2.4 · that Theorem 2 of the paper is wrong.
 
 ---
@@ -13,8 +14,11 @@
 Let `X(s;λ) = Γ(2s+λ) Γ(2s+2) Γ(s) Γ(1−s)` (the paper's ladder multiplier) and
 
 ```
-G_λ(z) := (1/2πi) ∫_{Re s = s0} e^{sz} X(s;λ) ds,      0 < s0 < 1.
+G_λ(z) := (1/2πi) ∫_{Re s = s0} e^{sz} X(s;λ) ds,      max(0, −Re λ/2) < s0 < 1.
 ```
+
+The lower limit keeps the contour to the right of the pole of `Γ(2s+λ)` at `s = −λ/2`; `s0 = σ` is
+admissible. A contour to the left of that pole gives a different function.
 
 Then, for every `λ` with `Re λ > −2σ`, `σ ∈ (0, 1/2)`:
 
@@ -26,8 +30,12 @@ Properties of `G_λ`:
 
 - it lies in `L²_σ(ℝ)` for every `σ ∈ (0, 1)` with `2σ + Re λ > 0`;
 - it is smooth up to the edge and vanishes linearly there: `G_λ ~ r_1 v + r_2 v² + …`, `v = e^z`,
-  with `r_m = (−1)^{m+1} Γ(2m+λ) Γ(2m+2)`;
-- it tends to the constant `Γ(λ)` as `z → +∞`;
+  with `r_m = (−1)^{m+1} Γ(2m+λ) Γ(2m+2)` (from the poles of `Γ(1−s)` at `s = m`);
+- far field, `z → +∞`:
+  - `Re λ > 0`: `G_λ → Γ(λ)`;
+  - `−2σ < Re λ ≤ 0`, `λ ≠ 0`: `G_λ = A_λ e^{−λz/2} + Γ(λ) + o(1)` with
+    `A_λ = ½ Γ(2−λ) Γ(−λ/2) Γ(1+λ/2)`, the residue of `X` at `s = −λ/2`; this is still in `L²_σ`
+    because `−Re λ/2 < σ`;
 - `H[g](1) = −(1/π) Ĝ(1/2) = −2 Γ(1+λ) ≠ 0`.
 
 So the operator `−2∂_z + ½Q̃_op` **without** the domain condition `Ĝ(1/2) = 0` has every `λ` in
@@ -36,8 +44,9 @@ So the operator `−2∂_z + ½Q̃_op` **without** the domain condition `Ĝ(1/2)
 ## 2. Why it follows from the paper's own identities
 
 The paper's Appendix A shows `(λ+2s) X(s;λ) = c(s+½) X(s+½;λ)`, i.e. `Ĝ = X` solves the homogeneous
-ladder equation. `X` is holomorphic and exponentially decaying on the strip `0 < Re s < 1`, so `G_λ`
-has Mellin transform `X` on every line there, and Lemma B.1(1) (`𝓜[½Q̃_op G](s) = c(s+½) Ĝ(s+½)`,
+ladder equation. `X` is holomorphic and exponentially decaying on the strip
+`max(0, −Re λ/2) < Re s < 1`, so `G_λ` has Mellin transform `X` on every line there. Since
+`Re λ > −2σ > −1`, that strip contains lines `Re s = s1` and `Re s = s1 + ½` together, and Lemma B.1(1) (`𝓜[½Q̃_op G](s) = c(s+½) Ĝ(s+½)`,
 stated "without assuming `H[g](1) = 0`") turns the ladder identity into the eigen-equation.
 
 In the W2 uniqueness proof, kernel elements are `P·X` with `P` constant, and the constant is killed by
@@ -46,7 +55,7 @@ the two differ by the constant `H[g](1)/2`, whose Laplace transform on `[0,∞)`
 So `P(0) = 0` holds only when `H[g](1) = 0`. Theorem 1 is therefore a statement about the operator
 restricted to `{Ĝ(1/2) = 0}`, which is the frozen-exponent operator `−2∂_z + ½Q_op`.
 
-## 3. What was checked numerically (`EM-1..EM-4`)
+## 3. What was checked numerically (`EM-1..EM-5`)
 
 | Check | Content | Result |
 |---|---|---|
@@ -54,6 +63,10 @@ restricted to `{Ĝ(1/2) = 0}`, which is the frozen-exponent operator `−2∂_z 
 | EM-2 | `H[g](1) = −2Γ(1+λ)`, `G(+∞) = Γ(λ)`, contour independence | agree to 1e-6 (the far-field limit is asserted for `λ ≥ 1` only; at `λ = 0.3` the `e^{−λz/2}` correction is still visible at `z = 40`) |
 | EM-3 | edge coefficients `r_1`, `r_2` against the residue formula; `|r_{m+1}/r_m|` grows like `(2m)⁴` | agree to 0.2% |
 | EM-4 | the repo's discretized Gauge-(a) matrix (`src/stability_edge_z.py`, as used in `edge_nonlinear_comoving_closure.py`) | no unstable eigenvalue; marching `G_1` gives `H[g](1)(T)/H[g](1)(0) ≈ e^{−T}`, where the continuum mode has `e^{+T}` |
+| EM-5 | negative `λ = −1/4` (pole at `s = 1/8`): contours `s0 = 0.25` and `0.9` agree; `s0 = 0.1` differs by exactly `A_λ e^{z/8}`; far field `A_λ e^{z/8} + Γ(λ)` with remainder matching the next pole term; eigen-identity; `H[g](1)` | `A_λ = 4.6506249067`; `G(16) = 29.4658775645` (Codex's value), `G(32) = 249.01` against `Γ(λ) = −4.90`; eigen-identity residual ≤ 1.6e-8; `H[g](1)` agrees to 1e-6 |
+
+EM-1..EM-3 use positive `λ` only (`0.3, 1, 3`). EM-5 is the only negative-`λ` test, and only real `λ`
+is tested anywhere in the probe.
 
 The identity in EM-1 is the `v`-derivative of `v·[λG + 2vG′ − ½Q̃_op G] = 0`; both sides vanish at
 `v → 0`, so it is equivalent to the eigen-equation.

@@ -371,13 +371,20 @@ constant $-\tfrac12 H[g](1)$ (whose right-sided Laplace transform has a simple p
 Indeed, for the \emph{unconstrained} Gauge-(a) operator $-2\partial_z+\tfrac12\widetilde{Q}_{\mathrm{op}}$
 on $L^2_\sigma(\mathbb{R})$, the inverse Mellin transform
 \[
-G_\lambda(z) := \frac{1}{2\pi i}\int_{\operatorname{Re}s=s_0} e^{sz}X(s;\lambda)\,ds \qquad (0<s_0<1)
+G_\lambda(z) := \frac{1}{2\pi i}\int_{\operatorname{Re}s=s_0} e^{sz}X(s;\lambda)\,ds
+\qquad \bigl(\max(0,-\tfrac12\operatorname{Re}\lambda)<s_0<1\bigr)
 \]
+(the contour must stay to the right of the pole of $\Gamma(2s+\lambda)$ at $s=-\lambda/2$; $s_0=\sigma$ is admissible)
 is an explicit eigenfunction in $L^2_\sigma(\mathbb{R})$ solving
 $\lambda G_\lambda = -2\partial_z G_\lambda + \tfrac12\widetilde{Q}_{\mathrm{op}}G_\lambda$
-for \emph{every} $\operatorname{Re}\lambda>-2\sigma$, with $H[g_\lambda](1)=-2\Gamma(1+\lambda)\ne 0$
-and $G_\lambda(z)\to\Gamma(\lambda)$ as $z\to+\infty$ (\texttt{edge\_gauge\_a\_\allowbreak eigenmode\_check.py}).
-Shifting the contour across $s=-m$ ($m\ge 1$) shows that $G_\lambda(1+v)$ is $C^\infty$ up to
+for \emph{every} $\operatorname{Re}\lambda>-2\sigma$, with $H[g_\lambda](1)=-2\Gamma(1+\lambda)\ne 0$.
+As $z\to+\infty$, $G_\lambda(z)\to\Gamma(\lambda)$ when $\operatorname{Re}\lambda>0$; when
+$-2\sigma<\operatorname{Re}\lambda\le 0$ ($\lambda\ne 0$), the pole at $s=-\lambda/2$ lies on or to the right of
+$\operatorname{Re}s=0$ and instead
+$G_\lambda(z)=\tfrac12\Gamma(2-\lambda)\Gamma(-\tfrac{\lambda}{2})\Gamma(1+\tfrac{\lambda}{2})\,e^{-\lambda z/2}+\Gamma(\lambda)+o(1)$,
+which is still in $L^2_\sigma$ at $+\infty$ because $-\tfrac12\operatorname{Re}\lambda<\sigma$
+(\texttt{edge\_gauge\_a\_\allowbreak eigenmode\_check.py}, \texttt{EM-1}--\texttt{EM-5}).
+Shifting the contour to the right across the poles of $\Gamma(1-s)$ at $s=m$ ($m\ge 1$) shows that $G_\lambda(1+v)$ is $C^\infty$ up to
 $v=e^z\to 0^+$ with $G_\lambda(1+v)\sim\sum_{m=1}^\infty r_m v^m$, but its Taylor coefficients
 $r_m=(-1)^{m+1}\Gamma(2m+\lambda)\Gamma(2m+2)$ grow factorially ($r_0=0$), so
 $G_\lambda\notin\mathcal{H}^1(D(1,1))$.
@@ -1162,7 +1169,10 @@ generates nonzero $G$).  Define the $h$-energy
   + \|\partial_z(e^{-z/2}h_z)\|_{L^2_{1/4}([-\ln 2,\infty))}^2
   + \sum_{k=1}^\infty (k+\tfrac12)^4|d_k|^2
 \]
-for $h(1+v)=\sum_{k=1}^\infty d_k v^{k+1/2}$ on $D(1,1)$, so $\|e^{-z/2}h_z\|_{\mathcal{X}}^2\le\mathcal{E}_h$.
+for $h(1+v)=\sum_{k=1}^\infty d_k v^{k+1/2}$ on $D(1,1)$.  Since $e^{-z/2}h_z=\sum_{k\ge 1}(k+\tfrac12)d_k v^k$
+with $k^2(k+\tfrac12)^2\le(k+\tfrac12)^4$, and $\|\cdot\|_{\mathcal{X}}^2=20X_{\mathrm{far}}+Y_{\mathrm{far}}+20Z_{\mathrm{disk}}$
+carries the weights $(20,1,20)$, we have $\|e^{-z/2}h_z\|_{\mathcal{X}}^2\le 20\,\mathcal{E}_h$
+(the factor $20$ is absorbed by the free weight $\mu_h$ below).
 Because linear transport on $e^{-z/2}h_z$ has damping rate $\le -3$ on both $D(1,1)$ and $[-\ln 2,\infty)$,
 choosing $\mu_h>0$ sufficiently large (depending on $B(0)$) makes the augmented Lyapunov functional
 $\mathcal{E}_{\mathrm{tot}} := \mathcal{E} + \mu_h\mathcal{E}_h$ satisfy

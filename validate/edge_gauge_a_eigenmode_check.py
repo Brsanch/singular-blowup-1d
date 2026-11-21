@@ -6,19 +6,31 @@ docs/findings_session_2026_11_21_gauge_a_eigenmodes.md):
 
   For every lam with Re(lam) > -2*sigma, the function
 
-      G_lam(z) := (1 / 2 pi i) * int_{Re s = s0} e^{s z} X(s; lam) ds,   0 < s0 < 1,
+      G_lam(z) := (1 / 2 pi i) * int_{Re s = s0} e^{s z} X(s; lam) ds,
+                  max(0, -Re(lam)/2) < s0 < 1,
       X(s; lam) = Gamma(2s + lam) Gamma(2s + 2) Gamma(s) Gamma(1 - s),
 
   solves   lam * G = -2 dG/dz + (1/2) Qtilde_op G   on all of R, where
   Qtilde_op G (1+v) = (1/v) int_0^v ( H[g](1+u) - H[g](1) ) du,  g = v^{-1/2} G.
 
-  G_lam is in L^2_sigma(R) for every sigma in (0, 1/2), is smooth up to the edge with
-  G = O(v), tends to Gamma(lam) as z -> +inf, and has H[g](1) = -2 Gamma(1 + lam) != 0.
+  The lower limit on s0 keeps the contour to the right of the pole of Gamma(2s + lam)
+  at s = -lam/2 (s0 = sigma is admissible).  A contour to the left of that pole gives a
+  different function (it differs by the residue term A_lam e^{-lam z/2}).
+
+  G_lam is in L^2_sigma(R) whenever sigma > max(0, -Re(lam)/2), is smooth up to the edge
+  with G = O(v), and has H[g](1) = -2 Gamma(1 + lam) != 0.  Far field (z -> +inf):
+    Re(lam) > 0:                 G_lam -> Gamma(lam);
+    -2 sigma < Re(lam) <= 0,     G_lam = A_lam e^{-lam z/2} + Gamma(lam) + o(1),
+    lam != 0:                    A_lam = (1/2) Gamma(2-lam) Gamma(-lam/2) Gamma(1+lam/2).
   So the operator -2 d/dz + (1/2) Qtilde_op WITHOUT the domain condition Ghat(1/2) = 0
   has every such lam (including Re lam > 0) as an eigenvalue.  The paper's Theorem 1
   (kernel trivial on Re lam > -2 sigma) holds only on the domain WITH that condition.
 
-What this script checks (exit 0 iff EM-1..EM-4 all PASS; PASS = "finding reproduced"):
+  Correction 2026-11-21 (Codex finding, independently verified by Claude): the first
+  version of this text allowed any 0 < s0 < 1 and claimed G_lam -> Gamma(lam) for all
+  Re(lam) > -2 sigma.  Both are wrong for Re(lam) <= 0; EM-5 below tests lam = -1/4.
+
+What this script checks (exit 0 iff EM-1..EM-5 all PASS; PASS = "finding reproduced"):
 
   EM-1  Real-space eigen-identity, by quadrature of the Hilbert transform, with NO Mellin
         identity used on the right-hand side:
@@ -36,10 +48,18 @@ What this script checks (exit 0 iff EM-1..EM-4 all PASS; PASS = "finding reprodu
         matrix has no unstable eigenvalue, and marching G_1 with it makes H[g](1) decay
         like e^{-T}, where the continuum mode grows like e^{+T}.  The grid stops at
         z_min, so the edge term is absent from the discretization.
+  EM-5  Negative lam (lam = -1/4, pole at s = 1/8): admissible contours agree; a contour
+        left of the pole differs by exactly A_lam e^{z/8}; the far field is
+        A_lam e^{z/8} + Gamma(lam) + o(1), NOT the constant Gamma(lam); the real-space
+        eigen-identity and H[g](1) = -2 Gamma(1+lam) still hold.
+
+EM-1..EM-3 use lam = 0.3, 1, 3 (positive only); EM-5 is the only negative-lam test, and
+only real lam is tested.
 
 Not claimed: anything about the nonlinear PDE, the frozen-exponent operator on its
-constrained domain, or Conjecture 2.4.  Review form: single reviewer (Claude), not
-independently audited.
+constrained domain, or Conjecture 2.4.  Review form: EM-1..EM-4 single reviewer (Claude);
+the contour/far-field correction and EM-5 are an independent Claude verification of
+Codex findings.  Nothing here machine-certifies the PDE proof.
 """
 from __future__ import annotations
 
@@ -85,14 +105,20 @@ def inv_mellin(x, lam, s0):
     return out
 
 
+def far_contour(lam):
+    """Far-field contour for real lam: small for conditioning, but right of the pole at s = -lam/2."""
+    return max(0.1, -0.5 * lam + 0.15)
+
+
 def g_lam(x, lam):
-    """Contour near Re s = 1 for the edge side (x < 0), near 0 for the far field: best conditioning."""
+    """Contour near Re s = 1 for the edge side (x < 0), near the left end of the admissible
+    strip max(0, -lam/2) < Re s < 1 for the far field: best conditioning."""
     out = np.empty((3, len(x)))
     m = x < 0
     if m.any():
         out[:, m] = inv_mellin(x[m], lam, 0.9)
     if (~m).any():
-        out[:, ~m] = inv_mellin(x[~m], lam, 0.1)
+        out[:, ~m] = inv_mellin(x[~m], lam, far_contour(lam))
     return out
 
 
@@ -107,7 +133,7 @@ def half_D(v, Gs):
 
 
 def main() -> int:
-    print("Unconstrained Gauge-(a) eigenmode probe (EM-1..EM-4)")
+    print("Unconstrained Gauge-(a) eigenmode probe (EM-1..EM-5)")
     lams = (0.3, 1.0, 3.0)
     worst_rel, detail1 = 0.0, []
     ok2, detail2 = True, []
@@ -184,10 +210,47 @@ def main() -> int:
                + ", ".join(f"{ratios[T]:.3f}" for T in ratios)
                + f" vs e^-T: {math.exp(-0.5):.3f}, {math.exp(-1):.3f}, {math.exp(-2):.3f}; continuum e^+T: {math.exp(0.5):.2f}, {math.exp(1):.2f}, {math.exp(2):.2f}")
 
+    # ---- EM-5: negative lam: admissible contour and far-field asymptotics ----
+    lam = -0.25
+    s_pole = -0.5 * lam                                                   # 1/8
+    A = 0.5 * gamma(2 - lam) * gamma(-0.5 * lam) * gamma(1 + 0.5 * lam)   # residue of X at s = -lam/2
+    zs = np.array([-6.0, 0.0, 4.0, 16.0])
+    g_a = inv_mellin(zs, lam, 0.25)[0]
+    g_b = inv_mellin(zs, lam, 0.9)[0]
+    g_left = inv_mellin(zs, lam, 0.1)[0]                                  # 0.1 < 1/8: left of the pole
+    contours_agree = float(np.max(np.abs(g_a - g_b) / np.abs(g_a))) < 1e-8
+    jump_is_residue = float(np.max(np.abs((g_a - g_left) - A * np.exp(s_pole * zs)) / (A * np.exp(s_pole * zs)))) < 1e-8
+    zf = np.array([16.0, 24.0, 32.0])
+    gf = inv_mellin(zf, lam, 0.25)[0]
+    rem = gf - A * np.exp(s_pole * zf) - gamma(lam)                       # should be o(1)
+    s_next = -0.5 * (1 + lam)                                             # next pole of Gamma(2s + lam)
+    c_next = -0.5 * gamma(2 * s_next + 2) * gamma(s_next) * gamma(1 - s_next)
+    far_ok = (abs(rem[0]) > abs(rem[1]) > abs(rem[2])
+              and abs(rem[2]) < 1e-4
+              and abs(rem[1] - c_next * math.exp(s_next * zf[1])) < 1e-2 * abs(rem[1])
+              and abs(gf[2] - gamma(lam)) > 100.0)                        # the constant-limit claim fails
+    Gn, vG1n, v2G2n = g_lam(X_GRID, lam)
+    Gs, G1s, G2s = CubicSpline(X_GRID, Gn), CubicSpline(X_GRID, vG1n), CubicSpline(X_GRID, v2G2n)
+    rel5 = 0.0
+    for v in (0.05, 0.3, 1.0, 4.0, 30.0):
+        xv = math.log(v)
+        lhs = lam * float(Gs(xv)) + (lam + 4) * float(G1s(xv)) + 2 * float(G2s(xv))
+        rel5 = max(rel5, abs(lhs - half_D(v, Gs)) / abs(lhs))
+    x_max = X_GRID[-1]
+    a_tail = -(1 / math.pi) * A * math.exp(-0.5 * (1 + lam) * x_max) * 2 / (1 + lam)   # leading tail beyond the grid
+    a_num = -(1 / math.pi) * quad(lambda xx: math.exp(-0.5 * xx) * float(Gs(xx)), X_GRID[0], x_max, limit=800)[0] + a_tail
+    a_exact = -2 * gamma(1 + lam)
+    a_ok = abs(a_num - a_exact) < 1e-6 * abs(a_exact)
+    report("EM-5 lam=-1/4: contour must satisfy s0 > -lam/2; far field is A e^(-lam z/2) + Gamma(lam) + o(1), not Gamma(lam)",
+           contours_agree and jump_is_residue and far_ok and rel5 < 1e-6 and a_ok,
+           f"A={A:.10f}; G(16)={gf[0]:.10f}, G(32)={gf[2]:.6f} vs Gamma(lam)={gamma(lam):.6f}; "
+           f"remainder at z=16,24,32: {rem[0]:.2e}, {rem[1]:.2e}, {rem[2]:.2e}; "
+           f"eigen-identity rel. residual {rel5:.1e}; H[g](1)={a_num:.7f} (-2Gamma(1+lam)={a_exact:.7f})")
+
     if FAILURES:
         print(f"PROBE FAIL: {FAILURES}")
         return 1
-    print("PROBE PASS: unconstrained Gauge-(a) eigenmodes reproduced (EM-1..EM-4)")
+    print("PROBE PASS: unconstrained Gauge-(a) eigenmodes reproduced (EM-1..EM-5)")
     return 0
 
 
