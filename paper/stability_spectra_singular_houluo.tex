@@ -1017,7 +1017,7 @@ Split $G=G_-+G_+$ with $G_-:=G\mathbf{1}_{(-\infty,0]}$ and $G_+:=G\mathbf{1}_{[
   note that when $0<\operatorname{Re}\lambda+2\sigma\le 1$, $G_+$ need not belong to $L^2_{\sigma-1/2}([0,\infty))$ a priori), while
   on $(-\infty,0]$, $G_-\in L^2_\sigma((-\infty,0])\subset L^2_{\sigma-1/2}((-\infty,0])$ and
   $(2\partial_z+\lambda)G_-\in L^2_{\sigma-1/2}((-\infty,0])$ give $e^{-(\sigma-1/2)z}G_-\in H^1((-\infty,0])\subset C_0((-\infty,0])$
-  (so $\lim_{z\to-\infty}e^{-sz}G(z)=0$ for all $\operatorname{Re}s\in[\sigma-\tfrac12,\sigma]$).
+  (so $\lim_{z\to-\infty}e^{-sz}G(z)=0$ on the left boundary line $\operatorname{Re}s=\sigma-\tfrac12$).
   For $z\ge 0$ and $\sigma'\in[\sigma-\tfrac12,\sigma]$, $-2\sigma' z\le -2(\sigma-\tfrac12)z$ (Lean: \texttt{left\_strip\_far\_exponent\_le}),
   so $(2\partial_z+\lambda)G_+\in L^2_{\sigma'}([0,\infty))$ across the entire left strip, and
   $\mathcal{H}_+(s):=\int_0^\infty e^{-sz}(2\partial_z+\lambda)G(z)\,dz$ is holomorphic on $\operatorname{Re}s>\sigma-\tfrac12$
@@ -1032,8 +1032,8 @@ Split $G=G_-+G_+$ with $G_-:=G\mathbf{1}_{(-\infty,0]}$ and $G_+:=G\mathbf{1}_{[
   defines the meromorphic continuation of $\widehat{G}$ from $\operatorname{Re}s=\sigma$ across the strip
   $\sigma-\tfrac12\le\operatorname{Re}s\le\sigma$ with at most a simple pole at $s_*=-\lambda/2$ ($\operatorname{Re}s_*<\sigma$),
   without assuming $G_+\in L^2_{\sigma-1/2}([0,\infty))$.
-  Moreover, on $(-\infty,0]$, since $e^{-(\sigma-1/2)z}G_-\in H^1((-\infty,0])$ has $\lim_{z\to-\infty}e^{-sz}G(z)=0$ for all
-  $\operatorname{Re}s\in[\sigma-\tfrac12,\sigma]$, integration by parts holds on the left boundary line $\operatorname{Re}s=\sigma-\tfrac12$ as well,
+  Moreover, on $(-\infty,0]$, since $e^{-(\sigma-1/2)z}G_-\in H^1((-\infty,0])$ has $\lim_{z\to-\infty}e^{-sz}G(z)=0$ on
+  $\operatorname{Re}s=\sigma-\tfrac12$, integration by parts holds on the left boundary line $\operatorname{Re}s=\sigma-\tfrac12$ as well,
   giving $(2s+\lambda)\mathcal{G}_-(s)=-2G(0)+\int_{-\infty}^0 e^{-sz}(2\partial_z+\lambda)G(z)\,dz$; adding
   $2G(0)+\mathcal{H}_+(s)$ cancels $\pm 2G(0)$ identically on $\operatorname{Re}s=\sigma-\tfrac12$, so
   $(2s+\lambda)\widehat{G}(s)=\int_{\mathbb{R}}e^{-sz}e^{-z/2}(T_c G)(z)\,dz = c(s+\tfrac12)\widehat{G}(s+\tfrac12)$
