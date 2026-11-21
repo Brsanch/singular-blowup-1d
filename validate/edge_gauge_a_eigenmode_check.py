@@ -17,8 +17,9 @@ docs/findings_session_2026_11_21_gauge_a_eigenmodes.md):
   at s = -lam/2 (s0 = sigma is admissible).  A contour to the left of that pole gives a
   different function (it differs by the residue term A_lam e^{-lam z/2}).
 
-  G_lam is in L^2_sigma(R) whenever sigma > max(0, -Re(lam)/2), is smooth up to the edge
-  with G = O(v), and has H[g](1) = -2 Gamma(1 + lam) != 0.  Far field (z -> +inf):
+  G_lam is in L^2_sigma(R) whenever max(0, -Re(lam)/2) < sigma < 1 (the upper bound is the
+  edge: G ~ r_1 v gives int_0 v^{1 - 2 sigma} dv), is smooth up to the edge with G = O(v),
+  and has H[g](1) = -2 Gamma(1 + lam) != 0.  Far field (z -> +inf):
     Re(lam) > 0:                 G_lam -> Gamma(lam);
     -2 sigma < Re(lam) <= 0,     G_lam = A_lam e^{-lam z/2} + Gamma(lam) + o(1),
     lam != 0:                    A_lam = (1/2) Gamma(2-lam) Gamma(-lam/2) Gamma(1+lam/2).

@@ -67,15 +67,17 @@ and discrete Hilbert coercivity on $\mathcal{H}^1(D(1,1))$, a pure direct-energy
 Lyapunov functional satisfies $\dot{\mathcal{E}}\le -\frac{1}{8}\mathcal{E}+C_{\mathrm{nl}}\mathcal{E}^{3/2}$,
 yielding global existence with zero analyticity-radius shrinkage and exponential decay
 $\mathcal{E}(\tau)\le\mathcal{E}(0)e^{-\tau/16}$ and $(c_l,c_\omega,B)\to(2,-1,B_\infty)$
-(establishing Conjecture~2.4 of arXiv:2604.01868 within the edge-analytic co-moving class
-$\mathcal{X}$).  Remarkably, edge analyticity is essential in Gauge~(a): without the domain
+(establishing the asymptotic stability asserted in Conjecture~2.4 of arXiv:2604.01868 for
+perturbations in the edge-analytic co-moving class $\mathcal{X}$, which does not contain the
+smooth degenerate initial data that the conjecture itself concerns).  Remarkably, edge analyticity is essential in Gauge~(a): without the domain
 constraint $\widehat{G}(\tfrac12)=0$, the unconstrained operator $-2\partial_z+\tfrac12\widetilde{Q}_{\mathrm{op}}$
 admits explicit $C^\infty$ eigenmodes $G_\lambda=\mathcal{M}^{-1}[X(\cdot;\lambda)]\in L^2_\sigma(\mathbb{R})$
 for every $\operatorname{Re}\lambda>-2\sigma$ whose edge Taylor series
 $\sum_{m\ge 1}(-1)^{m+1}\Gamma(2m+\lambda)\Gamma(2m+2)v^m$ diverges factorially ($r_0=0$), so
-$G_\lambda\notin\mathcal{H}^1(D(1,1))$.  Finite-order $C^k([1,2])$ stability therefore requires
-either edge analyticity or a modified gauge, and the global transition from smooth degenerate
-initial data on $\mathbb{R}$ to the singular profile remains open.
+$G_\lambda\notin\mathcal{H}^1(D(1,1))$.  The Gauge-(a) linearization therefore has exponentially
+growing solutions $e^{\lambda\tau}G_\lambda$ in every finite-order $C^k([1,2])$ edge class, so a
+finite-regularity result would need a modified gauge or constraint; the global transition from smooth
+degenerate initial data on $\mathbb{R}$ to the singular profile remains open.
 The algebraic cancellations, exponent/symbol inequalities, finite telescoping bounds, rational
 arithmetic combinations, and the real-analytic Riccati ODE trapping theorem are machine-checked
 in Lean~4 (7~modules, \texttt{0~sorry}, \texttt{0~axioms}), while all continuous PDE, operator-norm,
@@ -146,8 +148,8 @@ Following eq.~(2.4) of~\cite{chen2026houluo}:
 U_X=H(\Omega),\ U(0)=0.
 \end{aligned}
 \end{equation}
-The singular steady state (Thm.~2.3, certified by
-\texttt{verify\_singular\_steady.py}):
+The singular steady state (Thm.~2.3; the gate \texttt{verify\_singular\_steady.py}
+re-checks it with the analytic $\bar U$):
 \begin{align*}
 \bar\Omega(X)&=1_{X>1}(X-1)^{-1/2},&
 \bar\Theta&=\tfrac\pi2\,1_{X>1},&
@@ -300,7 +302,7 @@ Smooth Hou--Luo stability \cite{chen2021hl,huang2023exact} &
   Smooth asymptotically self-similar profiles &
   Different profile class (not $(X-1)^{-1/2}$). \\
 This paper &
-  Stability spectra + linear W1--W3 gap + small-data nonlinear bootstrap in $\mathcal{X}$ &
+  Stability spectra + linear W1--W2 gap + small-data nonlinear bootstrap in $\mathcal{X}$ &
   Local nonlinear stability in singular-edge class $\mathcal{X}$. \\
 \bottomrule
 \end{tabular}
@@ -318,7 +320,8 @@ stability proofs~\cite{chen2021hl,huang2023exact} treat smooth profiles.
 Complete self-contained proofs of Walls~W1 and~W2 appear in Appendix~\ref{app:w123}.
 While pure exponential weighted-energy and field-of-values methods fail for $M_{GG}$ on
 all of $\mathbb{R}$ because the nonlocal factor $e^{-z/2}$ is unbounded as $z\to-\infty$,
-the exact Mellin--Laplace ladder structure of $M_{GG}=-2\partial_z+\tfrac12\widetilde{Q}_{\mathrm{op}}$
+the exact Mellin--Laplace ladder structure of $M_{GG}=-2\partial_z+\tfrac12 Q_{\mathrm{op}}$
+(which coincides with $-2\partial_z+\tfrac12\widetilde{Q}_{\mathrm{op}}$ on the constrained domain $\widehat{G}(\tfrac12)=0$)
 yields an explicit slit-plane resolvent and a uniform vertical-line resolvent bound on
 $L^2_\sigma(\mathbb{R})$.
 
@@ -549,7 +552,7 @@ Section~\ref{sec:nonlin} remain numerical.
 \paragraph{Energy / field-of-values obstructions on bare $L^2_\sigma(\mathbb{R})$.}
 \begin{itemize}
 \item \textbf{Pure weighted $L^2_\sigma(\mathbb{R})$ energy fails at the edge.}
-  Because $\tfrac12\widetilde{Q}_{\mathrm{op}}G=e^{-z/2}T_c G$ maps $L^2_\sigma$ into
+  Because $\tfrac12 Q_{\mathrm{op}}G=e^{-z/2}T_c G$ maps $L^2_\sigma$ into
   $L^2_{\sigma-1/2}$, no pure exponential weight closes a dissipative energy estimate on all of
   $\mathbb{R}$ without field-of-values divergence (\texttt{edge\_layer\_obstruction.py},
   \texttt{cap\_scaffold.py})~\cite{findings_edge_layer,findings_cap}.
@@ -565,9 +568,11 @@ $(X-1)^{-1/2}\mathbf{1}_{X>1}$ singular edge and have edge-analytic $G\in\mathca
 (cancelling the fractional-exponent $\frac{1}{2}$-loss of $\widetilde{Q}_{\mathrm{op}}$ on
 $L^2_{\sigma_-}((-\infty,0])$).  Because the unconstrained Gauge-(a) linearization admits the factorially divergent $C^\infty$
 eigenmodes $G_\lambda=O(v)$ of Remark~\ref{rem:w3_scope} for every $\operatorname{Re}\lambda>0$,
-edge analyticity $\mathcal{H}^1(D(1,1))$ cannot be lowered to finite-order $C^k([1,2])$ within
-unconstrained Gauge~(a); a finite-regularity result would require an alternative gauge or
-codimension-1 condition (such as fixing $U_X(0)$ as in~\cite[eq.~(3.2)]{chen2026houluo}).
+the linearization has exponentially growing solutions $e^{\lambda\tau}G_\lambda$ in every finite-order
+$C^k([1,2])$ edge class within unconstrained Gauge~(a), so edge analyticity $\mathcal{H}^1(D(1,1))$
+cannot simply be lowered there; a finite-regularity result would require an alternative gauge or
+codimension-1 condition (such as the normalization $U_X(0,\tau)\equiv U_X(0,0)$ that leads
+to~\cite[eq.~(3.2)]{chen2026houluo}).
 How smooth degenerate initial data on $\mathbb{R}$ transition to the singular
 $(X-1)^{-1/2}\mathbf{1}_{X>1}$ support boundary, as well as the 2D Boussinesq analogue and
 gCLM $a$-family, are left for future work.
@@ -836,10 +841,14 @@ T_{\mathrm{diag}}(\lambda) = M_{u(\cdot;\lambda)}\circ \widetilde{T}_{\mathrm{di
 where $M_u, M_{u^{-1}}$ are unitary on $L^2(\mathbb{R})$ and $\|M_{(\lambda+2s')^{-1}}\|_{L^2\to L^2}\le \delta^{-1}$.
 Inside $\widetilde{T}_{\mathrm{diag}}(\lambda)$, only the real modulus $|X|$ enters.  From~\eqref{eq:app_X},
 $\frac{d}{d\tau}\log|X(\sigma+i\tau;\lambda)| = -\operatorname{Im}\bigl(2\psi(2s+\lambda)+2\psi(2s+2)+\psi(s)-\psi(1-s)\bigr)$.
-Since $|\operatorname{Im}\psi(x+iy)|\le \frac{\pi}{2}+\frac{1}{x}$ for all $x>0, y\in\mathbb{R}$
-(using $\operatorname{Im}\psi(x+iy)=\sum_{n=0}^\infty\frac{y}{(x+n)^2+y^2}$), we obtain
+Since $|\operatorname{Im}\psi(x+iy)|\le \frac{\pi}{2}+\frac{1}{2x}$ for all $x>0, y\in\mathbb{R}$
+(in $\operatorname{Im}\psi(x+iy)=\sum_{n=0}^\infty\frac{y}{(x+n)^2+y^2}$ the $n=0$ term is at most $\frac{1}{2x}$ and the
+remaining sum is at most $\int_0^\infty\frac{|y|\,dt}{(x+t)^2+y^2}\le\frac{\pi}{2}$), applying this with
+$x=\delta,\;2\sigma+2,\;\sigma,\;1-\sigma$ gives
 \[
-\Bigl|\frac{d}{d\tau}\log|X(\sigma+i\tau;\lambda)|\Bigr| \le 3\pi + \frac{2}{\delta} + \frac{1}{\sigma} + \frac{1}{1-\sigma} =: L(\sigma,\delta),
+\Bigl|\frac{d}{d\tau}\log|X(\sigma+i\tau;\lambda)|\Bigr|
+\le 3\pi + \frac{1}{\delta} + \frac{1}{2\sigma+2} + \frac{1}{2\sigma} + \frac{1}{2(1-\sigma)}
+\le 3\pi + \frac{2}{\delta} + \frac{1}{\sigma} + \frac{1}{1-\sigma} =: L(\sigma,\delta),
 \]
 uniformly for all $(\tau,\omega)\in\mathbb{R}^2$.
 Writing $\frac{|X(\tau)|}{|X(\tau')|} = 1 + \bigl(\frac{|X(\tau)|}{|X(\tau')|}-1\bigr)$ on $|\tau-\tau'|<1$:
@@ -861,11 +870,13 @@ $\|T_{\mathrm{defect}}((-2\sigma+\delta)+i\omega)\|_{L^2\to L^2}\le C_{\mathrm{d
 Since $T_{\mathrm{defect}}(\lambda)$ has rank one,
 $\|T_{\mathrm{defect}}(\lambda)\|_{L^2\to L^2}=\|X(\sigma+i\cdot;\lambda)\|_{L^2}\|K_{\mathrm{slit}}(\cdot;\lambda)\|_{L^2}$,
 with $K_{\mathrm{slit}}$ given by~\eqref{eq:app_Kslit} and $|\kappa_1(\tau')|\le C_\sigma e^{-4\pi|\tau'|}$.
-By the triangle-inequality margin (Lean: \texttt{slit\_defect\_\allowbreak rank\_one\_margin}),
+The exponential decay exponents of $|X(\sigma+i\tau;\lambda)|$ and $|K_{\mathrm{slit}}(\tau';\lambda)|$ are
+$\pi|\tau+\tfrac{\omega}{2}|+2\pi|\tau|$ and $2\pi|\tau'|-\pi|\tau'+\tfrac{\omega}{2}|$ respectively, and
+by the triangle-inequality margin (Lean: \texttt{slit\_defect\_\allowbreak rank\_one\_margin}),
 \begin{align*}
 \pi|\tau+\tfrac{\omega}{2}| + 2\pi|\tau| &\ge \tfrac{\pi}{2}|\omega| + \pi|\tau|,
   & \|X(\sigma+i\cdot;\lambda)\|_{L^2} &\le C_1(\sigma,\delta)(1+|\omega|)^{\delta-1/2}e^{-\pi|\omega|/2}, \\
-\pi|\tau'+\tfrac{\omega}{2}| - 2\pi|\tau'| &\ge -\tfrac{\pi}{2}|\omega| - \pi|\tau'|,
+2\pi|\tau'| - \pi|\tau'+\tfrac{\omega}{2}| &\ge \pi|\tau'| - \tfrac{\pi}{2}|\omega|,
   & \|K_{\mathrm{slit}}(\cdot;\lambda)\|_{L^2} &\le C_2(\sigma,\delta)(1+|\omega|)^{-(\delta+1/2)}e^{+\pi|\omega|/2}.
 \end{align*}
 Multiplying the two bounds cancels $e^{\mp\pi|\omega|/2}$ identically and sums the polynomial exponents to
@@ -963,7 +974,7 @@ multiplies the Mellin transform by $(s+1)^{-1}$, and $\frac{1}{\pi}\mathrm{p.v.}
 \]
 (2) On $\operatorname{Re}s=\tfrac14$, $w=s+\tfrac12=\tfrac34+i\tau$ satisfies
 $|\tan(\pi(\tfrac34+i\tau))|\equiv 1$ and $|2(\tfrac34+i\tau)+1|=\sqrt{\tfrac{25}{4}+4\tau^2}\ge\tfrac52$,
-so $|c(\tfrac34+i\tau)|\le\tfrac25$ (Lean: \texttt{symbol\_norm\_three\_quarters\_sq\_le}).
+so $|c(\tfrac34+i\tau)|\le\tfrac25$ (Lean: \texttt{symbol\_norm\_three\_quarter\_sq\_le}).
 Plancherel's theorem on $\operatorname{Re}s=\tfrac14$ and $\operatorname{Re}w=\tfrac34$ immediately yields~\eqref{eq:qtilde_plancherel}.
 \end{proof}
 
@@ -1302,22 +1313,25 @@ arXiv:2604.01868, 2026.
 
 \bibitem{huang2026gclm}
 D.~Huang, J.~Tong, X.~Wang,
-\textit{Self-similar finite-time blowups of the generalized Constantin--Lax--Majda
-model}, arXiv:2603.25104, 2026.
+\textit{Self-similar finite-time blowups with singular profiles of the generalized
+Constantin--Lax--Majda model: theoretical and numerical investigations},
+arXiv:2603.25104, 2026.
 
 \bibitem{chen2026euler}
 J.~Chen,
 \textit{Asymptotically self-similar blowup for 3D incompressible Euler with
-$C^{1,1/3-}$ velocity}, arXiv:2605.15130, 2026.
+$C^{1,1/3-}$ velocity II: 3D profiles, blowup, and limiting behavior},
+arXiv:2605.15130, 2026.
 
 \bibitem{chen2021hl}
-J.~Chen, T.Y.~Hou,
+J.~Chen, T.Y.~Hou, D.~Huang,
 \textit{Asymptotically self-similar blowup of the Hou--Luo model for the 3D Euler
 equations}, arXiv:2106.05422, 2021.
 
 \bibitem{huang2023exact}
-D.~Huang, J.~Tong, X.~Wang,
-\textit{Exact self-similar finite-time blowup of the Hou--Luo model}, arXiv:2308.01528, 2023.
+D.~Huang, X.~Qin, X.~Wang, D.~Wei,
+\textit{Exact self-similar finite-time blowup of the Hou--Luo model with smooth profiles},
+arXiv:2308.01528, 2023.
 
 \bibitem{engelnagel2000}
 K.-J.~Engel, R.~Nagel,
