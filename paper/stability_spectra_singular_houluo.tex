@@ -1257,8 +1257,12 @@ $\|\frac{1}{m+k-1}\|_{\ell^2\to\ell^2}=\pi$ gives
 whence~\eqref{eq:Q_linf} yields
 $\|p[W^{(n-1)}]\|_{L^\infty}+\|\widetilde{Q}_{\mathrm{op}}W^{(n-1)}\|_{L^\infty}\le C\|W^{(n-1)}\|_{\mathcal{W}}$, 
 and by Lemma~\ref{lem:disk_coercive}, $p[W^{(n-1)}]$ is bounded in $\ell^1$ directly by $\|W^{(n-1)}\|_{\mathcal{W}}$:
-$\sum_{j\ge 1}|q_j^{\mathrm{disk}}[W^{(n-1)}]|\le\frac{1}{\pi}\bigl(\sum_{j\ge 1}(j+1)^{-2}\bigr)^{1/2}\|\mathcal{H}_{1/2}w^{(n-1)}\|_{\ell^2}\le\|w^{(n-1)}\|_{\mathcal{H}^0}$
-and $\sum_{j\ge 1}|q_j^{\mathrm{far}}[W^{(n-1)}]|\le\bigl(\sum_{j\ge 1}\frac{1}{\pi(j+1)\sqrt{2j+1/2}}\bigr)\|W^{(n-1)}\|_{L^2_{1/4}}\le C\|W^{(n-1)}\|_{\mathcal{W}}$.
+\begin{align*}
+\sum_{j\ge 1}\bigl|q_j^{\mathrm{disk}}[W^{(n-1)}]\bigr|
+  &\le \frac{1}{\pi}\Bigl(\sum_{j\ge 1}(j+1)^{-2}\Bigr)^{1/2}\|\mathcal{H}_{1/2}w^{(n-1)}\|_{\ell^2} \le \|w^{(n-1)}\|_{\mathcal{H}^0}, \\
+\sum_{j\ge 1}\bigl|q_j^{\mathrm{far}}[W^{(n-1)}]\bigr|
+  &\le \sum_{j\ge 1}\frac{\|W^{(n-1)}\|_{L^2_{1/4}}}{\pi(j+1)\sqrt{2j+1/2}} \le C\|W^{(n-1)}\|_{\mathcal{W}}.
+\end{align*}
 By Young's inequality $\|p[W^{(n-1)}]*(k c_k^{(n)})\|_{\ell^2}\le\|p[W^{(n-1)}]\|_{\ell^1}\sqrt{Z_{\mathrm{disk}}(G^{(n)})}$, while
 $\|\partial_z G^{(n)}\|_{L^2_{1/4}(\mathbb{R})}$ and $\|G^{(n)}\|_{\mathcal{X}}$ are bounded by $C\sqrt{R_0}$.
 Hence
