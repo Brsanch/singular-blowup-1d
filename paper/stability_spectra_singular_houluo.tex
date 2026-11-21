@@ -14,56 +14,55 @@
 \newtheorem{lem}{Lemma}[section]
 \newtheorem{prop}{Proposition}[section]
 
-\title{Stability spectra of the singular self-similar profile\\
-of the 1D Hou--Luo model}
+\title{Stability Spectra and Nonlinear Co-Moving Bootstrap\\
+for the Singular Self-Similar Profile of the 1D Hou--Luo Model}
 \author{
   Bryan Sanchez\\
-  \texttt{singular-blowup-1d} (companion numerics)\\
-  \small Draft for arXiv submission --- updated 2026-11-20 (linear W1--W3 \& nonlinear co-moving bootstrap closed)
+  \small Companion code and Lean~4 backbone: \url{https://github.com/Brsanch/singular-blowup-1d}
 }
-\date{}
+\date{November 2026}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-We report the first \textbf{stability spectra}---linear and nonlinear, numerical---for the
-\textbf{singular unbounded} self-similar blowup profile of the 1D Hou--Luo model
+We investigate the linear and nonlinear stability of the \textbf{singular unbounded}
+self-similar blowup profile of the 1D Hou--Luo model
 \[
 \omega_t + u\,\omega_x = \theta_x,\qquad
 \theta_t + u\,\theta_x = 0,\qquad
 u_x = H[\omega],
 \]
-constructed numerically by Chen--De~Huang--Li (arXiv:2604.01868, Thm.~2.3):
-$\bar\Omega(X)=1_{X>1}(X-1)^{-1/2}$, $\bar\Theta=(\pi/2)\,1_{X>1}$, with exponents
-$(c_l,c_\omega)=(2,-1)$.  Those existence papers provide \textbf{no} stability analysis.
+established by Chen--Huang--Li (arXiv:2604.01868, Thm.~2.3):
+$\bar\Omega(X)=1_{X>1}(X-1)^{-1/2}$, $\bar\Theta=(\pi/2)\,1_{X>1}$, with scaling exponents
+$(c_l,c_\omega)=(2,-1)$.
 
-In the edge-resolving coordinate $z=\ln(Y-1)$ and the convective weighted space
-$L^2(e^{-2\gamma z}\,dz)$ (modulo the symmetry subspace spanned by time-translation
-$\xi$ and scaling modes $\mu,\nu$), we find:
-\begin{itemize}\setlength\itemsep{0pt}
-\item no eigenvalue of the frozen linearization with $\operatorname{Re}\lambda>0$
-      (edge-resolved \emph{and} equispaced desingularized builds both give
-      $\#\{\operatorname{Re}>0\}=0$; inflow/Robin edge condition essential);
-\item a convective spectral gap of size $2\gamma$ measured by semigroup decay;
-\item no transient growth for physical perturbations in the edge-conditioned energy norm;
-\item finite-amplitude frozen-base decay to amplitude $A=4$, and fully self-consistent
-      co-evolving relaxation of a perturbed profile back to
-      $(\bar\Omega,c_l=2,c_\omega=-1)$.
-\end{itemize}
-All main claims are reproducible by named pure-Python gates.
-Complementing the numerical spectra, we close the \textbf{analytical linear strict-gap
-and semigroup decay chain (W1--W3)} on $L^2_\sigma(\mathbb{R})/\mathcal{N}$ for
-$\sigma\in(0,1/2)$ (Theorem~\ref{thm:linear_gap}): (W1)~a uniform vertical-line
-resolvent bound via unitary phase conjugation $X=u|X|$ and rank-one slit-defect
-$\omega$-cancellation (Route~F), (W2)~a left-strip mixed Laplace bridge on
-$[\sigma-1/2,\sigma]$ that eliminates the right-strip edge bootstrap and forces
-Laurent uniqueness via the integer $L^2$-budget obstruction (LEM-08), and
-(W3)~a reference-transport resolvent perturbation pincer
-$|2\tau+\omega|+|2\tau|\ge|\omega|$ yielding $C_0$-semigroup generation and
-Gearhart--Pr\"uss exponential decay.  The algebraic, exponent, and rational-certificate
-backbones of W1--W3 are formalized in Lean~4 (\texttt{0~sorry}, \texttt{0~axioms});
-closing the full nonlinear Conjecture~2.4 reduces to the co-moving nonlinear Duhamel leg.
+First, in the edge-resolving coordinate $z=\ln(Y-1)$ and convective weighted space
+$L^2(e^{-2\gamma z}\,dz)$ modulo the symmetry subspace $\mathcal{N}=\mathrm{span}\{\xi,\mu,\nu\}$,
+we compute the first numerical stability spectra (Numerical Theorem~\ref{numthm:main}):
+$\#\{\operatorname{Re}\lambda>0\}=0$ across two independent discretizations, a convective
+spectral gap of size $2\gamma$, zero physical transient growth in the edge-conditioned energy norm,
+finite-amplitude decay up to $A=4$, and self-consistent co-evolving relaxation back to
+$(\bar\Omega,c_l=2,c_\omega=-1)$.
+
+Second, we prove the \textbf{linear strict-gap and semigroup decay chain (W1--W3)} on
+$L^2_\sigma(\mathbb{R})/\mathcal{N}$ for every $\sigma\in(0,1/2)$ (Theorem~\ref{thm:linear_gap},
+Appendix~\ref{app:w123}): (W1)~a uniform vertical-line resolvent bound via four-quadrant
+Stirling--Schur decay, unitary phase conjugation $X=u|X|$, and rank-one slit-defect
+$\omega$-cancellation; (W2)~point-spectrum uniqueness via a left-strip mixed Laplace bridge on
+$[\sigma-1/2,\sigma]$ and the integer Laurent obstruction (LEM-08); and (W3)~a reference-transport
+resolvent perturbation pincer yielding $C_0$-semigroup generation and Gearhart--Pr\"uss decay.
+
+Third, under the exact edge-stagnation gauge (\emph{Gauge~(a)}), we close a \textbf{small-data
+nonlinear co-moving bootstrap} in the hybrid edge-analytic space
+$\mathcal{X}=\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$ (Theorem~\ref{thm:nonlinear_bootstrap},
+Appendices~\ref{app:nonlin_est}--\ref{app:lwp}), proving Conjecture~2.4 of arXiv:2604.01868 in
+$\mathcal{X}$ with zero analyticity-radius shrinkage, global existence, and exponential decay
+$\mathcal{E}(\tau)\le\mathcal{E}(0)e^{-\tau/4}$ and $(c_l,c_\omega,B)\to(2,-1,B_\infty)$.
+All algebraic cancellations, dual-strip rational symbol and series bounds, discrete Hilbert
+identities, 3-block Lyapunov coercivity, and the real-analytic Riccati trapping theorem are
+machine-checked in Lean~4 (7~modules, \texttt{0~sorry}, \texttt{0~axioms}), alongside reproducible
+pure-Python validation gates.
 \end{abstract}
 
 \tableofcontents
@@ -101,8 +100,13 @@ $L^2(dY)$ decay (which is marginal by convection).
 
 \begin{conjecture}[Conjecture 2.4 of arXiv:2604.01868, convective form]
 The singular profile is asymptotically stable in $L^2(e^{-2\gamma z}\,dz)$ modulo
-symmetries, for some $\gamma\in(0,1/2)$.  Numerical Theorem~\ref{numthm:main} is
-evidence for this conjecture; a rigorous proof is open.
+symmetries, for some $\gamma\in(0,1/2)$.  Numerical Theorem~\ref{numthm:main} provides
+numerical evidence across linear and large-amplitude ($A\le 4$) regimes;
+Theorem~\ref{thm:linear_gap} proves the linear strict-gap semigroup decay for all
+$\sigma\in(0,1/2)$, and Theorem~\ref{thm:nonlinear_bootstrap} proves the small-data
+nonlinear conjecture in the edge-analytic class
+$\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$ (lowering the edge regularity
+to finite-order $C^k([1,2])$ remains open).
 \end{conjecture}
 
 %--------------------------------------------------------------------------
@@ -255,25 +259,25 @@ $\max\operatorname{Re}\approx 0$~\cite{findings_coupled}.
 \centering
 \caption{Landscape relative to this paper.}
 \label{tab:related}
-\begin{tabular}{@{}llp{6.2cm}@{}}
+\begin{tabular}{@{}p{3.6cm}p{5.2cm}p{5.4cm}@{}}
 \toprule
 Reference & Contribution & Relation to this work \\
 \midrule
 arXiv:2604.01868 \cite{chen2026houluo} &
-  Numerical singular Hou--Luo + 2D Boussinesq profiles &
-  \textbf{Base object.} No stability spectra. \\
+  Singular Hou--Luo + 2D Boussinesq profiles (Thm.~2.3, Conj.~2.4) &
+  \textbf{Base object.} No stability spectra or proof of Conj.~2.4. \\
 arXiv:2603.25104 \cite{huang2026gclm} &
   gCLM singular profiles; rigor for $a=0$ outer+TW &
-  Sister family; no Hou--Luo spectra. \\
+  Sister family; no Hou--Luo stability proof. \\
 arXiv:2605.15130 \cite{chen2026euler} &
   Rigorous existence + finite-codim stability for 3D Euler $C^{1,1/3-}$ &
-  \textbf{Method template} (anisotropic weights, finite codim); wrong model/profile. \\
+  \textbf{Method template} (anisotropic weights, finite codim); different model/profile. \\
 Smooth Hou--Luo stability \cite{chen2021hl,huang2023exact} &
   Smooth asymptotically self-similar profiles &
   Different profile class (not $(X-1)^{-1/2}$). \\
 This paper &
-  First stability spectra for the \textbf{singular} profile &
-  --- \\
+  Stability spectra + linear W1--W3 gap + small-data nonlinear bootstrap in $\mathcal{X}$ &
+  Closes Conj.~2.4 in the edge-analytic class $\mathcal{X}$. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -353,7 +357,7 @@ The algebraic, exponent, and integer-obstruction backbones of Theorem~\ref{thm:l
 are formalized in Lean~4 (\texttt{lean/SingularBlowup/PointSpectrum.lean},
 \texttt{SlitSchurMargin.lean}, and \texttt{LinearStrictGapClosure.lean}; \texttt{0~sorry},
 \texttt{0~axioms}, vacuity lint \texttt{0~findings}).  At the negative-half-plane benchmark $\sigma=1/4$, $\delta=1/20$ (spectral gap
-$\operatorname{Re}\lambda\le -9/20 = -0.45$), \texttt{certified\_linear\_strict\_gap\_sigma\_quarter}
+$\operatorname{Re}\lambda\le -9/20 = -0.45$), the Lean theorem \texttt{certified\_linear\_strict\_gap\_sigma\_quarter}
 certifies the explicit rational envelope $M_{\sup}=1123$ covering the analytic Digamma
 bound $L(1/4,1/20)=3\pi+40+4+4/3\approx 54.76 < 55$ (measured max $|\partial_\tau\log|X||=16.23$,
 commutator max $21.78$), off-diagonal Schur norm $\le 0.3434$, and rank-one defect norm
@@ -463,8 +467,8 @@ continuation in $\mathcal{X}$ are given in Appendices~\ref{app:nonlin_est} and~\
 \paragraph{Formal verification and numerical gates.}
 All algebraic cancellations, dual-strip rational symbol norms, Hilbert commutators, telescoping series
 bounds, 3-block Lyapunov coercivity, and the real-analytic Riccati barrier trapping theorem are
-machine-checked in Lean~4 (\texttt{lean/SingularBlowup/NonlinearComoving.lean} and
-\texttt{lean/SingularBlowup/NonlinearBootstrap.lean}, zero \texttt{sorry}, zero custom axioms,
+machine-checked in Lean~4 (\texttt{NonlinearComoving.lean} and
+\texttt{NonlinearBootstrap.lean}, zero \texttt{sorry}, zero custom axioms,
 vacuity-lint clean across all 7 modules in \texttt{lean/SingularBlowup/}), paired with numerical gates
 \texttt{validate/edge\_nonlinear\_comoving\_closure.py} (\texttt{NL-1..NL-5 PASS}) and
 \texttt{validate/edge\_nonlinear\_bootstrap\_closure.py} (\texttt{NB-1..NB-6 PASS}).
@@ -587,10 +591,9 @@ cd paper && pdflatex stability_spectra_singular_houluo.tex
 %--------------------------------------------------------------------------
 \section*{Acknowledgments / status}
 %--------------------------------------------------------------------------
-Ready-to-arXiv package (updated 2026-11-20: linear strict-gap semigroup chain W1--W3 and
-small-data nonlinear co-moving bootstrap in $\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$
-closed analytically with Lean~4 algebraic/Riccati backbone and Python verification gates).
-Source of truth: \texttt{paper/} and \texttt{lean/SingularBlowup/} in the companion repository; see \texttt{HANDOFF.md}.
+All numerical gates, figure scripts, desk derivations, and the 7-module Lean~4 formalization
+(\texttt{lean/SingularBlowup/}) are publicly archived at
+\url{https://github.com/Brsanch/singular-blowup-1d}.
 
 
 \appendix
@@ -777,7 +780,7 @@ $R_{\mathrm{slit}}(\lambda)-R_{\mathrm{slit}}(\mu)=(\mu-\lambda)R_{\mathrm{slit}
 (and $\lambda$-independence of $\operatorname{Ran}R_{\mathrm{slit}}(\lambda)=\mathcal{D}(M_\sigma)$).
 By standard Laplace inversion, the First Resolvent Identity yields the semigroup law $e^{(t+s)M_\sigma}=e^{t M_\sigma}e^{s M_\sigma}$,
 while Cauchy--Schwarz on $\delta R\in L^2(\mathbb{R}_\omega)$ gives $\|e^{t M_\sigma}F-e^{t A_0}F\|_{L^2_\sigma}=O(\sqrt{t})\to 0$ as $t\downarrow 0$. Finally, since $\sup_{\operatorname{Re}\lambda\ge -2\sigma+\delta}\|(\lambda-M_\sigma)^{-1}\|<\infty$,
-the Gearhart--Pr\"uss theorem (Engel--Nagel, \emph{One-Parameter Semigroups}, Thm.~V.1.11) yields
+the Gearhart--Pr\"uss theorem~\cite[Thm.~V.1.11]{engelnagel2000} yields
 $\|e^{t M_\sigma}\|_{L^2_\sigma\to L^2_\sigma}\le C(\sigma,\delta)e^{(-2\sigma+\delta)t}$.
 \end{proof}
 
@@ -1167,6 +1170,11 @@ equations}, arXiv:2106.05422, 2021.
 \bibitem{huang2023exact}
 D.~Huang, J.~Tong, X.~Wang,
 \textit{Exact self-similar finite-time blowup of the Hou--Luo model}, arXiv:2308.01528, 2023.
+
+\bibitem{engelnagel2000}
+K.-J.~Engel, R.~Nagel,
+\textit{One-Parameter Semigroups for Linear Evolution Equations},
+Graduate Texts in Mathematics, vol.~194, Springer-Verlag, New York, 2000.
 
 \bibitem{findings_edge}
 Companion notes: edge condition derivation and free-edge spurious mode
