@@ -31,3 +31,4 @@ import SingularBlowup.NonlinearComoving
 import SingularBlowup.NonlinearBootstrap
 import SingularBlowup.CoupledHSector
 import SingularBlowup.ConjugationSymbol
+import SingularBlowup.WeakEdgeManifolds
