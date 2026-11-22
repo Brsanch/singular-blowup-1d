@@ -20,6 +20,9 @@ verification:
     - "operator-norm probe (SVD over spans of u^a e^{−bu}, each member checked against the ladder equation): lower bounds C* = 1.0000 for σ ≤ 0.26, 1.0018 at 0.30, 1.1111 at 0.40 (converged); 1.39 at 0.45 and 2.41 at 0.499 (not converged, rising). No upper bound computed"
     - "reviewer CORRECTED the implementer: the OBS-09 modes map to k_λ ∈ H^p_σ with (λ−A)k_λ = πΓ(1+λ)𝟙 (Lemma D's defect; constant verified 2.81948734633 at λ=0.3), not to the homogeneous solution"
     - "strong continuity off the domain is only Hölder: ‖S(τ)g−g‖ ~ τ^{1−2σ} for ĝ(½) ≠ 0 (measured exponents 0.399–0.400 at σ=0.3, 0.099–0.100 at σ=0.45)"
+    - "second independent Claude referee on the WRITTEN proof (manuscript Appendix app:conj), 2026-11-21: no step wrong; four small gaps in the domain lemma and five wording items, all repaired; defect constant re-verified to 12 digits"
+    - "second referee did NOT reproduce the C* lower bounds above 1.06 (smaller family); the C* table is single-source"
+    - "energy form: Re c(x+it) < 0 for all t when x in (0,1/2) (closed formula, re-derived by hand), so for sigma < 1/4 the form is non-positive on strip-regular data — indicates C* = 1 there; core argument not written"
   independent_rederivation: true
   machine_verification: "validate/edge_w3_conjugation_check.py (WC-1..WC-3, exit 0, ~30 s); reviewer scripts validate/review_2026_11_21_w3/ (not re-run by the implementer)"
 lean_ref: "lean/SingularBlowup/ConjugationSymbol.lean — symbol identity, N(½)=0, semigroup law and characteristic ODE for the explicit flow, pointwise damping bound, sign of c on (0,½) and (½,1). NO operator statement is formalized."

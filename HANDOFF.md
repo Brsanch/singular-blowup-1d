@@ -9,7 +9,7 @@ Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasur
 > With `N(s) = cos(πs)Γ(2s+2)/π`: `N(s+½)c(s+½) = −N(s)`, so `M_σ = 𝒩(−2∂_z − e^{−z/2})𝒩⁻¹` on `L²_σ`,
 > `σ ∈ (0,½)`, and the semigroup is explicit with `‖S(τ)‖ = C*(σ)e^{−2στ}`. Proved on paper (short), one
 > independent Claude adversarial pass did not break it; Lean checks the identities only (`ConjugationSymbol.lean`, ledger `LEM-10`); not expert-reviewed, no upper
-> bound on `C*`. The manuscript is not yet edited. Does not touch the Gauge-(a) operator or review item N1.
+> bound on `C*`. In the manuscript as Theorem `thm:conjugation` + Appendix `app:conj` (written proof refereed by a second independent Claude). Does not touch the Gauge-(a) operator or review item N1.
 > The block below still says "W3 withdrawn"; that refers to the Laplace-inversion route.
 >
 > ---

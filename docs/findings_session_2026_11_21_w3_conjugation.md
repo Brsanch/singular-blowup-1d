@@ -158,6 +158,38 @@ Gauge (a), whose operator acts through `c` on `Re s ∈ (½, 3/2)`; conjugating 
 its pole at `s = ½`, which is the rank-one defect again. Whether a stability statement for the original
 system across the edge exists is still open.
 
+## 6b. Manuscript edit and second review (same day)
+
+The result is now Theorem `thm:conjugation`, Remark `rem:conj_scope` and Appendix `app:conj` of
+`paper/stability_spectra_singular_houluo.tex`. **Review form of the written proof:** independent — a second
+Claude referee with fresh context, given only the manuscript and the diff. Verdict: no step wrong; Lemma
+`conj_domain` had four small gaps (class `S_Σ` under-defined, a sign slip, two unstated density extensions),
+all repaired; five wording findings repaired. Not expert review.
+
+What the second review changed or added:
+
+- **The manuscript's `M_σ` is the maximal realization** (its Theorem 1 defines it so). This removes that item
+  from section 5.
+- **Energy form, by hand (re-derived by the implementer):**
+  `Re c(x+it) = −[(2x+1)sin(2πx) + 2t·sinh(2πt)] / [(cos 2πx + cosh 2πt)·|2(x+it)+1|²]`, negative for every `t`
+  when `x ∈ (0,½)`. So for `σ < ¼` the form `Re⟨(M_σ+2σ)G,G⟩_σ` is non-positive on strip-regular data, which
+  indicates `M_σ + 2σ` is dissipative and `C* = 1` there. The core argument extending this to all of `D(M_σ)`
+  is not written, so it is not claimed. For `σ > ¼` there is a positive window on the line `σ+¼`; the referee
+  measured form/‖G‖² = +0.144 and `‖S(1)G‖e^{2σ}/‖G‖ = 1.033` at `σ = 0.4`. The repo's "energy route is dead"
+  statements (LEM-09 (C), `edge_layer_estimate.md`, OBS-03) therefore need the restriction `σ > ¼`; those
+  docs were not edited or re-read here.
+- **The `C*` table in section 4 was not reproduced.** The referee's 24-member span gave suprema below 1 at
+  `σ = 0.4, 0.45`; its Gaussian data gave lower bounds 1.033 and 1.061. The first reviewer's 1.1111 and 1.39
+  depend on its larger family. Both are lower bounds; treat the table as single-source.
+- **Defect constant re-verified** to 12 digits at `(σ,λ) = (0.3, 0.4)` and `(0.2, −0.1+1.3i)`.
+- The identification with `R_slit` is not independent of Appendix A: it uses that appendix's right-inverse
+  identity on a dense class. `Ĝ(½) = 0` holds for the analytic continuation; `G ∈ L²_{1/2}` is not claimed.
+- Not pinned against the book: Engel–Nagel Thm II.1.10 (cited for the resolvent integral).
+- Pre-existing and left alone: the manuscript's phrase "0 axioms" (the Lean files use the three standard
+  axioms), three overfull boxes, the stale companion `.md` copy of the paper.
+
+Referee scripts: `validate/review_2026_11_21_w3/referee_chk{1,2,3}.py`.
+
 ## 7. Reproducing
 
 - `python3 validate/edge_w3_conjugation_check.py` — WC-1 identity (1.5e-14), WC-2 ladder equation

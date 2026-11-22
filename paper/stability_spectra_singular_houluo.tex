@@ -60,8 +60,13 @@ four-quadrant Stirling--Schur decay, unitary phase conjugation $X=u|X|$, and ran
 $\omega$-cancellation; and (W2)~point-spectrum uniqueness $\ker(\lambda-M_\sigma)=\{0\}$ on
 $\operatorname{Re}\lambda>-2\sigma$ via a left-strip mixed Laplace bridge on $[\sigma-1/2,\sigma]$
 and an integer Laurent obstruction (symmetry modes $\xi,\mu,\nu$ do not lie in $L^2_\sigma$).
-Because the nonlocal perturbation maps $L^2_\sigma\to L^2_{\sigma-1/2}$, bare-$L^2_\sigma$
-$C_0$-semigroup generation is not claimed from W1--W2 alone.
+By a different route we also obtain the semigroup: with the Mellin multiplier
+$N(s)=\cos(\pi s)\Gamma(2s+2)/\pi$ one has $N(s+\tfrac12)c(s+\tfrac12)=-N(s)$, so
+$M_\sigma=\mathcal{N}(-2\partial_z-e^{-z/2})\mathcal{N}^{-1}$ is conjugate to transport with edge damping
+(Theorem~\ref{thm:conjugation}, Appendix~\ref{app:conj}).  Hence $M_\sigma$ generates an explicit
+$C_0$-semigroup on $L^2_\sigma(\mathbb{R})$ with $\|e^{\tau M_\sigma}\|=C_*(\sigma)e^{-2\sigma\tau}$
+($\tau>0$), the resolvent is bounded by $C_*(\sigma)/(\operatorname{Re}\lambda+2\sigma)$ on the whole
+half-plane, and $\sigma(M_\sigma)=\{\operatorname{Re}\lambda\le-2\sigma\}$ with no eigenvalues.
 
 Third, completely bypassing bare-$L^2_\sigma$ semigroup theory, we prove a \textbf{small-data
 nonlinear co-moving stability theorem} for the support-interior ($X>1$) reduction under the
@@ -91,8 +96,8 @@ finite-regularity result would need a modified gauge or constraint; the global t
 degenerate initial data on $\mathbb{R}$ to the singular profile remains open.
 The algebraic cancellations, exponent/symbol inequalities, finite telescoping bounds, rational
 arithmetic combinations, and the real-analytic Riccati ODE trapping theorem are machine-checked
-in Lean~4 (8~modules, \texttt{0~sorry}, \texttt{0~axioms}), while all continuous PDE, operator-norm,
-and Gamma-function estimates are proved analytically in Appendices~\ref{app:w123}--\ref{app:lwp}
+in Lean~4 (9~modules, \texttt{0~sorry}, \texttt{0~axioms}), while all continuous PDE, operator-norm,
+and Gamma-function estimates are proved analytically in Appendices~\ref{app:w123}--\ref{app:conj}
 and cross-checked by standalone Python gates.
 \end{abstract}
 
@@ -140,7 +145,8 @@ singular profile $(\bar\Omega,\bar\Theta)$ in dynamic-rescaling coordinates.
 In this paper: (i)~Numerical Theorem~\ref{numthm:main} documents linear and large-amplitude
 ($A\le 4$) convective stability numerically; (ii)~Theorem~\ref{thm:linear_gap} proves a
 linear spectral gap and uniform resolvent bound on $L^2_\sigma(\mathbb{R})$ for every
-$\sigma\in(0,1/2)$; and (iii)~Theorem~\ref{thm:nonlinear_bootstrap} proves small-data
+$\sigma\in(0,1/2)$, and Theorem~\ref{thm:conjugation} gives the corresponding $C_0$-semigroup with
+decay rate exactly $2\sigma$; and (iii)~Theorem~\ref{thm:nonlinear_bootstrap} proves small-data
 global nonlinear asymptotic stability for the support-interior ($X>1$) Gauge-(a) co-moving
 reduction (in the invariant sector $h\equiv 0$) of singular-edge perturbations
 $\Omega=(X-1)^{-1/2}(1+G)\mathbf{1}_{X>1}$ in the hybrid edge-analytic space
@@ -374,8 +380,8 @@ stability proofs~\cite{chen2021hl,huang2023exact} treat smooth profiles.
 %--------------------------------------------------------------------------
 
 Complete self-contained proofs of Walls~W1 and~W2 appear in Appendix~\ref{app:w123}.
-While pure exponential weighted-energy and field-of-values methods fail for $M_{GG}$ on
-all of $\mathbb{R}$ because the nonlocal factor $e^{-z/2}$ is unbounded as $z\to-\infty$,
+While the pure exponential weighted-energy form of $M_{GG}$ on $L^2_\sigma(\mathbb{R})$ is sign-indefinite for
+$\sigma>\tfrac14$ (Remark~\ref{rem:conj_scope}(e); the nonlocal factor $e^{-z/2}$ is unbounded as $z\to-\infty$),
 the exact Mellin--Laplace ladder structure of $M_{GG}=-2\partial_z+\tfrac12 Q_{\mathrm{op}}$
 (which coincides with $-2\partial_z+\tfrac12\widetilde{Q}_{\mathrm{op}}$ on the constrained domain $\widehat{G}(\tfrac12)=0$)
 yields an explicit slit-plane resolvent and a uniform vertical-line resolvent bound on
@@ -425,6 +431,77 @@ $\sigma\in(0,1/2)$.)  Then:
 \end{enumerate}
 \end{thm}
 
+\begin{thm}[Conjugation to damped transport and explicit $C_0$-semigroup on $L^2_\sigma(\mathbb{R})$]
+\label{thm:conjugation}
+Let $\sigma\in(0,1/2)$, $p:=2\sigma+\tfrac32$, and let $M_\sigma$ with its maximal domain be as in
+Theorem~\ref{thm:linear_gap}.  Put
+\[
+N(s):=\frac{\cos(\pi s)\,\Gamma(2s+2)}{\pi},\qquad
+H^p_\sigma:=\Bigl\{k\in L^2_\sigma(\mathbb{R}) : (1+|t|)^p\,\widehat{k}(\sigma+it)\in L^2(\mathbb{R}_t)\Bigr\},
+\]
+and let $\mathcal{N}$ be the Mellin multiplier $\widehat{\mathcal{N}k}(s)=N(s)\widehat{k}(s)$ on $\operatorname{Re}s=\sigma$.  Then:
+\begin{enumerate}
+\item \textbf{(Symbol.)} $N(s+\tfrac12)\,c(s+\tfrac12)=-N(s)$.  $N$ is analytic and zero-free on
+  $|\operatorname{Re}s|<\tfrac12$, and on each compact $[a,b]\subset(-\tfrac12,\tfrac12)$ there are $0<m\le M$ with
+  $m(1+|t|)^{2x+3/2}\le|N(x+it)|\le M(1+|t|)^{2x+3/2}$ for $x\in[a,b]$, $t\in\mathbb{R}$.  In particular
+  $\mathcal{N}:H^p_\sigma\to L^2_\sigma(\mathbb{R})$ is an isomorphism.
+\item \textbf{(Conjugation.)} $M_\sigma=\mathcal{N}A\,\mathcal{N}^{-1}$, where $Ak:=-2\partial_z k-e^{-z/2}k$ on
+  $\mathcal{D}(A):=\{k\in H^p_\sigma: Ak\in H^p_\sigma\}$; that is, $\mathcal{D}(M_\sigma)=\mathcal{N}\mathcal{D}(A)$ and
+  $M_\sigma\mathcal{N}k=\mathcal{N}Ak$.
+\item \textbf{(Semigroup.)} $M_\sigma$ generates the $C_0$-semigroup $S(\tau)=\mathcal{N}T(\tau)\mathcal{N}^{-1}$ on
+  $L^2_\sigma(\mathbb{R})$, where
+  \[
+  (T(\tau)k)(z)=k(z-2\tau)\,\exp\!\bigl(-(1-e^{-\tau})\,e^{-(z-2\tau)/2}\bigr),
+  \]
+  and there is a constant $1\le C_*(\sigma)<\infty$ with $\|S(\tau)\|_{L^2_\sigma\to L^2_\sigma}=C_*(\sigma)\,e^{-2\sigma\tau}$
+  for every $\tau>0$.
+\item \textbf{(Resolvent and spectrum.)} For $\operatorname{Re}\lambda>-2\sigma$,
+  $\|(\lambda-M_\sigma)^{-1}\|\le C_*(\sigma)/(\operatorname{Re}\lambda+2\sigma)$.  The spectrum is the closed
+  half-plane $\sigma(M_\sigma)=\{\operatorname{Re}\lambda\le-2\sigma\}$; $M_\sigma$ has no eigenvalue, and for
+  $\operatorname{Re}\lambda<-2\sigma$ the range of $\lambda-M_\sigma$ is not dense.
+\end{enumerate}
+\end{thm}
+
+\begin{remark}[Scope of Theorem~\ref{thm:conjugation}, the constant $C_*(\sigma)$, and what is not proved]
+\label{rem:conj_scope}
+(a) Theorem~\ref{thm:conjugation} is proved in Appendix~\ref{app:conj} independently of Theorem~\ref{thm:linear_gap}.
+Item~4 gives $\{\operatorname{Re}\lambda>-2\sigma\}\subset\rho(M_\sigma)$ and a resolvent bound on whole half-planes without
+using W1--W2.  The identification $(\lambda-M_\sigma)^{-1}=R_{\mathrm{slit}}(\lambda)$ is not independent: it uses the
+right-inverse identity of Appendix~\ref{app:w123} on the dense class $\widehat{F}\in C_c^\infty$.
+(b) The domain condition is automatic: for $G=\mathcal{N}k\in\mathcal{D}(M_\sigma)$, $e^{-z/2}k=-Ak-2\partial_zk\in L^2_\sigma$,
+so $\widehat{k}$ is analytic on $\sigma<\operatorname{Re}s<\sigma+\tfrac12$ and the analytic continuation of $\widehat{G}=N\widehat{k}$
+vanishes at $s=\tfrac12$ (we do not claim $G\in L^2_{1/2}$).
+The zero of $N$ at $s=\tfrac12$ is also what confines the result to $\sigma<\tfrac12$.
+(c) The theorem concerns $M_\sigma=-2\partial_z+\tfrac12Q_{\mathrm{op}}$ only.  It does not cover the Gauge-(a)
+operator $-2\partial_z+\tfrac12\widetilde{Q}_{\mathrm{op}}$ of Theorem~\ref{thm:nonlinear_bootstrap}, whose symbol
+acts on lines to the right of $\operatorname{Re}w=\tfrac12$ (Lemma~\ref{lem:mellin_plancherel}): conjugating it would need $1/N$ across its pole at $s=\tfrac12$.
+In the conjugated variables the Gauge-(a) modes $G_\lambda$ of Remark~\ref{rem:w3_scope} are $k_\lambda$ with
+$\widehat{k_\lambda}=2\pi^2\Gamma(2s+\lambda)/\sin(2\pi s)$, which lie in $H^p_\sigma$ and satisfy
+$(\lambda-A)k_\lambda=\pi\Gamma(1+\lambda)\cdot\mathbf{1}$ (the residue of $\widehat{k_\lambda}$ at $s=\tfrac12$); this matches
+$(\lambda-M_\sigma)G_\lambda=-\tfrac12H[g_\lambda](1)\cdot\mathbf{1}=\Gamma(1+\lambda)\cdot\mathbf{1}\notin L^2_\sigma$ from Remark~\ref{rem:w3_scope}.
+(d) \emph{Numerical information on $C_*(\sigma)$, not proved.}  Suprema of $\|S(\tau)G\|e^{2\sigma\tau}/\|G\|$ over
+finite spans of $\mathcal{N}[u^ae^{-bu}]$, $u=e^{-z/2}$, give the lower bounds $C_*=1.0000$ for $\sigma\le0.26$,
+$1.0018$ at $\sigma=0.30$, $1.1111$ at $\sigma=0.40$ (converged in the family size), and $1.39$ at $\sigma=0.45$,
+$2.41$ at $\sigma=0.499$ (not converged, still increasing).  No upper bound on $C_*(\sigma)$ has been computed.
+These are lower bounds from one reviewer's computation and were not reproduced by a second one with a smaller family.
+When $C_*>1$ the semigroup is not quasi-contractive ($\|S(\tau)\|\to C_*$ as $\tau\to0^+$).
+(e) \emph{Sign of the energy form.}  For $G$ whose transform is analytic across $\sigma\le\operatorname{Re}s\le\sigma+\tfrac14$
+with decay, the substitution $w=e^{-z/4}G$ gives
+$\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}=\frac{1}{2\pi}\int\operatorname{Re}c(\sigma+\tfrac14+it)\,|\widehat{G}(\sigma+\tfrac14+it)|^2\,dt$, and
+\[
+\operatorname{Re}c(x+it)=-\frac{(2x+1)\sin(2\pi x)+2t\sinh(2\pi t)}{\bigl(\cos(2\pi x)+\cosh(2\pi t)\bigr)\,|2(x+it)+1|^2},
+\]
+which is negative for all $t$ when $x\in(0,\tfrac12)$, and positive on a window $|t|<t_0(x)$ when $x\in(\tfrac12,1)$
+(on the real axis: Lean \texttt{cRe\_neg}, \texttt{cRe\_pos}).  Hence for $\sigma<\tfrac14$ the form is non-positive on
+such $G$, which indicates that $M_\sigma+2\sigma$ is dissipative and $C_*(\sigma)=1$ there; we have not written out the
+core argument needed to extend this to all of $\mathcal{D}(M_\sigma)$, so this is not claimed as a theorem.  For
+$\sigma>\tfrac14$ the form is positive on data concentrated in the window (observed numerically: e.g.\ form$/\|G\|^2=+0.144$
+and $\|S(1)G\|e^{2\sigma}/\|G\|=1.033$ at $\sigma=0.4$), so the plain weighted energy estimate cannot close and $C_*(\sigma)>1$.
+(f) The argument has been attacked by one independent automated reviewer, the written proof in Appendix~\ref{app:conj} refereed by a second, and the closed-form evolution compared with the
+real-space discretization (\texttt{edge\_w3\_conjugation\_check.py}); it has not been reviewed by an expert, and the
+Lean module \texttt{ConjugationSymbol.lean} checks only the identities listed in Appendix~\ref{app:conj}.
+\end{remark}
+
 \begin{remark}[Constrained domain $\{\widehat{G}(\tfrac12)=0\}$, explicit unconstrained Gauge-(a) eigenmodes $G_\lambda$, and semigroup scope]
 \label{rem:w3_scope}
 Comparing Theorem~\ref{thm:linear_gap} ($M_\sigma=-2\partial_z+\tfrac12 Q_{\mathrm{op}}=-2\partial_z+e^{-z/2}T_c$) with the Gauge-(a) linearized operator $-2\partial_z+\tfrac12\widetilde{Q}_{\mathrm{op}}$, the two coincide when $\widehat{G}(\tfrac12)=0$ ($H[g](1)=0$). For the Gauge-(a) operator without $\widehat{G}(\tfrac12)=0$, the eigenvalue equation $(2\partial_z+\lambda)G=e^{-z/2}T_c G-\tfrac12 H[g](1)$ carries the extra constant $-\tfrac12 H[g](1)$ (whose right-sided Laplace transform has a simple pole at $s=0$, whereas for $M_\sigma$ in Lemma~\ref{lem:app_w2} $(2\partial_z+\lambda)G=e^{-z/2}T_c G\in L^2_{\sigma-1/2}(\mathbb{R})$ directly).
@@ -456,15 +533,15 @@ eliminating the $v=0^+$ edge residue $-\tfrac13 c_1$ and suppressing $G_\lambda$
 
 Furthermore, on the constrained domain $\mathcal{D}(M_\sigma)$, Theorem~\ref{thm:linear_gap}
 establishes absence of spectrum in $\{\operatorname{Re}\lambda>-2\sigma\}$ and a uniform resolvent bound along
-every vertical line $\operatorname{Re}\lambda=-2\sigma+\delta$ ($\delta>0$, uniform on compact $\delta$-strips).  It does \emph{not} prove that
-$M_\sigma$ generates a $C_0$-semigroup on bare $L^2_\sigma(\mathbb{R})$: the nonlocal perturbation
+every vertical line $\operatorname{Re}\lambda=-2\sigma+\delta$ ($\delta>0$, uniform on compact $\delta$-strips).  By itself it does
+\emph{not} show that $M_\sigma$ generates a $C_0$-semigroup on $L^2_\sigma(\mathbb{R})$: the nonlocal perturbation
 $\tfrac12 Q_{\mathrm{op}}G = e^{-z/2}T_c G$ maps $L^2_\sigma$ into $L^2_{\sigma-1/2}$
 rather than $L^2_\sigma$, so Phillips bounded-perturbation theory does not apply, and the
 resolvent perturbation $R_{\mathrm{slit}}(\lambda)-R_0(\lambda)$ is not shown to be $L^1(\mathbb{R}_\omega)$
-in operator norm.  (If $C_0$-semigroup generation on $L^2_\sigma$ were established independently,
-Gearhart--Pr\"uss~\cite[Thm.~V.1.11]{engelnagel2000} would immediately imply exponential decay
-$O(e^{(-2\sigma+\delta)t})$.)  Crucially, Theorem~\ref{thm:nonlinear_bootstrap} below does
-\emph{not} depend on bare-$L^2_\sigma$ semigroup generation: it closes directly by pure energy
+in operator norm.  Semigroup generation and the decay rate $2\sigma$ are instead obtained in
+Theorem~\ref{thm:conjugation} by conjugation to damped transport, without Laplace inversion or the
+Gearhart--Pr\"uss theorem~\cite[Thm.~V.1.11]{engelnagel2000}.  Theorem~\ref{thm:nonlinear_bootstrap} below does
+\emph{not} depend on either linear theorem: it closes directly by pure energy
 estimates on the hybrid space $\mathcal{X}=\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$.
 \end{remark}
 
@@ -482,6 +559,13 @@ elementary exponent inequalities, four-quadrant triangle margins, Laurent/Stirli
 and rational arithmetic combinations of externally supplied operator bounds;
 Gamma functions, singular integrals, and $L^2_\sigma$ operator norms are proved analytically in
 Appendix~\ref{app:w123} rather than formalized in Mathlib.
+For Theorem~\ref{thm:conjugation}, \texttt{validate/edge\_w3\_conjugation\_check.py} (\texttt{WC-1..3 PASS}) checks the
+symbol identity ($1.5\times10^{-14}$), the ladder equation for the closed-form evolution ($4.3\times10^{-9}$), and
+agreement of that evolution with $\exp(\tau M_{GG})$ from the real-space discretization
+($4.8\times10^{-4}$ at $N=1500$, $2.4\times10^{-4}$ at $N=3000$; transport alone: $6.7\times10^{-2}$);
+\texttt{ConjugationSymbol.lean} machine-checks the symbol identity, $N(\tfrac12)=0$, the semigroup law and
+characteristic ODE of $T(\tau)$, the pointwise bound $|T(\tau)k(z)|\le|k(z-2\tau)|$, and the sign of $c$ on
+$(0,\tfrac12)$ and $(\tfrac12,1)$.
 
 %--------------------------------------------------------------------------
 \section{Nonlinear co-moving bootstrap in $\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$}
@@ -620,7 +704,7 @@ Standalone Python gates spot-check the nonlinear algebraic identities, symbol no
 \texttt{edge\_nonlinear\_bootstrap\_closure.py} (\texttt{NB-1..NB-6 PASS}), and
 \texttt{edge\_coupled\_h\_nonlinear\_closure.py} (\texttt{CH-1..CH-4 PASS}).
 The companion Lean~4 modules (\texttt{NonlinearComoving.lean}, \texttt{NonlinearBootstrap.lean}, and
-\texttt{CoupledHSector.lean}; \texttt{0~sorry}, \texttt{0~axioms} across all 8 modules in
+\texttt{CoupledHSector.lean}; \texttt{0~sorry}, \texttt{0~axioms} across all 9 modules in
 \texttt{lean/SingularBlowup/})
 machine-check the algebraic Gauge-(a) cancellations, rational symbol and telescoping series bounds,
 discrete Hilbert commutator identity, 3-block Lyapunov rational inequality, and the real-analytic scalar Riccati ODE barrier-trapping lemma (given a differentiable function on $[0,\infty)$ satisfying the differential inequality); all continuous PDE operator bounds, integral identities, and
@@ -634,7 +718,8 @@ local well-posedness are proved analytically in Appendices~\ref{app:nonlin_est}-
 Theorem~\ref{thm:linear_gap} (spectral gap and uniform resolvent bound on $L^2_\sigma(\mathbb{R})$)
 and Theorems~\ref{thm:nonlinear_bootstrap} and~\ref{thm:coupled_h} (small-data global nonlinear
 stability in $\mathcal{X}$ and in the coupled space $\mathcal{X}\times\mathcal{X}_h$) are proved analytically in
-full in Appendices~\ref{app:w123}--\ref{app:lwp}.
+full in Appendices~\ref{app:w123}--\ref{app:lwp}; Theorem~\ref{thm:conjugation} is proved in Appendix~\ref{app:conj}
+(see Remark~\ref{rem:conj_scope}(f) for how far that proof has been checked).
 The Lean~4 modules in \texttt{lean/SingularBlowup/} (\texttt{0~sorry}, \texttt{0~axioms})
 verify only the algebraic cancellations, exponent/symbol inequalities, finite telescoping series
 bounds, rational arithmetic combinations of externally supplied bounds, and the real-analytic
@@ -644,13 +729,14 @@ Section~\ref{sec:nonlin} remain numerical.
 
 \paragraph{Energy / field-of-values obstructions on bare $L^2_\sigma(\mathbb{R})$.}
 \begin{itemize}
-\item \textbf{Pure weighted $L^2_\sigma(\mathbb{R})$ energy fails at the edge.}
+\item \textbf{Pure weighted $L^2_\sigma(\mathbb{R})$ energy is sign-indefinite for $\sigma>\tfrac14$.}
   Because $\tfrac12 Q_{\mathrm{op}}G=e^{-z/2}T_c G$ maps $L^2_\sigma$ into
-  $L^2_{\sigma-1/2}$, no pure exponential weight closes a dissipative energy estimate on all of
-  $\mathbb{R}$ without field-of-values divergence (\texttt{edge\_layer\_obstruction.py},
+  $L^2_{\sigma-1/2}$, the perturbation is unbounded on $L^2_\sigma$; for $\sigma>\tfrac14$ the form
+  $\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}$ takes both signs, while for $\sigma<\tfrac14$ it is
+  non-positive on a dense class (Remark~\ref{rem:conj_scope}(e)); truncated-grid field-of-values computations diverge (\texttt{edge\_layer\_obstruction.py},
   \texttt{cap\_scaffold.py})~\cite{findings_edge_layer,findings_cap}.
   In Theorem~\ref{thm:linear_gap} this is bypassed in the resolvent via the Mellin ladder and
-  slit-plane Cauchy integral; in Theorem~\ref{thm:nonlinear_bootstrap} it is bypassed in the
+  slit-plane Cauchy integral, and in Theorem~\ref{thm:conjugation} by the multiplier $\mathcal{N}$; in Theorem~\ref{thm:nonlinear_bootstrap} it is bypassed in the
   time-dependent PDE by replacing $L^2_\sigma((-\infty,0])$ with the edge Hardy disk $\mathcal{H}^1(D(1,1))$.
 \end{itemize}
 
@@ -731,6 +817,7 @@ python3 validate/nonlinear_shape_march.py            # A<=4, gamma=0/coarse peak
 python3 validate/coevolve_projected.py               # (c_l,c_w)->(2,-1), xi=0
 python3 validate/edge_w1_route_f_closure.py          # W1 (F1-F5 PASS)
 python3 validate/edge_w2_w3_closure.py               # W2 (W2-A..C PASS)
+python3 validate/edge_w3_conjugation_check.py        # Conjugation (WC-1..3 PASS)
 python3 validate/edge_nonlinear_comoving_closure.py  # Gauge-(a) (NL-1..6 PASS)
 python3 validate/edge_nonlinear_bootstrap_closure.py # Bootstrap (NB-1..6 PASS)
 python3 validate/edge_gauge_a_eigenmode_check.py     # Eigenmodes (EM-1..5 PASS)
@@ -768,7 +855,7 @@ cd paper && pdflatex stability_spectra_singular_houluo.tex
 %--------------------------------------------------------------------------
 \section*{Code and verification availability}
 %--------------------------------------------------------------------------
-All numerical gates, figure scripts, desk notes, and the 8-module Lean~4 algebraic/ODE
+All numerical gates, figure scripts, desk notes, and the 9-module Lean~4 algebraic/ODE
 backbone (directory \texttt{lean/SingularBlowup}) are maintained in the companion
 \texttt{singular-blowup-1d} repository and will be made publicly available upon release or
 request.
@@ -1579,6 +1666,140 @@ At $\tau=T_0$, Lemma~\ref{lem:three_block_nl} gives $\mathcal{E}(G(T_0))\le\math
 Since $T_0=T_0(R_0)$ depends only on $R_0$, repeating Steps 1--3 on $[k T_0, (k+1)T_0]$ for every $k\ge 1$ extends $G$ uniquely
 to $[0,\infty)$ with $\mathcal{E}(G(\tau))\le\mathcal{E}(G_0)e^{-\tau/16}$ for all $\tau\ge 0$.
 \end{proof}
+
+%==========================================================================
+\section{Proof of Theorem~\ref{thm:conjugation} (Conjugation to Damped Transport)}
+\label{app:conj}
+%==========================================================================
+
+Throughout, $\sigma\in(0,\tfrac12)$, $p=2\sigma+\tfrac32\in(\tfrac32,\tfrac52)$, $u(z):=e^{-z/2}$,
+$\widehat{f}(s)=\int_{\mathbb{R}}e^{-sz}f(z)\,dz$, and $\Sigma:=\{s:\sigma-\tfrac12\le\operatorname{Re}s\le\sigma\}$, a closed
+strip contained in $|\operatorname{Re}s|<\tfrac12$.  For $f\in L^2_a(\mathbb{R})$ and $\varphi$ with $e^{az}\varphi\in L^2$, Parseval reads
+\begin{equation}\label{eq:conj_parseval}
+\langle f,\varphi\rangle:=\int_{\mathbb{R}}f\varphi\,dz=\frac{1}{2\pi}\int_{\mathbb{R}}\widehat{f}(a+it)\,\psi(a+it)\,dt,
+\qquad \psi(s):=\int_{\mathbb{R}}e^{sz}\varphi(z)\,dz .
+\end{equation}
+Fix an open strip $\Sigma'\supset\Sigma$ with closure in $|\operatorname{Re}s|<\tfrac12$.  Let $\mathcal{S}_\Sigma$ be the class of
+$\varphi(z)=\frac{1}{2\pi i}\int_{\operatorname{Re}s=a}e^{-sz}\psi(s)\,ds$ with $\psi$ analytic on $\Sigma'$ and
+$\sup_{s\in\Sigma'}|s|^j|\psi(s)|<\infty$ for every $j$ (the integral does not depend on $a\in\Sigma'\cap\mathbb{R}$, and
+$\psi(s)=\int e^{sz}\varphi\,dz$ there).  Then $C_c^\infty(\mathbb{R})\subset\mathcal{S}_\Sigma$, and every
+$\varphi\in\mathcal{S}_\Sigma$ is smooth with $e^{az}\varphi^{(j)}\in L^2$ for all $j$ and all $a\in[\sigma-\tfrac12,\sigma]$.
+
+\begin{lem}[Symbol identity and two-sided bounds]\label{lem:conj_symbol}
+$N(s+\tfrac12)c(s+\tfrac12)=-N(s)$ for $\sin(\pi s)\ne0$, $s\ne-1$.  $N$ is analytic on $\operatorname{Re}s>-1$, its zeros
+there are the half-integers, and for every compact $[a,b]\subset(-\tfrac12,\tfrac12)$ there are $0<m\le M$ with
+$m(1+|t|)^{2x+3/2}\le|N(x+it)|\le M(1+|t|)^{2x+3/2}$ for all $x\in[a,b]$, $t\in\mathbb{R}$.
+\end{lem}
+\textit{Proof.}
+$\cos(\pi s+\tfrac{\pi}{2})=-\sin(\pi s)$ and $\Gamma(2s+3)=(2s+2)\Gamma(2s+2)$ give
+$N(s+\tfrac12)=-\sin(\pi s)(2s+2)\Gamma(2s+2)/\pi$, while $c(s+\tfrac12)=-\tan(\pi s+\tfrac{\pi}{2})/(2s+2)=\cot(\pi s)/(2s+2)$;
+the product is $-\cos(\pi s)\Gamma(2s+2)/\pi$ (Lean: \texttt{nSym\_shift\_mul\_cSym}).
+$\Gamma(2s+2)$ is analytic and zero-free on $\operatorname{Re}s>-1$, and $\cos(\pi s)$ vanishes exactly at the half-integers.
+For the bounds, $|\cos(\pi(x+it))|^2=\cos^2(\pi x)+\sinh^2(\pi t)$, and Stirling's formula
+$|\Gamma(x'+iy)|=\sqrt{2\pi}\,|y|^{x'-1/2}e^{-\pi|y|/2}(1+O(|y|^{-1}))$, uniform for $x'$ in compact sets, applied with
+$x'=2x+2$, $y=2t$, gives $|N(x+it)|=c_x|t|^{2x+3/2}(1+O(|t|^{-1}))$ as $|t|\to\infty$ with $c_x$ continuous and positive: the
+factors $e^{\pi|t|}$ and $e^{-\pi|t|}$ cancel.  On the remaining compact set $|t|\le t_0$, $x\in[a,b]$, $|N|$ is continuous and
+non-vanishing. \hfill$\square$
+
+\medskip
+By Lemma~\ref{lem:conj_symbol} with $x=\sigma$, $\mathcal{N}:H^p_\sigma\to L^2_\sigma(\mathbb{R})$ is an isomorphism, and
+$\varphi\mapsto\varphi_N$, defined by $\psi_{\varphi_N}:=N\psi_\varphi$, is a bijection of $\mathcal{S}_\Sigma$ ($N$ and $1/N$ are
+analytic and polynomially bounded on $\Sigma'$ by Lemma~\ref{lem:conj_symbol}).  By~\eqref{eq:conj_parseval}, $\langle\mathcal{N}f,\varphi\rangle=\langle f,\varphi_N\rangle$
+for $f\in H^p_\sigma$.
+
+\begin{lem}[Conjugation and domains]\label{lem:conj_domain}
+For $k\in H^p_\sigma$ and $\varphi\in\mathcal{S}_\Sigma$,
+\begin{equation}\label{eq:conj_weak}
+\langle M_\sigma\mathcal{N}k,\varphi\rangle=\langle Ak,\varphi_N\rangle,\qquad
+\langle Ak,\chi\rangle:=\langle k,2\chi'\rangle-\langle uk,\chi\rangle .
+\end{equation}
+Consequently $\mathcal{N}k\in\mathcal{D}(M_\sigma)$ if and only if $Ak\in H^p_\sigma$, and then $M_\sigma\mathcal{N}k=\mathcal{N}Ak$.
+\end{lem}
+\textit{Proof.}
+For $G\in L^2_\sigma$ the distribution $M_\sigma G$ is $\langle M_\sigma G,\varphi\rangle=\langle G,2\varphi'\rangle+\langle uT_cG,\varphi\rangle$,
+$\varphi\in C_c^\infty$.  Since $G\in L^2_\sigma$ and $uT_cG\in L^2_{\sigma-1/2}$, the right-hand side, and $\langle F,\varphi\rangle$ for $F\in L^2_\sigma$, are continuous in the norm
+$\|e^{\sigma z}\varphi'\|_{L^2}+\|e^{\sigma z}\varphi\|_{L^2}+\|e^{(\sigma-1/2)z}\varphi\|_{L^2}$, in which $C_c^\infty$ is dense in
+$\mathcal{S}_\Sigma$ (cut off);
+so the formula, and any identity $M_\sigma G=F\in L^2_\sigma$, extend to $\varphi\in\mathcal{S}_\Sigma$.  The same extension applies to
+$\langle Ak,\chi\rangle$ and to any identity $Ak=f\in H^p_\sigma$.  The transform of
+$2\varphi'$ in the sense of~\eqref{eq:conj_parseval} is $-2s\psi(s)$, and the transform of $uT_cG$ on $\operatorname{Re}s=\sigma-\tfrac12$ is
+$c(s+\tfrac12)\widehat{G}(s+\tfrac12)$.  With $G=\mathcal{N}k$, Lemma~\ref{lem:conj_symbol} gives
+$c(s+\tfrac12)\widehat{G}(s+\tfrac12)=c(s+\tfrac12)N(s+\tfrac12)\widehat{k}(s+\tfrac12)=-N(s)\,\widehat{uk}(s)$ on that line
+($uk\in L^2_{\sigma-1/2}$ because $k\in L^2_\sigma$).  Hence
+\begin{align*}
+\langle M_\sigma\mathcal{N}k,\varphi\rangle
+&=\frac{1}{2\pi}\!\int_{\operatorname{Re}s=\sigma}\!\widehat{k}(s)\,(-2s)\,N(s)\psi(s)\,dt
+-\frac{1}{2\pi}\!\int_{\operatorname{Re}s=\sigma-\frac12}\!\widehat{uk}(s)\,N(s)\psi(s)\,dt\\
+&=\langle k,2\varphi_N'\rangle-\langle uk,\varphi_N\rangle ,
+\end{align*}
+which is~\eqref{eq:conj_weak}.
+If $Ak=f\in H^p_\sigma$, then $\langle M_\sigma\mathcal{N}k,\varphi\rangle=\langle f,\varphi_N\rangle=\langle\mathcal{N}f,\varphi\rangle$, so
+$M_\sigma\mathcal{N}k=\mathcal{N}f\in L^2_\sigma$.  Conversely, if $M_\sigma\mathcal{N}k=F\in L^2_\sigma$, put $f:=\mathcal{N}^{-1}F\in H^p_\sigma$;
+for $\chi\in C_c^\infty$ choose $\varphi\in\mathcal{S}_\Sigma$ with $\varphi_N=\chi$.  Then
+$\langle Ak,\chi\rangle=\langle F,\varphi\rangle=\langle\mathcal{N}f,\varphi\rangle=\langle f,\chi\rangle$, so $Ak=f$. \hfill$\square$
+
+\begin{lem}[Translations and smooth multipliers on $H^p_\sigma$]\label{lem:conj_mult}
+(a) $\|k(\cdot-h)\|_{H^p_\sigma}=e^{-\sigma h}\|k\|_{H^p_\sigma}$, and likewise on $L^2_\sigma$.
+(b) There is $C_p<\infty$ such that $\|\Phi k\|_{H^p_\sigma}\le C_p\|\Phi\|_{C^3_b}\|k\|_{H^p_\sigma}$ for every $\Phi\in C^3_b(\mathbb{R})$;
+the multiplier norm of $\Phi$ on $H^p_\sigma$ is unchanged if $\Phi$ is translated.
+(c) $\Phi(z):=\exp(-e^{-z/2})$ lies in $C_b^\infty(\mathbb{R})$.
+\end{lem}
+\textit{Proof.}
+$k\in H^p_\sigma$ iff $e^{-\sigma z}k\in H^p(\mathbb{R})$, with equal norms, because $\widehat{k}(\sigma+it)$ is the Fourier transform of
+$e^{-\sigma z}k$.  (a) follows since $e^{-\sigma z}k(z-h)=e^{-\sigma h}(e^{-\sigma\cdot}k)(z-h)$.  For (b), multiplication by $\Phi$
+commutes with $e^{-\sigma z}$, is bounded on $L^2$ by $\|\Phi\|_\infty$ and on $H^3$ by a multiple of $\|\Phi\|_{C^3_b}$ (Leibniz),
+hence on $H^p$, $0\le p\le3$, by interpolation; translation invariance follows from (a).  For (c),
+$\Phi^{(j)}=P_j(u)e^{-u}$ with $P_j$ a polynomial, and $\sup_{u>0}|P_j(u)|e^{-u}<\infty$. \hfill$\square$
+
+\paragraph{Proof of Theorem~\ref{thm:conjugation}.}
+Item~1 is Lemma~\ref{lem:conj_symbol} and item~2 is Lemma~\ref{lem:conj_domain}.
+
+\emph{Item 3: the semigroup.}  Write $x(\tau):=1-e^{-\tau}$, $\Phi_x(z):=\exp(-xe^{-z/2})=\Phi(z-2\ln x)$ for $x>0$, $\Phi_0:=1$,
+so that $T(\tau)k=(\Phi_{x(\tau)}k)(\cdot-2\tau)$.
+The semigroup law $T(s)T(t)=T(s+t)$ is the identity $x(t)+e^{-t}x(s)=x(s+t)$ (Lean: \texttt{flow\_add}; \texttt{flow\_zero} for $T(0)=I$).
+By Lemma~\ref{lem:conj_mult}, $\|T(\tau)\|_{H^p_\sigma\to H^p_\sigma}\le C_\Phi e^{-2\sigma\tau}$ with
+$C_\Phi:=\|\Phi\|_{\mathrm{mult}(H^p_\sigma)}$ independent of $\tau$.
+Strong continuity at $\tau=0$: for $k\in C_c^\infty$, $(\Phi_{x}-1)k\to0$ in $H^3$ as $x\to0^+$ (because $xe^{-z/2}\to0$ in
+$C^3$ on $\operatorname{supp}k$; on a fixed compact support the $H^3$ norm dominates the $H^p_\sigma$ norm since $p<3$, and the
+subsequent translation costs only the factor $e^{-2\sigma\tau}$) and $k(\cdot-2\tau)\to k$ in $H^p_\sigma$; the uniform bound and density of $C_c^\infty$ in
+$H^p_\sigma$ give $T(\tau)k\to k$ for all $k$.  So $T$ is a $C_0$-semigroup on $H^p_\sigma$; let $B$ be its generator.
+
+\emph{$B=A$.}  For $k\in\mathcal{D}(B)$ and $\chi\in C_c^\infty$,
+$\langle T(\tau)k,\chi\rangle=\langle k,\Phi_{x(\tau)}\,\chi(\cdot+2\tau)\rangle$, and
+$\tau^{-1}\bigl(\Phi_{x(\tau)}\chi(\cdot+2\tau)-\chi\bigr)\to2\chi'-u\chi$ uniformly with supports in a fixed compact set
+(since $x'(0)=1$ and $\partial_x\Phi_x=-u\Phi_x$; Lean: \texttt{hasDerivAt\_damp\_along\_characteristic}).  Hence
+$\langle Bk,\chi\rangle=\langle k,2\chi'\rangle-\langle uk,\chi\rangle$, i.e.\ $Bk=Ak\in H^p_\sigma$: $B\subset A$.
+For $\operatorname{Re}\lambda>-2\sigma$, $\lambda-B$ is onto $H^p_\sigma$~\cite[Thm.~II.1.10]{engelnagel2000}, while $\lambda-A$ is injective:
+a distribution with $2k'+(\lambda+u)k=0$ is $k=Ce^{-\lambda z/2}\exp(+e^{-z/2})$, which is not in $L^2_\sigma$ unless $C=0$.
+Therefore $A=B$.
+
+\emph{Transfer to $L^2_\sigma$ and the norm.}  By item~2, $M_\sigma=\mathcal{N}A\mathcal{N}^{-1}$ generates
+$S(\tau)=\mathcal{N}T(\tau)\mathcal{N}^{-1}$.  Let $U_h:=e^{\sigma h}\,(\text{translation by }h)$, a unitary on $L^2_\sigma$ that commutes with
+$\mathcal{N}$.  Then $S(\tau)=e^{-2\sigma\tau}\,U_{2\tau}\,\mathcal{N}\Phi_{x(\tau)}\mathcal{N}^{-1}$ and
+$U_h\,\mathcal{N}\Phi_x\mathcal{N}^{-1}\,U_h^{-1}=\mathcal{N}\Phi_{xe^{h/2}}\mathcal{N}^{-1}$, so
+$C_*(\sigma):=\|\mathcal{N}\Phi_x\mathcal{N}^{-1}\|_{L^2_\sigma\to L^2_\sigma}$ does not depend on $x\in(0,\infty)$ and
+$\|S(\tau)\|=C_*(\sigma)e^{-2\sigma\tau}$ for every $\tau>0$.  Finiteness: $C_*\le(M/m)C_\Phi$ with $m,M$ from
+Lemma~\ref{lem:conj_symbol} at $x=\sigma$.  $C_*\ge1$ because $S(\tau)\to I$ strongly as $\tau\to0^+$.
+
+\emph{Item 4: resolvent.}  For $\operatorname{Re}\lambda>-2\sigma$, $(\lambda-M_\sigma)^{-1}=\int_0^\infty e^{-\lambda\tau}S(\tau)\,d\tau$
+\cite[Thm.~II.1.10]{engelnagel2000}, whose norm is at most $C_*(\sigma)/(\operatorname{Re}\lambda+2\sigma)$.
+
+\emph{Item 4: spectrum.}  It suffices to treat $A$ on $H^p_\sigma$.  By the injectivity argument above, which did not use the sign of
+$\operatorname{Re}\lambda+2\sigma$, $A$ has no eigenvalue.  Let $\operatorname{Re}\lambda<-2\sigma$ and
+$E(z):=e^{\lambda z/2}\exp(-e^{-z/2})$.  Then $e^{\sigma z}E\in L^2(\mathbb{R})$ (exponential decay at $+\infty$ because
+$\sigma+\tfrac12\operatorname{Re}\lambda<0$, double-exponential decay at $-\infty$), so $\ell(f):=\int fE\,dz$ is a bounded, non-zero
+functional on $L^2_\sigma\supset H^p_\sigma$, non-zero on $C_c^\infty\subset H^p_\sigma$.  For $k\in\mathcal{D}(A)$ and $f=(\lambda-A)k=2k'+(\lambda+u)k$,
+$E'=\tfrac12(\lambda+u)E$ gives $(kE)'=\tfrac12fE$.  Since $p>\tfrac32$, $e^{-\sigma z}k\in C^1$ tends to $0$ at $\pm\infty$; thus
+$|kE|=o(e^{(\sigma+\operatorname{Re}\lambda/2)z})\to0$ as $z\to+\infty$ and $kE\to0$ as $z\to-\infty$, and $\ell(f)=2[kE]_{-\infty}^{\infty}=0$.
+So the range of $\lambda-A$ lies in the proper closed subspace $\ker\ell$: every $\lambda$ with $\operatorname{Re}\lambda<-2\sigma$ is in the
+spectrum, and so is the line $\operatorname{Re}\lambda=-2\sigma$ because the spectrum is closed.  The open half-plane
+$\operatorname{Re}\lambda>-2\sigma$ is in the resolvent set by the previous step. \hfill$\square$
+
+\paragraph{Closed-form test family.}
+For $k_0=u^ae^{-bu}$ ($a>0$, $\operatorname{Re}b>0$), $\widehat{k_0}(s)=2\Gamma(2s+a)b^{-2s-a}$ and
+$T(\tau)k_0=e^{a\tau}u^a\exp(-(b+x(\tau))e^{\tau}u)$, so
+$\widehat{S(\tau)\mathcal{N}k_0}(s)=N(s)\,e^{-2s\tau}\,2\Gamma(2s+a)\,(b+1-e^{-\tau})^{-2s-a}$.
+This is the datum compared with $\exp(\tau M_{GG})$ in \texttt{edge\_w3\_conjugation\_check.py}.
 
 \begin{thebibliography}{99}
 
