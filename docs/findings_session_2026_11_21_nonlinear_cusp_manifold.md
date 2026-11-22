@@ -93,7 +93,7 @@ Fix $\rho_0 \in (0, \pi)$ (e.g. $\rho_0 = 1$) and define the strip-analytic inte
 |---|---|---|
 | `NM-1` | 35-digit `mpmath`: exact $V_{G_1}(\tau)$ vs quadrature (non-exponential gap $4.01\times 10^{-2}$); $O(\varepsilon^2, \varepsilon^3)$ edge identities & $g_{2,2} = O(w)$ via Tricomi | `PASS`: $V_{G_1}$ err `5.84e-22`, edge err `0.0e+00`, $g_{2,2}(0.001)/0.001 = +0.402676$ |
 | `NM-2` | Conjugation $\frac{1}{2}Q(\mathcal{N}h) = -\mathcal{N}(uh)$; strip-analytic kernel bounds on $|\operatorname{Im}z| \le 1$; zero-initial-data Duhamel on $N_2$ | `PASS`: `conj_err = 2.69e-9`, kernel bounds sharp, `N2_PDE_res = 7.61e-6`, `|0.5*QW2(0)+N2(0)| = 3.03e-7` |
-| `NM-3` | Full nonlinear conjugated Picard iteration ($\varepsilon = 0.05$, $G_0 = w/(2+w)^2$, $W(\cdot,0) \equiv 0$, $s \in [0, 1.2] > s_\infty = 0.998662$) + physical-time $(\star)$ check across $\tau \in \{0.2, 0.6, 1.5, 3.0\}$ | `PASS`: `||dG|| = 1.24e-12`, `||dW|| = 3.98e-12`; $s$-clock `res_G = 9.93e-6`, `res_H = 3.89e-9`, `|a+D| = 1.72e-7`, `D_end_err = 1.91e-9`; physical-time `res_G(*) = 2.61e-6`, `res_eta(*) = 9.16e-6`, `|a(tau)+D(tau)| = 1.35e-7` |
+| `NM-3` | Full nonlinear conjugated Picard iteration ($\varepsilon = 0.08$, $G_0 = w/(2+w)^2$, $W(\cdot,0) \equiv 0$, $s \in [0, 1.2] > s_\infty = 0.997861$) + true physical-time $(\star)$ check with full-ODE `V_G` mutations (`-V_G`, `3V_G`) | `PASS`: `||dG|| = 1.97e-12`, `||dW|| = 8.00e-12`; $s$-clock `res_G = 7.31e-8`, `res_H = 6.99e-10`, `|a+D| = 3.20e-7`, `D_end_err = 5.37e-9`; physical-time `res_G(*) = 3.29e-7` (full-ODE mut `-V_G, 3V_G`: `4.67e-5, 4.64e-5`, `141.2x`), `res_eta(*) = 3.53e-7`, `|a(tau)+D(tau)| = 2.62e-7` |
 
 ---
 

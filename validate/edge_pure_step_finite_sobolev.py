@@ -121,8 +121,8 @@ def check_fs2() -> bool:
 
 
 def check_fs3() -> bool:
-    # Clean unfiltered domain [-72, 72] (fixes C4/C5 periodic wraparound & filter artifacts)
-    # Checks convergence of ALL FOUR norms L^2, H^1, H^2, H^3 and direct tail-corrected quadrature a_quad!
+    # Sponge-stabilized multi-domain & multi-resolution check (fixes C3 seam-wraparound NaNs!)
+    # Checks convergence of ALL FOUR norms L^2, H^1, H^2, H^3 across both Nz and domain width!
     sigma = 0.25
     eps = 0.03
     S_max = 1.2
@@ -130,8 +130,8 @@ def check_fs3() -> bool:
     ds = S_max / Ns
 
     results = {}
-    for Nz in (4096, 8192):
-        zmin, zmax = -72.0, 72.0
+    for z_half, Nz in ((64.0, 4096), (64.0, 8192), (80.0, 4096)):
+        zmin, zmax = -z_half, z_half
         L = zmax - zmin
         dz = L / Nz
         z = zmin + np.arange(Nz) * dz
@@ -144,6 +144,7 @@ def check_fs3() -> bool:
         w_g = np.exp(-sigma * z)
         w_r = np.exp(-(sigma - 0.5) * z)
         m_g = sigma + 1j * xi
+        sponge = 0.5 * (1.0 + np.tanh((z - (zmin + 10.0)) / 1.5)) * 0.5 * (1.0 - np.tanh((z - (zmax - 10.0)) / 1.5))
 
         Ng = lambda h: np.fft.ifft(Nm_g * np.fft.fft(w_g * h)).real / w_g
         NgI = lambda G: np.fft.ifft(np.fft.fft(w_g * G) / Nm_g).real / w_g
@@ -166,7 +167,7 @@ def check_fs3() -> bool:
         def rhs_f(h_cur):
             G_cur = Ng(h_cur)
             QG_cur = Q(G_cur)
-            return NgI(-QG_cur * Dg(G_cur) + 0.5 * QG_cur * G_cur)
+            return sponge * NgI(-QG_cur * Dg(G_cur) + 0.5 * QG_cur * G_cur)
 
         for _ in range(Ns):
             f0 = rhs_f(h)
@@ -180,10 +181,8 @@ def check_fs3() -> bool:
         h2 = math.sqrt(float(np.sum((1.0 + xi**2) ** 2 * np.abs(vhat) ** 2)) * L)
         h3 = math.sqrt(float(np.sum((1.0 + xi**2) ** 3 * np.abs(vhat) ** 2)) * L)
 
-        # Direct real-space quadrature of a(G(1.2)) with exact c1*w edge tail
         G_end = Ng(h)
-        z_lo, z_hi = -18.0, 20.0
-        m_q = (z >= z_lo) & (z <= z_hi)
+        m_q = (z >= -18.0) & (z <= 20.0)
         zm = z[m_q]
         wt = np.full_like(zm, dz)
         wt[0] *= 0.5
@@ -191,16 +190,17 @@ def check_fs3() -> bool:
         ix_lo = int(np.where(m_q)[0][0])
         c1_est = float(G_end[ix_lo] / w[ix_lo])
         a_quad = float(-(1.0 / math.pi) * np.sum(wt * np.exp(-0.5 * zm) * G_end[m_q]) - (2.0 * c1_est / math.pi) * math.exp(0.5 * zm[0]))
-        results[Nz] = (l2, h1, h2, h3, a_quad)
+        results[(z_half, Nz)] = (l2, h1, h2, h3, a_quad)
 
-    drifts = [abs(results[8192][i] - results[4096][i]) / results[8192][i] for i in range(4)]
-    a_q = abs(results[8192][4])
-    ok = bool(max(drifts) < 2e-3 and a_q < 1e-8)
+    r_ref = results[(64.0, 8192)]
+    drifts_nz = [abs(r_ref[i] - results[(64.0, 4096)][i]) / r_ref[i] for i in range(4)]
+    drifts_dom = [abs(r_ref[i] - results[(80.0, 4096)][i]) / r_ref[i] for i in range(4)]
+    a_q = abs(r_ref[4])
+    ok = bool(max(drifts_nz) < 2e-3 and max(drifts_dom) < 2e-3 and a_q < 1e-8)
     print(
-        f"FS-3 Non-analytic bump [-72,72]  PASS={ok}: "
-        f"L2={results[8192][0]:.4e}, H1={results[8192][1]:.4e}, "
-        f"H2={results[8192][2]:.4e}, H3={results[8192][3]:.4e} "
-        f"(max drift 4096->8192={max(drifts):.1e}), |a_quad|={a_q:.2e}"
+        f"FS-3 Non-analytic bump (sponge)  PASS={ok}: "
+        f"L2={r_ref[0]:.4e}, H1={r_ref[1]:.4e}, H2={r_ref[2]:.4e}, H3={r_ref[3]:.4e} "
+        f"(Nz_drift={max(drifts_nz):.1e}, dom_drift={max(drifts_dom):.1e}), |a_quad|={a_q:.2e}"
     )
     return ok
 

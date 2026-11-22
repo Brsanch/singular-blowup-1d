@@ -357,88 +357,106 @@ def check_nm3() -> bool:
         r_arr[j + 1] = r_next
         VG_arr[j + 1] = compute_VG(G[j + 1], r_next)
 
-    # Exact s_inf by linear interpolation of r(s) = 0
-    r_last = r_arr[s_inf_idx]
-    dr_last = -1.0 + 0.5 * VG_arr[s_inf_idx]
-    s_inf = float(s_grid[s_inf_idx] - r_last / dr_last)
+    # True physical-time V_G test (fixes C2!): compute V_phys directly from reconstructed G_phys
+    # and mutate V_G EVERYWHERE in the horizon ODE (-V_G and 3 V_G)!
+    def compute_V_phys(G_phys_grid):
+        ln_term = np.where(z < -30.0, -z + np.log1p(np.exp(z)), np.log1p(np.exp(-z)))
+        return float(-(1.0 / math.pi) * np.sum(np.exp(0.5 * z) * ln_term * G_phys_grid) * dz)
 
-    # Compute tau(s) on j = 0 .. s_inf_idx
-    tau_arr = np.zeros(s_inf_idx + 1)
-    for j in range(s_inf_idx):
-        tau_arr[j + 1] = tau_arr[j] + 0.5 * ds * (1.0 / r_arr[j] + 1.0 / r_arr[j + 1])
+    def eval_nm3_phys(v_scale: float):
+        r_loc = np.zeros(Ns + 1)
+        r_loc[0] = 1.0
+        idx_end = Ns
+        for j in range(Ns):
+            k1 = -1.0 + 0.5 * v_scale * compute_VG(G[j], r_loc[j])
+            r_mid = r_loc[j] + 0.5 * ds * k1
+            if r_mid <= 0.0:
+                idx_end = j
+                break
+            k2 = -1.0 + 0.5 * v_scale * compute_VG(0.5 * (G[j] + G[j + 1]), r_mid)
+            r_next = r_loc[j] + ds * k2
+            if r_next <= 0.0:
+                idx_end = j
+                break
+            r_loc[j + 1] = r_next
+        s_inf_loc = float(s_grid[idx_end] - r_loc[idx_end] / (-1.0 + 0.5 * v_scale * compute_VG(G[idx_end], r_loc[idx_end])))
+        tau_loc = np.zeros(idx_end + 1)
+        for j in range(idx_end):
+            tau_loc[j + 1] = tau_loc[j] + 0.5 * ds * (1.0 / r_loc[j] + 1.0 / r_loc[j + 1])
 
-    # Verify original physical-time nonlinear PDEs (*) at tau in {0.2, 0.6, 1.5, 3.0}!
-    # G_phys(v, tau) = G(r(s)^2 * v, s),  eta_phys(v, tau) = r(s) * sqrt(v) * H(r(s)^2 * v, s)
-    # Build splines in s for r(s), VG(s), and evaluate PDE (*) by central finite differences in tau & v
-    s_sub = s_grid[: s_inf_idx + 1]
-    r_sp = make_interp_spline(s_sub, r_arr[: s_inf_idx + 1], k=3)
-    tau_to_s = make_interp_spline(tau_arr, s_sub, k=3)
-    VG_sp = make_interp_spline(s_sub, VG_arr[: s_inf_idx + 1], k=3)
+        s_sub_l = s_grid[: idx_end + 1]
+        r_sp_l = make_interp_spline(s_sub_l, r_loc[: idx_end + 1], k=3)
+        tau_to_s_l = make_interp_spline(tau_loc, s_sub_l, k=3)
+        G_sp_l = [make_interp_spline(z, G[j], k=3) for j in range(idx_end + 1)]
+        H_sp_l = [make_interp_spline(z, H[j], k=3) for j in range(idx_end + 1)]
+        QG_sp_l = [make_interp_spline(z, QG_all[j], k=3) for j in range(idx_end + 1)]
 
-    # For each s_j, build z-splines of G, H, QG
-    G_z_sp = [make_interp_spline(z, G[j], k=3) for j in range(s_inf_idx + 1)]
-    H_z_sp = [make_interp_spline(z, H[j], k=3) for j in range(s_inf_idx + 1)]
-    QG_z_sp = [make_interp_spline(z, QG_all[j], k=3) for j in range(s_inf_idx + 1)]
+        def eval_f(splines_list, w_val, s_val):
+            zw = math.log(w_val)
+            j0 = min(max(int(s_val / ds) - 1, 0), idx_end - 3)
+            ss = s_sub_l[j0 : j0 + 4]
+            vals = np.array([float(splines_list[j0 + m](zw)) for m in range(4)])
+            res = 0.0
+            for m in range(4):
+                L_m = 1.0
+                for q_m in range(4):
+                    if q_m != m:
+                        L_m *= (s_val - ss[q_m]) / (ss[m] - ss[q_m])
+                res += vals[m] * L_m
+            return res
 
-    def eval_field(splines_list, w_val, s_val):
-        zw = math.log(w_val)
-        # Cubic interpolation in s using 4 nearest nodes
-        j0 = min(max(int(s_val / ds) - 1, 0), s_inf_idx - 3)
-        ss = s_sub[j0 : j0 + 4]
-        vals = np.array([float(splines_list[j0 + m](zw)) for m in range(4)])
-        # Lagrange interpolation at s_val
-        res = 0.0
-        for m in range(4):
-            L_m = 1.0
-            for q_m in range(4):
-                if q_m != m:
-                    L_m *= (s_val - ss[q_m]) / (ss[m] - ss[q_m])
-            res += vals[m] * L_m
-        return res
+        dtau = 1e-4
+        dv_rel = 1e-4
+        mG, mE, mC = 0.0, 0.0, 0.0
+        for tau_val in (0.2, 0.6):
+            s0 = float(tau_to_s_l(tau_val))
+            r0 = float(r_sp_l(s0))
+            a_tau = r0 * eval_f(QG_sp_l, math.exp(-18.0), s0)
+            D_tau = r0 * eval_f(H_sp_l, math.exp(-18.0), s0)
+            mC = max(mC, abs(a_tau + D_tau))
 
-    dtau = 1e-4
-    dv_rel = 1e-4
-    max_phys_G = 0.0
-    max_phys_eta = 0.0
-    max_phys_G_mut = 0.0
-    max_phys_compat = 0.0
+            j0 = min(max(int(s0 / ds) - 1, 0), idx_end - 3)
+            ss = s_sub_l[j0 : j0 + 4]
+            z_shift = z + 2.0 * math.log(r0)
+            z_clip = np.clip(z_shift, z[0], z[-1])
+            Gp_full = np.zeros_like(z)
+            for m in range(4):
+                L_m = 1.0
+                for q_m in range(4):
+                    if q_m != m:
+                        L_m *= (s0 - ss[q_m]) / (ss[m] - ss[q_m])
+                Gp_full += L_m * G_sp_l[j0 + m](z_clip)
+            Gp_full[z_shift < z[0] + 1.0] = 0.0
+            Vp = compute_V_phys(Gp_full)
 
-    for tau_val in (0.2, 0.6):
-        s0 = float(tau_to_s(tau_val))
-        r0 = float(r_sp(s0))
-        VG0 = float(VG_sp(s0))
-        a_tau = r0 * eval_field(QG_z_sp, math.exp(-18.0), s0)
-        D_tau = r0 * eval_field(H_z_sp, math.exp(-18.0), s0)
-        max_phys_compat = max(max_phys_compat, abs(a_tau + D_tau))
+            for v0 in (0.2, 1.0, 4.0):
+                def G_phys(vv, tt):
+                    ss_t = float(tau_to_s_l(tt))
+                    rr_t = float(r_sp_l(ss_t))
+                    return eval_f(G_sp_l, rr_t * rr_t * vv, ss_t)
 
-        for v0 in (0.2, 1.0, 4.0):
-            def G_phys(vv, tt):
-                ss = float(tau_to_s(tt))
-                rr = float(r_sp(ss))
-                return eval_field(G_z_sp, rr * rr * vv, ss)
+                def eta_phys(vv, tt):
+                    ss_t = float(tau_to_s_l(tt))
+                    rr_t = float(r_sp_l(ss_t))
+                    return rr_t * math.sqrt(vv) * eval_f(H_sp_l, rr_t * rr_t * vv, ss_t)
 
-            def eta_phys(vv, tt):
-                ss = float(tau_to_s(tt))
-                rr = float(r_sp(ss))
-                return rr * math.sqrt(vv) * eval_field(H_z_sp, rr * rr * vv, ss)
+                G_t = (G_phys(v0, tau_val + dtau) - G_phys(v0, tau_val - dtau)) / (2.0 * dtau)
+                dv = v0 * dv_rel
+                G_v = (G_phys(v0 + dv, tau_val) - G_phys(v0 - dv, tau_val)) / (2.0 * dv)
+                eta_t = (eta_phys(v0, tau_val + dtau) - eta_phys(v0, tau_val - dtau)) / (2.0 * dtau)
+                eta_v = (eta_phys(v0 + dv, tau_val) - eta_phys(v0 - dv, tau_val)) / (2.0 * dv)
+                G_val = G_phys(v0, tau_val)
+                QG_val = r0 * eval_f(QG_sp_l, r0 * r0 * v0, s0)
 
-            G_t = (G_phys(v0, tau_val + dtau) - G_phys(v0, tau_val - dtau)) / (2.0 * dtau)
-            dv = v0 * dv_rel
-            G_v = (G_phys(v0 + dv, tau_val) - G_phys(v0 - dv, tau_val)) / (2.0 * dv)
-            eta_t = (eta_phys(v0, tau_val + dtau) - eta_phys(v0, tau_val - dtau)) / (2.0 * dtau)
-            eta_v = (eta_phys(v0 + dv, tau_val) - eta_phys(v0 - dv, tau_val)) / (2.0 * dv)
+                mG = max(mG, abs(G_t + (2.0 - Vp + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val) - math.sqrt(v0) * eta_v))
+                mE = max(mE, abs(eta_t + (2.0 - Vp + QG_val) * v0 * eta_v))
+        return s_inf_loc, float(tau_loc[-1]), mG, mE, mC
 
-            G_val = G_phys(v0, tau_val)
-            QG_val = r0 * eval_field(QG_z_sp, r0 * r0 * v0, s0)
+    s_inf, tau_max, max_phys_G, max_phys_eta, max_phys_compat = eval_nm3_phys(1.0)
+    _, _, max_phys_G_neg, _, _ = eval_nm3_phys(-1.0)
+    _, _, max_phys_G_3x, _, _ = eval_nm3_phys(3.0)
+    vg_ratio = min(max_phys_G_neg, max_phys_G_3x) / max(max_phys_G, 1e-30)
 
-            res_G_p = G_t + (2.0 - VG0 + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val) - math.sqrt(v0) * eta_v
-            res_G_mut = G_t + (2.0 + VG0 + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val) - math.sqrt(v0) * eta_v
-            res_eta_p = eta_t + (2.0 - VG0 + QG_val) * v0 * eta_v
-            max_phys_G = max(max_phys_G, abs(res_G_p))
-            max_phys_G_mut = max(max_phys_G_mut, abs(res_G_mut))
-            max_phys_eta = max(max_phys_eta, abs(res_eta_p))
-
-    vg_ratio = max_phys_G_mut / max(max_phys_G, 1e-30)
     ok = bool(
         diff_G < 1e-10
         and diff_W < 1e-10
@@ -450,14 +468,14 @@ def check_nm3() -> bool:
         and max_phys_G < 1e-5
         and max_phys_eta < 1e-5
         and max_phys_compat < 1e-6
-        and vg_ratio > 10.0
+        and vg_ratio > 50.0
     )
     print(
         f"NM-3 Full nonlinear Picard & (*) PASS={ok}:\n"
         f"     Picard conv: ||dG||={diff_G:.2e}, ||dW||={diff_W:.2e}\n"
         f"     s-clock PDE: res_G={max_s_res_G:.2e}, res_H={max_s_res_H:.2e}, |a+D|={max_s_compat:.2e}, D_end_err={D_end_err:.2e}\n"
-        f"     Phys time  : s_inf={s_inf:.6f} (tau_max={tau_arr[-1]:.2f}), "
-        f"res_G(*)={max_phys_G:.2e} (mut V_G->-V_G: {max_phys_G_mut:.2e}, {vg_ratio:.1f}x), "
+        f"     Phys time  : s_inf={s_inf:.6f} (tau_max={tau_max:.2f}), "
+        f"res_G(*)={max_phys_G:.2e} (full-ODE mut -V_G,3V_G: {max_phys_G_neg:.2e},{max_phys_G_3x:.2e}, {vg_ratio:.1f}x), "
         f"res_eta(*)={max_phys_eta:.2e}, |a(tau)+D(tau)|={max_phys_compat:.2e}"
     )
     return ok
