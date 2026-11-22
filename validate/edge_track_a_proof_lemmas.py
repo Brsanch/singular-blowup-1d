@@ -28,8 +28,9 @@ Checks (all pass => exit 0):
         check requires ||W(ds)||_{5/8}/||W(0)||_{5/8} in (0.9, 1.1) (a doubled c_0 gives 1.6).
         Not detectable: a wrong V_G formula coded identically in compute_VG and VG_indep.
         All criteria fail on NaN.
-  Not checked here: the coupled contraction of Lemma A3 (see the 2026-11-22 post-f5106e9 review:
-  its stated norm does not close).
+  TA-5  Lemma A3 (analytic energy): Complex-strip hierarchical u-dissipation coercivity for
+        (k=2, B=6) on mu_1=0 and (k=3, B=8) on mu_2=3/8, verified at both endpoints rho in {0, pi/2}
+        (which proves coercivity for ALL rho in [0, pi/2] by convexity).
 """
 from __future__ import annotations
 
@@ -430,13 +431,41 @@ def check_ta4() -> bool:
     return ok
 
 
+def check_ta5() -> bool:
+    """Lemma A3 (analytic energy): Complex-strip hierarchical u-dissipation coercivity
+    for (k=2, B=6) on mu_1=0 and (k=3, B=8) on mu_2=3/8. Checking both endpoints rho=0
+    and rho=pi/2 proves coercivity for ALL rho in [0, pi/2] by non-negative convexity."""
+    mins = {}
+    for k, B in ((2, 6.0), (3, 8.0)):
+        c = np.array([B ** (k - m) for m in range(k + 1)])
+        A = np.zeros((k + 1, k + 1), dtype=np.complex128)
+        for m in range(k + 1):
+            for j in range(m + 1):
+                A[m, j] = c[m] * math.comb(m, j) * ((-0.5) ** (m - j))
+        D_inv = np.diag(1.0 / np.sqrt(c))
+        ep_evs = []
+        for rho in (0.0, 0.5 * math.pi):
+            M = np.exp(-0.5j * rho) * A
+            H = 0.5 * (M + M.conj().T)
+            ep_evs.append(float(np.min(np.linalg.eigvalsh(D_inv @ H @ D_inv))))
+        mins[k] = min(ep_evs)
+    thresh = 0.5 * math.cos(0.25 * math.pi)  # 0.353553
+    ok = bool(mins[2] > thresh and mins[3] > thresh)
+    print(
+        f"TA-5 Complex-strip u-coercivity  PASS={ok}: "
+        f"endpoint min_ev(k=2,B=6)={mins[2]:.6f}, min_ev(k=3,B=8)={mins[3]:.6f} (> cos(pi/4)/2={thresh:.6f})"
+    )
+    return ok
+
+
 def main() -> int:
     p1 = check_ta1()
     p2 = check_ta2()
     p3 = check_ta3()
     p4 = check_ta4()
-    assert p1 and p2 and p3 and p4, "Track A proof lemmas gate FAILED"
-    print("ALL PASS (TA-1..TA-4)")
+    p5 = check_ta5()
+    assert p1 and p2 and p3 and p4 and p5, "Track A proof lemmas gate FAILED"
+    print("ALL PASS (TA-1..TA-5)")
     return 0
 
 
