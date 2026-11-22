@@ -38,8 +38,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from stability_edge_z import build_blocks_z  # noqa: E402
 
 
-def build(N=1400, zmin=-12.0, zmax=12.0, Y_ref=3.0, Nm=600):
-    B = build_blocks_z(N=N, zmin=zmin, zmax=zmax, beta=0.0, edge_bc=True)  # reduced grid
+def build(N=1400, zmin=-12.0, zmax=12.0, Y_ref=3.0, Nm=600, edge_tail=None):
+    kw = {} if edge_tail is None else {"edge_tail": edge_tail}   # None -> build_blocks_z default
+    B = build_blocks_z(N=N, zmin=zmin, zmax=zmax, beta=0.0, edge_bc=True, **kw)  # reduced grid
     z, dz, Y = B["z"], B["dz"], B["Y"]
     ym1 = Y - 1.0
     n = len(z)

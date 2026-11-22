@@ -67,7 +67,41 @@ def hilbert_support_z(Y, Ymax):
     return H
 
 
-def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True, edge_tail=False):
+def edge_tail_row(z):
+    """Row t with  t @ G = int_0^{v_min} H[g](1+y) dy  (v_min = e^{z_min}), EXACT for
+    g = v^{-1/2} G supported on v >= v_min (which is what the grid represents):
+
+        int_0^{v_min} dy / (v' - y) = -ln(1 - v_min/v')   =>
+        t @ G = -(1/pi) int_{z_min}^{z_max} e^{z'/2} (-ln(1 - e^{z_min - z'})) G(z') dz'.
+
+    For z' >> z_min the kernel tends to -(1/pi) e^{z_min} e^{-z'/2}, i.e. e^{z_min} times
+    the edge functional a = H[g](1).  The log singularity at z' = z_min is integrable;
+    weights are exact integrals of the kernel against the piecewise-linear hat functions
+    (Gauss-Legendre per cell, adaptive quadrature on the first, singular, cell)."""
+    from scipy.integrate import quad
+    z = np.asarray(z, dtype=float)
+    n = len(z)
+    z0 = z[0]
+
+    def k(zp):
+        return np.exp(0.5 * zp) * (-np.log1p(-np.exp(z0 - zp)))
+
+    xg, wg = np.polynomial.legendre.leggauss(12)
+    W = np.zeros(n)
+    a, b = z[1:-1], z[2:]                       # cells j = 1 .. n-2 (smooth)
+    half = 0.5 * (b - a)
+    zq = a[:, None] + half[:, None] * (xg[None, :] + 1.0)
+    kq = k(zq) * wg[None, :] * half[:, None]
+    lam = (zq - a[:, None]) / (b - a)[:, None]  # 0 at left node, 1 at right node
+    W[1:-1] += (kq * (1.0 - lam)).sum(axis=1)
+    W[2:] += (kq * lam).sum(axis=1)
+    h = z[1] - z[0]                             # first cell: log singularity at z0
+    W[0] += quad(lambda zp: k(zp) * (z[1] - zp) / h, z0, z[1], limit=200)[0]
+    W[1] += quad(lambda zp: k(zp) * (zp - z0) / h, z0, z[1], limit=200)[0]
+    return -W / np.pi
+
+
+def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True, edge_tail=True):
     """Assemble the frozen operator on z in [zmin, zmax].
 
     beta : far-field weight exponent (w = e^{beta z}); beta<0 pushes the essential
@@ -79,17 +113,22 @@ def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True, edge_ta
            re-admits that inadmissible branch as a spurious z_min-dependent edge
            mode (e.g. Re~+1.7).  Implemented by dropping the z_min DOF.
     edge_tail : include the part of the edge average that lies below the grid,
-           int_{-inf}^{z_min} H(g) e^{z'} dz' ~= H(g)(z_min) e^{z_min}  (H(g) taken constant
-           below z_min, its edge limit a = H[g](1)).
-           DEFAULT False = the historical matrices.  With False, J_op, forcing and Q_op
-           equal the continuum operator MINUS a*e^{z_min-z}: Q_op's first row is
-           identically 0 and the error is O(1) within a few units of z_min (for
-           G = w/(2+w)^2, exact a = -0.17678: Q_op = 0.000 / -0.1115 / -0.1680 at
-           z_min / z_min+1 / z_min+3).  Do NOT read Q_op or forcing near z_min as the
-           edge value a; use Hg_op[0] for that.  With True, Q_op = -0.1767 at the edge.
-           The default is kept False because the truncation is load-bearing: with True,
-           five gates flip and the free-edge "+1.7" mode disappears
-           (docs/findings_session_2026_11_22_qop_edge_tail.md).
+           int_0^{v_min} H(g) dy, through the exact kernel of edge_tail_row() (exact for g
+           supported on the grid).  DEFAULT True since 2026-11-22.
+           With False (the historical matrices) J_op, forcing and Q_op equal the
+           continuum operator MINUS (tail)*e^{-z}: Q_op's first row is identically 0 and
+           the error is O(1) within a few units of z_min (for G = w/(2+w)^2, exact
+           a = -0.17678: Q_op = 0.000 / -0.1115 / -0.1680 at z_min / z_min+1 / z_min+3).
+           With True, Q_op G is accurate to ~1e-3 relative for BULK data.
+           KNOWN REMAINING DEFECT (both settings): hilbert_support_z puts the p.v. of a
+           constant over [1, Ymax] on the diagonal, i.e. row i assumes g = g_i on
+           [1, Y_min], while the tail assumes g = 0 there.  On structure within O(1) of
+           z_min Hg_op (hence Q_op) is 14-37% wrong, independent of N.  Edge-layer
+           eigen/sup quantities (field of values, free-edge spectrum) are therefore
+           grid-specific.  docs/findings_session_2026_11_22_qop_edge_tail.md section 6.
+           Other effects of True: the stiff edge eigenvalue pair of M_GG grows ~1.5x
+           (-141 +- 153i at z_min = -14).  Gates that add a tail themselves
+           (Q_exact = Q_op + ...) must pass edge_tail=False.
     """
     z = np.linspace(zmin, zmax, N)
     dz = z[1] - z[0]
@@ -105,8 +144,9 @@ def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True, edge_ta
     Hg_op = Hz @ np.diag(ym1 ** -0.5)
     # J(Y) = int_1^Y H(g) dY' = int H(g) * (Y-1) dz'   (cumulative in z)
     J_op = Cz @ np.diag(ym1) @ Hg_op
-    if edge_tail:                             # + int_{-inf}^{z_min} H(g) e^{z'} dz'
-        J_op = J_op + ym1[0] * np.ones((N, 1)) @ Hg_op[0:1, :]
+    if edge_tail:                             # + int_0^{v_min} H(g) dy  (exact kernel)
+        t_row = edge_tail_row(z)
+        J_op = J_op + np.ones((N, 1)) @ t_row[None, :]
     forcing = np.diag(0.5 / ym1) @ J_op       # (1/2) J/(Y-1)
 
     # Bounded form of  delta_U/(Y-1) = J/(Y-1)  acting on G (= 2*forcing), recast as
@@ -120,9 +160,9 @@ def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True, edge_ta
         w_ea = np.exp(z[:i + 1] - z[i])       # e^{z'-z} <= 1 for z' <= z
         tw = np.full(i + 1, dz); tw[0] *= 0.5; tw[i] *= 0.5   # trapezoid weights
         EA[i, :i + 1] = w_ea * tw
-    if edge_tail:                             # tail weight e^{z_min - z} on the edge node
-        EA[:, 0] += np.exp(z[0] - z)
     Q_op = EA @ Hg_op                          # Q_op @ G ~= delta_U/(Y-1), bounded
+    if edge_tail:
+        Q_op = Q_op + np.outer(np.exp(-z), t_row)
 
     transport = -2.0 * Dz                     # -abar G_Y = -2 d_z (constant coeff)
     M_GG = transport + forcing

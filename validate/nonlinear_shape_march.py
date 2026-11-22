@@ -94,12 +94,20 @@ def hi_k_fraction(G):
 def march(B, A, gammas, taus, nl=True, h_amp=0.0):
     """Evolve a bulk bump of amplitude A; return weighted-norm series + diagnostics."""
     z, dz = B["z"], B["dz"]
+    if "rho_GG" not in B:
+        B["rho_GG"] = float(np.abs(np.linalg.eigvals(B["M_GG"])).max())
     rhs = make_rhs(B)
     G = A * np.exp(-((z - 1.0) / 1.0) ** 2)
     h = h_amp * np.exp(-((z - 1.5) / 1.0) ** 2)
     G[0] = 0.0; h[0] = 0.0
 
     dt = 0.25 * dz                                   # CFL ~0.5 for transport speed 2
+    # With the edge tail included (build_blocks_z default since 2026-11-22) the stiff edge
+    # eigenvalue pair of M_GG is ~1.5x larger (-141 +- 153i at z_min = -14; truncated -95 +- 111i),
+    # raising the spectral radius.  dt*rho is <= 0.97 on most grids used here but 2.36 on
+    # (1800, -16, 14), where this cap binds.  2/rho is inside the RK4 stability region for the
+    # whole spectrum on the three grids of this script (reviewer check, 2026-11-22).
+    dt = min(dt, 2.0 / B["rho_GG"])
     series = {g: [] for g in gammas}
     n0 = {g: wnorm(z, dz, G, h, g) for g in gammas}
     peak = 1.0

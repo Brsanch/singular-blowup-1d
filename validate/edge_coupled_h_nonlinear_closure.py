@@ -126,7 +126,7 @@ def check_ch4():
     # Q_op G = H[g](1) (1 - e^{z_min - z}). Restoring the truncated edge tail
     # (as in edge_nonlinear_comoving_closure.py and EM-4) gives Q_exact G -> H[g](1),
     # and Qtilde G = Q_exact G - H[g](1) = O(e^z). Transport uses explicit upwind D_up.
-    B = build(N=800, zmin=-10.0, zmax=10.0)
+    B = build(N=800, zmin=-10.0, zmax=10.0, edge_tail=False)  # tail restored by hand below (Q_exact)
     z, dz, Q_op, Dz, b1 = B["z"], B["dz"], B["Q_op"], B["Dz"], B["b1"]
     n = len(z)
     D_up = np.zeros((n, n))

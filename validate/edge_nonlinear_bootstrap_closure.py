@@ -95,7 +95,7 @@ def main() -> int:
     int_34 = float(np.trapezoid(1.0 / (6.25 * c2 + 4.0 * s2), theta))
     c_linf_bound = 1.0 / math.sqrt(math.pi) + math.sqrt(2.0 / 3.0)
 
-    B = build_blocks_z(N=1000, zmin=-10.0, zmax=10.0, beta=0.0, edge_bc=True)
+    B = build_blocks_z(N=1000, zmin=-10.0, zmax=10.0, beta=0.0, edge_bc=True, edge_tail=False)  # edge_tail=False: this gate restores the tail itself (Q_exact below)
     z, dz, Y, Q_op = B["z"], B["dz"], B["Y"], B["Q_op"]
     Ymin = 1.0 + math.exp(-10.0)
     w_trap = np.full(len(z), dz)

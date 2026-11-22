@@ -24,6 +24,11 @@ def energy_op(B, gamma=0.4, z0=-6.0, s=2.0):
     S = -np.diag(pp) + 0.5 * (Ft + Ft.T)
     return S, z, sw, pp
 
+print("NOTE 2026-11-22: build_blocks_z now includes the exact edge tail by default.  The narrative")
+print("text and the numbers documented for this script were produced with the TRUNCATED edge")
+print("average (edge_tail=False); with the tail the printed values change substantially and the")
+print("narrative below has NOT been updated.  Magnitudes are grid-specific in both settings.")
+print("See docs/findings_session_2026_11_22_qop_edge_tail.md.")
 print("=" * 78)
 print("(1) SELF-SIMILAR COLLAPSE  A_full * exp(zmin/2) = const ?  (N=1400)")
 print("    zmin    A_full      A_full*exp(zmin/2)    bulk(z>-6)   bulk(z>-4)")

@@ -10,9 +10,11 @@ Gates:
      Y>1 (10x better than the equispaced tool's ~15%); the residual is combined
      far-field tail truncation + resolution, and the spectral verdict (gate 3) is
      robust to it.
- (2) WITHOUT the inflow BC the discretization re-admits an inadmissible edge branch
-     as a SPURIOUS, z_min-dependent mode (Re~+1.7).  WITH the BC G(z_min)=0 it
-     vanishes -> the corrected operator has NO Re>0 mode.
+ (2) Free edge vs inflow BC, with the edge average truncated at z_min (edge_tail=False)
+     and with its tail included (edge_tail=True, the default since 2026-11-22).  The
+     SPURIOUS, z_min-dependent free-edge mode (Re~+1.7) exists only for the truncated
+     average; with the tail there is no Re>0 mode with or without the BC.  With the BC
+     G(z_min)=0 both give the same max Re < 0.
  (3) the clean verdict (max Re < 0) is robust under N, z_min, z_max refinement.
 """
 import os
@@ -44,16 +46,25 @@ def gate1_hilbert():
 
 def gate2_edge_bc():
     print("\n" + "=" * 78)
-    print("  (2) the inflow/regularity edge BC is essential")
+    print("  (2) free edge vs inflow BC; truncated edge average vs tail included")
     print("=" * 78)
-    print("   zmin   no BC: max Re (spurious, z_min-dependent)   with BC G(zmin)=0: max Re")
-    for zmin in (-12.0, -14.0, -16.0, -18.0):
-        vno, _ = spectrum(build_blocks_z(N=1600, zmin=zmin, zmax=7.0, edge_bc=False)["M_GG"])
-        vbc, _ = spectrum(build_blocks_z(N=1600, zmin=zmin, zmax=7.0, edge_bc=True)["M_GG"])
-        print(f"   {zmin:5.0f}        {vno.real.max():+.4f}"
-              f"                          {vbc.real.max():+.5f}")
-    print("   -> no-BC mode (Re~+1.7) drifts with z_min = inadmissible homogeneous")
-    print("      edge branch (G~(Y-1)^{-lambda/2} blows up at edge); BC removes it.")
+    print("   rightmost Re over the whole spectrum / over |Im| < 20 (the whole-spectrum maximum")
+    print("   is a grid-sawtooth pair at |Im| = 2/dz, ~1/N, blind to the edge)")
+    print("   zmin   no BC, truncated    no BC, exact tail    BC, truncated      BC, exact tail")
+    for zmin in (-6.0, -10.0, -12.0, -14.0, -16.0, -18.0):
+        mx = {}
+        for bc in (False, True):
+            for tail in (False, True):
+                v, _ = spectrum(build_blocks_z(N=1600, zmin=zmin, zmax=7.0, edge_bc=bc,
+                                               edge_tail=tail)["M_GG"])
+                mx[bc, tail] = (v.real.max(), v[np.abs(v.imag) < 20.0].real.max())
+        print(f"   {zmin:5.0f}  " + "   ".join(
+            f"{mx[k][0]:+.4f}/{mx[k][1]:+.3f}" for k in ((False, False), (False, True), (True, False), (True, True))))
+    print("   -> the real free-edge mode (Re~+1.4..+1.7, drifting with z_min) appears with the")
+    print("      TRUNCATED edge average; with the tail included this matrix has no Re>0 mode for")
+    print("      z_min <= -4.  The free-edge spectrum is discretization-defined (a free inflow")
+    print("      boundary has no continuum limit; an independent collocation of Q has an unstable")
+    print("      edge-node mode), so only the BC columns carry meaning: max Re < 0 in both.")
 
 
 def gate3_verdict():

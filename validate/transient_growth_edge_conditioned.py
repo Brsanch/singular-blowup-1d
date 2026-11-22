@@ -38,7 +38,10 @@ TAUS = np.linspace(0.0, 6.0, 31)
 
 
 def build_bounded(N, zmin, zmax):
-    B = build_blocks_z(N=N, zmin=zmin, zmax=zmax, beta=0.0, edge_bc=True)
+    # edge_tail=False: every number documented for this gate (mu_an, mu_disc, G_mat ~112,
+    # the 2.33 -> 3.91 baseline) was produced with the truncated edge average; the script
+    # takes > 25 min, so it has not been re-baselined with the exact tail (2026-11-22).
+    B = build_blocks_z(N=N, zmin=zmin, zmax=zmax, beta=0.0, edge_bc=True, edge_tail=False)
     M = -2.0 * B["Dz"] + 0.5 * B["Q_op"]   # bounded-forcing operator (= transient_growth.py form)
     return M, B["Dz"], B["Q_op"], B["z"], B["dz"]
 

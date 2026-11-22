@@ -47,6 +47,11 @@ def energy_abscissa(B, gamma, z0, s, return_vec=False):
 
 
 def main():
+    print("NOTE 2026-11-22: build_blocks_z now includes the exact edge tail by default.  The narrative")
+    print("text and the numbers documented for this script were produced with the TRUNCATED edge")
+    print("average (edge_tail=False); with the tail the printed values change substantially and the")
+    print("narrative below has NOT been updated.  Magnitudes are grid-specific in both settings.")
+    print("See docs/findings_session_2026_11_22_qop_edge_tail.md.")
     print("=" * 84)
     print("  PROOF ATTEMPT step 1: energy abscissa with a BOUNDED-AT-EDGE anisotropic weight")
     print("=" * 84)

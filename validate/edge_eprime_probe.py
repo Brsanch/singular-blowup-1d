@@ -150,7 +150,10 @@ def main() -> int:
 
     # ---------- Q3: free-edge spurious mode = homogeneous branch ----------
     print("\nQ3: free-edge (edge_bc=False) spurious mode edge growth vs −Reλ/2")
-    Bf = build_blocks_z(N=1000, zmin=-12.0, zmax=7.0, edge_bc=False)
+    # edge_tail=False: the free-edge mode at Re λ ≈ +1.7 is a property of the TRUNCATED edge
+    # average (Q_op minus a·e^{z_min−z}); it is absent when the tail is included (Q3b below,
+    # docs/findings_session_2026_11_22_qop_edge_tail.md).
+    Bf = build_blocks_z(N=1000, zmin=-12.0, zmax=7.0, edge_bc=False, edge_tail=False)
     vf, Vf = spectrum(Bf["M_GG"])
     i_spur = int(np.argmax(vf.real))
     lam_spur = complex(vf[i_spur])
@@ -165,7 +168,7 @@ def main() -> int:
     print(f"  λ_spur = {lam_spur.real:+.4f}{lam_spur.imag:+.4f}i")
     print(f"  α_edge (fit) = {alpha:.4f}   −Re(λ)/2 = {pred_alpha:.4f}")
     report(
-        "Q3 free-edge mode has Re λ > 0.5",
+        "Q3 truncated free-edge mode has Re λ > 0.5",
         lam_spur.real > 0.5,
         f"Re λ_spur={lam_spur.real:.4f}",
     )
@@ -176,6 +179,20 @@ def main() -> int:
         "Q3 edge growth homogeneous-class (α≈−Reλ/2, α<−0.3)",
         ok_match,
         f"α={alpha:.4f}  −Reλ/2={pred_alpha:.4f}  |diff|={abs(alpha - pred_alpha):.4f}",
+    )
+
+    # ---------- Q3b: with the edge tail included, the free-edge mode is gone ----------
+    Bft = build_blocks_z(N=1000, zmin=-12.0, zmax=7.0, edge_bc=False, edge_tail=True)
+    v_ft = np.linalg.eigvals(Bft["M_GG"])
+    max_re_free_tail = float(v_ft.real.max())
+    low_ft = v_ft[np.abs(v_ft.imag) < 20.0]          # the grid-sawtooth pair sits at |Im| = 2/dz
+    max_re_low = float(low_ft.real.max())
+    print(f"\nQ3b: free-edge with edge_tail=True: max Re = {max_re_free_tail:+.5f}, "
+          f"rightmost with |Im|<20: Re = {max_re_low:+.4f}")
+    report(
+        "Q3b free-edge + exact edge tail: no unstable mode (max Re ≤ 0; low-frequency Re ≤ −0.3)",
+        max_re_free_tail <= 0.0 and max_re_low <= -0.3,
+        f"max Re={max_re_free_tail:.5f}, low-freq Re={max_re_low:.4f} (truncated: {lam_spur.real:.4f})",
     )
 
     # ---------- Q4: with edge_bc, no unstable mode; recessive edge ----------

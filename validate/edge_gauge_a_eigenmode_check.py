@@ -191,7 +191,7 @@ def main() -> int:
         report("EM-4 discrepancy with the repo's discretized operator", False, f"import failed: {exc}")
     else:
         zmin, zmax = -10.0, 10.0
-        B = build_blocks_z(N=1000, zmin=zmin, zmax=zmax, beta=0.0, edge_bc=True)
+        B = build_blocks_z(N=1000, zmin=zmin, zmax=zmax, beta=0.0, edge_bc=True, edge_tail=False)  # edge_tail=False: this gate restores the tail itself (Q_exact below)
         z, dz, Y, Q_op, Dz = B["z"], B["dz"], B["Y"], B["Q_op"], B["Dz"]
         n = len(z)
         w = np.full(n, dz)

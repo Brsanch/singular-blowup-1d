@@ -2,8 +2,8 @@
 id: OBS-03
 title: The +40 edge energy-abscissa is a continuum non-normal resonance carried by the g-unbounded (Y-1)^{-1/2} indicial branch, not a grid artifact and not a coercivity obstruction on the admissible class — A_full·e^{z_min/2}=0.099 const (z_min=−10..−16); bulk abscissa −0.41/−0.65 depth-independent; an infinitesimal g-mass penalty κ=1e-3 crushes +40 to negative; discrete Hilbert mis-resolves the profile at the edge node (−0.445·e^{−z_min/2} vs continuum 0).
 category: OBS
-status: verified
-confidence: 1.0
+status: measured
+confidence: 0.3   # lowered 2026-11-22: truncated-operator artefact, see CORR in body
 dependencies: []
 supports: [LEM-06]
 cross_citations:
@@ -20,6 +20,13 @@ verification:
 lean_ref: none
 tags: [track2-evidence, artifact-vs-real-settled]
 ---
+
+**CORR 2026-11-22.** The numbers in this entry were produced with the discrete edge average truncated at `z_min`
+(`build_blocks_z(edge_tail=False)`). With the exact edge tail (default since 2026-11-22) this entry's script prints
+very different values (the large positive abscissas collapse), and a second review found the remaining values are
+grid-specific because the discrete Hilbert transform is inaccurate near `z_min`. Treat the quantitative content of this
+entry as a property of the truncated matrix, not of the operator. Status lowered from `verified` accordingly.
+Details: `docs/findings_session_2026_11_22_qop_edge_tail.md`. The entry text below is left as written.
 
 Settles the artifact-vs-real dispute that split the derivation lenses: BOTH a genuine
 continuum profile-resonance AND a discrete-Hilbert contamination exist at the edge (same

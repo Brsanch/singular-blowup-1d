@@ -60,7 +60,7 @@ def main() -> int:
 
     N = 1000
     zmin, zmax = -10.0, 10.0
-    B = build_blocks_z(N=N, zmin=zmin, zmax=zmax, beta=0.0, edge_bc=True)
+    B = build_blocks_z(N=N, zmin=zmin, zmax=zmax, beta=0.0, edge_bc=True, edge_tail=False)  # edge_tail=False: this gate restores the tail itself (Q_exact below)
     z, dz, Y, Q_op, Dz = B["z"], B["dz"], B["Y"], B["Q_op"], B["Dz"]
     n = len(z)
     Ymin = 1.0 + math.exp(zmin)

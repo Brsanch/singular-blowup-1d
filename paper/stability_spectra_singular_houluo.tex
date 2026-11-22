@@ -209,8 +209,13 @@ $\mathcal{M}[T_c G](s)=c(s)\widehat{G}(s)$, $c(s):=-\tan(\pi s)/(2s+1)$.
 The edge is an inflow boundary: the homogeneous branch
 $G\sim e^{-\lambda z/2}$ is inadmissible in the weighted space for
 $\operatorname{Re}\lambda>-2\sigma$; we impose $G(z_{\min})=0$ (Robin/inflow).
-Without this BC the discretization re-admits a spurious mode with
-$\operatorname{Re}\lambda\approx +1.7$~\cite{findings_edge}.
+If the discrete edge average $\delta U/(Y-1)$ is truncated at $z_{\min}$ (omitting
+$\int_0^{v_{\min}}H(g)\,dy$) and this BC is not imposed, the discretization has a real spurious
+mode with $\operatorname{Re}\lambda\approx +1.4$ to $+1.7$~\cite{findings_edge}.  The free-edge spectrum is a property of the
+discretization, not of the model (a free inflow boundary has no continuum limit): with the tail of the edge average
+included the same matrix has no $\operatorname{Re}\lambda>0$ eigenvalue for $z_{\min}\le-4$, while an independent collocation of
+$Q_{\mathrm{op}}$ has an unstable edge-node mode.  With the BC, both versions have $\max\operatorname{Re}\lambda<0$
+(\texttt{stability\_edge\_z\_spectrum.py}, gate (2)).
 
 %--------------------------------------------------------------------------
 \section{Linear spectrum and gap}
@@ -754,10 +759,14 @@ Section~\ref{sec:nonlin} remain numerical.
   Because $\tfrac12 Q_{\mathrm{op}}G=e^{-z/2}T_c G$ maps $L^2_\sigma$ into
   $L^2_{\sigma-1/2}$, the perturbation is unbounded on $L^2_\sigma$; for $\sigma>\tfrac14$ the form
   $\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}$ takes both signs, while for $\sigma\le\tfrac14$ it is
-  non-positive on $\mathcal{D}(M_\sigma)$ (Proposition~\ref{prop:energy_form}).  The field-of-values divergences reported for truncated grids
-  (\texttt{edge\_layer\_obstruction.py}, \texttt{cap\_scaffold.py})~\cite{findings_edge_layer,findings_cap} are statements about
-  those discretizations and weight classes; for $\sigma\le\tfrac14$ they do not reflect the continuum operator on $L^2_\sigma(\mathbb{R})$,
-  whose numerical range lies in $\operatorname{Re}\le-2\sigma$.
+  non-positive on $\mathcal{D}(M_\sigma)$ (Proposition~\ref{prop:energy_form}).  The large positive field-of-values bounds earlier reported at every weight
+  (\texttt{cap\_scaffold.py}, \texttt{edge\_layer\_obstruction.py})~\cite{findings_edge_layer,findings_cap} were produced by a
+  discrete edge average truncated at $z_{\min}$.  With its tail included, \texttt{cap\_scaffold.py} gives a weighted bound of the
+  nonlocal forcing below $5\times10^{-4}$ for $\gamma\le0.25$ on its grid (decreasing under refinement of $N$ at fixed depth) and
+  positive, depth-divergent values from $\gamma=0.3$; an independent collocation of $Q_{\mathrm{op}}$ gives non-positive values
+  through $\gamma=0.26$ and positive ones from $\gamma=0.27$.  The sign pattern is consistent with Proposition~\ref{prop:energy_form};
+  the magnitudes for $\gamma>\tfrac14$ are grid-dependent (the discrete Hilbert transform is inaccurate on structure within $O(1)$
+  of $z_{\min}$) and are not quoted.
   In Theorem~\ref{thm:linear_gap} this is bypassed in the resolvent via the Mellin ladder and
   slit-plane Cauchy integral, and in Theorem~\ref{thm:conjugation} by the multiplier $\mathcal{N}$; in Theorem~\ref{thm:nonlinear_bootstrap} it is bypassed in the
   time-dependent PDE by replacing $L^2_\sigma((-\infty,0])$ with the edge Hardy disk $\mathcal{H}^1(D(1,1))$.
@@ -790,8 +799,10 @@ gCLM $a$-family, are left for future work.
 
 \begin{enumerate}
 \item \emph{Edge boundary condition.}
-  Without the inflow condition $G(z_{\min})=0$, discretization produces a $z_{\min}$-dependent
-  spurious eigenvalue near $\operatorname{Re}\approx +1.7$ (the inadmissible homogeneous branch).
+  Without the inflow condition $G(z_{\min})=0$ and with the edge average truncated at $z_{\min}$, the
+  discretization produces a $z_{\min}$-dependent real spurious eigenvalue ($\operatorname{Re}\approx +1.4$ to $+1.7$).  The free-edge
+  spectrum depends on how the edge average is discretized (no $\operatorname{Re}>0$ eigenvalue with its tail included, for
+  $z_{\min}\le-4$; an unstable edge-node mode for an independent collocation), so no conclusion is drawn from it.
   With the inflow condition, both independent discretizations give $\#(\operatorname{Re}>0)=0$.
 \item \emph{Finite amplitude and co-evolving exponents.}
   Frozen-base marches decay up to $A=4$, and stage-consistent co-evolving marches with the
