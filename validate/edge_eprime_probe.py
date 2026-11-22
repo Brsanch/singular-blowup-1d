@@ -181,19 +181,16 @@ def main() -> int:
         f"α={alpha:.4f}  −Reλ/2={pred_alpha:.4f}  |diff|={abs(alpha - pred_alpha):.4f}",
     )
 
-    # ---------- Q3b: with the edge tail included, the free-edge mode is gone ----------
-    Bft = build_blocks_z(N=1000, zmin=-12.0, zmax=7.0, edge_bc=False, edge_tail=True)
-    v_ft = np.linalg.eigvals(Bft["M_GG"])
-    max_re_free_tail = float(v_ft.real.max())
-    low_ft = v_ft[np.abs(v_ft.imag) < 20.0]          # the grid-sawtooth pair sits at |Im| = 2/dz
-    max_re_low = float(low_ft.real.max())
-    print(f"\nQ3b: free-edge with edge_tail=True: max Re = {max_re_free_tail:+.5f}, "
-          f"rightmost with |Im|<20: Re = {max_re_low:+.4f}")
-    report(
-        "Q3b free-edge + exact edge tail: no unstable mode (max Re ≤ 0; low-frequency Re ≤ −0.3)",
-        max_re_free_tail <= 0.0 and max_re_low <= -0.3,
-        f"max Re={max_re_free_tail:.5f}, low-freq Re={max_re_low:.4f} (truncated: {lam_spur.real:.4f})",
-    )
+    # ---------- Q3b (informational): the free-edge spectrum is discretization-defined ----------
+    # A free inflow boundary has no continuum limit.  Three discretizations of the same edge
+    # average give three different free-edge spectra; nothing is asserted about any of them.
+    print("\nQ3b (info): free-edge max Re by discretization (N=1000, z_min=-12)")
+    for label, kw in (("truncated average, historical Hilbert", dict(edge_tail=False)),
+                      ("exact tail, historical Hilbert", dict(edge_tail=True, hilbert_grid_support=False)),
+                      ("exact tail, grid-supported Hilbert (default)", dict(edge_tail=True))):
+        v_i = np.linalg.eigvals(build_blocks_z(N=1000, zmin=-12.0, zmax=7.0, edge_bc=False, **kw)["M_GG"])
+        k_i = int(np.argmax(v_i.real))
+        print(f"  {label:46s}: {v_i[k_i].real:+.4f}{v_i[k_i].imag:+.2f}i")
 
     # ---------- Q4: with edge_bc, no unstable mode; recessive edge ----------
     print("\nQ4: edge_bc=True — stable + recessive edge decay of rightmost mode")

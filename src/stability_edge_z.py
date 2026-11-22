@@ -47,11 +47,20 @@ def _cumz(N, dz):
     return C
 
 
-def hilbert_support_z(Y, Ymax):
+def hilbert_support_z(Y, Ymax, grid_support=False):
     """Non-equispaced line-Hilbert for g supported on Y>1, sampled on a clustered
-    Y-grid.  H(g)(Y_i) = (1/pi) pv int_1^{Ymax} g/(Y_i-Y') dY'.  Subtraction form:
+    Y-grid.  H(g)(Y_i) = (1/pi) pv int g/(Y_i-Y') dY'.  Subtraction form:
     off-diagonal (1/pi) wY_j/(Y_i-Y_j); diagonal absorbs the exact pv of a constant
-    so that H is exact on constants (and accurate on smooth g)."""
+    so that H is exact on constants (and accurate on smooth g).
+
+    grid_support=False (historical): the pv of the constant is taken over [1, Ymax],
+        although the off-diagonal sum only covers [Y_0, Ymax]; row i therefore assumes
+        g = g_i on [1, Y_0].  On structure within O(1) of the first node this is
+        14-37% wrong, independent of N (review 2026-11-22).
+    grid_support=True: the pv is taken over [Y_0, Ymax], i.e. g is supported on the
+        grid, consistent with edge_tail_row().  Row 0 keeps the historical diagonal
+        (the pv over [Y_0, Ymax] is log-divergent at its own endpoint; with the inflow
+        BC that node is dropped)."""
     n = len(Y)
     wY = np.empty(n)
     wY[1:-1] = 0.5 * (Y[2:] - Y[:-2])
@@ -63,6 +72,8 @@ def hilbert_support_z(Y, Ymax):
     K[np.diag_indices(n)] = 0.0
     H = K / np.pi
     pv = np.log((Y - 1.0) / (Ymax - Y))
+    if grid_support:
+        pv[1:] = np.log((Y[1:] - Y[0]) / (Ymax - Y[1:]))
     H[np.diag_indices(n)] = (pv - K.sum(axis=1)) / np.pi
     return H
 
@@ -101,7 +112,8 @@ def edge_tail_row(z):
     return -W / np.pi
 
 
-def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True, edge_tail=True):
+def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True, edge_tail=True,
+                   hilbert_grid_support=None):
     """Assemble the frozen operator on z in [zmin, zmax].
 
     beta : far-field weight exponent (w = e^{beta z}); beta<0 pushes the essential
@@ -114,21 +126,26 @@ def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True, edge_ta
            mode (e.g. Re~+1.7).  Implemented by dropping the z_min DOF.
     edge_tail : include the part of the edge average that lies below the grid,
            int_0^{v_min} H(g) dy, through the exact kernel of edge_tail_row() (exact for g
-           supported on the grid).  DEFAULT True since 2026-11-22.
-           With False (the historical matrices) J_op, forcing and Q_op equal the
-           continuum operator MINUS (tail)*e^{-z}: Q_op's first row is identically 0 and
-           the error is O(1) within a few units of z_min (for G = w/(2+w)^2, exact
-           a = -0.17678: Q_op = 0.000 / -0.1115 / -0.1680 at z_min / z_min+1 / z_min+3).
-           With True, Q_op G is accurate to ~1e-3 relative for BULK data.
-           KNOWN REMAINING DEFECT (both settings): hilbert_support_z puts the p.v. of a
-           constant over [1, Ymax] on the diagonal, i.e. row i assumes g = g_i on
-           [1, Y_min], while the tail assumes g = 0 there.  On structure within O(1) of
-           z_min Hg_op (hence Q_op) is 14-37% wrong, independent of N.  Edge-layer
-           eigen/sup quantities (field of values, free-edge spectrum) are therefore
-           grid-specific.  docs/findings_session_2026_11_22_qop_edge_tail.md section 6.
-           Other effects of True: the stiff edge eigenvalue pair of M_GG grows ~1.5x
-           (-141 +- 153i at z_min = -14).  Gates that add a tail themselves
-           (Q_exact = Q_op + ...) must pass edge_tail=False.
+           supported on the grid).  DEFAULT True since 2026-11-22.  With False (the
+           historical matrices) J_op, forcing and Q_op equal the continuum operator MINUS
+           (tail)*e^{-z}: Q_op's first row is identically 0 and the error is O(1) within a
+           few units of z_min.  Gates that add a tail themselves (Q_exact = Q_op + ...)
+           must pass edge_tail=False.
+    hilbert_grid_support : diagonal of the Hilbert quadrature (see hilbert_support_z).
+           None (default) follows edge_tail, so the default operator models "g = 0 below
+           the grid" in both pieces.  Accuracy of the default (review 2026-11-22):
+             * data supported on the grid (bumps, jumps near z_min): Q_op first-order
+               convergent, 1-2% at N = 400 -> 0.1-0.3% at N = 3200 (the historical
+               diagonal is 15-43% wrong there, independent of N);
+             * bulk data with G = o(e^{z/2}) at the edge: ~1e-3 or better;
+             * data with g(Y_0) != 0, i.e. G ~ v^{1/2} at the edge: WORSE than the
+               historical diagonal -- Q_op 2-12% wrong (Hg 20-100%), N-independent,
+               decreasing only like 1/|z_min|.  For such data use
+               edge_tail=True, hilbert_grid_support=False (<= 0.3%).
+           The stiff edge eigenvalue pair of M_GG is -183 +- 81i at z_min = -14
+           (N-independent; ~ e^{-z_min/2}).  The free-edge (edge_bc=False) spectrum is
+           discretization-defined and carries no meaning.
+           docs/findings_session_2026_11_22_qop_edge_tail.md.
     """
     z = np.linspace(zmin, zmax, N)
     dz = z[1] - z[0]
@@ -138,7 +155,9 @@ def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True, edge_ta
 
     Dz = _dz_central(N, dz)
     Cz = _cumz(N, dz)
-    Hz = hilbert_support_z(Y, Ymax)
+    if hilbert_grid_support is None:           # follows edge_tail: both model "g = 0 below the grid"
+        hilbert_grid_support = bool(edge_tail)
+    Hz = hilbert_support_z(Y, Ymax, grid_support=hilbert_grid_support)
 
     # g = (Y-1)^{-1/2} G ;  H(g) as a map on G
     Hg_op = Hz @ np.diag(ym1 ** -0.5)

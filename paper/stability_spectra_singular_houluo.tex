@@ -213,8 +213,8 @@ If the discrete edge average $\delta U/(Y-1)$ is truncated at $z_{\min}$ (omitti
 $\int_0^{v_{\min}}H(g)\,dy$) and this BC is not imposed, the discretization has a real spurious
 mode with $\operatorname{Re}\lambda\approx +1.4$ to $+1.7$~\cite{findings_edge}.  The free-edge spectrum is a property of the
 discretization, not of the model (a free inflow boundary has no continuum limit): with the tail of the edge average
-included the same matrix has no $\operatorname{Re}\lambda>0$ eigenvalue for $z_{\min}\le-4$, while an independent collocation of
-$Q_{\mathrm{op}}$ has an unstable edge-node mode.  With the BC, both versions have $\max\operatorname{Re}\lambda<0$
+included and a Hilbert quadrature consistent with it, the free-edge matrix instead has an edge-node mode whose growth rate
+increases with $N$.  With the BC, both versions have $\max\operatorname{Re}\lambda<0$
 (\texttt{stability\_edge\_z\_spectrum.py}, gate (2)).
 
 %--------------------------------------------------------------------------
@@ -761,12 +761,15 @@ Section~\ref{sec:nonlin} remain numerical.
   $\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}$ takes both signs, while for $\sigma\le\tfrac14$ it is
   non-positive on $\mathcal{D}(M_\sigma)$ (Proposition~\ref{prop:energy_form}).  The large positive field-of-values bounds earlier reported at every weight
   (\texttt{cap\_scaffold.py}, \texttt{edge\_layer\_obstruction.py})~\cite{findings_edge_layer,findings_cap} were produced by a
-  discrete edge average truncated at $z_{\min}$.  With its tail included, \texttt{cap\_scaffold.py} gives a weighted bound of the
-  nonlocal forcing below $5\times10^{-4}$ for $\gamma\le0.25$ on its grid (decreasing under refinement of $N$ at fixed depth) and
-  positive, depth-divergent values from $\gamma=0.3$; an independent collocation of $Q_{\mathrm{op}}$ gives non-positive values
-  through $\gamma=0.26$ and positive ones from $\gamma=0.27$.  The sign pattern is consistent with Proposition~\ref{prop:energy_form};
-  the magnitudes for $\gamma>\tfrac14$ are grid-dependent (the discrete Hilbert transform is inaccurate on structure within $O(1)$
-  of $z_{\min}$) and are not quoted.
+  discrete edge average truncated at $z_{\min}$.  With its tail included and a Hilbert quadrature consistent with it (the defaults since 2026-11-22;
+  grids with $z_{\max}=12$, inflow BC), the largest eigenvalue of the symmetric part of the weighted nonlocal forcing in
+  $L^2(e^{-2\gamma z})$ is at most $10^{-6}$ for $\gamma\le0.25$ at $N\ge800$ --- a residual carried by the last nodes at
+  $z_{\max}$, which becomes negative when those nodes are removed and tends to zero under refinement --- and is positive from
+  $\gamma\approx0.27$ at $z_{\min}=-10$, the threshold moving toward $\tfrac14$ with depth ($0.26$ at $z_{\min}=-22$).  For
+  $\gamma>\tfrac14$ it is $N$-converged at fixed $(z_{\min},z_{\max})$ and grows with depth: $0.059$, $0.165$, $0.452$ at $\gamma=0.3$
+  and $3.56$, $9.85$, $27.1$ at $\gamma=0.4$ for $z_{\min}=-10,-12,-14$ (these depend on $z_{\max}$: $0.046$ and $3.23$ at
+  $z_{\min}=-10$, $z_{\max}=7$).  For $\gamma\ge0.3$ an independent collocation of $Q_{\mathrm{op}}$ agrees to within $0.5\%$.
+  The sign pattern is the one of Proposition~\ref{prop:energy_form}.
   In Theorem~\ref{thm:linear_gap} this is bypassed in the resolvent via the Mellin ladder and
   slit-plane Cauchy integral, and in Theorem~\ref{thm:conjugation} by the multiplier $\mathcal{N}$; in Theorem~\ref{thm:nonlinear_bootstrap} it is bypassed in the
   time-dependent PDE by replacing $L^2_\sigma((-\infty,0])$ with the edge Hardy disk $\mathcal{H}^1(D(1,1))$.
@@ -801,8 +804,8 @@ gCLM $a$-family, are left for future work.
 \item \emph{Edge boundary condition.}
   Without the inflow condition $G(z_{\min})=0$ and with the edge average truncated at $z_{\min}$, the
   discretization produces a $z_{\min}$-dependent real spurious eigenvalue ($\operatorname{Re}\approx +1.4$ to $+1.7$).  The free-edge
-  spectrum depends on how the edge average is discretized (no $\operatorname{Re}>0$ eigenvalue with its tail included, for
-  $z_{\min}\le-4$; an unstable edge-node mode for an independent collocation), so no conclusion is drawn from it.
+  spectrum depends on how the edge average is discretized (with its tail included and a consistent Hilbert quadrature, an
+  edge-node mode whose growth rate increases with $N$ replaces it), so no conclusion is drawn from it.
   With the inflow condition, both independent discretizations give $\#(\operatorname{Re}>0)=0$.
 \item \emph{Finite amplitude and co-evolving exponents.}
   Frozen-base marches decay up to $A=4$, and stage-consistent co-evolving marches with the

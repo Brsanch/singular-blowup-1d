@@ -103,8 +103,8 @@ def march(B, A, gammas, taus, nl=True, h_amp=0.0):
 
     dt = 0.25 * dz                                   # CFL ~0.5 for transport speed 2
     # With the edge tail included (build_blocks_z default since 2026-11-22) the stiff edge
-    # eigenvalue pair of M_GG is ~1.5x larger (-141 +- 153i at z_min = -14; truncated -95 +- 111i),
-    # raising the spectral radius.  dt*rho is <= 0.97 on most grids used here but 2.36 on
+    # eigenvalue pair of M_GG is larger (-183 +- 81i at z_min = -14; truncated -95 +- 111i),
+    # raising the spectral radius.  dt*rho is <= 0.93 on most grids used here but 2.26 on
     # (1800, -16, 14), where this cap binds.  2/rho is inside the RK4 stability region for the
     # whole spectrum on the three grids of this script (reviewer check, 2026-11-22).
     dt = min(dt, 2.0 / B["rho_GG"])

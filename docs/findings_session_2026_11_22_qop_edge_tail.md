@@ -67,7 +67,7 @@ structure within O(1) of `z_min` (hand/exact = 0.77 on a bump one unit above `z_
 Six scripts, including `edge_coupled_h_nonlinear_closure.py`, hard-code the main checkout as `ROOT`; a copy in
 another worktree therefore imports this checkout's `src/` (reviewer 2 hit this in `.claude/worktrees/`).
 
-## 5. What changes with the tail, and how far each reading holds
+## 5. What changes with the tail, and how far each reading holds  *(state before the Hilbert-diagonal repair; see section 11 for the current default)*
 
 Sweep: every `validate/` script importing the module directly or through `coevolve_moving_frame`, plus
 `review_2026_11_21_w3/disc.py`, tail off and on. All exit 0 in both settings.
@@ -127,7 +127,7 @@ What can be said about the old record: the `+30 … +56` field-of-values bounds 
 abscissas (OBS-01, OBS-03, `findings_cap_scaffold.md`, `edge_layer_estimate.md`) were dominated by the
 truncated edge average at every γ, including the ramp weights. They are not evidence about the operator.
 
-## 6. The remaining defect (not fixed)
+## 6. The remaining defect (not fixed)  *(REPAIRED later the same day — section 11)*
 
 `hilbert_support_z` sums over `[Y_0, Y_max]` but puts the principal value of a constant over `[1, Y_max]` on
 the diagonal, so row i assumes `g ≡ g_i` on `[1, Y_0]`, while the tail assumes `g = 0` there. On structure
@@ -170,3 +170,72 @@ that it describes the truncated operator). The hard-coded `ROOT` in six scripts.
 `python3 validate/stability_edge_z_spectrum.py` (5a), `python3 validate/cap_scaffold.py` (5b, repo column),
 `validate/review_2026_11_22_qop_tail/v2/exactmat.py` + `t5*.py` (independent collocation; the scripts
 reference the reviewer's scratch layout and may need path edits), `python3 validate/edge_eprime_probe.py`.
+
+## 11. Hilbert-diagonal repair (later 2026-11-22; Bryan: "Yes, repair it")
+
+**Review form:** independent — a third Claude reviewer with fresh context (scripts in
+`validate/review_2026_11_22_qop_tail/v3/`, not re-run by the implementer). No further review round was run
+on the wording changes that fold its findings.
+
+**Change.** `hilbert_support_z(..., grid_support=True)` takes the principal value of the constant over
+`[Y_0, Y_max]` for rows ≥ 1, so the Hilbert quadrature and the tail both model `g = 0` below the grid.
+`build_blocks_z(hilbert_grid_support=None)` follows `edge_tail`, so every gate pinned to `edge_tail=False`
+is unaffected (reviewer: 1056 array comparisons bit-identical to the pre-change code).
+
+**Verified by the reviewer**
+
+| Item | Result |
+|---|---|
+| derivation of the diagonal; half-weight first node | correct; `Hz @ 1` on rows ≥ 1 equals the exact transform of the indicator of `[Y_0, Y_max]` to 1.8e-15 |
+| accuracy on grid-supported data (bumps at `z_min+1`, `z_min+½`; jump at `z_min`; zero-edge-functional pair), N = 400 → 3200 | `Q_op`: 1–4% → 0.1–0.5% (jump: 6–10% → 1–2%), first order; historical diagonal 15–43%, flat in N |
+| headline spectrum with the inflow BC | `max Re` and `#Re>0` unchanged; rightmost with `|Im| < 20`: −0.929 / −1.083 / −1.167 (truncated / tail only / current), independent collocation −1.159 |
+| stiff edge pair | −182.9 ± 80.6i (N = 1400), −183.4 ± 81.2i (N = 2800) at `z_min = −14`; collocation −183.4 ± 81.6i |
+| explicit steps | `max|R(dt·λ)| ≤ 0.99995` on all 11 marching grids; `dt·ρ` = 0.50–0.93 (1.43 on one N = 300 grid; 2.26 on (1800, −16, 14), where the shape-march cap binds) |
+| scripts | 23/23 exit 0; ten byte-identical to the previous default, incl. the pinned gates, `nonlinear_shape_march`, `spectral_gap` |
+
+**Where the new default is WORSE (S1, not fixed — a modelling trade-off).** For data with `g(Y_0) ≠ 0`,
+i.e. `G ~ v^{1/2}` at the edge (e.g. `G = v^{1/2}/(1+v)^{3/2}`), `Q_op` is 2–12% wrong and `Hg_op` 20–100%
+wrong, independent of N and decreasing only like `1/|z_min|`; the historical diagonal with the tail is
+≤ 0.3% there. Mechanism: the removed diagonal term is exactly the contribution of `g ≡ g(Y_0)` on `[1, Y_0]`.
+For such data use `edge_tail=True, hilbert_grid_support=False`. The marches (Gaussian at z = 1) are
+unaffected, and no current gate shows a consequence.
+
+**Field of values of the weighted forcing, current default** (largest eigenvalue of the symmetric part,
+`L²(e^{−2γz})`, inflow BC, `z_max = 12`):
+
+| γ | `z_min = −10`, N = 800 / 1600 / 3200 | `z_min = −12` | `z_min = −14` |
+|---|---|---|---|
+| ≤ 0.25 | 7.0e-7 / 4.8e-7 / 3.1e-7 | 5.9e-7 | 5.3e-7 |
+| 0.27 | 7.3e-5 / 8.4e-5 / 9.0e-5 | 1.2e-3 | 4.5e-3 |
+| 0.30 | 0.0593 / 0.0595 / 0.0596 | 0.165 | 0.452 |
+| 0.40 | 3.56 / 3.56 / 3.56 | 9.85 | 27.1 |
+
+Reviewer's qualifications, all folded into the manuscript sentence:
+- the γ ≤ ¼ residual is carried by the last nodes at `z_max` (scales like `e^{−z_max/2}`; 7.5e-6 at
+  `z_max = 7`); with the top three nodes removed the value is negative and tends to zero
+  (−4.9e-8 … −1.2e-11 for N = 400 … 6400). It no longer grows with depth (5e-7–7e-7 from `z_min` = −10 to −28);
+- the values for γ > ¼ depend on `z_max` (γ = 0.3, `z_min = −10`: 0.046 / 0.0595 / 0.0614 at `z_max` = 7 / 12 / 20);
+- the first positive γ moves toward ¼ with depth (0.27 at `z_min = −10`, 0.264–0.266 at −14, 0.26 at −22);
+- an independent second-order collocation agrees to ≤ 0.5% for γ ≥ 0.3, to 1–17% at γ = 0.27, and has the
+  opposite (negative) sign for γ ≤ 0.26; it uses the same "g = 0 below the grid" model, so it checks the
+  quadrature, not that modelling choice.
+
+**Free edge.** With the current default the free-edge matrix has an edge-node mode whose growth rate increases
+with N (4.4 ± 22i, 10.8 ± 30i, 18.2 ± 40i, 26.8 ± 53i for N = 400 … 3200 at `z_min = −12`); consistent row-0
+choices give a larger real mode. Together with section 5a this confirms the free-edge spectrum is
+discretization-defined. `edge_eprime_probe` Q3b is now an informational print of three discretizations
+(+1.7066, −0.0016 + 105.2i, +13.09 + 33.1i) with no assertion; a pinned regression value was not added.
+
+**Printed numbers that moved again** (previous default → current): `cap_scaffold` `C_force` 1.2e-4 / 2.7e-4 /
+0.789 / 15.2 / 94.3 → 0.0000 / 0.0000 / 0.165 / 9.85 / 84.0 at γ = 0.1 … 0.5 — and it now flags γ = 0.3 as
+"DISSIPATIVE; best", which is a one-grid statement (`C_force(0.3)` = 3.36 at `z_min = −18`);
+`edge_eprime_probe` `r_min` 5.04 → 6.38, `r(−14)` 276.7 → 346.7, `alpha_edge_bc` 3.1502 → 3.4473 (beyond that
+gate's own 2% dual-run tolerance for its KEY line); `edge_mellin_symbol` part (2) coefficients by under 1%;
+`edge_coupled_resolvent_scan`, `coevolve_*`, `disc.py` in the 3rd–6th digit.
+
+**Pre-existing, noted by the reviewer, not addressed:** the top end of the Hilbert quadrature is inconsistent by
+half a cell (O(dz)); `Y = 1 + e^z` loses the node spacing to round-off for `z_min ≲ −28`.
+
+**Superseded statements in this note:** section 5a's "with the tail there is no Re > 0 eigenvalue for
+`z_min ≤ −4`" and the "with tail" columns of 5a/5b describe the previous default (tail with the historical
+diagonal, still available as `hilbert_grid_support=False`); section 6 is repaired; section 9's first item is done.

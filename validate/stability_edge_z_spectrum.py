@@ -50,7 +50,8 @@ def gate2_edge_bc():
     print("=" * 78)
     print("   rightmost Re over the whole spectrum / over |Im| < 20 (the whole-spectrum maximum")
     print("   is a grid-sawtooth pair at |Im| = 2/dz, ~1/N, blind to the edge)")
-    print("   zmin   no BC, truncated    no BC, exact tail    BC, truncated      BC, exact tail")
+    print("   zmin   no BC, truncated    no BC, default       BC, truncated      BC, default")
+    print("   (default = exact tail + grid-supported Hilbert diagonal)")
     for zmin in (-6.0, -10.0, -12.0, -14.0, -16.0, -18.0):
         mx = {}
         for bc in (False, True):
@@ -60,11 +61,10 @@ def gate2_edge_bc():
                 mx[bc, tail] = (v.real.max(), v[np.abs(v.imag) < 20.0].real.max())
         print(f"   {zmin:5.0f}  " + "   ".join(
             f"{mx[k][0]:+.4f}/{mx[k][1]:+.3f}" for k in ((False, False), (False, True), (True, False), (True, True))))
-    print("   -> the real free-edge mode (Re~+1.4..+1.7, drifting with z_min) appears with the")
-    print("      TRUNCATED edge average; with the tail included this matrix has no Re>0 mode for")
-    print("      z_min <= -4.  The free-edge spectrum is discretization-defined (a free inflow")
-    print("      boundary has no continuum limit; an independent collocation of Q has an unstable")
-    print("      edge-node mode), so only the BC columns carry meaning: max Re < 0 in both.")
+    print("   -> the free-edge spectrum is discretization-defined (a free inflow boundary has no")
+    print("      continuum limit): a real mode at Re~+1.4..+1.7 with the TRUNCATED edge average,")
+    print("      an edge-node mode whose growth rate increases with N with the default operator.")
+    print("      Only the BC columns carry meaning: max Re < 0 in both.")
 
 
 def gate3_verdict():
