@@ -68,8 +68,10 @@ edited on 2026-07-16 and stay as they are; this paragraph records what has chang
   manuscript's ansatz at linear order; and the weighted-norm transient of `M_GG` grows with edge depth (peak 12.7 at
   γ = 0.75, `z_min = −14`), which the OBS rows above do not record. No ledger status changes.
 - **Review of Theorem 3 (`ef0eaea`, 2026-11-21):** `docs/findings_session_2026_11_21_theorem3_review.md`, probe
-  `validate/theorem3_review_2026_11_21_probe.py`. Relevant to this ledger: the repo's discrete `Q_op` keeps the edge
-  value `H[g](1)`, so every grid run built on `M_GG` is a run of the Theta-balance operator; the discretised
-  Gauge-(a) operator `M_GG − ½·1⊗h1` has one growing eigenvalue (+35 at `z_min = −10`, +102 at `z_min = −12`) and
-  carries the OBS-09 modes to 3–4%. This extends OBS-09 from the continuum to the grid. No ledger status changes;
-  the manuscript's Theorem 3 has no ledger entry.
+  `validate/theorem3_review_2026_11_21_probe.py`. Relevant to this ledger: the repo's discrete `Q_op` is the
+  unsubtracted operator cut at the grid edge, `Q_op G = H[g](1)(1 − e^{z_min − z})` there, so every grid run built
+  on `M_GG` alone is a run of the Theta-balance operator. A Gauge-(a) discretisation must restore the tail
+  (`Q_exact = Q_op + (e^{z_min}/(Y−1))⊗h1`, as `edge_nonlinear_comoving_closure.py` and `EM-4` do); with it the
+  operator is stable on the grid and does not carry the OBS-09 modes, without it a spurious eigenvalue
+  `~e^{|z_min|/2}` appears (+35, +102 at `z_min = −10, −12`). OBS-09's statement that the truncated grid does not
+  carry the modes stands. No ledger status changes; the manuscript's Theorem 3 has no ledger entry.

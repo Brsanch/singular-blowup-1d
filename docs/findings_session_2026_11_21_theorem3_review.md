@@ -7,19 +7,45 @@ Lean 4, CH-1..4)" — `paper/stability_spectra_singular_houluo.tex`, `lean/Singu
 was a local commit on `main`, not yet pushed; this note sits on a branch cut from `2ed1e2a`.
 
 **Review form:** one Claude session, independent of the author of `ef0eaea`, re-deriving the estimates by hand
-and running the probe below. No separate reviewers ran. Not expert review. Nothing here certifies or refutes
-Theorem 3.
+and running the probe below. Not expert review. Nothing here certifies or refutes Theorem 3. One finding of
+the first version of this note was wrong and was caught by an automated review comment on the pull request;
+see **Correction** below.
 
-Probe: `validate/theorem3_review_2026_11_21_probe.py` (`Q1`–`Q5`, about 15 s; `PASS` means the finding
+Probe: `validate/theorem3_review_2026_11_21_probe.py` (`Q1`–`Q5`, about 20 s; `PASS` means the finding
 reproduces). It does not import the reviewed gate, so it runs with or without `ef0eaea`.
+
+## Correction (same day)
+
+The first version of this note (commit `7f4b881`) said that the manuscript's Gauge-(a) system "blows up" on
+the gate's grid, that the discretised Gauge-(a) operator has a growing eigenvalue (+35 at `z_min = −10`, +102
+at `z_min = −12`) carrying the OBS-09 modes, and that no finite-difference run could verify Theorem 3.
+**That was wrong.** It was an artifact of this review's own probe.
+
+- Mechanism. The grid integrates `δU` from `Y_min = 1 + e^{z_min}`, not from 1, so the repo's `Q_op` satisfies
+  `Q_op G = H[g](1)(1 − e^{z_min − z})` near the edge (probe `Q2`: −0.03457 against −0.03456 at `z = −9`). The
+  first probe subtracted the full `H[g](1)` from this truncated operator. That leaves a forcing
+  `−½H[g](1)e^{z_min − z}` concentrated at `z_min`, which feeds back through the weight `e^{−z/2}` in `H[g](1)`
+  with gain `~e^{|z_min|/2}`.
+- Test. With the tail restored, `Q_exact = Q_op + (e^{z_min}/(Y−1))⊗h1` — the discretisation that
+  `edge_nonlinear_comoving_closure.py` and check `EM-4` of the eigenmode probe already use — the largest real
+  part is −0.0011 at `z_min = −10` and −0.0010 at `z_min = −12`. Without the tail it is +35.3, +101.8, +282.4
+  at `z_min = −10, −12, −14`, the predicted `e^{|z_min|/2}` scaling (probe `Q4`).
+- Consequence. With the tail restored the manuscript's system decays on the gate's grid (probe `Q3`). The grid
+  does not carry the OBS-09 modes: under the tail-corrected flow `H[g](1)` of `G_1` decays like `e^{−T}`
+  (0.654, 0.393, 0.141 at `T = ½, 1, 2`), where the continuum mode grows like `e^{+T}`. This is what `EM-4`
+  had already recorded; the first version of this note contradicted it.
+- Credit. The error was pointed out by the Cursor Bugbot review comment on pull request 4, which named the
+  missing `Q_exact` tail and `EM-4`. It was confirmed here by the experiment above before anything was changed.
+
+Findings C1 and C2 below are restated accordingly. C3–C6 are unaffected.
 
 ## Verdict
 
 1. The estimates of Theorem 3 hold when re-derived. No false step was found in the argument that the coupled
    energy closes.
-2. The numerical verification claimed for it does not test it. Check `CH-4` of the new gate integrates a
-   different system; with the manuscript's system the same run blows up, for a reason the manuscript itself
-   documents (Remark `rem:w3_scope`).
+2. Check `CH-4` of the new gate does not integrate the system it names. A run of the manuscript's system on
+   the same grid also decays, so the qualitative outcome stands; the gate's printed values belong to another
+   system.
 3. Well-posedness for the coupled system is asserted, not proved, and three bounds the proof relies on are
    not stated anywhere. They are true.
 4. Two displayed constants and one displayed equation are wrong as written. None changes the conclusion.
@@ -32,51 +58,53 @@ itself; `[S3]` wrong but harmless; `[doc]` a fix that changes no mathematics.
 
 | ID | Severity | Where | Finding | Checked by |
 |---|---|---|---|---|
-| C1 | S1 (evidence) | gate lines 18, 123–124, 142–147 | `CH-4` is described as integrating "the exact coupled Gauge-(a) PDE". It treats the repo's `Q_op` as the subtracted operator `Q̃_op`, but `Q_op` keeps the edge value `H[g](1)`. The run therefore uses the Theta-balance linear operator and a velocity off by `−H[g](1)`. | probe `Q2`, reading the code |
-| C2 | S1 (evidence) | tex 700–701, 621 | "verified by `edge_coupled_h_nonlinear_closure.py`, `CH-1..CH-4 PASS`". With the manuscript's right-hand side the same grid, data and time step blow up. No finite-difference run of this kind can verify the theorem. | probe `Q3`, `Q4` |
+| C1 | S2 (evidence) | gate lines 18, 123–124, 142–147 | `CH-4` is described as integrating "the exact coupled Gauge-(a) PDE". It treats the repo's `Q_op` as the subtracted operator `Q̃_op`. `Q_op` is the unsubtracted operator cut at the grid edge, so the run uses the Theta-balance linear operator and a velocity off by about `−H[g](1)`. The manuscript's system, discretised with the tail, also decays, with different numbers. | probe `Q2`, `Q3`; reading the code |
+| C2 | doc | tex 700–701, 621 | "verified by `edge_coupled_h_nonlinear_closure.py`, `CH-1..CH-4 PASS`" overstates four spot checks. `CH-4` is one grid, two initial data, `T = 3`; and the grid does not carry the non-analytic Gauge-(a) modes, so no grid run tests the edge-analytic hypothesis. | probe `Q4`, reading |
 | C3 | S2 | tex 1349–1368, 1433–1436, 1455–1459 | Local well-posedness, uniqueness and continuity for the coupled system are asserted in two lines; `𝒲_h` is not defined; the bounds `‖j^{3/2} q_j‖_{ℓ²}, ‖j q_j‖_{ℓ¹} ≤ C√𝓔(G)` are not stated in any lemma; the Riccati inequality is stated pointwise although Theorem 2 was corrected to the integrated form in `3039582`. | hand derivation |
 | C4 | S3 | tex 1387–1412 | The displayed `m_1`, `m_2` are the multipliers of `½Q_op`, not of `Q_op`; `p` is written with a factor `½` that contradicts its definition (line 1114); the stated `‖p_zz‖ ≤ ½·2^{1/4}√𝓔(G)` is false. The correct constant is `2^{1/4}` and the next bound still holds. | probe `Q1` |
 | C5 | S3 | tex 1432, 1438–1439 | The coefficient equation for `d̃_m` omits the `p₀` term and uses the opposite sign convention to Lemma `lem:embeddings`; "once `C√𝓔(G) ≤ 2`" should be about 1.3. | hand derivation |
 | C6 | doc | gate 12, 15, 34, 52, 174; tex 618–628, 1358 | Hard-coded absolute repo path; docstring says 16 test functions where 12 and 8 are used; `CH-4` uses weight 100 and far-field energies only; three overfull boxes of 54–64 pt. | reading, PDF log |
 
-### C1, C2 — what `CH-4` integrates, and what happens with the right system
+### C1 — what `CH-4` integrates
 
 The manuscript's system (eq. `comoving_exact`, Theorem 3's proof) is
 
     G_τ = −2 G_z + ½ Q̃_op G + B q + p G_z + ½ (Q̃_op G) G,   Q̃_op G = Q_op G − H[g](1),   p = V_G(1) − Q_op G.
 
 The gate (lines 142–147) sets `QtG = Q_op @ G`, `p = Vg1 − QtG − Hg1`, `dG = M_GG @ G + …`, on the stated
-assumption (lines 123–124) that the repo's `Q_op` already vanishes at the edge. It does not:
+assumption (lines 123–124) that the repo's `Q_op` already vanishes at the edge like `O(e^z)`. It does not:
+`Q_op G = H[g](1)(1 − e^{z_min − z})` there (probe `Q2`), and `M_GG = −2∂_z + ½Q_op` likewise. So the gate's
+linear and quadratic terms use `Q_op` where the system has `Q̃_op`, and at `z = −8` its velocity perturbation
+is +0.058 where the manuscript's is +0.011. A scratch check (not in the probe) also contradicts the comment
+that `M_GG = −2 D_up + ½ Q_op`: the two differ by up to 79.9 in an entry, with `max|M_GG|` = 159.8.
 
-- `Q_op @ G` at `z = −4` is −0.05482 against `H[g](1)` = −0.05464 (probe `Q2`), so `Q_op` is the unsubtracted
-  operator. `M_GG = −2∂_z + ½Q_op` likewise.
-- At `z = −8` the gate's velocity perturbation is +0.058; the manuscript's is +0.0035.
-- A scratch check (not in the probe) also contradicts the comment that `M_GG = −2 D_up + ½ Q_op`: the two
-  differ by up to 79.9 in an entry, with `max|M_GG|` = 159.8.
+Rerun on the gate's grid (`N = 800`, `z ∈ [−10, 10]`), data and time step (probe `Q3`):
 
-Rerun with both right-hand sides (probe `Q3`, the gate's grid `N = 800`, `z ∈ [−10, 10]`, its data and step):
+| right-hand side | data | `E_tot` ratio at `T = 3` | `B` | `c_l` |
+|---|---|---|---|---|
+| as written in the gate | `G₀ = 0, q₀ = 0.2` | 3.85e-03 | 1.0006 | 2.0003 |
+| as written in the gate | `G₀ = 0.15, q₀ = 0.2` | 1.10e-02 | 1.0017 | 2.0003 |
+| manuscript's Gauge-(a), tail restored | `G₀ = 0, q₀ = 0.2` | 4.57e-03 | 1.0260 | 2.0027 |
+| manuscript's Gauge-(a), tail restored | `G₀ = 0.15, q₀ = 0.2` | 1.52e-02 | 1.0818 | 2.0054 |
 
-| right-hand side | `G₀ = 0, q₀ = 0.2` | `G₀ = 0.15, q₀ = 0.2` |
-|---|---|---|
-| as written in the gate | `E_tot` ratio 3.85e-03 | `E_tot` ratio 1.10e-02 |
-| manuscript's Gauge-(a) | `|G| > 1e6` at τ = 0.32 | `|G| > 1e6` at τ = 0.22 |
+All four are far below the gate's threshold `e^{−T/16}` = 0.829. The decay that `CH-4` reports therefore also
+holds for the system it claims to integrate; the values it prints (`B`, `c_l`, `c_ω`, the ratios) are those of
+a different system. The repair is to use `Q_exact` and `Q̃ = Q_exact − H[g](1)` as
+`edge_nonlinear_comoving_closure.py` does.
 
-Mechanism (probe `Q4`). Let `L_a = M_GG − ½·1⊗h1` with `h1 @ G = H[g](1)`, the discretised `−2∂_z + ½Q̃_op`.
+### C2 — what the gate can and cannot show
 
-- `M_GG` has `max Re` = −0.001. `L_a` has exactly one eigenvalue with positive real part: +35.3 at
-  `z_min = −10` and +101.8 at `z_min = −12`. The ratio 2.88 is close to `e¹`, i.e. the rate scales like
-  `e^{|z_min|/2}` and diverges as the grid resolves the edge.
-- The explicit eigenfunctions `G_λ` of OBS-09, sampled on the grid, satisfy `L_a G_λ ≈ λ G_λ` with relative
-  residual 0.04, 0.03, 0.04 for `λ = ½, 1, 2`; under `M_GG` the residual is above 1.
+`CH-1` checks the two multiplier bounds and spot-checks the smoothing inequality (ratio 0.79 on 12 functions).
+`CH-2` checks the disk coefficient bounds on 8 power-law sequences, using only the leading far-field boundary
+term. `CH-3` checks the scalar Young inequality. `CH-4` is one grid, two initial data, one time horizon.
+These are spot checks of ingredients and one illustration, not a verification of a nonlinear stability
+theorem.
 
-So the grid version of the Gauge-(a) operator carries the growing non-analytic modes that Remark `rem:w3_scope`
-describes. Theorems 2 and 3 exclude them by edge analyticity `𝓗¹(D(1,1))`, which a finite-difference grid
-cannot impose. This does not contradict Theorem 3. It does mean that `CH-4` passes only because it integrates
-another system, and that the sentence at lines 700–701 is unsupported.
-
-What `CH-1`–`CH-3` do cover: `CH-1` the two multiplier bounds and a spot check of the smoothing inequality
-(ratio 0.79 on 12 functions); `CH-2` the disk coefficient bounds on 8 power-law sequences, using only the
-leading far-field boundary term; `CH-3` the scalar Young inequality. These are spot checks of ingredients.
+A grid run also cannot test the hypothesis that makes the theorem true. Remark `rem:w3_scope` shows the
+Gauge-(a) linearisation has growing solutions in every finite-order edge class; the theorem excludes them by
+edge analyticity. The truncated grid does not carry those modes at all (probe `Q4`, and `EM-4`): the
+tail-corrected discrete operator is stable, and `H[g](1)` of the explicit mode `G_1` decays under its flow. So
+decay on the grid says nothing about whether analyticity is needed, in either direction.
 
 ### C3 — what the proof needs and does not state
 
@@ -148,7 +176,7 @@ Read in full; no error found.
 
 - `lakelock lake build` on `ef0eaea`: success (8257 jobs); 0 `sorry`, 0 `axiom`; vacuity lint 0 findings. The
   five lemmas in `CoupledHSector.lean` are real-number arithmetic, as the manuscript says.
-- `edge_coupled_h_nonlinear_closure.py`: exit 0 (`CH-1..CH-4 PASS`), subject to C1 and C2.
+- `edge_coupled_h_nonlinear_closure.py`: exit 0 (`CH-1..CH-4 PASS`), subject to C1.
 - PDF from `ef0eaea`: 0 errors, 0 undefined references, three overfull boxes (60 pt and 64 pt in the gate-list
   paragraph at lines 618–628, 54 pt in the display at line 1358).
 - The reproducibility gate list and both earlier probes, run on `917a496`: 14 of 14 exit 0. No gate file

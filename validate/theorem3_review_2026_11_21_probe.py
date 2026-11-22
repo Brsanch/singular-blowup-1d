@@ -11,27 +11,36 @@ PASS here means "the review finding reproduces", NOT "the manuscript's claim hol
       Checked by Plancherel on Re w = 1/2 with the exact multiplier for smooth bumps supported
       in z > 0 (so G vanishes on the disk and E = 20 X_far + Y_far).
   Q2  The repo's discrete Q_op (stability_edge_z.build_blocks_z, reused by
-      coevolve_moving_frame.build) tends to H[g](1) at the edge.  It is Q_op, not the subtracted
-      Qtilde_op = Q_op - H[g](1) that the gate edge_coupled_h_nonlinear_closure.py assumes.
+      coevolve_moving_frame.build) is the unsubtracted operator cut at the grid edge:
+          Q_op G = H[g](1) (1 - e^{z_min - z})   near the edge,
+      because the grid integrates dU from Y_min = 1 + e^{z_min}.  It is neither Qtilde_op
+      (which vanishes at the edge) as the gate edge_coupled_h_nonlinear_closure.py assumes, nor
+      Q_op itself.  Restoring the tail,  Q_exact = Q_op + (e^{z_min}/(Y-1)) (x) h1  (as
+      edge_nonlinear_comoving_closure.py and EM-4 do), gives Q_exact G = H[g](1) at the edge.
   Q3  CH-4 of that gate, rerun on its own grid, data and time step with two right-hand sides:
-      (a) as written in the gate; (b) the Gauge-(a) system of the manuscript (subtract H[g](1),
-      p = V_G(1) - Q_op G).  (a) decays; (b) is non-finite before tau = 3.
-  Q4  Mechanism of (b).  The discretised Gauge-(a) linear operator
-          L_a = M_GG - (1/2) 1 (x) h1        (h1 @ G = H[g](1))
-      has one eigenvalue with large positive real part that grows with the edge depth, while
-      M_GG has none; and the explicit eigenfunctions G_lambda of OBS-09 satisfy
-      L_a G_lambda ~ lambda G_lambda on the grid.  A finite-difference grid cannot impose the
-      edge analyticity that Theorem 2 / Theorem 3 use to exclude these modes.
+      (a) as written in the gate; (b) the Gauge-(a) system of the manuscript, discretised with
+      the tail:  Qtilde = Q_exact - H[g](1),  p = V_G(1) - Q_exact G.  Both decay, so the
+      qualitative outcome of CH-4 survives; the numbers differ (B, c_l), so the gate's printed
+      values are not those of the system it names.
+  Q4  Stability of the discretised Gauge-(a) linear operator, and a pitfall.  With the tail,
+          L = M_GG + (1/2) (e^{z_min}/(Y-1)) (x) h1 - (1/2) 1 (x) h1        (h1 @ G = H[g](1))
+      has no eigenvalue with positive real part, and its flow makes H[g](1) of the OBS-09
+      mode G_1 decay like e^{-T} (continuum: e^{+T}); the grid does not carry those modes
+      (this is EM-4 again).  WITHOUT the tail the operator has one spurious eigenvalue that
+      grows like e^{|z_min|/2} (+35, +102 at z_min = -10, -12).  The first version of this probe
+      omitted the tail and reported that eigenvalue, and the resulting blow-up of CH-4, as a
+      property of the Gauge-(a) system.  That was wrong; see the Correction in the note.
   Q5  The weighted transient of M_GG quoted in the manuscript (peak about 1.17 at gamma = 0.5,
       12.7 at gamma = 0.75, z_min = -14), recomputed with scipy's expm_multiply (no eigen-
       decomposition); and its driver: at the edge G grows initially like (1/2) H[g](1) tau.
 
-Run:  python3 validate/theorem3_review_2026_11_21_probe.py        (about 15 s)
+Run:  python3 validate/theorem3_review_2026_11_21_probe.py        (about 20 s)
 Exit 0 iff Q1..Q5 all reproduce.  The probe does not import the reviewed gate, so it runs with
 or without commit ef0eaea.
 
-Review form: one Claude session, independent of the author of ef0eaea; no separate reviewers.
-Nothing in this file certifies or refutes Theorem 3.
+Review form: one Claude session, independent of the author of ef0eaea.  The missing tail in the
+first version of Q3/Q4 was pointed out by an automated review comment on the pull request and
+confirmed here by experiment.  Nothing in this file certifies or refutes Theorem 3.
 """
 from __future__ import annotations
 
@@ -41,6 +50,7 @@ import sys
 import warnings
 
 import numpy as np
+from scipy.linalg import expm
 from scipy.sparse.linalg import expm_multiply
 
 warnings.simplefilter("ignore", RuntimeWarning)
@@ -103,23 +113,30 @@ def q1() -> None:
 
 
 def q2():
-    B = build(N=800, zmin=-10.0, zmax=10.0)
+    zmin = -10.0
+    B = build(N=800, zmin=zmin, zmax=10.0)
     z, dz, Q = B["z"], B["dz"], B["Q_op"]
     wt = np.full_like(z, dz)
     wt[0] *= 0.5
     wt[-1] *= 0.5
     h1 = -(1.0 / np.pi) * np.exp(-0.5 * z) * wt
+    tail = math.exp(zmin) / (B["Y"] - 1.0)             # e^{z_min - z}: the part of dU the grid does not integrate
     G = 0.15 * np.exp(-((z - 1.0)) ** 2)
     H, QG, V = float(h1 @ G), Q @ G, float(B["b1"] @ G)
-    i4, i8 = int(np.argmin(np.abs(z + 4.0))), int(np.argmin(np.abs(z + 8.0)))
-    ok = abs(QG[i4] - H) < 0.02 * abs(H)
-    report("Q2 the discrete Q_op tends to H[g](1) at the edge (it is not Qtilde_op)", ok,
-           f"(Q_op G)(z=-4) = {QG[i4]:+.5f}, H[g](1) = {H:+.5f}; velocity perturbation at z=-8: "
-           f"gate's V - Q - H = {V - QG[i8] - H:+.5f}, manuscript's p = V - Q_op G = {V - QG[i8]:+.5f}")
-    return B, h1
+    QE = QG + tail * H                                 # Q_exact G
+    rng = (z > -9.5) & (z < -6.0)
+    cut = float(np.max(np.abs(QG[rng] - H * (1.0 - tail[rng]))) / abs(H))
+    ex = float(np.max(np.abs(QE[rng] - H)) / abs(H))
+    i9, i8 = int(np.argmin(np.abs(z + 9.0))), int(np.argmin(np.abs(z + 8.0)))
+    ok = cut < 0.01 and ex < 0.01 and abs(QG[i9] - H) > 0.2 * abs(H) and abs(QG[i9]) > 0.2 * abs(H)
+    report("Q2 the discrete Q_op is H[g](1)(1 - e^(z_min - z)) at the edge: not Qtilde_op, and Q_op only after the tail is restored",
+           ok, f"z=-9: Q_op G = {QG[i9]:+.5f}, H(1 - e^(zmin-z)) = {H * (1 - tail[i9]):+.5f}, Q_exact G = {QE[i9]:+.5f}, "
+           f"H[g](1) = {H:+.5f}; velocity perturbation at z=-8: gate's V - Q - H = {V - QG[i8] - H:+.5f}, "
+           f"manuscript's p = V - Q_exact G = {V - QE[i8]:+.5f}")
+    return B, h1, tail
 
 
-def q3(B, h1) -> None:
+def q3(B, h1, tail) -> None:
     z, dz, Q_op, Dz, b1, M_GG = B["z"], B["dz"], B["Q_op"], B["Dz"], B["b1"], B["M_GG"]
     n = len(z)
     D_up = np.zeros((n, n))
@@ -131,15 +148,17 @@ def q3(B, h1) -> None:
         QG = Q_op @ G
         Gz, qz = D_up @ G, D_up @ q
         if variant == "gate":                       # as written in edge_coupled_h_nonlinear_closure.py
+            Qfull = QG
             Qt, p = QG, V - QG - H
             dG = M_GG @ G + Bamp * q + p * Gz + 0.5 * Qt * G
-        else:                                       # manuscript: Qtilde = Q_op - H, p = V - Q_op G
-            Qt, p = QG - H, V - QG
-            dG = M_GG @ G - 0.5 * H + Bamp * q + p * Gz + 0.5 * Qt * G
-        dq = (-2.0 + p) * qz - q + (0.5 * p - (Dz @ QG)) * q
+        else:                                       # manuscript: Qtilde = Q_exact - H, p = V - Q_exact G
+            Qfull = QG + tail * H
+            Qt, p = Qfull - H, V - Qfull
+            dG = M_GG @ G + 0.5 * tail * H - 0.5 * H + Bamp * q + p * Gz + 0.5 * Qt * G
+        dq = (-2.0 + p) * qz - q + (0.5 * p - (Dz @ Qfull)) * q
         dG[0] = 0.0
         dq[0] = 0.0
-        return dG, dq, -Bamp * H
+        return dG, dq, -Bamp * H, V
 
     def e_tot(G, q):
         m = z >= -math.log(2.0)
@@ -149,13 +168,13 @@ def q3(B, h1) -> None:
     T_end = 3.0
     nsteps = int(round(T_end / (0.2 * dz)))
     dt = T_end / nsteps
-    out, ok = [], True
+    out, ok, Bs = [], True, {}
     for variant in ("gate", "gauge_a"):
         for Ga in (0.0, 0.15):
             G = Ga * np.exp(-((z - 1.0)) ** 2)
             q = 0.2 * np.exp(-((z - 1.5)) ** 2)
             G[0] = q[0] = 0.0
-            Bamp, E0, t_bad = 1.0, None, None
+            Bamp, t_bad = 1.0, None
             E0 = e_tot(G, q)
             for k in range(nsteps):
                 k1 = rhs(G, q, Bamp, variant)
@@ -168,18 +187,23 @@ def q3(B, h1) -> None:
                 if not np.all(np.isfinite(G)) or float(np.max(np.abs(G))) > 1e6:
                     t_bad = (k + 1) * dt
                     break
-            if variant == "gate":
-                ratio = e_tot(G, q) / E0
-                ok = ok and t_bad is None and ratio < math.exp(-T_end / 16.0)
-                out.append(f"gate rhs, G0 amp {Ga}: E_tot ratio {ratio:.2e}")
-            else:
-                ok = ok and t_bad is not None
-                out.append(f"Gauge-(a) rhs, G0 amp {Ga}: " + (f"|G| > 1e6 at tau = {t_bad:.3f}" if t_bad else "stays bounded"))
-    report("Q3 CH-4 decays with the gate's right-hand side and blows up with the manuscript's", ok, "; ".join(out))
+            if t_bad is not None:
+                ok = False
+                out.append(f"{variant}, G0 amp {Ga}: |G| > 1e6 at tau = {t_bad:.3f}")
+                continue
+            ratio = e_tot(G, q) / E0
+            c_l = 2.0 - rhs(G, q, Bamp, variant)[3]
+            Bs[(variant, Ga)] = Bamp
+            ok = ok and ratio < math.exp(-T_end / 16.0)
+            name = "gate's rhs" if variant == "gate" else "Gauge-(a) with tail"
+            out.append(f"{name}, G0 amp {Ga}: E_tot ratio {ratio:.2e}, B = {Bamp:.4f}, c_l = {c_l:.4f}")
+    ok = ok and len(Bs) == 4 and abs(Bs[("gate", 0.15)] - Bs[("gauge_a", 0.15)]) > 0.01
+    report("Q3 CH-4 decays with the gate's right-hand side and with the tail-corrected Gauge-(a) system; the numbers differ",
+           ok, "; ".join(out))
 
 
 def q4() -> None:
-    tops, det, ok = [], [], True
+    spur, det, ok = [], [], True
     for (N, zmin) in ((800, -10.0), (960, -12.0)):
         B = build(N=N, zmin=zmin, zmax=10.0)
         z, dz, M = B["z"], B["dz"], B["M_GG"]
@@ -187,22 +211,30 @@ def q4() -> None:
         wt[0] *= 0.5
         wt[-1] *= 0.5
         h1 = -(1.0 / np.pi) * np.exp(-0.5 * z) * wt
-        La = M - 0.5 * np.outer(np.ones_like(z), h1)
-        mt, ea = float(np.linalg.eigvals(M).real.max()), np.linalg.eigvals(La)
-        tops.append(float(ea.real.max()))
-        ok = ok and mt < 0 and tops[-1] > 10.0
-        det.append(f"z_min={zmin:+.0f}: max Re eig M_GG = {mt:+.4f}, max Re eig L_a = {tops[-1]:+.2f} "
-                   f"({int(np.sum(ea.real > 1e-8))} with Re > 0)")
+        one = np.ones_like(z)
+        tail = math.exp(zmin) / (B["Y"] - 1.0)
+        L = M + 0.5 * np.outer(tail, h1) - 0.5 * np.outer(one, h1)      # -2 d_z + (1/2) Qtilde_op, tail restored
+        L_notail = M - 0.5 * np.outer(one, h1)                          # the first version of this probe
+        mt = float(np.linalg.eigvals(L).real.max())
+        spur.append(float(np.linalg.eigvals(L_notail).real.max()))
+        ok = ok and mt < 0 and spur[-1] > 10.0
+        det.append(f"z_min={zmin:+.0f}: max Re eig with tail = {mt:+.4f}, without tail = {spur[-1]:+.2f}")
         if N == 800:
             mid = (z > zmin + 3.0) & (z < 6.0)
             for lam in (0.5, 1.0, 2.0):
                 Gl = EM.g_lam(z, lam)[0]
-                ra = float(np.max(np.abs((La @ Gl - lam * Gl)[mid])) / np.max(np.abs(lam * Gl[mid])))
-                rt = float(np.max(np.abs((M @ Gl - lam * Gl)[mid])) / np.max(np.abs(lam * Gl[mid])))
-                ok = ok and ra < 0.1 and rt > 0.5
-                det.append(f"lambda={lam}: residual of G_lambda under L_a {ra:.3f}, under M_GG {rt:.2f}")
-    ok = ok and tops[1] > 1.5 * tops[0]
-    report("Q4 the discretised Gauge-(a) operator has a growing mode that M_GG lacks; the OBS-09 modes fit it", ok, "; ".join(det))
+                ra = float(np.max(np.abs((L @ Gl - lam * Gl)[mid])) / np.max(np.abs(lam * Gl[mid])))
+                ok = ok and ra < 0.1
+                det.append(f"lambda={lam}: interior residual of G_lambda {ra:.3f}")
+            G1 = EM.g_lam(z, 1.0)[0]
+            a0 = float(h1 @ G1)
+            ratios = {T: float(h1 @ (expm(T * L) @ G1)) / a0 for T in (0.5, 1.0, 2.0)}
+            ok = ok and all(abs(ratios[T] - math.exp(-T)) < 0.2 * math.exp(-T) for T in ratios)
+            det.append("H[g](1)(T)/H[g](1)(0) of G_1 at T=0.5,1,2: " + ", ".join(f"{ratios[T]:.3f}" for T in ratios)
+                       + f" (e^-T: {math.exp(-0.5):.3f}, {math.exp(-1.0):.3f}, {math.exp(-2.0):.3f})")
+    ok = ok and spur[1] > 1.5 * spur[0]
+    report("Q4 the tail-corrected Gauge-(a) operator is stable on the grid and does not carry the OBS-09 modes; "
+           "dropping the tail creates a spurious eigenvalue ~ e^(|z_min|/2)", ok, "; ".join(det))
 
 
 def q5() -> None:
@@ -230,8 +262,8 @@ def q5() -> None:
 def main() -> int:
     print("Theorem-3 review probe 2026-11-21 (Q1..Q5; PASS = review finding reproduces)")
     q1()
-    B, h1 = q2()
-    q3(B, h1)
+    B, h1, tail = q2()
+    q3(B, h1, tail)
     q4()
     q5()
     if FAILURES:
