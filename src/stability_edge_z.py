@@ -67,7 +67,7 @@ def hilbert_support_z(Y, Ymax):
     return H
 
 
-def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True):
+def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True, edge_tail=False):
     """Assemble the frozen operator on z in [zmin, zmax].
 
     beta : far-field weight exponent (w = e^{beta z}); beta<0 pushes the essential
@@ -78,6 +78,18 @@ def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True):
            blows up at the edge for Re lambda>0.  Without this BC the discretization
            re-admits that inadmissible branch as a spurious z_min-dependent edge
            mode (e.g. Re~+1.7).  Implemented by dropping the z_min DOF.
+    edge_tail : include the part of the edge average that lies below the grid,
+           int_{-inf}^{z_min} H(g) e^{z'} dz' ~= H(g)(z_min) e^{z_min}  (H(g) taken constant
+           below z_min, its edge limit a = H[g](1)).
+           DEFAULT False = the historical matrices.  With False, J_op, forcing and Q_op
+           equal the continuum operator MINUS a*e^{z_min-z}: Q_op's first row is
+           identically 0 and the error is O(1) within a few units of z_min (for
+           G = w/(2+w)^2, exact a = -0.17678: Q_op = 0.000 / -0.1115 / -0.1680 at
+           z_min / z_min+1 / z_min+3).  Do NOT read Q_op or forcing near z_min as the
+           edge value a; use Hg_op[0] for that.  With True, Q_op = -0.1767 at the edge.
+           The default is kept False because the truncation is load-bearing: with True,
+           five gates flip and the free-edge "+1.7" mode disappears
+           (docs/findings_session_2026_11_22_qop_edge_tail.md).
     """
     z = np.linspace(zmin, zmax, N)
     dz = z[1] - z[0]
@@ -93,6 +105,8 @@ def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True):
     Hg_op = Hz @ np.diag(ym1 ** -0.5)
     # J(Y) = int_1^Y H(g) dY' = int H(g) * (Y-1) dz'   (cumulative in z)
     J_op = Cz @ np.diag(ym1) @ Hg_op
+    if edge_tail:                             # + int_{-inf}^{z_min} H(g) e^{z'} dz'
+        J_op = J_op + ym1[0] * np.ones((N, 1)) @ Hg_op[0:1, :]
     forcing = np.diag(0.5 / ym1) @ J_op       # (1/2) J/(Y-1)
 
     # Bounded form of  delta_U/(Y-1) = J/(Y-1)  acting on G (= 2*forcing), recast as
@@ -106,6 +120,8 @@ def build_blocks_z(N=1400, zmin=-14.0, zmax=7.0, beta=0.0, edge_bc=True):
         w_ea = np.exp(z[:i + 1] - z[i])       # e^{z'-z} <= 1 for z' <= z
         tw = np.full(i + 1, dz); tw[0] *= 0.5; tw[i] *= 0.5   # trapezoid weights
         EA[i, :i + 1] = w_ea * tw
+    if edge_tail:                             # tail weight e^{z_min - z} on the edge node
+        EA[:, 0] += np.exp(z[0] - z)
     Q_op = EA @ Hg_op                          # Q_op @ G ~= delta_U/(Y-1), bounded
 
     transport = -2.0 * Dz                     # -abar G_Y = -2 d_z (constant coeff)
