@@ -213,6 +213,15 @@ referee result recorded in the ledger entry LEM-10.
   OBS-03) is a different family and was not re-examined.
 - **What this does not give:** a route around the edge problem (N1) or the Gauge-(a) operator.
 
+**Review form for section 6c:** independent — a third Claude referee with fresh context, told to refute the
+proposition. It could not; nothing above S3. Repaired from its report: the polynomial bound on `N` was used on
+lines outside the symbol lemma's stated range (the lemma now states the upper bound for `Re s` in compacts of
+`(−1,∞)`); the `Re c` formula is undefined on `½+ℤ`; two semigroup facts were uncited; "takes both signs" for
+`σ > ¼` is now proved (modulate the test family by `e^{iωz}`). Its search for a counterexample at
+`σ ∈ {0.02, 0.1, 0.2, 0.25}` over five families found ratio ≤ 1.000000000 and form < 0 throughout; its
+real-space finite-difference check of `e^{4στ}‖S(τ)G‖²` agrees with the form in sign and size. Scripts:
+`validate/review_2026_11_21_w3/referee2_{a,b2,c}.py`. Not confirmed: the Engel–Nagel item numbers.
+
 ## 7. Reproducing
 
 - `python3 validate/edge_w3_conjugation_check.py` — WC-4 and WC-5 as in section 6c; WC-1 identity (1.5e-14), WC-2 ladder equation

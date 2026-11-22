@@ -474,7 +474,8 @@ Let $\sigma\in(0,\tfrac12)$ and let $S(\tau)$, $C_*(\sigma)$ be as in Theorem~\r
   =\frac{1}{2\pi}\int_{\mathbb{R}}\operatorname{Re}c(\sigma+\tfrac14+it)\,\bigl|\widehat{G}(\sigma+\tfrac14+it)\bigr|^2\,dt,
   \]
   \[
-  \operatorname{Re}c(x+it)=-\frac{(2x+1)\sin(2\pi x)+2t\sinh(2\pi t)}{\bigl(\cos(2\pi x)+\cosh(2\pi t)\bigr)\,|2(x+it)+1|^2}.
+  \operatorname{Re}c(x+it)=-\frac{(2x+1)\sin(2\pi x)+2t\sinh(2\pi t)}{\bigl(\cos(2\pi x)+\cosh(2\pi t)\bigr)\,|2(x+it)+1|^2}
+  \qquad(x+it\notin\tfrac12+\mathbb{Z}).
   \]
 \item If $\sigma\le\tfrac14$, then $\operatorname{Re}\langle M_\sigma G,G\rangle_{L^2_\sigma}\le-2\sigma\|G\|^2_{L^2_\sigma}$ for every
   $G\in\mathcal{D}(M_\sigma)$; hence $\|S(\tau)\|=e^{-2\sigma\tau}$ for all $\tau\ge0$, i.e.\ $C_*(\sigma)=1$.
@@ -578,7 +579,8 @@ For Theorem~\ref{thm:conjugation} and Proposition~\ref{prop:energy_form}, \textt
 symbol identity ($1.5\times10^{-14}$), the ladder equation for the closed-form evolution ($4.3\times10^{-9}$),
 agreement of that evolution with $\exp(\tau M_{GG})$ from the real-space discretization
 ($4.8\times10^{-4}$ at $N=1500$, $2.4\times10^{-4}$ at $N=3000$; transport alone: $6.7\times10^{-2}$), the closed formula for
-$\operatorname{Re}c$ and its sign ($8.4\times10^{-14}$), and the energy-form identity computed on the two lines
+$\operatorname{Re}c$ and its sign ($8.4\times10^{-14}$), and the energy-form identity computed on the two lines (a check of the
+contour shift in Mellin variables, not of the identification with the real-space operator)
 $\operatorname{Re}s=\sigma$ and $\sigma+\tfrac14$ ($1.6\times10^{-14}$; form$/\|G\|^2=-0.396,-0.024,-0.111,+0.021,+0.144$ at
 $\sigma=0.1,0.2,0.25,0.3,0.4$);
 \texttt{ConjugationSymbol.lean} machine-checks the symbol identity, $N(\tfrac12)=0$, the semigroup law and
@@ -752,8 +754,10 @@ Section~\ref{sec:nonlin} remain numerical.
   Because $\tfrac12 Q_{\mathrm{op}}G=e^{-z/2}T_c G$ maps $L^2_\sigma$ into
   $L^2_{\sigma-1/2}$, the perturbation is unbounded on $L^2_\sigma$; for $\sigma>\tfrac14$ the form
   $\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}$ takes both signs, while for $\sigma\le\tfrac14$ it is
-  non-positive on $\mathcal{D}(M_\sigma)$ (Proposition~\ref{prop:energy_form}); truncated-grid field-of-values computations diverge (\texttt{edge\_layer\_obstruction.py},
-  \texttt{cap\_scaffold.py})~\cite{findings_edge_layer,findings_cap}.
+  non-positive on $\mathcal{D}(M_\sigma)$ (Proposition~\ref{prop:energy_form}).  The field-of-values divergences reported for truncated grids
+  (\texttt{edge\_layer\_obstruction.py}, \texttt{cap\_scaffold.py})~\cite{findings_edge_layer,findings_cap} are statements about
+  those discretizations and weight classes; for $\sigma\le\tfrac14$ they do not reflect the continuum operator on $L^2_\sigma(\mathbb{R})$,
+  whose numerical range lies in $\operatorname{Re}\le-2\sigma$.
   In Theorem~\ref{thm:linear_gap} this is bypassed in the resolvent via the Mellin ladder and
   slit-plane Cauchy integral, and in Theorem~\ref{thm:conjugation} by the multiplier $\mathcal{N}$; in Theorem~\ref{thm:nonlinear_bootstrap} it is bypassed in the
   time-dependent PDE by replacing $L^2_\sigma((-\infty,0])$ with the edge Hardy disk $\mathcal{H}^1(D(1,1))$.
@@ -1754,6 +1758,7 @@ $\varphi\in\mathcal{S}_\Sigma$ is smooth with $e^{az}\varphi^{(j)}\in L^2$ for a
 $N(s+\tfrac12)c(s+\tfrac12)=-N(s)$ for $\sin(\pi s)\ne0$, $s\ne-1$.  $N$ is analytic on $\operatorname{Re}s>-1$, its zeros
 there are the half-integers, and for every compact $[a,b]\subset(-\tfrac12,\tfrac12)$ there are $0<m\le M$ with
 $m(1+|t|)^{2x+3/2}\le|N(x+it)|\le M(1+|t|)^{2x+3/2}$ for all $x\in[a,b]$, $t\in\mathbb{R}$.
+The upper bound $|N(x+it)|\le M(1+|t|)^{2x+3/2}$ holds, with $M=M(a,b)$, for every compact $[a,b]\subset(-1,\infty)$.
 \end{lem}
 \textit{Proof.}
 $\cos(\pi s+\tfrac{\pi}{2})=-\sin(\pi s)$ and $\Gamma(2s+3)=(2s+2)\Gamma(2s+2)$ give
@@ -1764,7 +1769,8 @@ For the bounds, $|\cos(\pi(x+it))|^2=\cos^2(\pi x)+\sinh^2(\pi t)$, and Stirling
 $|\Gamma(x'+iy)|=\sqrt{2\pi}\,|y|^{x'-1/2}e^{-\pi|y|/2}(1+O(|y|^{-1}))$, uniform for $x'$ in compact sets, applied with
 $x'=2x+2$, $y=2t$, gives $|N(x+it)|=c_x|t|^{2x+3/2}(1+O(|t|^{-1}))$ as $|t|\to\infty$ with $c_x$ continuous and positive: the
 factors $e^{\pi|t|}$ and $e^{-\pi|t|}$ cancel.  On the remaining compact set $|t|\le t_0$, $x\in[a,b]$, $|N|$ is continuous and
-non-vanishing. \hfill$\square$
+non-vanishing.  The upper bound uses only the Stirling asymptotics and continuity of $N$, not $N\ne0$, so it holds for
+$x$ in any compact subset of $(-1,\infty)$. \hfill$\square$
 
 \medskip
 By Lemma~\ref{lem:conj_symbol} with $x=\sigma$, $\mathcal{N}:H^p_\sigma\to L^2_\sigma(\mathbb{R})$ is an isomorphism, and
@@ -1876,7 +1882,9 @@ $(-2s+2\sigma)|\widehat{G}(s)|^2=-2it\,|\widehat{G}|^2$ is purely imaginary, so
 J(s):=-N(s)\,\widehat{k}(s+\tfrac12)\,\widehat{G}^*(2\sigma-s),\qquad \widehat{G}^*(s):=\overline{\widehat{G}(\bar s)},
 \end{gather*}
 because $\overline{\widehat{G}(s)}=\widehat{G}^*(2\sigma-s)$ on $\operatorname{Re}s=\sigma$.  $J$ is analytic on $-1<\operatorname{Re}s<2\sigma+1$ and
-decays faster than any power on vertical lines, uniformly for $\operatorname{Re}s\in[\sigma-\tfrac14,\sigma]$; so the contour may be moved to
+decays faster than any power on vertical lines, uniformly for $\operatorname{Re}s\in[\sigma-\tfrac14,\sigma]$ (the factors $N(s)$ and
+$\widehat{G}^*(2\sigma-s)=\overline{N(2\sigma-\bar s)\widehat{k}(2\sigma-\bar s)}$ are polynomially bounded by the upper bound of
+Lemma~\ref{lem:conj_symbol}, with real parts in $[\sigma-\tfrac14,\sigma+\tfrac14]\subset(-1,\infty)$, and $\widehat{k}$ decays rapidly); so the contour may be moved to
 $\operatorname{Re}s=\sigma-\tfrac14$.  There, with $w:=s+\tfrac12=\sigma+\tfrac14+it$, one has $2\sigma-s=\bar w$, hence
 $\widehat{G}^*(2\sigma-s)=\overline{\widehat{G}(w)}$, and by Lemma~\ref{lem:conj_symbol}
 $-N(s)\widehat{k}(s+\tfrac12)=-N(w-\tfrac12)\widehat{k}(w)=c(w)N(w)\widehat{k}(w)=c(w)\widehat{G}(w)$ for $w\ne\tfrac12$.
@@ -1888,12 +1896,15 @@ $\dfrac{1}{2w+1}=\dfrac{(2x+1)-2it}{|2w+1|^2}$.
 $\cos(2\pi x)+\cosh(2\pi t)$ are positive (Lean: \texttt{reC\_numerator\_pos}, \texttt{reC\_denominator\_pos}); for $x=\tfrac12$,
 $\operatorname{Re}c(\tfrac12+it)=-2t\sinh(2\pi t)/\bigl((\cosh(2\pi t)-1)|2+2it|^2\bigr)<0$ for $t\ne0$.  So for $\sigma\le\tfrac14$ the right side of
 item~1 is $\le0$ on the core.  If $G\in\mathcal{D}(M_\sigma)$, choose $G_n$ in the core with $G_n\to G$ and $M_\sigma G_n\to M_\sigma G$ in
-$L^2_\sigma$; the inequality $\operatorname{Re}\langle M_\sigma G_n,G_n\rangle\le-2\sigma\|G_n\|^2$ passes to the limit.  For
-$G\in\mathcal{D}(M_\sigma)$, $\frac{d}{d\tau}\|S(\tau)G\|^2=2\operatorname{Re}\langle M_\sigma S(\tau)G,S(\tau)G\rangle\le-4\sigma\|S(\tau)G\|^2$, so
+$L^2_\sigma$; the inequality $\operatorname{Re}\langle M_\sigma G_n,G_n\rangle_{L^2_\sigma}\le-2\sigma\|G_n\|^2$ passes to the limit.  For
+$G\in\mathcal{D}(M_\sigma)$, $S(\tau)G\in\mathcal{D}(M_\sigma)$ and $\tau\mapsto S(\tau)G$ is $C^1$~\cite[Lemma~II.1.3]{engelnagel2000}, so
+$\frac{d}{d\tau}\|S(\tau)G\|^2=2\operatorname{Re}\langle M_\sigma S(\tau)G,S(\tau)G\rangle_{L^2_\sigma}\le-4\sigma\|S(\tau)G\|^2$ and
+$\|S(\tau)G\|\le e^{-2\sigma\tau}\|G\|$; by density of $\mathcal{D}(M_\sigma)$,
 $\|S(\tau)\|\le e^{-2\sigma\tau}$; with $C_*\ge1$ from Theorem~\ref{thm:conjugation} this gives $C_*(\sigma)=1$.
 
 \emph{Item 3.}  Let $\sigma>\tfrac14$, $x:=\sigma+\tfrac14\in(\tfrac12,\tfrac34)$ and $q(t):=\operatorname{Re}c(x+it)\,|N(x+it)|^2$.  Then $q$ is
-continuous and polynomially bounded, and $q(0)=c(x)N(x)^2>0$ ($c(x)>0$ on $(\tfrac12,1)$, Lean: \texttt{cRe\_pos}; $N(x)\ne0$).
+continuous and polynomially bounded (upper bound of Lemma~\ref{lem:conj_symbol}; $\operatorname{Re}c(x+it)$ is bounded in $t$ because
+$x\notin\tfrac12+\mathbb{Z}$), and $q(0)=c(x)N(x)^2>0$ ($c(x)>0$ on $(\tfrac12,1)$, Lean: \texttt{cRe\_pos}; $N(x)\ne0$).
 Fix a real $\eta\in C_c^\infty$, $\eta\not\equiv0$, and put $k_R(z):=e^{xz}\eta(z/R)$, so $\widehat{k_R}(x+it)=R\,\widehat{\eta}_0(Rt)$ with
 $\widehat{\eta}_0(t)=\int\eta(z)e^{-itz}dz$.  By item~1 and dominated convergence,
 \[
@@ -1901,8 +1912,10 @@ $\widehat{\eta}_0(t)=\int\eta(z)e^{-itz}dz$.  By item~1 and dominated convergenc
 =\frac{R}{2\pi}\int q(t/R)\,|\widehat{\eta}_0(t)|^2\,dt=\frac{R}{2\pi}\bigl(q(0)\|\widehat{\eta}_0\|_{L^2}^2+o(1)\bigr)>0
 \]
 for $R$ large.  For such $G=\mathcal{N}k_R\in\mathcal{D}(M_\sigma)$ the function $f(\tau):=e^{4\sigma\tau}\|S(\tau)G\|^2$ has
-$f'(0)=2\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle>0$, so $e^{2\sigma\tau}\|S(\tau)G\|>\|G\|$ for small $\tau>0$ and $C_*(\sigma)>1$.
-Since $\|S(\tau)\|=C_*e^{-2\sigma\tau}\to C_*>1$ as $\tau\to0^+$, no bound $\|S(\tau)\|\le e^{\omega\tau}$ can hold. \hfill$\square$
+$f'(0)=2\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}>0$, so $e^{2\sigma\tau}\|S(\tau)G\|>\|G\|$ for small $\tau>0$ and $C_*(\sigma)>1$.
+Since $\|S(\tau)\|=C_*e^{-2\sigma\tau}\to C_*>1$ as $\tau\to0^+$, no bound $\|S(\tau)\|\le e^{\omega\tau}$ can hold.
+(The form also takes negative values for $\sigma>\tfrac14$: replacing $\eta(z/R)$ by $e^{i\omega z}\eta(z/R)$ gives the limit
+$\frac{R}{2\pi}q(\omega)\|\widehat{\eta}_0\|^2_{L^2}$, and $q(\omega)<0$ once $2\omega\sinh(2\pi\omega)>(2x+1)|\sin(2\pi x)|$.) \hfill$\square$
 
 \paragraph{Closed-form test family.}
 For $k_0=u^ae^{-bu}$ ($a>0$, $\operatorname{Re}b>0$), $\widehat{k_0}(s)=2\Gamma(2s+a)b^{-2s-a}$ and
