@@ -12,8 +12,8 @@ Checks (all pass => exit 0):
   TB-3  Lemma 1(2): Pole-free Q-smoothing on X_rho^0:
           ||Q G||_{rho, -1/4} and ||Q G||_{rho, 1/8} finite and ||Q G||_{H^inf(S_rho)} <= C ||G||_{X_rho}
           verified directly on the complex strip |Im z| <= rho = 0.5.
-  TB-4  Lemma 4: Horizon regularity V_G(r^2) = O(r^3 |ln r|) as r -> 0+ for G in X_rho^0
-        (a(G) = 0), confirming C^1 transversal crossing of dr/ds = -1 + (1/2) V_G(r^2).
+  TB-4  Lemma 4: Horizon regularity V_G(r^2) = (2/3) c_1 r^2 + O(r^3 |ln r|) as r -> 0+
+        for curved G in X_rho^0 (a(G) = 0, c_1 != 0), confirming C^1 transversal crossing.
 """
 from __future__ import annotations
 
