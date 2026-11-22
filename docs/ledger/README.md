@@ -31,6 +31,7 @@ review, no matter how green the lemma DAG is.
 | OBS-07 | edge-forcing resolvent gain ∝ e^{z₀/2} = ε, λ-uniform (edge input annihilated; supports σ(M|_σ) = transport line, ‖R‖~C/dist) | measured (0.85) | validate/edge_convective_resolvent_scan.py |
 | OBS-08 | high-frequency corner benign: dressing → 1 with |Ω| at every depth (the ex-corner of the crude Schur; coupling c(σ+iΩ)~1/(2|Ω|)) | measured (0.85) | validate/edge_slitplane_representation.py (P3) |
 | OBS-09 | Gauge-(a) operator WITHOUT the domain condition Ĝ(½)=0 has an explicit eigenfunction G_λ = 𝓜⁻¹[X(·;λ)] for every Re λ > −2σ (C^∞ at the edge, O(v), not edge-analytic, H[g](1) = −2Γ(1+λ) ≠ 0); the truncated grid does not carry it | measured (0.9) | validate/edge_gauge_a_eigenmode_check.py (EM-1..EM-5) |
+| LEM-10 | W3 by conjugation: M_σ = 𝒩(−2∂_z − e^{−z/2})𝒩⁻¹, N(s)=cos(πs)Γ(2s+2)/π; explicit C₀-semigroup, ‖S(τ)‖ = C*(σ)e^{−2στ}; half-plane resolvent bound C/(Re λ+2σ) | proved-on-paper (0.8); one independent adversarial pass | Lean (identities only: ConjugationSymbol) + validate/edge_w3_conjugation_check.py |
 
 LEM-01..05 = the **Track-1 algebraic backbone** (Lean-verified). LEM-06 (the (★)
 leap) + the H¹_W coupling = **Track 2**, the genuine remaining analytic work; it
@@ -75,3 +76,9 @@ edited on 2026-07-16 and stay as they are; this paragraph records what has chang
   operator is stable on the grid and does not carry the OBS-09 modes, without it a spurious eigenvalue
   `~e^{|z_min|/2}` appears (+35, +102 at `z_min = −10, −12`). OBS-09's statement that the truncated grid does not
   carry the modes stands. No ledger status changes; the manuscript's Theorem 3 has no ledger entry.
+- **LEM-10 (2026-11-21, later):** a conjugation proof of the W3 step, independent of the withdrawn Laplace-inversion
+  route. `proved-on-paper`; the Lean file `ConjugationSymbol.lean` checks the symbol identity, `N(½)=0`, the semigroup
+  law and characteristic ODE of the explicit flow, and the sign of `c` on the real axis — no operator statement.
+  LEM-06 stays `conjectured` under the no-self-certification rule; what remains for its linear half is the list of
+  open items in LEM-10. LEM-10 also restricts LEM-09 (C) to `σ > ¼` and replaces "spectrum = the line" by the closed
+  half-plane `Re λ ≤ −2σ` for the maximal realization. THR-01 unchanged.

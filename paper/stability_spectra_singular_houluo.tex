@@ -64,10 +64,12 @@ Because the nonlocal perturbation maps $L^2_\sigma\to L^2_{\sigma-1/2}$, bare-$L
 $C_0$-semigroup generation is not claimed from W1--W2 alone.
 
 Third, completely bypassing bare-$L^2_\sigma$ semigroup theory, we prove a \textbf{small-data
-nonlinear co-moving stability theorem} for the support-interior ($X>1$) reduction in the invariant
-$\Theta$-sector $h\equiv 0$ under the edge-stagnation gauge (\emph{Gauge~(a)}) in the hybrid edge-analytic space
+nonlinear co-moving stability theorem} for the support-interior ($X>1$) reduction under the
+edge-stagnation gauge (\emph{Gauge~(a)}) in the hybrid edge-analytic space
 $\mathcal{X}=\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$
-(Theorem~\ref{thm:nonlinear_bootstrap}, Appendices~\ref{app:nonlin_est}--\ref{app:lwp}).
+(Theorem~\ref{thm:nonlinear_bootstrap} in the invariant $\Theta$-sector $h\equiv 0$, and
+Theorem~\ref{thm:coupled_h} for the full coupled $(G,h)$ system in $\mathcal{X}\times\mathcal{X}_h$
+with zero extra derivatives on $G$, Appendices~\ref{app:nonlin_est}--\ref{app:lwp}).
 Using the unconditional Plancherel bound $\|\tfrac12\widetilde{Q}_{\mathrm{op}}G\|_{L^2_{1/4}(\mathbb{R})}\le\frac{2}{5}\|G\|_{L^2_{3/4}(\mathbb{R})}$
 and discrete Hilbert coercivity on $\mathcal{H}^1(D(1,1))$, a pure direct-energy three-block
 Lyapunov functional satisfies $\dot{\mathcal{E}}\le -\frac{1}{8}\mathcal{E}+C_{\mathrm{nl}}\mathcal{E}^{3/2}$,
@@ -89,7 +91,7 @@ finite-regularity result would need a modified gauge or constraint; the global t
 degenerate initial data on $\mathbb{R}$ to the singular profile remains open.
 The algebraic cancellations, exponent/symbol inequalities, finite telescoping bounds, rational
 arithmetic combinations, and the real-analytic Riccati ODE trapping theorem are machine-checked
-in Lean~4 (7~modules, \texttt{0~sorry}, \texttt{0~axioms}), while all continuous PDE, operator-norm,
+in Lean~4 (8~modules, \texttt{0~sorry}, \texttt{0~axioms}), while all continuous PDE, operator-norm,
 and Gamma-function estimates are proved analytically in Appendices~\ref{app:w123}--\ref{app:lwp}
 and cross-checked by standalone Python gates.
 \end{abstract}
@@ -542,8 +544,9 @@ admits a unique global solution $G\in C([0,\infty);\mathcal{X})$ (unique in $\{\
 \]
 Complete self-contained proofs of all nonlinear estimates and of local well-posedness / global
 continuation in $\mathcal{X}$ are given in Appendices~\ref{app:nonlin_est} and~\ref{app:lwp}
-(for the coupled $h\not\equiv 0$ extension with augmented energy $\mathcal{E}+\mu_h\mathcal{E}_h$,
-see Remark~\ref{rem:h_sector}).
+(the full coupled $(G,h)$ nonlinear extension with $h\not\equiv 0$ and augmented energy
+$\mathcal{E}+\mu_h\mathcal{E}_h$---requiring zero extra derivatives on $G$---is proved in
+Theorem~\ref{thm:coupled_h}).
 \end{thm}
 
 \begin{remark}[Support-interior reduction vs.\ global weak-edge jump balance at $X=1$]\label{rem:weak_edge_jump}
@@ -613,10 +616,12 @@ Moreover, the subspace $\{H[g](1)=0\}$ is \emph{not} invariant under~\eqref{eq:c
 
 \paragraph{Numerical gates and Lean~4 algebraic/ODE verification.}
 Standalone Python gates spot-check the nonlinear algebraic identities, symbol norms, linear block constants, and static regularized weak-edge jump integral:
-\texttt{edge\_nonlinear\_comoving\_closure.py} (\texttt{NL-1..NL-6 PASS}) and
-\texttt{edge\_nonlinear\_bootstrap\_closure.py} (\texttt{NB-1..NB-6 PASS}).
-The companion Lean~4 modules (\texttt{NonlinearComoving.lean} and \texttt{NonlinearBootstrap.lean};
-\texttt{0~sorry}, \texttt{0~axioms} across all 7 modules in \texttt{lean/SingularBlowup/})
+\texttt{edge\_nonlinear\_comoving\_closure.py} (\texttt{NL-1..NL-6 PASS}),
+\texttt{edge\_nonlinear\_bootstrap\_closure.py} (\texttt{NB-1..NB-6 PASS}), and
+\texttt{edge\_coupled\_h\_nonlinear\_closure.py} (\texttt{CH-1..CH-4 PASS}).
+The companion Lean~4 modules (\texttt{NonlinearComoving.lean}, \texttt{NonlinearBootstrap.lean}, and
+\texttt{CoupledHSector.lean}; \texttt{0~sorry}, \texttt{0~axioms} across all 8 modules in
+\texttt{lean/SingularBlowup/})
 machine-check the algebraic Gauge-(a) cancellations, rational symbol and telescoping series bounds,
 discrete Hilbert commutator identity, 3-block Lyapunov rational inequality, and the real-analytic scalar Riccati ODE barrier-trapping lemma (given a differentiable function on $[0,\infty)$ satisfying the differential inequality); all continuous PDE operator bounds, integral identities, and
 local well-posedness are proved analytically in Appendices~\ref{app:nonlin_est}--\ref{app:lwp}.
@@ -627,8 +632,8 @@ local well-posedness are proved analytically in Appendices~\ref{app:nonlin_est}-
 
 \paragraph{Analytical proofs vs.\ Lean~4 formalization scope.}
 Theorem~\ref{thm:linear_gap} (spectral gap and uniform resolvent bound on $L^2_\sigma(\mathbb{R})$)
-and Theorem~\ref{thm:nonlinear_bootstrap} (small-data global nonlinear stability in
-$\mathcal{X}=\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$) are proved analytically in
+and Theorems~\ref{thm:nonlinear_bootstrap} and~\ref{thm:coupled_h} (small-data global nonlinear
+stability in $\mathcal{X}$ and in the coupled space $\mathcal{X}\times\mathcal{X}_h$) are proved analytically in
 full in Appendices~\ref{app:w123}--\ref{app:lwp}.
 The Lean~4 modules in \texttt{lean/SingularBlowup/} (\texttt{0~sorry}, \texttt{0~axioms})
 verify only the algebraic cancellations, exponent/symbol inequalities, finite telescoping series
@@ -690,8 +695,10 @@ gCLM $a$-family, are left for future work.
   $\lambda_{\max}(\operatorname{sym}_W(M_b))>0$ (sampled matrix norm $\sim 112$, short-time
   amplification $1.033$ at $\tau=10^{-3}$) and is not a discrete matrix contraction.
 \item \emph{Coupled $(G,h)$ block.}
-  The coupled spectrum retains the convective gap, and the $\Theta\to G$ resolvent gain
-  saturates $O(1)$.
+  The coupled spectrum retains the convective gap, the $\Theta\to G$ resolvent gain saturates $O(1)$,
+  and full coupled $(G,h)$ nonlinear asymptotic stability in $\mathcal{X}\times\mathcal{X}_h$ is proved
+  analytically in Theorem~\ref{thm:coupled_h} (with zero extra derivatives on $G$, verified by
+  \texttt{edge\_coupled\_h\_nonlinear\_closure.py}, \texttt{CH-1..CH-4 PASS}).
 \end{enumerate}
 
 %--------------------------------------------------------------------------
@@ -727,6 +734,7 @@ python3 validate/edge_w2_w3_closure.py               # W2 (W2-A..C PASS)
 python3 validate/edge_nonlinear_comoving_closure.py  # Gauge-(a) (NL-1..6 PASS)
 python3 validate/edge_nonlinear_bootstrap_closure.py # Bootstrap (NB-1..6 PASS)
 python3 validate/edge_gauge_a_eigenmode_check.py     # Eigenmodes (EM-1..5 PASS)
+python3 validate/edge_coupled_h_nonlinear_closure.py # Coupled (G,h) (CH-1..4 PASS)
 \end{verbatim}
 }
 
@@ -760,7 +768,7 @@ cd paper && pdflatex stability_spectra_singular_houluo.tex
 %--------------------------------------------------------------------------
 \section*{Code and verification availability}
 %--------------------------------------------------------------------------
-All numerical gates, figure scripts, desk notes, and the 7-module Lean~4 algebraic/ODE
+All numerical gates, figure scripts, desk notes, and the 8-module Lean~4 algebraic/ODE
 backbone (directory \texttt{lean/SingularBlowup}) are maintained in the companion
 \texttt{singular-blowup-1d} repository and will be made publicly available upon release or
 request.
@@ -1098,7 +1106,7 @@ satisfies $(\lambda-M_\sigma)U=0$, so $U\equiv 0$ by Lemma~\ref{lem:app_w2}, est
 \label{app:nonlin_est}
 %==========================================================================
 
-Write the exact Gauge-(a) PDE~\eqref{eq:comoving_exact} (in the invariant $h\equiv 0$ sector; see Remark~\ref{rem:h_sector} for $h\not\equiv 0$) as
+Write the exact Gauge-(a) PDE~\eqref{eq:comoving_exact} (in the invariant $h\equiv 0$ sector; see Theorem~\ref{thm:coupled_h} for $h\not\equiv 0$) as
 \[
 \partial_\tau G = -2\partial_z G + \tfrac12\widetilde{Q}_{\mathrm{op}}G + \mathcal{N}[G], \qquad
 \mathcal{N}[G] := p[G]\,\partial_z G + \tfrac12\bigl(\widetilde{Q}_{\mathrm{op}}G\bigr)G,
@@ -1338,26 +1346,118 @@ are all $O(\sqrt{\mathcal{E}(\tau)})=O(\sqrt{\mathcal{E}(0)}e^{-\tau/32})\in L^1
 exponentially at rate $e^{-\tau/32}$ with $B_\infty>0$.
 \end{proof}
 
-\begin{remark}[Coupled $\Theta$-perturbation $h\not\equiv 0$ with augmented energy]\label{rem:h_sector}
-When $h_0\not\equiv 0$, $\partial_\tau h = (-2+p[G])\partial_z h$ in~\eqref{eq:comoving_exact} is upper-triangular
-with respect to $G$, while $B(\tau)e^{-z/2}\partial_z h$ forces $G$ linearly (so $\mathcal{E}(0)=0, h_0\not\equiv 0$
-generates nonzero $G$).  Define the $h$-energy
+\begin{thm}[Coupled $(G,h)$ nonlinear asymptotic stability with zero derivative loss]\label{thm:coupled_h}
+Let $q := e^{-z/2}h_z$ so that on $D(1,1)$, $h(1+v)=\sum_{k=1}^\infty d_k v^{k+1/2}$ gives
+$q(1+v)=\sum_{m=1}^\infty \tilde{d}_m v^m$ with $\tilde{d}_m := (m+\tfrac12)d_m$.
+Define the $h$-energy space $\mathcal{X}_h$ by the norm squared
 \[
-\mathcal{E}_h := \|e^{-z/2}h_z\|_{L^2_{1/4}([-\ln 2,\infty))}^2
-  + \|\partial_z(e^{-z/2}h_z)\|_{L^2_{1/4}([-\ln 2,\infty))}^2
-  + \sum_{k=1}^\infty (k+\tfrac12)^4|d_k|^2
+\mathcal{E}_h(q) := X_h + Y_h + Z_{h,\mathrm{disk}},\qquad
+X_h := \|q\|_{L^2_{1/4}([-\ln 2,\infty))}^2,\quad
+Y_h := \|q_z\|_{L^2_{1/4}([-\ln 2,\infty))}^2,\quad
+Z_{h,\mathrm{disk}} := \sum_{m=1}^\infty m^2|\tilde{d}_m|^2,
 \]
-for $h(1+v)=\sum_{k=1}^\infty d_k v^{k+1/2}$ on $D(1,1)$.  Since $e^{-z/2}h_z=\sum_{k\ge 1}(k+\tfrac12)d_k v^k$
-with $k^2(k+\tfrac12)^2\le(k+\tfrac12)^4$, and $\|\cdot\|_{\mathcal{X}}^2=20X_{\mathrm{far}}+Y_{\mathrm{far}}+20Z_{\mathrm{disk}}$
-carries the weights $(20,1,20)$, we have $\|e^{-z/2}h_z\|_{\mathcal{X}}^2\le 20\,\mathcal{E}_h$
-(the factor $20$ is absorbed by the free weight $\mu_h$ below).
-Because linear transport on $e^{-z/2}h_z$ has damping rate $\le -3$ on both $D(1,1)$ and $[-\ln 2,\infty)$,
-choosing $\mu_h>0$ sufficiently large (depending on $B_0:=B(0)>0$) makes the linear part of the augmented Lyapunov functional
-$\mathcal{E}_{\mathrm{tot}} := \mathcal{E} + \mu_h\mathcal{E}_h$ strictly coercive with rate $\le -\frac{1}{16}\mathcal{E}_{\mathrm{tot}}$;
-closing the quasilinear commutator $(\partial_z p[G])\partial_z(e^{-z/2}h_z)$ in $\mathcal{E}_h$ without derivative loss requires
-controlling $\partial_z^2(Q_{\mathrm{op}}G)$ (i.e.\ one higher far-field derivative on $G$, or full analyticity of $(G,h)$), so
-Theorem~\ref{thm:nonlinear_bootstrap} is stated in the invariant sector $h\equiv 0$.
-\end{remark}
+and for any $B_0 := B(0) > 0$ set $\mu_h := 1000\,B_0^2$ and
+$\mathcal{E}_{\mathrm{tot}}(G,q) := \mathcal{E}(G) + \mu_h\,\mathcal{E}_h(q)$.
+Then there exists a constant $C_{\mathrm{tot}} = C_{\mathrm{tot}}(B_0) > 0$ such that for all initial data
+$(G_0, q_0) \in \mathcal{X} \times \mathcal{X}_h$ with $\mathcal{E}_{\mathrm{tot}}(G_0, q_0) < (32\,C_{\mathrm{tot}})^{-2}$,
+the full coupled Gauge-(a) system~\eqref{eq:comoving_exact} admits a unique global mild/characteristic
+solution $(G, q) \in C([0,\infty); \mathcal{X}\times\mathcal{X}_h)$ with zero analyticity-radius shrinkage,
+$B(\tau) \in [\tfrac12 B_0, 2 B_0]$ for all $\tau\ge 0$, and
+\[
+\frac{d}{d\tau}\mathcal{E}_{\mathrm{tot}} \le -\frac{1}{16}\,\mathcal{E}_{\mathrm{tot}} + C_{\mathrm{tot}}\,\mathcal{E}_{\mathrm{tot}}^{3/2},
+\qquad
+\mathcal{E}_{\mathrm{tot}}(\tau) \le \mathcal{E}_{\mathrm{tot}}(0)\,e^{-\tau/32},
+\]
+together with $|c_l(\tau)-2| + |c_\omega(\tau)+1| + |B(\tau)-B_\infty| \le C\sqrt{\mathcal{E}_{\mathrm{tot}}(0)}\,e^{-\tau/64}$.
+In particular, no extra far-field derivative on $G$ is required.
+\end{thm}
+\begin{proof}
+Applying $e^{-z/2}\partial_z$ to $\partial_\tau h + (2-p[G])\partial_z h = 0$ yields the exact coupled
+Gauge-(a) system
+\[
+\partial_\tau q + (2-p[G])\partial_z q + \bigl(1 - \tfrac12 p[G] - \partial_z p[G]\bigr)q = 0,
+\qquad
+\dot B/B = -H[g](1),
+\]
+while the $G$-equation in~\eqref{eq:comoving_exact} gains only the linear forcing $+B(\tau)\,q$.
+Because $\|\cdot\|_{\mathcal{X}}^2 = 20 X_{\mathrm{far}} + Y_{\mathrm{far}} + 20 Z_{\mathrm{disk}}$,
+we have $\|q\|_{\mathcal{X}}^2 \le 20\,\mathcal{E}_h(q)$.
+
+\emph{Step 1 (Unweighted 1-derivative smoothing of $Q_{\mathrm{op}}$).}
+In Mellin variables $s=\sigma+i\tau$, $\mathcal{M}[\partial_z^k(Q_{\mathrm{op}}G)](s) = m_k(s)\,\widehat{\partial_z G}(s+\tfrac12)$
+for $k=2$ and $\mathcal{M}[\partial_z(Q_{\mathrm{op}}W)](s) = m_1(s)\,\widehat{W}(s+\tfrac12)$ for $k=1$, where on the
+unweighted line $s=i\tau$ ($\sigma=0$) the simple pole of $\coth(\pi\tau)$ at $\tau=0$ cancels:
+\[
+m_2(i\tau) = \frac{i\tau^2\coth(\pi\tau)}{(\tfrac12+i\tau)(2+2i\tau)},\qquad
+m_1(i\tau) = \frac{-\tau\coth(\pi\tau)}{2+2i\tau}.
+\]
+Since $\sinh x \ge x$ for all $x>0$ implies $\coth^2(\pi\tau) = 1 + \sinh^{-2}(\pi\tau) \le 1 + (\pi\tau)^{-2}$,
+we obtain
+\[
+|m_2(i\tau)|^2 = \frac{\tau^4\coth^2(\pi\tau)}{4(\tfrac14+\tau^2)(1+\tau^2)}
+  \le \frac{\tau^4 + \tau^2/\pi^2}{4(\tfrac14+\tau^2)(1+\tau^2)} < \frac{1}{4},
+\qquad
+|m_1(i\tau)|^2 \le \frac{\tau^2 + \pi^{-2}}{4(1+\tau^2)} < \frac{1}{4}
+\]
+for all $\tau\in\mathbb{R}$ (Lean: \texttt{CoupledHSector.m2\_re0\_sq\_lt\_quarter},
+\texttt{m1\_re0\_sq\_lt\_quarter}).  By Plancherel's theorem and the $L^2_{1/2}$-to-$\mathcal{X}$ embedding,
+\[
+\|\partial_z^2(Q_{\mathrm{op}}G)\|_{L^2_0(\mathbb{R})} \le \|\partial_z G\|_{L^2_{1/2}(\mathbb{R})}
+  \le 2^{1/4}\sqrt{\mathcal{E}(G)},
+\qquad
+\|\partial_z(Q_{\mathrm{op}}W)\|_{L^2_0(\mathbb{R})} \le \|W\|_{L^2_{1/2}(\mathbb{R})}.
+\]
+Since $p[G] = \tfrac12 V_g(1) - \tfrac12\widetilde{Q}_{\mathrm{op}}G - \tfrac12 H[g](1)$ differs from
+$-\tfrac12 Q_{\mathrm{op}}G$ by constants, $\|p_{zz}\|_{L^2_0(\mathbb{R})} \le \tfrac12\cdot 2^{1/4}\sqrt{\mathcal{E}(G)}$
+with zero extra derivatives on $G$ and zero weight loss at $+\infty$.
+
+\emph{Step 2 (Far-field $q$-energy and quasilinear commutator).}
+Testing the $q$- and $q_z$-equations against $e^{-z/2}q$ and $e^{-z/2}q_z$ on $[z_0,\infty)$ ($z_0=-\ln 2$)
+gives linear damping $-3(X_h+Y_h)$ with boundary inflow at $z_0$ bounded by $2\sqrt{2}/3 < 1$
+(Lean: \texttt{CoupledHSector.coupled\_q\_inflow\_lt\_one}), which is absorbed by the disk dissipation
+$D_{h,\mathrm{disk}} := \sum_{m=1}^\infty m^3|\tilde{d}_m|^2$ below.
+In the $Y_h$-estimate, the only term involving $p_{zz}$ is the quasilinear commutator
+$2\int_{z_0}^\infty e^{-z/2} q_z\, p_{zz}\, q\,dz$; by Step~1 and the 1D Sobolev bound
+$\|e^{-z/4}q\|_{L^\infty([z_0,\infty))}^2 \le \tfrac32(X_h + Y_h)$,
+\[
+\left|2\int_{z_0}^\infty e^{-z/2} q_z\, p_{zz}\, q\,dz\right|
+  \le 2\,\|e^{-z/4}q\|_{L^\infty}\|q_z\|_{L^2_{1/4}}\|p_{zz}\|_{L^2_0}
+  \le 3\cdot 2^{1/4}\sqrt{\mathcal{E}(G)}\,(X_h + Y_h).
+\]
+All remaining nonlinear terms involve only $p$ and $p_z$, which are already controlled in $L^\infty$
+by $C\sqrt{\mathcal{E}(G)}$ via Lemma~\ref{lem:embeddings}.
+
+\emph{Step 3 (Disk $q$-energy and convolution split).}
+On $D(1,1)$, $q(1+v)=\sum_{m\ge 1}\tilde{d}_m v^m$ satisfies
+$\partial_\tau\tilde{d}_m + (2m+1)\tilde{d}_m = \sum_{j+k=m} (k + j + \tfrac12) q_j\tilde{d}_k$,
+so testing against $m^2\tilde{d}_m$ yields linear dissipation $-4 D_{h,\mathrm{disk}} - 2 Z_{h,\mathrm{disk}}$.
+Splitting $\sqrt{m}\le\sqrt{j}+\sqrt{k}$ for $j+k=m$ (Lean: \texttt{CoupledHSector.coupled\_disk\_sqrt\_split})
+and applying Young's convolution inequality with
+$\|j^{3/2}q_j\|_{\ell^2}, \|j q_j\|_{\ell^1} \le C\sqrt{\mathcal{E}(G)}$ bounds every nonlinear disk
+term by $C\sqrt{\mathcal{E}(G)}\,D_{h,\mathrm{disk}}$, giving
+$\dot{\mathcal{E}}_h \le -3\,\mathcal{E}_h + C_h\sqrt{\mathcal{E}(G)}\,\mathcal{E}_h$ once
+$C\sqrt{\mathcal{E}(G)} \le 2$.
+
+\emph{Step 4 (Coupled coercivity, $B(\tau)$-trapping, and LWP).}
+By Cauchy--Schwarz on $\mathcal{X}$, the forcing $B(\tau)q$ contributes at most
+$2 B(\tau)\sqrt{\mathcal{E}(G)}\,\|q\|_{\mathcal{X}} \le 2 B(\tau)\sqrt{20\,\mathcal{E}(G)\,\mathcal{E}_h(q)}$
+to $\dot{\mathcal{E}}(G)$.  Under the bootstrap hypothesis $B(\tau) \le 2 B_0$, with $\mu_h = 1000 B_0^2$
+the quadratic Young inequality
+\[
+-\frac{1}{8}\mathcal{E} + 4 B_0\sqrt{20\,\mathcal{E}\,\mathcal{E}_h} - 3\mu_h\mathcal{E}_h
+  \le -\frac{1}{16}\bigl(\mathcal{E} + \mu_h\mathcal{E}_h\bigr)
+\]
+(Lean: \texttt{CoupledHSector.coupled\_h\_linear\_coercivity}) yields
+$\dot{\mathcal{E}}_{\mathrm{tot}} \le -\frac{1}{16}\mathcal{E}_{\mathrm{tot}} + C_{\mathrm{tot}}\mathcal{E}_{\mathrm{tot}}^{3/2}$.
+By the Riccati barrier trapping lemma, $\mathcal{E}_{\mathrm{tot}}(0) < (32 C_{\mathrm{tot}})^{-2}$ implies
+$\mathcal{E}_{\mathrm{tot}}(\tau) \le \mathcal{E}_{\mathrm{tot}}(0) e^{-\tau/32}$, and choosing
+$C_{\mathrm{tot}}$ large enough that $\int_0^\infty |H[g](1)|\,d\tau \le C\sqrt{\mathcal{E}_{\mathrm{tot}}(0)} \le \ln 2$
+closes $B(\tau) \in [\tfrac12 B_0, 2 B_0]$ globally with $B(\tau) \to B_\infty > 0$.
+Finally, local well-posedness in $\mathcal{X}\times\mathcal{X}_h$ follows by the same Kato--Majda
+frozen-velocity iteration as Proposition~\ref{prop:lwp}, with weak-norm contraction in
+$\mathcal{W}\times\mathcal{W}_h$ closed by the unweighted $m_1$ bound
+$\|\partial_z(Q_{\mathrm{op}}W)\|_{L^2_0} \le \|W\|_{L^2_{1/2}} \le C\|W\|_{\mathcal{W}}$ from Step~1.
+\end{proof}
 
 %==========================================================================
 \section{Local Well-Posedness, Zero-Shrinkage Disk Flow, and Global Continuation}

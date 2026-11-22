@@ -4,7 +4,16 @@ Read this + `README.md` + `docs/findings_*.md` first. The next step is named at
 the bottom ("THE NEXT CHIP"). Repo: github.com/Brsanch/singular-blowup-1d (private).
 Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasure loop.
 
-> ## ⚑ LATEST (2026-11-21) — **manuscript rewritten after review; W3 withdrawn; Gauge-(a) eigenmodes**
+> ## ⚑ LATEST (2026-11-21, later) — **W3 candidate: `M_σ` is conjugate to damped transport**
+> `docs/findings_session_2026_11_21_w3_conjugation.md`; probe `validate/edge_w3_conjugation_check.py`.
+> With `N(s) = cos(πs)Γ(2s+2)/π`: `N(s+½)c(s+½) = −N(s)`, so `M_σ = 𝒩(−2∂_z − e^{−z/2})𝒩⁻¹` on `L²_σ`,
+> `σ ∈ (0,½)`, and the semigroup is explicit with `‖S(τ)‖ = C*(σ)e^{−2στ}`. Proved on paper (short), one
+> independent Claude adversarial pass did not break it; Lean checks the identities only (`ConjugationSymbol.lean`, ledger `LEM-10`); not expert-reviewed, no upper
+> bound on `C*`. The manuscript is not yet edited. Does not touch the Gauge-(a) operator or review item N1.
+> The block below still says "W3 withdrawn"; that refers to the Laplace-inversion route.
+>
+> ---
+> ## Prior (2026-11-21) — **manuscript rewritten after review; W3 withdrawn; Gauge-(a) eigenmodes**
 > Everything below this block was written on or before 2026-08-07 and predates the work of
 > 2026-11-20/21 (W1–W2 write-up, nonlinear theorem, manuscript appendices, 4 new Lean files).
 > Read `docs/ledger/README.md` ("State as of 2026-11-21") first.
