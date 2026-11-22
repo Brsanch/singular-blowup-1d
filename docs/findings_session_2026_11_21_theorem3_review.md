@@ -7,7 +7,8 @@ Lean 4, CH-1..4)" — `paper/stability_spectra_singular_houluo.tex`, `lean/Singu
 was a local commit on `main`, not yet pushed; this note sits on a branch cut from `2ed1e2a`.
 
 **Review form:** one Claude session, independent of the author of `ef0eaea`, re-deriving the estimates by hand
-and running the probe below. Not expert review. Nothing here certifies or refutes Theorem 3. One finding of
+and running the probe below, followed by two independent Claude reviewers (see **Independent pass**). Not
+expert review. Nothing here certifies or refutes Theorem 3. One finding of
 the first version of this note was wrong and was caught by an automated review comment on the pull request;
 see **Correction** below.
 
@@ -39,6 +40,40 @@ at `z_min = −12`) carrying the OBS-09 modes, and that no finite-difference run
 
 Findings C1 and C2 below are restated accordingly. C3–C6 are unaffected.
 
+## Independent pass (same day, after the correction)
+
+Two independent Claude reviewers with fresh context reviewed `ef0eaea` without seeing this note: one checked
+the statement and proof of Theorem 3 line by line; one checked the well-posedness claims and the gate and Lean
+evidence. The coordinating session read their reports and, for the two claims new to it, their outputs; it did
+not re-run their scripts. Their scripts are not in the repo.
+
+Agreement. Both found no error that changes the Riccati inequality, the decay rates or the trapping of `B`,
+and both independently reported C1, C3, C4 and C5. The second reviewer also met the blow-up of a naive
+correction of `CH-4`, diagnosed it as a grid artifact, and obtained the same corrected values as probe `Q3`
+(ratios 4.6e-3 and 1.5e-2; `B(3)` = 1.026 and 1.082).
+
+What they add:
+
+- **`CH-4` is uninformative even when corrected.** With every nonlocal and nonlinear term deleted (pure
+  transport) the check still passes (ratios 0.084 and 0.107 against the threshold 0.829); so does the system
+  with the sign of `½Q̃G` flipped (0.0046, 0.060). The initial data are Gaussians in `z`, not analytic at the
+  edge, so they lie outside `𝒳 × 𝒳_h`; `c_l` and `c_ω` are printed, not asserted.
+- **Why the gate's system damps `H[g](1)` so fast.** As coded, `H[g](1)` decays at rate
+  `1 + (2/3π)e^{−z_min/2}` (predicted −12.59, −32.49, −86.61; measured −12.58, −32.48, −86.58 at
+  `z_min = −8, −10, −12`), where the manuscript's identity gives −1.
+- **`M_GG` uses central differences**, not the upwind form the gate's comment states (Frobenius distance 0 to
+  the central form, 2765 to the upwind form).
+- **Step 1:** the displayed `m_1` also has the wrong sign (the true value at 0 is `+1/π`).
+- **Step 3:** the sharp joint inflow bound is `1.669·Z_{h,disk}` and the dissipation left is `1.50·D_{h,disk}`
+  (this note's cruder count gives 1.3; the manuscript implies 2). `‖j²q_j‖_{ℓ²} ≤ √Z_disk + √(Y_far/π)`.
+- **Statement:** uniqueness is claimed with no class; `C_tot` does not depend on `B₀`; lines 633–637 say
+  Theorems 2 and 3 are "proved analytically in full" while the coupled well-posedness is one sentence.
+- **Lean header** cites a "Remark B.1 (`rem:h_sector`)" that no longer exists.
+
+Severity. Both reviewers rate the evidence sentence at lines 700–701 `[S1]`, and the first rates the false
+`p_zz` bound `[S1]` as a displayed bound with no effect on the conclusion. C1 and C2 below carry the
+reviewers' rating; C4 is listed as S3 with that dissent recorded here.
+
 ## Verdict
 
 1. The estimates of Theorem 3 hold when re-derived. No false step was found in the argument that the coupled
@@ -58,8 +93,8 @@ itself; `[S3]` wrong but harmless; `[doc]` a fix that changes no mathematics.
 
 | ID | Severity | Where | Finding | Checked by |
 |---|---|---|---|---|
-| C1 | S2 (evidence) | gate lines 18, 123–124, 142–147 | `CH-4` is described as integrating "the exact coupled Gauge-(a) PDE". It treats the repo's `Q_op` as the subtracted operator `Q̃_op`. `Q_op` is the unsubtracted operator cut at the grid edge, so the run uses the Theta-balance linear operator and a velocity off by about `−H[g](1)`. The manuscript's system, discretised with the tail, also decays, with different numbers. | probe `Q2`, `Q3`; reading the code |
-| C2 | doc | tex 700–701, 621 | "verified by `edge_coupled_h_nonlinear_closure.py`, `CH-1..CH-4 PASS`" overstates four spot checks. `CH-4` is one grid, two initial data, `T = 3`; and the grid does not carry the non-analytic Gauge-(a) modes, so no grid run tests the edge-analytic hypothesis. | probe `Q4`, reading |
+| C1 | S1 (evidence) | gate lines 18, 123–124, 142–147 | `CH-4` is described as integrating "the exact coupled Gauge-(a) PDE". It treats the repo's `Q_op` as the subtracted operator `Q̃_op`. `Q_op` is the unsubtracted operator cut at the grid edge, so the run uses the Theta-balance linear operator and a velocity off by about `−H[g](1)`. The manuscript's system, discretised with the tail, also decays, with different numbers. | probe `Q2`, `Q3`; reading the code |
+| C2 | S1 (evidence) | tex 700–701, 621 | "verified by `edge_coupled_h_nonlinear_closure.py`, `CH-1..CH-4 PASS`" is not supported. `CH-4` passes for pure transport and for a sign-flipped operator, uses data outside the theorem's space, one grid and `T = 3`; and the grid does not carry the non-analytic Gauge-(a) modes, so no grid run tests the edge-analytic hypothesis. | probe `Q4`; independent reviewer's runs |
 | C3 | S2 | tex 1349–1368, 1433–1436, 1455–1459 | Local well-posedness, uniqueness and continuity for the coupled system are asserted in two lines; `𝒲_h` is not defined; the bounds `‖j^{3/2} q_j‖_{ℓ²}, ‖j q_j‖_{ℓ¹} ≤ C√𝓔(G)` are not stated in any lemma; the Riccati inequality is stated pointwise although Theorem 2 was corrected to the integrated form in `3039582`. | hand derivation |
 | C4 | S3 | tex 1387–1412 | The displayed `m_1`, `m_2` are the multipliers of `½Q_op`, not of `Q_op`; `p` is written with a factor `½` that contradicts its definition (line 1114); the stated `‖p_zz‖ ≤ ½·2^{1/4}√𝓔(G)` is false. The correct constant is `2^{1/4}` and the next bound still holds. | probe `Q1` |
 | C5 | S3 | tex 1432, 1438–1439 | The coefficient equation for `d̃_m` omits the `p₀` term and uses the opposite sign convention to Lemma `lem:embeddings`; "once `C√𝓔(G) ≤ 2`" should be about 1.3. | hand derivation |
