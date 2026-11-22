@@ -18,9 +18,10 @@ Machine-checked (zero-sorry) theorems in this file:
   3. `strip_re_u_ge`, `strip_norm_exp_le_one`, `strip_norm_us_exp_le` — sharp uniform bounds
      on `u = exp(-(x + i y)/2)` for `|y| ≤ ρ < π` and `s ≥ 0`:
        `Re(u) ≥ e^{-x/2} cos(ρ/2) > 0`, `‖exp(-u s)‖ ≤ 1`, `‖u s exp(-u s)‖ ≤ 1 / (e cos(ρ/2))`.
-  4. `hierarchical_u_dissipation_H3` — pointwise quadratic-form coercivity for `∂_z^m(u v)`
-     (`u = e^{-z/2}`, `∂_z u = -u/2`) with weights `(c₀, c₁, c₂, c₃) = (64, 16, 4, 1)`:
-       `∑_{m=0}^3 c_m u ((∂_z - 1/2)^m v) (∂_z^m v) ≥ (1/2) ∑_{m=0}^3 c_m u (∂_z^m v)²`.
+  4. `hierarchical_u_dissipation_H3` & `hierarchical_u_dissipation_H4` — pointwise quadratic-form
+     coercivity for `∂_z^m(u v)` (`u = e^{-z/2}`, `∂_z u = -u/2`) with weights `c_m = 4^{3-m}`
+     on `H³` and `c_m = 6^{4-m}` on `H⁴`:
+       `∑_{m=0}^k c_m u ((∂_z - 1/2)^m v) (∂_z^m v) ≥ (1/2) ∑_{m=0}^k c_m u (∂_z^m v)²`.
   5. `nishida_contraction_bound` — explicit parameter choice `γ = 1 / (20 C_T M_G)`,
      `a = 40 ε / γ` closing the coupled Nishida–Ovsyannikov contraction factor `< 1/2`.
 
@@ -229,6 +230,38 @@ theorem hierarchical_u_dissipation_H3 (u v₀ v₁ v₂ v₃ : ℝ) (hu : 0 ≤ 
             + (7 / 8 : ℝ) * (v₂ - (23 / 14 : ℝ) * v₁ + (13 / 28 : ℝ) * v₀) ^ 2
             + (75 / 14 : ℝ) * (v₁ - (46 / 75 : ℝ) * v₀) ^ 2
             + (17873 / 600 : ℝ) * v₀ ^ 2 := by ring
+    rw [hsos]
+    positivity
+  have hmul := mul_nonneg hu hq
+  linarith
+
+/-- **Pointwise `H⁴` hierarchical `u`-dissipation coercivity (Track C, `TCB-4`).**
+With weights `(c₀, c₁, c₂, c₃, c₄) = (1296, 216, 36, 6, 1)` (`c_m = 6^{4-m}`), the quadratic form
+for `∂_z^m(u v) = u (∂_z - 1/2)^m v` is strictly coercive with margin `1/2` for every `u ≥ 0`
+and every `(v₀, v₁, v₂, v₃, v₄) ∈ ℝ⁵`. -/
+theorem hierarchical_u_dissipation_H4 (u v₀ v₁ v₂ v₃ v₄ : ℝ) (hu : 0 ≤ u) :
+    1296 * (u * v₀) * v₀
+      + 216 * (u * (v₁ - (1 / 2 : ℝ) * v₀)) * v₁
+      + 36 * (u * (v₂ - v₁ + (1 / 4 : ℝ) * v₀)) * v₂
+      + 6 * (u * (v₃ - (3 / 2 : ℝ) * v₂ + (3 / 4 : ℝ) * v₁ - (1 / 8 : ℝ) * v₀)) * v₃
+      + 1 * (u * (v₄ - 2 * v₃ + (3 / 2 : ℝ) * v₂ - (1 / 2 : ℝ) * v₁ + (1 / 16 : ℝ) * v₀)) * v₄
+      ≥ (1 / 2 : ℝ) * (1296 * u * v₀ ^ 2 + 216 * u * v₁ ^ 2 + 36 * u * v₂ ^ 2
+          + 6 * u * v₃ ^ 2 + 1 * u * v₄ ^ 2) := by
+  have hq :
+      0 ≤ 648 * v₀ ^ 2 - 108 * v₀ * v₁ + 108 * v₁ ^ 2 + 9 * v₀ * v₂ - 36 * v₁ * v₂ + 18 * v₂ ^ 2
+          - (3 / 4 : ℝ) * v₀ * v₃ + (9 / 2 : ℝ) * v₁ * v₃ - 9 * v₂ * v₃ + 3 * v₃ ^ 2
+          + (1 / 16 : ℝ) * v₀ * v₄ - (1 / 2 : ℝ) * v₁ * v₄ + (3 / 2 : ℝ) * v₂ * v₄
+          - 2 * v₃ * v₄ + (1 / 2 : ℝ) * v₄ ^ 2 := by
+    have hsos :
+        648 * v₀ ^ 2 - 108 * v₀ * v₁ + 108 * v₁ ^ 2 + 9 * v₀ * v₂ - 36 * v₁ * v₂ + 18 * v₂ ^ 2
+            - (3 / 4 : ℝ) * v₀ * v₃ + (9 / 2 : ℝ) * v₁ * v₃ - 9 * v₂ * v₃ + 3 * v₃ ^ 2
+            + (1 / 16 : ℝ) * v₀ * v₄ - (1 / 2 : ℝ) * v₁ * v₄ + (3 / 2 : ℝ) * v₂ * v₄
+            - 2 * v₃ * v₄ + (1 / 2 : ℝ) * v₄ ^ 2
+          = (1 / 2 : ℝ) * (v₄ - 2 * v₃ + (3 / 2 : ℝ) * v₂ - (1 / 2 : ℝ) * v₁ + (1 / 16 : ℝ) * v₀) ^ 2
+            + (v₃ - 3 * v₂ + (7 / 4 : ℝ) * v₁ - (5 / 16 : ℝ) * v₀) ^ 2
+            + (63 / 8 : ℝ) * (v₂ - (11 / 7 : ℝ) * v₁ + (25 / 56 : ℝ) * v₀) ^ 2
+            + (9561 / 112 : ℝ) * (v₁ - (7155 / 12748 : ℝ) * v₀) ^ 2
+            + (63172875 / 101984 : ℝ) * v₀ ^ 2 := by ring
     rw [hsos]
     positivity
   have hmul := mul_nonneg hu hq

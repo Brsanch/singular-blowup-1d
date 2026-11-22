@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GATE: Quantitative verification of Lemmas C1-C4 of Theorem 3 (Track C: Finite-Sobolev
+GATE: Quantitative verification of Lemmas C1-C5 of Theorem 3 (Track C: Finite-Sobolev
 pure-step eta=0 global weak-edge manifold in H^3_{1/4} cap H^4_{5/8},
 docs/theorem_track_c_finite_sobolev_pure_step.md).
 
@@ -16,6 +16,8 @@ Checks (all pass => exit 0):
   TCB-4  Lemma C4: Exact hierarchical H^4 u-dissipation coercivity with weights
          c_m = 6^{4-m} (1296, 216, 36, 6, 1): minimum eigenvalue of the 5x5 quadratic form
          is strictly > 0.5 (proving coercivity for every v in H^4 at every z!).
+  TCB-5  Lemma C5: Parabolic operator L coercivity on sigma in {1/4, 5/8} and lower-norm
+         (H^2_{1/4,hier}, H^3_{5/8,hier}) phase-cancellation boundedness for b barely in H^2.
 """
 from __future__ import annotations
 
@@ -146,13 +148,74 @@ def check_tcb4() -> bool:
     return ok
 
 
+def check_tcb5() -> bool:
+    """Lemma C5: Parabolic operator L coercivity on sigma in {1/4, 5/8} AND lower-norm
+    (H^2_{1/4}, H^3_{5/8}) phase-cancellation boundedness for b barely in H^2."""
+    # 1. Exact symbol Re(L(sigma + i xi)) = xi^2 + 1/4 on sigma in {1/4, 5/8}
+    xi_test = np.linspace(-20.0, 20.0, 401)
+    min_re_diff = 0.0
+    for sig in (0.25, 0.625):
+        m = sig + 1j * xi_test
+        L_sym = -(m - 0.25) * (m - 0.625) + 0.25
+        diff = np.max(np.abs(np.real(L_sym) - (xi_test**2 + 0.25)))
+        min_re_diff = max(min_re_diff, float(diff))
+
+    # 2. Lower-norm H^2_{1/4} & H^3_{5/8} symmetric commutator bounded for b barely in H^2
+    norms_2 = []
+    norms_3 = []
+    for N in (128, 256, 512):
+        L = 24.0
+        xi = 2.0 * np.pi * np.fft.fftfreq(N, d=L / N)
+        idx = np.argsort(xi)
+        xi = xi[idx]
+        bhat = (1.0 + xi**2) ** (-1.275)
+        bhat /= np.sqrt(np.sum(np.abs(bhat) ** 2 * (1.0 + xi**2) ** 2) * (2.0 * np.pi / L))
+        dxi = 2.0 * np.pi / L
+
+        for sig, k_ord, c_base, out_list in (
+            (0.25, 2, 4.0, norms_2),
+            (0.625, 3, 4.0, norms_3),
+        ):
+            m_sig = build_Nm(xi, sig)
+            W = np.sqrt(sum((c_base ** (k_ord - m)) * (xi ** (2 * m)) for m in range(k_ord + 1)))
+            M = np.zeros((N, N), dtype=np.complex128)
+            for a in range(N):
+                for b_idx in range(N):
+                    kdiff = int(round((xi[a] - xi[b_idx]) / dxi))
+                    j0 = int(np.argmin(np.abs(xi - kdiff * dxi)))
+                    if abs(xi[j0] - (xi[a] - xi[b_idx])) < 1e-6:
+                        M[a, b_idx] = (
+                            (W[a] / m_sig[a])
+                            * (bhat[j0] * (sig + 1j * xi[b_idx]))
+                            * (m_sig[b_idx] / W[b_idx])
+                            * dxi
+                            / (2.0 * np.pi)
+                        )
+            S = 0.5 * (M + M.conj().T)
+            out_list.append(float(np.linalg.norm(S, 2)))
+
+    ok = bool(
+        min_re_diff < 1e-13
+        and norms_2[-1] < 1.5 * norms_2[0]
+        and norms_3[-1] < 1.5 * norms_3[0]
+    )
+    print(
+        f"TCB-5 Lemma C5 L-coerc & low-norm PASS={ok}: "
+        f"max|Re(L)-(xi^2+1/4)|={min_re_diff:.2e}, "
+        f"||sym_H2||=({norms_2[0]:.3f},{norms_2[1]:.3f},{norms_2[2]:.3f}), "
+        f"||sym_H3||=({norms_3[0]:.3f},{norms_3[1]:.3f},{norms_3[2]:.3f})"
+    )
+    return ok
+
+
 def main() -> int:
     p1 = check_tcb1()
     p2 = check_tcb2()
     p3 = check_tcb3()
     p4 = check_tcb4()
-    assert p1 and p2 and p3 and p4, "Track C proof lemmas gate FAILED"
-    print("ALL PASS (TCB-1..TCB-4)")
+    p5 = check_tcb5()
+    assert p1 and p2 and p3 and p4 and p5, "Track C proof lemmas gate FAILED"
+    print("ALL PASS (TCB-1..TCB-5)")
     return 0
 
 
