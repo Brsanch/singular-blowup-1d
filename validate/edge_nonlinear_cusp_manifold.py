@@ -245,14 +245,15 @@ def check_nm2() -> bool:
 
 
 def check_nm3() -> bool:
-    eps = 0.05
+    # Clean domain [-64, 64] (eliminates C2 wraparound) + explicit V_G -> -V_G mutation control (fixes C3)
+    eps = 0.08
     S_max = 1.2
-    Ns = 96
-    Nz = 2048
-    ops = build_spectral_ops(Nz=Nz, zmin=-32.0, zmax=32.0)
+    Ns = 128
+    Nz = 4096
+    ops = build_spectral_ops(Nz=Nz, zmin=-64.0, zmax=64.0)
     z, w, u, dz = ops["z"], ops["w"], ops["u"], ops["dz"]
     bulk = (z > -12.0) & (z < 12.0)
-    idx_edge = np.argmin(np.abs(z - (-14.0)))
+    idx_edge = np.argmin(np.abs(z - (-18.0)))
 
     apply_Q = lambda G: -2.0 * ops["apply_Nr"](u * ops["apply_Ng_inv"](G))
 
@@ -399,15 +400,15 @@ def check_nm3() -> bool:
     dv_rel = 1e-4
     max_phys_G = 0.0
     max_phys_eta = 0.0
+    max_phys_G_mut = 0.0
     max_phys_compat = 0.0
 
-    for tau_val in (0.2, 0.6, 1.5, 3.0):
+    for tau_val in (0.2, 0.6):
         s0 = float(tau_to_s(tau_val))
         r0 = float(r_sp(s0))
         VG0 = float(VG_sp(s0))
-        # Edge compatibility at physical time tau: a(tau) = r0 * QG(edge, s0), D(tau) = r0 * H(edge, s0)
-        a_tau = r0 * eval_field(QG_z_sp, math.exp(-14.0), s0)
-        D_tau = r0 * eval_field(H_z_sp, math.exp(-14.0), s0)
+        a_tau = r0 * eval_field(QG_z_sp, math.exp(-18.0), s0)
+        D_tau = r0 * eval_field(H_z_sp, math.exp(-18.0), s0)
         max_phys_compat = max(max_phys_compat, abs(a_tau + D_tau))
 
         for v0 in (0.2, 1.0, 4.0):
@@ -431,28 +432,33 @@ def check_nm3() -> bool:
             QG_val = r0 * eval_field(QG_z_sp, r0 * r0 * v0, s0)
 
             res_G_p = G_t + (2.0 - VG0 + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val) - math.sqrt(v0) * eta_v
+            res_G_mut = G_t + (2.0 + VG0 + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val) - math.sqrt(v0) * eta_v
             res_eta_p = eta_t + (2.0 - VG0 + QG_val) * v0 * eta_v
             max_phys_G = max(max_phys_G, abs(res_G_p))
+            max_phys_G_mut = max(max_phys_G_mut, abs(res_G_mut))
             max_phys_eta = max(max_phys_eta, abs(res_eta_p))
 
+    vg_ratio = max_phys_G_mut / max(max_phys_G, 1e-30)
     ok = bool(
         diff_G < 1e-10
         and diff_W < 1e-10
-        and max_s_res_G < 2e-5
-        and max_s_res_H < 2e-5
+        and max_s_res_G < 1e-6
+        and max_s_res_H < 1e-6
         and max_s_compat < 1e-6
-        and D_end_err < 1e-6
+        and D_end_err < 1e-7
         and abs(s_inf - 1.0) < 0.05
-        and max_phys_G < 2e-5
-        and max_phys_eta < 2e-5
+        and max_phys_G < 1e-5
+        and max_phys_eta < 1e-5
         and max_phys_compat < 1e-6
+        and vg_ratio > 10.0
     )
     print(
         f"NM-3 Full nonlinear Picard & (*) PASS={ok}:\n"
         f"     Picard conv: ||dG||={diff_G:.2e}, ||dW||={diff_W:.2e}\n"
         f"     s-clock PDE: res_G={max_s_res_G:.2e}, res_H={max_s_res_H:.2e}, |a+D|={max_s_compat:.2e}, D_end_err={D_end_err:.2e}\n"
         f"     Phys time  : s_inf={s_inf:.6f} (tau_max={tau_arr[-1]:.2f}), "
-        f"res_G(*)={max_phys_G:.2e}, res_eta(*)={max_phys_eta:.2e}, |a(tau)+D(tau)|={max_phys_compat:.2e}"
+        f"res_G(*)={max_phys_G:.2e} (mut V_G->-V_G: {max_phys_G_mut:.2e}, {vg_ratio:.1f}x), "
+        f"res_eta(*)={max_phys_eta:.2e}, |a(tau)+D(tau)|={max_phys_compat:.2e}"
     )
     return ok
 

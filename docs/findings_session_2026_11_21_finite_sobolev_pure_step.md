@@ -1,10 +1,12 @@
 # Finite-Sobolev (Non-Analytic) Energy Closure for the Pure-Step ($\eta \equiv 0$) Global Weak-Edge Manifold (2026-11-21)
 
-**Context:** Pushes [findings_session_2026_11_21_pure_step_nonlinear_manifold.md](findings_session_2026_11_21_pure_step_nonlinear_manifold.md) beyond strip-analyticity. Shows that for the pure-step ($\eta \equiv 0$) conjugated equation
+**Context (updated 2026-11-22 after hostile review `findings_session_2026_11_21_weak_edge_hostile_review.md`):** Investigates whether the pure-step ($\eta \equiv 0$) conjugated equation
 $$h_s + u\,h = \mathcal{N}_g^{-1}\Bigl[-(Q\widetilde G)\,D\widetilde G + \tfrac{1}{2}(Q\widetilde G)\,\widetilde G\Bigr], \qquad \widetilde G = \mathcal{N}_g h, \quad u = e^{-z/2},$$
-**strip-analyticity is NOT needed**: an exact **phase-cancellation identity** eliminates the logarithmic phase derivative of $\mathcal{N}_g$ completely in the symmetric part of the conjugated transport operator, yielding a **zero-derivative-loss finite-Sobolev $H^k_\sigma$ energy estimate** ($k = 3$ at $\sigma = \frac{1}{4}$, i.e. $\widetilde G \in H^1_{1/4}$).
+closes in finite Sobolev space without strip-analyticity. **Hostile-review verdict (A3, A4):**
+- **What holds (`[D, L, N]`):** The exact phase-cancellation identity (Lean-verified in `WeakEdgeManifolds.phase_cancellation_norm`), the top-order symmetric-part bound $|\operatorname{Re}\langle A_b v, v\rangle_{H^k}| \le C_k\|b\|_{H^2}\|v\|_{H^k}^2$ for **$k \in \{2, 3\}$ only** at $\sigma = \frac{1}{4}$, the hierarchical $H^3$ $u$-dissipation coercivity (Lean-verified in `hierarchical_u_dissipation_H3`), and filter-independent monotone-decreasing $H^2, H^3$ evolution of a non-analytic $C^\infty_c$ bump on clean domains `[-72, 72]`.
+- **What does NOT close as stated (A3, A4):** (1) The $\|b\|_{H^2}$ bound is **false at $k = 0$** (requires $\|b\|_{H^4}$) and unproven at $k = 1$ (requires $\|b\|_{H^3}$); (2) $h \in L^\infty_s H^3_{1/4}$ plus $u$-dissipation $L^2_s H^3_{1/2}$ falls short by $\delta > 0$ derivatives at the edge of controlling unweighted $\|b\|_{H^{3/2+\delta}}$ (since $b = -2\mathcal{N}(uh) \in H^j(\mathbb{R}) \iff h \in H^{j+3/2}_{1/2}$). Closing the second-weight $\sigma_2 > \frac{1}{2}$ rank-1 defect estimate remains **open**.
 
-**Evidence tiers:** `[D]` hand derivation; `[N]` numerical verification (`validate/edge_pure_step_finite_sobolev.py`, `FS-1..FS-3 PASS`). Not Lean-formalized.
+**Evidence tiers:** `[D, L]` for the phase-cancellation identity, $k \in \{2,3\}$ symmetric-part bound, and $H^3$ $u$-dissipation; `[C]` / **OPEN** for full finite-Sobolev nonlinear closure (A3); `[N]` for `validate/edge_pure_step_finite_sobolev.py` (`FS-1..FS-3 PASS`).
 
 ---
 
@@ -18,10 +20,10 @@ Although $\mathcal{N}_g \notin S^p_{1,0}$ (since $\Phi'(\xi) \sim 2\ln(2|\xi|) \
 $$K_k(\xi, \eta) := i(\xi - \eta)\frac{m_k(\xi - \eta)}{m_k(\xi)} - i\xi\frac{\overline{m_k(\xi)}}{\overline{m_k(\xi - \eta)}} = i\,e^{i(\Phi(\xi - \eta) - \Phi(\xi))}\left[(\xi - \eta)\frac{A_k(\xi - \eta)}{A_k(\xi)} - \xi\frac{A_k(\xi)}{A_k(\xi - \eta)}\right].$$
 **The oscillatory phase $e^{i(\Phi(\xi-\eta)-\Phi(\xi))}$ factors out identically with modulus $1$**, and the leading $O(\xi)$ terms cancel:
 $$|K_k(\xi, \eta)| = \left|(\xi - \eta)\frac{A_k(\xi - \eta)}{A_k(\xi)} - \xi\frac{A_k(\xi)}{A_k(\xi - \eta)}\right| \le C_k\,|\eta| \qquad (k \in \{2, 3\},\; \sigma = \tfrac{1}{4},\; p = 2\sigma + \tfrac{3}{2} = 2).$$
-Hence, for $k \in \{0, 1, 2, 3\}$ at $\sigma = \frac{1}{4}$:
-$$\left|\operatorname{Re}\langle A_b v, v \rangle_{H^k}\right| \le C_k\,\|\widehat{b_z}\|_{L^1}\,\|v\|_{H^k}^2 \le C_k'\,\|b\|_{H^2}\,\|v\|_{H^k}^2 \qquad \textbf{(ZERO derivative loss!)}.$$
+Hence, for **$k \in \{2, 3\}$** at $\sigma = \frac{1}{4}$ ($p = 2$, where $p - k \in \{0, -1\}$; note that $k = 0$ requires $\|b\|_{H^4}$ and $k = 1$ requires $\|b\|_{H^3}$, per hostile review A4):
+$$\left|\operatorname{Re}\langle A_b v, v \rangle_{H^k}\right| \le C_k\,\|\widehat{b_z}\|_{L^1}\,\|v\|_{H^k}^2 \le C_k'\,\|b\|_{H^2}\,\|v\|_{H^k}^2 \qquad \textbf{(ZERO derivative loss at } k \in \{2, 3\}\textbf{)}.$$
 
-**Check (`FS-1`):** Algebraic identity holds to `< 1e-12`; operator norm $\|(A_b + A_b^*)/2\|_{H^k \to H^k}$ is $N$-independent to `< 1e-4` from $N=256$ to $N=512$ (`H^0: 3.6546`, `H^1: 1.9331`, `H^2: 1.0331`, `H^3: 0.6026`) while $\|A_b\|_2$ doubles linearly with $\xi_{\max}$.
+**Check (`FS-1`):** Algebraic identity holds to `< 1e-12` (Lean-verified in `WeakEdgeManifolds.phase_cancellation_norm`); operator norm $\|(A_b + A_b^*)/2\|_{H^k \to H^k}$ is $N$-independent for $k \in \{2, 3\}$ even for $b$ barely in $H^2$ (while $k = 0$ grows unboundedly with cutoff, confirming A4).
 
 ---
 
@@ -29,6 +31,6 @@ $$\left|\operatorname{Re}\langle A_b v, v \rangle_{H^k}\right| \le C_k\,\|\wideh
 
 Because $\partial_z u = -\frac{1}{2} u$, differentiating $u v$ yields $\partial_z^m(u v) = u(\partial_z - \frac{1}{2})^m v$, where every lower-order commutator carries the same positive weight $u = e^{-z/2}$. With hierarchical weights $c_m = 4^{3-m}$ ($m = 0,1,2,3$), Young's inequality gives
 $$\sum_{m=0}^3 c_m \operatorname{Re}\bigl\langle \partial_z^m(u v),\, \partial_z^m v \bigr\rangle_{L^2} \ge \frac{1}{2}\sum_{m=0}^3 c_m \int_{\mathbb{R}} u\,|\partial_z^m v|^2\,dz \ge 0$$
-(`FS-2`: min ratio `> 0.5`). Combined with the exact phase-cancellation bound at $k = 3$ ($h \in H^3_{1/4} \iff \widetilde G = \mathcal{N}_g h \in H^1_{1/4} \implies b = Q\widetilde G \in H^2$ with $a(\widetilde G) \equiv 0$), the nonlinear pure-step energy closes on $s \in [0, s_\infty)$ in finite Sobolev regularity **without strip-analyticity** (with the $z \le 0$ bound on $b$ supplied by the $u$-dissipation / $H^4_{3/4}$ control after splitting the single rank-1 residue $f_{\mathcal{P}} = -\frac{\pi}{2}a(\mathcal{P})\frac{u}{u^2+1} + \tilde f_{\mathcal{P}}$).
+(`FS-2`: exact infimum `0.8935 > 0.5`; Lean-verified in `WeakEdgeManifolds.hierarchical_u_dissipation_H3`). **Open gap (A3):** Combining this with `FS-1` at $k = 3$ gives $h \in L^\infty_s H^3_{1/4}$ and $u$-dissipation $L^2_s H^3_{1/2}$, which controls $e^{z/4}b \in H^2$ ($z \ge 0$) but falls short by $\delta > 0$ derivatives at the edge of controlling unweighted $\|b\|_{H^{3/2+\delta}}$ (since $b = -2\mathcal{N}(uh) \in H^j(\mathbb{R}) \iff h \in H^{j+3/2}_{1/2}$). Closing the second-weight $\sigma_2 > \frac{1}{2}$ rank-1 defect estimate remains open.
 
-**Check (`FS-3`):** Evolving a **non-analytic $C^\infty_c$ bump** $h_0(u)$ supported on $u \in (0.5, 4.0)$ through the full nonlinear pure-step ($\eta \equiv 0$) PDE on $s \in [0, 1.2]$ ($> s_\infty$) via ETD-RK2 at $N_z \in \{1024, 2048, 4096\}$ gives grid-independent norms ($\|h(1.2)\|_{L^2} = 1.7027\times 10^{-3}$, $\|h(1.2)\|_{H^1} = 2.9353\times 10^{-3}$, drift `< 2e-4`) and global weak-edge compatibility $\max_s |a(G(s))| = 1.76\times 10^{-6}$ with zero $\Theta$-cusp.
+**Check (`FS-3`):** Evolving a **non-analytic $C^\infty_c$ bump** $h_0(u)$ supported on $u \in (0.5, 4.0)$ through the full nonlinear pure-step ($\eta \equiv 0$) PDE on $s \in [0, 1.2]$ ($> s_\infty$) via unfiltered ETD-RK2 on clean domain `[-72, 72]` ($N_z \in \{4096, 8192\}$) gives grid-independent, monotone-decreasing norms across all four orders $L^2, H^1, H^2, H^3$ (`H^2 = 6.986e-3`, `H^3 = 2.577e-2`, zero interior roughness growth) and tail-corrected real-space quadrature $|a_{\mathrm{quad}}| < 10^{-10}$.

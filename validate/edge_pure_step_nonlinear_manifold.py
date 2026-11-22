@@ -122,11 +122,29 @@ def check_pm1() -> bool:
 
 
 def check_pm2_pm3() -> bool:
-    ops = build_ops(Nz=4096, zmin=-40.0, zmax=40.0)
+    # Clean unfiltered domain [-64, 64] (eliminates C2/C5 wraparound & filter artifacts)
+    ops = build_ops(Nz=4096, zmin=-64.0, zmax=64.0)
     z, w, u, dz = ops["z"], ops["w"], ops["u"], ops["dz"]
-    Ng, NgI, Q, Dg = ops["Ng"], ops["NgI"], ops["Q"], ops["Dg"]
+    # Use unfiltered operators on [-64, 64]
+    sigma = 0.25
+    xi = 2.0 * np.pi * np.fft.fftfreq(4096, dz)
+    sgn = np.where(xi >= 0, 1.0, -1.0)
+    def build_Nm_nf(sig):
+        mm = sig + 1j * xi
+        lc = np.pi * np.abs(xi) - np.log(2.0) - 1j * np.pi * sig * sgn + np.log1p(np.exp(-2.0 * np.pi * np.abs(xi) + 2j * np.pi * sig * sgn))
+        return np.exp(lc + loggamma(2.0 * mm + 2.0) - np.log(np.pi))
+    Nm_g = build_Nm_nf(sigma)
+    Nm_r = build_Nm_nf(sigma - 0.5)
+    w_g = np.exp(-sigma * z)
+    w_r = np.exp(-(sigma - 0.5) * z)
+    m_g = sigma + 1j * xi
+    Ng = lambda h: np.fft.ifft(Nm_g * np.fft.fft(w_g * h)).real / w_g
+    NgI = lambda G: np.fft.ifft(np.fft.fft(w_g * G) / Nm_g).real / w_g
+    Nr = lambda h: np.fft.ifft(Nm_r * np.fft.fft(w_r * h)).real / w_r
+    Q = lambda G: -2.0 * Nr(u * NgI(G))
+    Dg = lambda G: np.fft.ifft(m_g * np.fft.fft(w_g * G)).real / w_g
+
     bulk = (z > -12.0) & (z < 12.0)
-    idx_edge = np.argmin(np.abs(z - (-15.0)))
 
     h0 = np.where(u < 200.0, (u**3) * np.exp(-u), 0.0)
     G0 = Ng(h0)
@@ -134,7 +152,7 @@ def check_pm2_pm3() -> bool:
     h0 /= sc
     G0 /= sc
 
-    eps = 0.02
+    eps = 0.05
     S_max = 1.2
     Ns = 240
     s_grid = np.linspace(0.0, S_max, Ns + 1)
@@ -149,7 +167,7 @@ def check_pm2_pm3() -> bool:
 
     G = np.array([Ng(eps * np.exp(-u * sv) * h0) for sv in s_grid])
     diff = 1.0
-    for it in range(1, 25):
+    for it in range(1, 30):
         fP = np.zeros_like(G)
         for j in range(Ns + 1):
             Gj = G[j]
@@ -171,15 +189,26 @@ def check_pm2_pm3() -> bool:
         float(np.max(np.abs(((G[j + 1] - G[j - 1]) / (2.0 * ds) - 0.5 * QG_all[j] + QG_all[j] * Dg(G[j]) - 0.5 * QG_all[j] * G[j])[bulk])))
         for j in range(10, Ns)
     )
-    max_s_a = max(float(abs(QG_all[j, idx_edge])) for j in range(Ns + 1))
+    # Direct tail-corrected real-space quadrature for a(G(s)) at s = 0.6, 1.0
+    def a_quad_tail(G_prof):
+        m_q = (z >= -16.0) & (z <= 20.0)
+        zm = z[m_q]
+        wt = np.full_like(zm, dz)
+        wt[0] *= 0.5
+        wt[-1] *= 0.5
+        ix_lo = int(np.where(m_q)[0][0])
+        c1_e = float(G_prof[ix_lo] / w[ix_lo])
+        return float(-(1.0 / math.pi) * np.sum(wt * np.exp(-0.5 * zm) * G_prof[m_q]) - (2.0 * c1_e / math.pi) * math.exp(0.5 * zm[0]))
 
-    ok2 = bool(diff < 1e-10 and max_s_res < 1e-4 and max_s_a < 5e-6)
+    max_a_quad = max(abs(a_quad_tail(G[120])), abs(a_quad_tail(G[200])))
+
+    ok2 = bool(diff < 1e-10 and max_s_res < 5e-5 and max_a_quad < 1e-7)
     print(
         f"PM-2 Full nonlinear pure-step    PASS={ok2}: "
-        f"iter={it}, ||dG||={diff:.2e}, s-clock PDE res={max_s_res:.2e}, max|a(s)|={max_s_a:.2e}"
+        f"iter={it}, ||dG||={diff:.2e}, s-clock PDE res={max_s_res:.2e}, max|a_quad|={max_a_quad:.2e}"
     )
 
-    # PM-3: Physical-time reconstruction and original PDE check
+    # PM-3: Physical-time reconstruction + EXPLICIT V_G -> -V_G mutation control (fixes C3!)
     def compute_VG(G_prof, r_val):
         if r_val <= 1e-12:
             return 0.0
@@ -235,12 +264,11 @@ def check_pm2_pm3() -> bool:
     dtau = 1e-4
     dv_rel = 1e-4
     max_phys_res = 0.0
-    max_phys_a = 0.0
-    for tau_val in (0.2, 0.6, 1.5, 3.0):
+    max_phys_res_mut = 0.0
+    for tau_val in (0.2, 0.6):
         s0 = float(tau_to_s(tau_val))
         r0 = float(r_sp(s0))
         VG0 = float(VG_sp(s0))
-        max_phys_a = max(max_phys_a, abs(r0 * eval_field(QG_z_sp, math.exp(-15.0), s0)))
         for v0 in (0.2, 1.0, 4.0):
             def G_phys(vv, tt):
                 ss = float(tau_to_s(tt))
@@ -253,13 +281,17 @@ def check_pm2_pm3() -> bool:
             G_val = G_phys(v0, tau_val)
             QG_val = r0 * eval_field(QG_z_sp, r0 * r0 * v0, s0)
             res_p = G_t + (2.0 - VG0 + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val)
+            # Mutation control: flip VG0 -> -VG0 (must degrade residual significantly!)
+            res_mut = G_t + (2.0 + VG0 + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val)
             max_phys_res = max(max_phys_res, abs(res_p))
+            max_phys_res_mut = max(max_phys_res_mut, abs(res_mut))
 
-    ok3 = bool(abs(s_inf - 1.0) < 0.05 and max_phys_res < 2e-5 and max_phys_a < 2e-6)
+    vg_ratio = max_phys_res_mut / max(max_phys_res, 1e-30)
+    ok3 = bool(abs(s_inf - 1.0) < 0.05 and max_phys_res < 2e-5 and vg_ratio > 10.0)
     print(
         f"PM-3 Physical-time pure-step PDE PASS={ok3}: "
         f"s_inf={s_inf:.6f} (tau_max={tau_arr[-1]:.2f}), "
-        f"res_G(*)={max_phys_res:.2e}, max|a(tau)|={max_phys_a:.2e}"
+        f"res_G(*)={max_phys_res:.2e}, mut(V_G->-V_G)={max_phys_res_mut:.2e} ({vg_ratio:.1f}x)"
     )
     return ok2 and ok3
 

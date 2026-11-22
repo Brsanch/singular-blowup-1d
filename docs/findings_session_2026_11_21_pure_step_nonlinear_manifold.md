@@ -2,7 +2,9 @@
 
 **Context:** Direct extension of [findings_session_2026_11_21_nonlinear_cusp_manifold.md](findings_session_2026_11_21_nonlinear_cusp_manifold.md) and [findings_session_2026_11_21_pure_step_quadratic_closure.md](findings_session_2026_11_21_pure_step_quadratic_closure.md). Shows that the **exact same autonomous $s$-clock + conjugation method** constructs a full nonlinear global weak-edge compatible manifold **even in the original pure-step ($\eta \equiv 0$) ansatz of the manuscript** (with $\Theta \equiv \frac{\pi}{2}\mathbf{1}_{X>1}$, $B(\tau) \equiv A(\tau)^2 = 1$, $a(\tau) \equiv 0$ for all $\tau \ge 0$, and **no $\sqrt{v}$ $\Theta$-cusp**).
 
-**Evidence tiers:** `[D]` hand derivation under stated strip-analytic hypotheses (not Lean-formalized); `[N]` numerical verification (`validate/edge_pure_step_nonlinear_manifold.py`, `PM-1..PM-3 PASS`).
+**Evidence tiers:** `[D]` algebraic reduction & asymptotics; `[C]` strip-analytic contraction sketch; `[N]` numerical verification (`validate/edge_pure_step_nonlinear_manifold.py`, `PM-1..PM-3 PASS`, plus independent real-space verification to `2.7e-9` in `findings_session_2026_11_21_weak_edge_hostile_review.md`).
+
+> **Hostile-review framing correction (2026-11-22, A5 & C1):** Working in the conjugated space $\widetilde G = \mathcal{N}_g h$ with $h = O(u^{-2})$ **imposes** the inflow boundary condition $G(0,\tau) = 0$ and weak-edge compatibility $a(\widetilde G(s)) \equiv 0$, $c_1(\widetilde G(s)) = 3a(\text{forcing})$ by choice of function space (it holds for any G-class forcing, not as a property specific to $\mathcal{P}$). Uniqueness of weak solutions on $v > 0$ (where $Q(1) = 0$ allows arbitrary edge-amplitude drifts) is not claimed. What is nontrivial is that the resulting conjugated nonlinear fixed point solves the **real-space** pure-step PDE (independently verified to `2.7e-9` in the core and `3.1e-12` at the edge on `[-104, 24]`, unfiltered).
 
 ---
 
