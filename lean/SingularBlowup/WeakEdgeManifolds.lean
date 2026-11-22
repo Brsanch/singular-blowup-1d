@@ -18,11 +18,15 @@ Machine-checked (zero-sorry) theorems in this file:
   3. `strip_re_u_ge`, `strip_norm_exp_le_one`, `strip_norm_us_exp_le` — sharp uniform bounds
      on `u = exp(-(x + i y)/2)` for `|y| ≤ ρ < π` and `s ≥ 0`:
        `Re(u) ≥ e^{-x/2} cos(ρ/2) > 0`, `‖exp(-u s)‖ ≤ 1`, `‖u s exp(-u s)‖ ≤ 1 / (e cos(ρ/2))`.
-  4. `hierarchical_u_dissipation_H3` — pointwise quadratic-form coercivity for `∂_z^m(u v)`
-     (`u = e^{-z/2}`, `∂_z u = -u/2`) with weights `(c₀, c₁, c₂, c₃) = (64, 16, 4, 1)`:
-       `∑_{m=0}^3 c_m u ((∂_z - 1/2)^m v) (∂_z^m v) ≥ (1/2) ∑_{m=0}^3 c_m u (∂_z^m v)²`.
-  5. `nishida_contraction_bound` — explicit parameter choice `γ = 1 / (20 C_T M_G)`,
-     `a = 40 ε / γ` closing the coupled Nishida–Ovsyannikov contraction factor `< 1/2`.
+  4. `hierarchical_u_dissipation_H3` & `hierarchical_u_dissipation_H4` — pointwise quadratic-form
+     coercivity for `∂_z^m(u v)` (`u = e^{-z/2}`, `∂_z u = -u/2`) with weights `c_m = 4^{3-m}`
+     on `H³` and `c_m = 6^{4-m}` on `H⁴`:
+       `∑_{m=0}^k c_m u ((∂_z - 1/2)^m v) (∂_z^m v) ≥ (1/2) ∑_{m=0}^k c_m u (∂_z^m v)²`.
+  5. `nishida_contraction_bound` — an ARITHMETIC fact only: with `γ = 1 / (20 C_T M_G)` and
+     `a = 40 ε / γ`, a three-term expression is `< 1/2`. It does not prove any estimate, and its
+     parametrisation (cone speed `a ∝ ε`, `2√2`) differs from Lemma A3 of
+     `docs/theorem_track_a_cusp_weak_edge.md` (`a ∈ [ρ₀/12, ρ₀/6]`, `γ = 1/(40 C_rem M_G)`, `4√2`).
+     Lemma A3's contraction has a gap (2026-11-22 post-f5106e9 review): its norm does not close.
 
 SCOPE. Operator-level Plancherel/Mellin bounds, the Nishida iteration in Banach scales, and
 distributional PDE equivalence across `X = 1` remain on paper (`[D]`) and in the Python
@@ -234,11 +238,44 @@ theorem hierarchical_u_dissipation_H3 (u v₀ v₁ v₂ v₃ : ℝ) (hu : 0 ≤ 
   have hmul := mul_nonneg hu hq
   linarith
 
+/-- **Pointwise `H⁴` hierarchical `u`-dissipation coercivity (Track C, `TCB-4`).**
+With weights `(c₀, c₁, c₂, c₃, c₄) = (1296, 216, 36, 6, 1)` (`c_m = 6^{4-m}`), the quadratic form
+for `∂_z^m(u v) = u (∂_z - 1/2)^m v` is strictly coercive with margin `1/2` for every `u ≥ 0`
+and every `(v₀, v₁, v₂, v₃, v₄) ∈ ℝ⁵`. -/
+theorem hierarchical_u_dissipation_H4 (u v₀ v₁ v₂ v₃ v₄ : ℝ) (hu : 0 ≤ u) :
+    1296 * (u * v₀) * v₀
+      + 216 * (u * (v₁ - (1 / 2 : ℝ) * v₀)) * v₁
+      + 36 * (u * (v₂ - v₁ + (1 / 4 : ℝ) * v₀)) * v₂
+      + 6 * (u * (v₃ - (3 / 2 : ℝ) * v₂ + (3 / 4 : ℝ) * v₁ - (1 / 8 : ℝ) * v₀)) * v₃
+      + 1 * (u * (v₄ - 2 * v₃ + (3 / 2 : ℝ) * v₂ - (1 / 2 : ℝ) * v₁ + (1 / 16 : ℝ) * v₀)) * v₄
+      ≥ (1 / 2 : ℝ) * (1296 * u * v₀ ^ 2 + 216 * u * v₁ ^ 2 + 36 * u * v₂ ^ 2
+          + 6 * u * v₃ ^ 2 + 1 * u * v₄ ^ 2) := by
+  have hq :
+      0 ≤ 648 * v₀ ^ 2 - 108 * v₀ * v₁ + 108 * v₁ ^ 2 + 9 * v₀ * v₂ - 36 * v₁ * v₂ + 18 * v₂ ^ 2
+          - (3 / 4 : ℝ) * v₀ * v₃ + (9 / 2 : ℝ) * v₁ * v₃ - 9 * v₂ * v₃ + 3 * v₃ ^ 2
+          + (1 / 16 : ℝ) * v₀ * v₄ - (1 / 2 : ℝ) * v₁ * v₄ + (3 / 2 : ℝ) * v₂ * v₄
+          - 2 * v₃ * v₄ + (1 / 2 : ℝ) * v₄ ^ 2 := by
+    have hsos :
+        648 * v₀ ^ 2 - 108 * v₀ * v₁ + 108 * v₁ ^ 2 + 9 * v₀ * v₂ - 36 * v₁ * v₂ + 18 * v₂ ^ 2
+            - (3 / 4 : ℝ) * v₀ * v₃ + (9 / 2 : ℝ) * v₁ * v₃ - 9 * v₂ * v₃ + 3 * v₃ ^ 2
+            + (1 / 16 : ℝ) * v₀ * v₄ - (1 / 2 : ℝ) * v₁ * v₄ + (3 / 2 : ℝ) * v₂ * v₄
+            - 2 * v₃ * v₄ + (1 / 2 : ℝ) * v₄ ^ 2
+          = (1 / 2 : ℝ) * (v₄ - 2 * v₃ + (3 / 2 : ℝ) * v₂ - (1 / 2 : ℝ) * v₁ + (1 / 16 : ℝ) * v₀) ^ 2
+            + (v₃ - 3 * v₂ + (7 / 4 : ℝ) * v₁ - (5 / 16 : ℝ) * v₀) ^ 2
+            + (63 / 8 : ℝ) * (v₂ - (11 / 7 : ℝ) * v₁ + (25 / 56 : ℝ) * v₀) ^ 2
+            + (9561 / 112 : ℝ) * (v₁ - (7155 / 12748 : ℝ) * v₀) ^ 2
+            + (63172875 / 101984 : ℝ) * v₀ ^ 2 := by ring
+    rw [hsos]
+    positivity
+  have hmul := mul_nonneg hu hq
+  linarith
+
 /-! ### 5. Nishida–Ovsyannikov Contraction Closure (Track A, §3) -/
 
-/-- Explicit parameter choice `γ = 1 / (20 C_T M_G)`, `a = 40 ε / γ` closing the coupled
-Nishida–Ovsyannikov contraction factor strictly below `1/2` (assuming the `O(ε/a)` lower-order
-coefficient `C_rem / 800 ≤ 1/10`). -/
+/-- Arithmetic only: with `γ = 1 / (20 C_T M_G)` and `a = 40 ε / γ`, the expression
+`2ε/(γa) + 2√2 γ C_T M_G + C_rem ε/a` is `< 1/2` (assuming `C_rem / (800 C_T M_G) ≤ 1/10`).
+This does NOT verify the coupled Nishida–Ovsyannikov estimate of Track A Lemma A3, whose weighted
+norm does not close (2026-11-22 post-f5106e9 review), and its parametrisation differs from that lemma's. -/
 theorem nishida_contraction_bound (ε C_T M_G C_rem : ℝ)
     (hε : 0 < ε) (hCT : 0 < C_T) (hMG : 0 < M_G)
     (hrem : C_rem / (800 * C_T * M_G) ≤ (1 / 10 : ℝ)) :

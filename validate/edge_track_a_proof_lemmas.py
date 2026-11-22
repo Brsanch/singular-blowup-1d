@@ -7,18 +7,29 @@ docs/theorem_track_a_cusp_weak_edge.md).
 
 Checks (all pass => exit 0):
   TA-1  Lemma A1(2)-(3): For edge-analytic G_0(w) = w/(2+w)^2 with a(G_0) != 0:
-          - Exact zero-derivative IBP a(P(G_0)) == -(1/pi) int e^{-z/2} D(QG_0) G_0 dz (< 1e-9 rel).
-          - Exact zero-derivative identity a((1/2 + D) f) == a(f) (< 1e-9 rel) for f = (QG_0)*G_0.
+          - Zero-derivative IBP a(P(G_0)) == -(1/pi) int e^{-z/2} D(QG_0) G_0 dz (< 1e-9 rel).
+          - Zero-derivative identity a((1/2 + D) f) == a(f) (< 1e-9 rel) for f = (QG_0)*G_0.
+          Both are integration-by-parts identities that hold for ANY smooth function in place of QG_0;
+          the check that ties TA-1 to Q is the comparison of the closed form QG_0 with the
+          independent real-space quadrature Q_real (< 3e-3 rel, quadrature-limited).
   TA-2  Lemma A2: Exact closed-form Phi_*(w) = N_g[u/(u^2+1)] = (1/2w) e^{-1/sqrt(w)}
         (Mellin transform Gamma(2m+2)) AND t^{-1/4} scaling of
         ||N_{5/8}(e^{-u t} * u/(u^2 + 1))||_{0, 5/8} as t -> 0+.
-  TA-3  Lemma A2 (resolving A1): Direct comparison of ||W_const(s)||_{0, 5/8} as s -> 0+
-        for h_0 = 0 (blows up like s^{-1/4}, confirming A1!) vs modified initial cusp
-        h_0 = pi c_0(G_0) * u/(u^2+1) (constant ||Phi_*||_{5/8} down to s = 0!).
+  TA-3  Lemma A2 (resolving A1), constant-c_0 linear model: ||W_const(s)||_{0, 5/8} for h_0 = 0
+        blows up like s^{-1/4}. With the modified cusp, W_const == Phi_* exactly, so the printed
+        "modified" value is just ||Phi_*||_{5/8} of one fixed function (no time evolution is computed).
   TA-4  Full nonlinear Track A Picard iteration WITH modified initial cusp h_0 = pi c_0 u/(u^2+1)
-        on clean [-64, 64]: geometric convergence, s-clock PDE res < 1e-6, physical-time PDE
-        res < 1e-5 with V_G -> -V_G mutation check (> 50x), and uniform ||W(s)||_{0, 5/8}
-        actually computed and asserted down to s = 0!
+        on [-64, 64] (Nz = 4096, Ns = 128, eps = 0.08): Picard convergence (< 1e-10), s-clock PDE
+        residual < 5e-8 (catches a sign flip of Term A, which gives 6e-7), |a + D| < 5e-9 at z = -18
+        (true run 3e-10; c_0 x 1.05 gives 1.6e-8 and fails), |V_ODE - V_indep| < 1e-8 at tau = 0.6,
+        physical-time PDE residual < 1e-5 with V_G computed INDEPENDENTLY from the reconstructed physical
+        profile (VG_indep), and mutation controls that rerun the horizon ODE + reconstruction with
+        V_G -> 3V_G and -V_G everywhere and must give a residual > 50x larger. The s -> 0 regularity
+        check requires ||W(ds)||_{5/8}/||W(0)||_{5/8} in (0.9, 1.1) (a doubled c_0 gives 1.6).
+        Not detectable: a wrong V_G formula coded identically in compute_VG and VG_indep.
+        All criteria fail on NaN.
+  Not checked here: the coupled contraction of Lemma A3 (see the 2026-11-22 post-f5106e9 review:
+  its stated norm does not close).
 """
 from __future__ import annotations
 
@@ -78,8 +89,18 @@ def check_ta1() -> bool:
     a_halfD = float(-(1.0 / math.pi) * np.sum(np.exp(-0.5 * z[m]) * (0.5 * f[m] + Df[m])) * dz)
     rel_halfD = abs(a_halfD - a_f) / abs(a_f)
 
-    ok = bool(rel_ibp < 1e-9 and rel_halfD < 1e-9)
-    print(f"TA-1 IBP a(P(G0)) & a((1/2+D)f)=a(f) PASS={ok}: IBP rel={rel_ibp:.2e}, a((1/2+D)f)==a(f) rel={rel_halfD:.2e}")
+    # The two identities above are integration by parts and hold for ANY smooth q0, f; what ties TA-1 to
+    # Lemma A1 is that q0 really is Q G_0 (with a(G_0) != 0): compare the closed form against the
+    # independent real-space quadrature of Q (Track B gate, q_real_eval) at bulk points.
+    import os, sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from edge_track_b_proof_lemmas import q_real_eval
+    z_pts = np.array([-4.0, -2.0, 0.0, 2.0, 4.0])
+    q_real = q_real_eval(lambda t: np.interp(t, z, G0), z_pts, -40.0, 40.0, 8192)
+    q_err = float(np.max(np.abs(np.interp(z_pts, z, q0) - q_real)) / np.max(np.abs(q_real)))
+
+    ok = bool(rel_ibp < 1e-9 and rel_halfD < 1e-9 and math.isfinite(q_err) and q_err < 3e-3)
+    print(f"TA-1 IBP a(P(G0)) & a((1/2+D)f)=a(f) PASS={ok}: IBP rel={rel_ibp:.2e}, a((1/2+D)f)==a(f) rel={rel_halfD:.2e}, closed-form QG0 vs Q_real={q_err:.2e}")
     return ok
 
 
@@ -252,13 +273,13 @@ def check_ta4() -> bool:
     for j in range(Ns):
         H[j + 1] = H[j] + 0.5 * ds * (rhs_H[j] + rhs_H[j + 1])
 
-    max_s_res_G = max(
+    max_s_res_G = np.max([
         float(np.max(np.abs(((G[j + 1] - G[j - 1]) / (2.0 * ds) + QG_all[j] * Dg(G[j]) - 0.5 * QG_all[j] * (1.0 + G[j]) - hpDr(H[j]))[bulk])))
         for j in range(1, Ns)
-    )
-    max_s_compat = max(float(abs(QG_all[j, idx_edge] + H[j, idx_edge])) for j in range(Ns + 1))
+    ])
+    max_s_compat = float(np.max(np.abs(QG_all[:, idx_edge] + H[:, idx_edge])))
 
-    # Physical-time reconstruction + V_G -> -V_G mutation control
+    # Physical-time reconstruction; V_G in the residual is computed independently (VG_indep)
     def compute_VG(G_prof, r_val):
         if r_val <= 1e-12:
             return 0.0
@@ -266,80 +287,115 @@ def check_ta4() -> bool:
         ln_term = np.where(arg > 1e6, 2.0 * math.log(r_val) - z + np.log1p(1.0 / arg), np.log1p(arg))
         return float(-(1.0 / (math.pi * r_val)) * np.sum(np.exp(0.5 * z) * ln_term * G_prof) * dz)
 
-    r_arr = np.zeros(Ns + 1)
-    VG_arr = np.zeros(Ns + 1)
-    r_arr[0] = 1.0
-    VG_arr[0] = compute_VG(G[0], 1.0)
-    s_inf_idx = Ns
-    for j in range(Ns):
-        k1 = -1.0 + 0.5 * VG_arr[j]
-        r_mid = r_arr[j] + 0.5 * ds * k1
-        if r_mid <= 0.0:
-            s_inf_idx = j
-            break
-        k2 = -1.0 + 0.5 * compute_VG(0.5 * (G[j] + G[j + 1]), r_mid)
-        r_next = r_arr[j] + ds * k2
-        if r_next <= 0.0:
-            s_inf_idx = j
-            break
-        r_arr[j + 1] = r_next
-        VG_arr[j + 1] = compute_VG(G[j + 1], r_next)
+    def VG_indep(G_spl, tau_val, tau_to_s, r_sp, eval_many):
+        """V_G(tau) of the reconstructed PHYSICAL profile, by its definition
+        V = -(1/pi) int_0^inf y^{-1/2} ln(1 + 1/y) G_phys(y, tau) dy, on its own log grid
+        (y = e^t, t in [-60, 40]); it never calls compute_VG, so a wrong V in the horizon ODE
+        makes the reconstruction inconsistent with this V."""
+        ss = float(tau_to_s(tau_val))
+        rr = float(r_sp(ss))
+        t = np.linspace(-60.0, 40.0, 20001)
+        Gp = eval_many(G_spl, 2.0 * math.log(rr) + t, ss)
+        y = np.exp(t)
+        integrand = np.exp(0.5 * t) * np.log1p(1.0 / y) * Gp
+        return float(-(1.0 / math.pi) * np.trapezoid(integrand, t))
 
-    s_inf = float(s_grid[s_inf_idx] - r_arr[s_inf_idx] / (-1.0 + 0.5 * VG_arr[s_inf_idx]))
-    tau_arr = np.zeros(s_inf_idx + 1)
-    for j in range(s_inf_idx):
-        tau_arr[j + 1] = tau_arr[j] + 0.5 * ds * (1.0 / r_arr[j] + 1.0 / r_arr[j + 1])
+    def reconstruct(v_scale):
+        """Horizon ODE + physical-time residual with V_G -> v_scale * V_G EVERYWHERE the solver uses it
+        (ODE, reconstruction). The residual uses VG_indep. v_scale = 1 is the true run; 3 and -1 are
+        mutation controls that must FAIL."""
+        VG_used = lambda G_prof, r_val: v_scale * compute_VG(G_prof, r_val)
+        r_arr = np.zeros(Ns + 1)
+        VG_arr = np.zeros(Ns + 1)
+        r_arr[0] = 1.0
+        VG_arr[0] = VG_used(G[0], 1.0)
+        s_inf_idx = Ns
+        for j in range(Ns):
+            k1 = -1.0 + 0.5 * VG_arr[j]
+            r_mid = r_arr[j] + 0.5 * ds * k1
+            if r_mid <= 0.0:
+                s_inf_idx = j
+                break
+            k2 = -1.0 + 0.5 * VG_used(0.5 * (G[j] + G[j + 1]), r_mid)
+            r_next = r_arr[j] + ds * k2
+            if r_next <= 0.0:
+                s_inf_idx = j
+                break
+            r_arr[j + 1] = r_next
+            VG_arr[j + 1] = VG_used(G[j + 1], r_next)
 
-    s_sub = s_grid[: s_inf_idx + 1]
-    r_sp = make_interp_spline(s_sub, r_arr[: s_inf_idx + 1], k=3)
-    tau_to_s = make_interp_spline(tau_arr, s_sub, k=3)
-    VG_sp = make_interp_spline(s_sub, VG_arr[: s_inf_idx + 1], k=3)
-    G_z_sp = [make_interp_spline(z, G[j], k=3) for j in range(s_inf_idx + 1)]
-    H_z_sp = [make_interp_spline(z, H[j], k=3) for j in range(s_inf_idx + 1)]
-    QG_z_sp = [make_interp_spline(z, QG_all[j], k=3) for j in range(s_inf_idx + 1)]
+        s_inf = float(s_grid[s_inf_idx] - r_arr[s_inf_idx] / (-1.0 + 0.5 * VG_arr[s_inf_idx]))
+        tau_arr = np.zeros(s_inf_idx + 1)
+        for j in range(s_inf_idx):
+            tau_arr[j + 1] = tau_arr[j] + 0.5 * ds * (1.0 / r_arr[j] + 1.0 / r_arr[j + 1])
 
-    def eval_field(splines_list, w_val, s_val):
-        zw = math.log(w_val)
-        j0 = min(max(int(s_val / ds) - 1, 0), s_inf_idx - 3)
-        ss = s_sub[j0 : j0 + 4]
-        vals = np.array([float(splines_list[j0 + m](zw)) for m in range(4)])
-        res = 0.0
-        for m in range(4):
-            L_m = 1.0
-            for q_m in range(4):
-                if q_m != m:
-                    L_m *= (s_val - ss[q_m]) / (ss[m] - ss[q_m])
-            res += vals[m] * L_m
-        return res
+        s_sub = s_grid[: s_inf_idx + 1]
+        r_sp = make_interp_spline(s_sub, r_arr[: s_inf_idx + 1], k=3)
+        tau_to_s = make_interp_spline(tau_arr, s_sub, k=3)
+        VG_sp = make_interp_spline(s_sub, VG_arr[: s_inf_idx + 1], k=3)
+        G_z_sp = [make_interp_spline(z, G[j], k=3) for j in range(s_inf_idx + 1)]
+        H_z_sp = [make_interp_spline(z, H[j], k=3) for j in range(s_inf_idx + 1)]
+        QG_z_sp = [make_interp_spline(z, QG_all[j], k=3) for j in range(s_inf_idx + 1)]
 
-    dtau, dv_rel = 1e-4, 1e-4
-    max_phys_G = 0.0
-    max_phys_G_mut = 0.0
-    for tau_val in (0.2, 0.6):
-        s0 = float(tau_to_s(tau_val))
-        r0 = float(r_sp(s0))
-        VG0 = float(VG_sp(s0))
-        for v0 in (0.2, 1.0, 4.0):
-            def G_phys(vv, tt):
-                ss = float(tau_to_s(tt))
-                rr = float(r_sp(ss))
-                return eval_field(G_z_sp, rr * rr * vv, ss)
+        def eval_field(splines_list, w_val, s_val):
+            zw = math.log(w_val)
+            j0 = min(max(int(s_val / ds) - 1, 0), s_inf_idx - 3)
+            ss = s_sub[j0 : j0 + 4]
+            vals = np.array([float(splines_list[j0 + m](zw)) for m in range(4)])
+            res = 0.0
+            for m in range(4):
+                L_m = 1.0
+                for q_m in range(4):
+                    if q_m != m:
+                        L_m *= (s_val - ss[q_m]) / (ss[m] - ss[q_m])
+                res += vals[m] * L_m
+            return res
 
-            def eta_phys(vv, tt):
-                ss = float(tau_to_s(tt))
-                rr = float(r_sp(ss))
-                return rr * math.sqrt(vv) * eval_field(H_z_sp, rr * rr * vv, ss)
+        def eval_many(splines_list, zw, s_val):
+            j0 = min(max(int(s_val / ds) - 1, 0), s_inf_idx - 3)
+            ss = s_sub[j0 : j0 + 4]
+            inside = (zw >= z[0]) & (zw <= z[-1])
+            zc = np.clip(zw, z[0], z[-1])
+            res = np.zeros_like(zw)
+            for m in range(4):
+                L_m = 1.0
+                for q_m in range(4):
+                    if q_m != m:
+                        L_m *= (s_val - ss[q_m]) / (ss[m] - ss[q_m])
+                res += L_m * splines_list[j0 + m](zc)
+            return np.where(inside, res, 0.0)
 
-            G_t = (G_phys(v0, tau_val + dtau) - G_phys(v0, tau_val - dtau)) / (2.0 * dtau)
-            dv = v0 * dv_rel
-            G_v = (G_phys(v0 + dv, tau_val) - G_phys(v0 - dv, tau_val)) / (2.0 * dv)
-            eta_v = (eta_phys(v0 + dv, tau_val) - eta_phys(v0 - dv, tau_val)) / (2.0 * dv)
-            G_val = G_phys(v0, tau_val)
-            QG_val = r0 * eval_field(QG_z_sp, r0 * r0 * v0, s0)
-            res_p = G_t + (2.0 - VG0 + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val) - math.sqrt(v0) * eta_v
-            res_m = G_t + (2.0 + VG0 + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val) - math.sqrt(v0) * eta_v
-            max_phys_G = max(max_phys_G, abs(res_p))
-            max_phys_G_mut = max(max_phys_G_mut, abs(res_m))
+        dtau, dv_rel = 1e-4, 1e-4
+        residuals = []
+        for tau_val in (0.2, 0.6):
+            s0 = float(tau_to_s(tau_val))
+            r0 = float(r_sp(s0))
+            VG0 = VG_indep(G_z_sp, tau_val, tau_to_s, r_sp, eval_many)
+            for v0 in (0.2, 1.0, 4.0):
+                def G_phys(vv, tt):
+                    ss = float(tau_to_s(tt))
+                    rr = float(r_sp(ss))
+                    return eval_field(G_z_sp, rr * rr * vv, ss)
+
+                def eta_phys(vv, tt):
+                    ss = float(tau_to_s(tt))
+                    rr = float(r_sp(ss))
+                    return rr * math.sqrt(vv) * eval_field(H_z_sp, rr * rr * vv, ss)
+
+                G_t = (G_phys(v0, tau_val + dtau) - G_phys(v0, tau_val - dtau)) / (2.0 * dtau)
+                dv = v0 * dv_rel
+                G_v = (G_phys(v0 + dv, tau_val) - G_phys(v0 - dv, tau_val)) / (2.0 * dv)
+                eta_v = (eta_phys(v0 + dv, tau_val) - eta_phys(v0 - dv, tau_val)) / (2.0 * dv)
+                G_val = G_phys(v0, tau_val)
+                QG_val = r0 * eval_field(QG_z_sp, r0 * r0 * v0, s0)
+                res_p = G_t + (2.0 - VG0 + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val) - math.sqrt(v0) * eta_v
+                residuals.append(abs(res_p))
+        # np.max propagates NaN (the builtin max would drop it)
+        return float(np.max(np.array(residuals))), float(VG_sp(float(tau_to_s(0.6)))), VG0
+
+    max_phys_G, VG_ode_06, VG_ind_06 = reconstruct(1.0)
+    max_phys_G_3x = reconstruct(3.0)[0]
+    max_phys_G_neg = reconstruct(-1.0)[0]
 
     # Also directly check uniform ||W(s)||_{0, 5/8} on [-16, 16] at s = 0, ds, 0.5, 1.0
     m58 = (z >= -16.0) & (z <= 16.0)
@@ -349,20 +405,26 @@ def check_ta4() -> bool:
     normW_mid = math.sqrt(float(np.sum((w58 * W[Ns // 2, m58]) ** 2) * dz))
     w58_ratio = max(normW_s0, normW_s1, normW_mid) / max(normW_s0, 1e-30)
 
-    vg_ratio = max_phys_G_mut / max(max_phys_G, 1e-30)
+    vg_ratio = min(max_phys_G_3x, max_phys_G_neg) / max(max_phys_G, 1e-30)
+    w58_step = normW_s1 / max(normW_s0, 1e-30)
+    vals = [diff_G, diff_W, max_s_res_G, max_s_compat, max_phys_G, max_phys_G_3x, max_phys_G_neg, normW_s0, normW_s1, normW_mid]
     ok = bool(
-        diff_G < 1e-10
+        all(math.isfinite(v) for v in vals)
+        and diff_G < 1e-10
         and diff_W < 1e-10
-        and max_s_res_G < 1e-6
-        and max_s_compat < 1e-6
+        and max_s_res_G < 5e-8
+        and max_s_compat < 5e-9
         and max_phys_G < 1e-5
+        and abs(VG_ode_06 - VG_ind_06) < 1e-8
         and vg_ratio > 50.0
-        and w58_ratio < 5.0
+        and normW_s0 > 0.0
+        and 0.9 < w58_step < 1.1
+        and w58_ratio < 1.2
     )
     print(
         f"TA-4 Track A modified-cusp Picard PASS={ok}: "
-        f"iter={it}, ||dG||={diff_G:.2e}, s-res_G={max_s_res_G:.2e}, |a+D|={max_s_compat:.2e}, "
-        f"phys_res={max_phys_G:.2e} (mut V_G->-V_G: {vg_ratio:.1f}x), "
+        f"iter={it}, ||dG||={diff_G:.2e}, s-res_G={max_s_res_G:.2e}, |a+D|={max_s_compat:.2e}, |V_ODE-V_indep|={abs(VG_ode_06 - VG_ind_06):.1e}, "
+        f"phys_res={max_phys_G:.2e} (V_G indep; ODE+recon with 3V/-V: {max_phys_G_3x:.1e}/{max_phys_G_neg:.1e}, {vg_ratio:.0f}x), "
         f"||W||_{{5/8}}(0,ds,0.6)=({normW_s0:.2e},{normW_s1:.2e},{normW_mid:.2e})"
     )
     return ok
