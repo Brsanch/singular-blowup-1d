@@ -67,6 +67,8 @@ $M_\sigma=\mathcal{N}(-2\partial_z-e^{-z/2})\mathcal{N}^{-1}$ is conjugate to tr
 $C_0$-semigroup on $L^2_\sigma(\mathbb{R})$ with $\|e^{\tau M_\sigma}\|=C_*(\sigma)e^{-2\sigma\tau}$
 ($\tau>0$), the resolvent is bounded by $C_*(\sigma)/(\operatorname{Re}\lambda+2\sigma)$ on the whole
 half-plane, and $\sigma(M_\sigma)=\{\operatorname{Re}\lambda\le-2\sigma\}$ with no eigenvalues.
+Moreover $C_*(\sigma)=1$ exactly when $\sigma\le\tfrac14$ (Proposition~\ref{prop:energy_form}): there the weighted $L^2_\sigma$
+energy inequality holds with rate $2\sigma$, while for $\sigma>\tfrac14$ it fails and the semigroup is not quasi-contractive.
 
 Third, completely bypassing bare-$L^2_\sigma$ semigroup theory, we prove a \textbf{small-data
 nonlinear co-moving stability theorem} for the support-interior ($X>1$) reduction under the
@@ -381,7 +383,7 @@ stability proofs~\cite{chen2021hl,huang2023exact} treat smooth profiles.
 
 Complete self-contained proofs of Walls~W1 and~W2 appear in Appendix~\ref{app:w123}.
 While the pure exponential weighted-energy form of $M_{GG}$ on $L^2_\sigma(\mathbb{R})$ is sign-indefinite for
-$\sigma>\tfrac14$ (Remark~\ref{rem:conj_scope}(e); the nonlocal factor $e^{-z/2}$ is unbounded as $z\to-\infty$),
+$\sigma>\tfrac14$ (Proposition~\ref{prop:energy_form}; the nonlocal factor $e^{-z/2}$ is unbounded as $z\to-\infty$),
 the exact Mellin--Laplace ladder structure of $M_{GG}=-2\partial_z+\tfrac12 Q_{\mathrm{op}}$
 (which coincides with $-2\partial_z+\tfrac12\widetilde{Q}_{\mathrm{op}}$ on the constrained domain $\widehat{G}(\tfrac12)=0$)
 yields an explicit slit-plane resolvent and a uniform vertical-line resolvent bound on
@@ -462,6 +464,26 @@ and let $\mathcal{N}$ be the Mellin multiplier $\widehat{\mathcal{N}k}(s)=N(s)\w
 \end{enumerate}
 \end{thm}
 
+\begin{prop}[Energy form of $M_\sigma$: contraction exactly for $\sigma\le\tfrac14$]
+\label{prop:energy_form}
+Let $\sigma\in(0,\tfrac12)$ and let $S(\tau)$, $C_*(\sigma)$ be as in Theorem~\ref{thm:conjugation}.
+\begin{enumerate}
+\item $\mathcal{N}C_c^\infty(\mathbb{R})$ is a core for $M_\sigma$, and for $G$ in it ($\widehat{G}$ is then analytic on $\operatorname{Re}s>-1$)
+  \[
+  \operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}
+  =\frac{1}{2\pi}\int_{\mathbb{R}}\operatorname{Re}c(\sigma+\tfrac14+it)\,\bigl|\widehat{G}(\sigma+\tfrac14+it)\bigr|^2\,dt,
+  \]
+  \[
+  \operatorname{Re}c(x+it)=-\frac{(2x+1)\sin(2\pi x)+2t\sinh(2\pi t)}{\bigl(\cos(2\pi x)+\cosh(2\pi t)\bigr)\,|2(x+it)+1|^2}.
+  \]
+\item If $\sigma\le\tfrac14$, then $\operatorname{Re}\langle M_\sigma G,G\rangle_{L^2_\sigma}\le-2\sigma\|G\|^2_{L^2_\sigma}$ for every
+  $G\in\mathcal{D}(M_\sigma)$; hence $\|S(\tau)\|=e^{-2\sigma\tau}$ for all $\tau\ge0$, i.e.\ $C_*(\sigma)=1$.
+\item If $\sigma>\tfrac14$, there is $G\in\mathcal{D}(M_\sigma)$ with $\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}>0$; hence
+  $C_*(\sigma)>1$, and $\|S(\tau)\|\le e^{\omega\tau}$ fails for every $\omega\in\mathbb{R}$ (no equivalent of a weighted energy
+  inequality in the $L^2_\sigma$ norm).
+\end{enumerate}
+\end{prop}
+
 \begin{remark}[Scope of Theorem~\ref{thm:conjugation}, the constant $C_*(\sigma)$, and what is not proved]
 \label{rem:conj_scope}
 (a) Theorem~\ref{thm:conjugation} is proved in Appendix~\ref{app:conj} independently of Theorem~\ref{thm:linear_gap}.
@@ -479,24 +501,16 @@ In the conjugated variables the Gauge-(a) modes $G_\lambda$ of Remark~\ref{rem:w
 $\widehat{k_\lambda}=2\pi^2\Gamma(2s+\lambda)/\sin(2\pi s)$, which lie in $H^p_\sigma$ and satisfy
 $(\lambda-A)k_\lambda=\pi\Gamma(1+\lambda)\cdot\mathbf{1}$ (the residue of $\widehat{k_\lambda}$ at $s=\tfrac12$); this matches
 $(\lambda-M_\sigma)G_\lambda=-\tfrac12H[g_\lambda](1)\cdot\mathbf{1}=\Gamma(1+\lambda)\cdot\mathbf{1}\notin L^2_\sigma$ from Remark~\ref{rem:w3_scope}.
-(d) \emph{Numerical information on $C_*(\sigma)$, not proved.}  Suprema of $\|S(\tau)G\|e^{2\sigma\tau}/\|G\|$ over
-finite spans of $\mathcal{N}[u^ae^{-bu}]$, $u=e^{-z/2}$, give the lower bounds $C_*=1.0000$ for $\sigma\le0.26$,
-$1.0018$ at $\sigma=0.30$, $1.1111$ at $\sigma=0.40$ (converged in the family size), and $1.39$ at $\sigma=0.45$,
-$2.41$ at $\sigma=0.499$ (not converged, still increasing).  No upper bound on $C_*(\sigma)$ has been computed.
-These are lower bounds from one reviewer's computation and were not reproduced by a second one with a smaller family.
-When $C_*>1$ the semigroup is not quasi-contractive ($\|S(\tau)\|\to C_*$ as $\tau\to0^+$).
-(e) \emph{Sign of the energy form.}  For $G$ whose transform is analytic across $\sigma\le\operatorname{Re}s\le\sigma+\tfrac14$
-with decay, the substitution $w=e^{-z/4}G$ gives
-$\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}=\frac{1}{2\pi}\int\operatorname{Re}c(\sigma+\tfrac14+it)\,|\widehat{G}(\sigma+\tfrac14+it)|^2\,dt$, and
-\[
-\operatorname{Re}c(x+it)=-\frac{(2x+1)\sin(2\pi x)+2t\sinh(2\pi t)}{\bigl(\cos(2\pi x)+\cosh(2\pi t)\bigr)\,|2(x+it)+1|^2},
-\]
-which is negative for all $t$ when $x\in(0,\tfrac12)$, and positive on a window $|t|<t_0(x)$ when $x\in(\tfrac12,1)$
-(on the real axis: Lean \texttt{cRe\_neg}, \texttt{cRe\_pos}).  Hence for $\sigma<\tfrac14$ the form is non-positive on
-such $G$, which indicates that $M_\sigma+2\sigma$ is dissipative and $C_*(\sigma)=1$ there; we have not written out the
-core argument needed to extend this to all of $\mathcal{D}(M_\sigma)$, so this is not claimed as a theorem.  For
-$\sigma>\tfrac14$ the form is positive on data concentrated in the window (observed numerically: e.g.\ form$/\|G\|^2=+0.144$
-and $\|S(1)G\|e^{2\sigma}/\|G\|=1.033$ at $\sigma=0.4$), so the plain weighted energy estimate cannot close and $C_*(\sigma)>1$.
+(d) \emph{Numerical information on $C_*(\sigma)$ for $\sigma>\tfrac14$, not proved.}  Proposition~\ref{prop:energy_form}
+gives $C_*=1$ for $\sigma\le\tfrac14$ and $C_*>1$ for $\sigma>\tfrac14$, but no value.  Suprema of
+$\|S(\tau)G\|e^{2\sigma\tau}/\|G\|$ over finite spans of $\mathcal{N}[u^ae^{-bu}]$, $u=e^{-z/2}$, gave the lower bounds
+$1.0002$ at $\sigma=0.28$, $1.0018$ at $0.30$, $1.1111$ at $0.40$ (converged in the family size), and $1.39$ at $0.45$,
+$2.41$ at $0.499$ (not converged, still increasing).  These come from one reviewer's computation; a second reviewer with a
+smaller family obtained only $1.033$ at $0.40$ and $1.061$ at $0.45$.  No upper bound on $C_*(\sigma)$ has been computed.
+(e) Proposition~\ref{prop:energy_form} corrects the earlier working assumption of this project that no exponential weight
+admits an energy estimate for $M_\sigma$: for $0<\sigma\le\tfrac14$ the plain $L^2_\sigma$ energy inequality holds with the
+sharp rate $2\sigma$.  It is the unboundedness of $e^{-z/2}T_c$ together with the positive window of
+$\operatorname{Re}c$ on $\operatorname{Re}w\in(\tfrac12,\tfrac34)$ that defeats it for $\sigma>\tfrac14$.
 (f) The argument has been attacked by one independent automated reviewer, the written proof in Appendix~\ref{app:conj} refereed by a second, and the closed-form evolution compared with the
 real-space discretization (\texttt{edge\_w3\_conjugation\_check.py}); it has not been reviewed by an expert, and the
 Lean module \texttt{ConjugationSymbol.lean} checks only the identities listed in Appendix~\ref{app:conj}.
@@ -559,13 +573,18 @@ elementary exponent inequalities, four-quadrant triangle margins, Laurent/Stirli
 and rational arithmetic combinations of externally supplied operator bounds;
 Gamma functions, singular integrals, and $L^2_\sigma$ operator norms are proved analytically in
 Appendix~\ref{app:w123} rather than formalized in Mathlib.
-For Theorem~\ref{thm:conjugation}, \texttt{validate/edge\_w3\_conjugation\_check.py} (\texttt{WC-1..3 PASS}) checks the
-symbol identity ($1.5\times10^{-14}$), the ladder equation for the closed-form evolution ($4.3\times10^{-9}$), and
+For Theorem~\ref{thm:conjugation} and Proposition~\ref{prop:energy_form}, \texttt{validate/edge\_w3\_conjugation\_check.py}
+(\texttt{WC-1..5 PASS}) checks the
+symbol identity ($1.5\times10^{-14}$), the ladder equation for the closed-form evolution ($4.3\times10^{-9}$),
 agreement of that evolution with $\exp(\tau M_{GG})$ from the real-space discretization
-($4.8\times10^{-4}$ at $N=1500$, $2.4\times10^{-4}$ at $N=3000$; transport alone: $6.7\times10^{-2}$);
+($4.8\times10^{-4}$ at $N=1500$, $2.4\times10^{-4}$ at $N=3000$; transport alone: $6.7\times10^{-2}$), the closed formula for
+$\operatorname{Re}c$ and its sign ($8.4\times10^{-14}$), and the energy-form identity computed on the two lines
+$\operatorname{Re}s=\sigma$ and $\sigma+\tfrac14$ ($1.6\times10^{-14}$; form$/\|G\|^2=-0.396,-0.024,-0.111,+0.021,+0.144$ at
+$\sigma=0.1,0.2,0.25,0.3,0.4$);
 \texttt{ConjugationSymbol.lean} machine-checks the symbol identity, $N(\tfrac12)=0$, the semigroup law and
-characteristic ODE of $T(\tau)$, the pointwise bound $|T(\tau)k(z)|\le|k(z-2\tau)|$, and the sign of $c$ on
-$(0,\tfrac12)$ and $(\tfrac12,1)$.
+characteristic ODE of $T(\tau)$, the pointwise bound $|T(\tau)k(z)|\le|k(z-2\tau)|$, the sign of $c$ on
+$(0,\tfrac12)$ and $(\tfrac12,1)$, and the positivity of the numerator and of $\cos(2\pi x)+\cosh(2\pi t)$ in the formula for
+$\operatorname{Re}c$ when $0<x<\tfrac12$ (not the formula itself).
 
 %--------------------------------------------------------------------------
 \section{Nonlinear co-moving bootstrap in $\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$}
@@ -732,8 +751,8 @@ Section~\ref{sec:nonlin} remain numerical.
 \item \textbf{Pure weighted $L^2_\sigma(\mathbb{R})$ energy is sign-indefinite for $\sigma>\tfrac14$.}
   Because $\tfrac12 Q_{\mathrm{op}}G=e^{-z/2}T_c G$ maps $L^2_\sigma$ into
   $L^2_{\sigma-1/2}$, the perturbation is unbounded on $L^2_\sigma$; for $\sigma>\tfrac14$ the form
-  $\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}$ takes both signs, while for $\sigma<\tfrac14$ it is
-  non-positive on a dense class (Remark~\ref{rem:conj_scope}(e)); truncated-grid field-of-values computations diverge (\texttt{edge\_layer\_obstruction.py},
+  $\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}$ takes both signs, while for $\sigma\le\tfrac14$ it is
+  non-positive on $\mathcal{D}(M_\sigma)$ (Proposition~\ref{prop:energy_form}); truncated-grid field-of-values computations diverge (\texttt{edge\_layer\_obstruction.py},
   \texttt{cap\_scaffold.py})~\cite{findings_edge_layer,findings_cap}.
   In Theorem~\ref{thm:linear_gap} this is bypassed in the resolvent via the Mellin ladder and
   slit-plane Cauchy integral, and in Theorem~\ref{thm:conjugation} by the multiplier $\mathcal{N}$; in Theorem~\ref{thm:nonlinear_bootstrap} it is bypassed in the
@@ -819,7 +838,7 @@ python3 validate/nonlinear_shape_march.py            # A<=4, gamma=0/coarse peak
 python3 validate/coevolve_projected.py               # (c_l,c_w)->(2,-1), xi=0
 python3 validate/edge_w1_route_f_closure.py          # W1 (F1-F5 PASS)
 python3 validate/edge_w2_w3_closure.py               # W2 (W2-A..C PASS)
-python3 validate/edge_w3_conjugation_check.py        # Conjugation (WC-1..3 PASS)
+python3 validate/edge_w3_conjugation_check.py        # Conjugation (WC-1..5 PASS)
 python3 validate/edge_nonlinear_comoving_closure.py  # Gauge-(a) (NL-1..6 PASS)
 python3 validate/edge_nonlinear_bootstrap_closure.py # Bootstrap (NB-1..6 PASS)
 python3 validate/edge_gauge_a_eigenmode_check.py     # Eigenmodes (EM-1..5 PASS)
@@ -1840,6 +1859,50 @@ $|kE|=o(e^{(\sigma+\operatorname{Re}\lambda/2)z})\to0$ as $z\to+\infty$ and $kE\
 So the range of $\lambda-A$ lies in the proper closed subspace $\ker\ell$: every $\lambda$ with $\operatorname{Re}\lambda<-2\sigma$ is in the
 spectrum, and so is the line $\operatorname{Re}\lambda=-2\sigma$ because the spectrum is closed.  The open half-plane
 $\operatorname{Re}\lambda>-2\sigma$ is in the resolvent set by the previous step. \hfill$\square$
+
+\paragraph{Proof of Proposition~\ref{prop:energy_form}.}
+\emph{Core.}  $C_c^\infty\subset\mathcal{D}(A)$ (if $k\in C_c^\infty$ then $Ak\in C_c^\infty$), $C_c^\infty$ is dense in $H^p_\sigma$, and
+$T(\tau)C_c^\infty\subset C_c^\infty$.  A dense, semigroup-invariant subspace of the domain is a core~\cite[Prop.~II.1.7]{engelnagel2000};
+so $C_c^\infty$ is a core for $A$ and $\mathcal{N}C_c^\infty$ is a core for $M_\sigma$.
+
+\emph{Identity.}  Let $G=\mathcal{N}k$, $k\in C_c^\infty$.  Then $\widehat{k}$ is entire with
+$\sup_{a\le\operatorname{Re}s\le b}|s|^j|\widehat{k}(s)|<\infty$ for all $j$ and all $a<b$, $\widehat{G}=N\widehat{k}$ is analytic on
+$\operatorname{Re}s>-1$, and by Lemma~\ref{lem:conj_domain}
+$\widehat{M_\sigma G}(s)=N(s)\bigl(-2s\,\widehat{k}(s)-\widehat{k}(s+\tfrac12)\bigr)$ on $\operatorname{Re}s=\sigma$.  The term
+$(-2s+2\sigma)|\widehat{G}(s)|^2=-2it\,|\widehat{G}|^2$ is purely imaginary, so
+\begin{gather*}
+\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle_{L^2_\sigma}
+=\operatorname{Re}\frac{1}{2\pi i}\int_{\operatorname{Re}s=\sigma}J(s)\,ds,\\
+J(s):=-N(s)\,\widehat{k}(s+\tfrac12)\,\widehat{G}^*(2\sigma-s),\qquad \widehat{G}^*(s):=\overline{\widehat{G}(\bar s)},
+\end{gather*}
+because $\overline{\widehat{G}(s)}=\widehat{G}^*(2\sigma-s)$ on $\operatorname{Re}s=\sigma$.  $J$ is analytic on $-1<\operatorname{Re}s<2\sigma+1$ and
+decays faster than any power on vertical lines, uniformly for $\operatorname{Re}s\in[\sigma-\tfrac14,\sigma]$; so the contour may be moved to
+$\operatorname{Re}s=\sigma-\tfrac14$.  There, with $w:=s+\tfrac12=\sigma+\tfrac14+it$, one has $2\sigma-s=\bar w$, hence
+$\widehat{G}^*(2\sigma-s)=\overline{\widehat{G}(w)}$, and by Lemma~\ref{lem:conj_symbol}
+$-N(s)\widehat{k}(s+\tfrac12)=-N(w-\tfrac12)\widehat{k}(w)=c(w)N(w)\widehat{k}(w)=c(w)\widehat{G}(w)$ for $w\ne\tfrac12$.
+Thus $J=c(w)|\widehat{G}(w)|^2$ (at $w=\tfrac12$, which occurs only for $\sigma=\tfrac14$, $t=0$, $J=0$ since $N(\tfrac12)=0$), which is item~1.
+The formula for $\operatorname{Re}c$ follows from $\tan(a+ib)=\dfrac{\sin 2a+i\sinh 2b}{\cos 2a+\cosh 2b}$ with $a=\pi x$, $b=\pi t$, and
+$\dfrac{1}{2w+1}=\dfrac{(2x+1)-2it}{|2w+1|^2}$.
+
+\emph{Item 2.}  For $0<x<\tfrac12$ the numerator $(2x+1)\sin(2\pi x)+2t\sinh(2\pi t)$ and the factor
+$\cos(2\pi x)+\cosh(2\pi t)$ are positive (Lean: \texttt{reC\_numerator\_pos}, \texttt{reC\_denominator\_pos}); for $x=\tfrac12$,
+$\operatorname{Re}c(\tfrac12+it)=-2t\sinh(2\pi t)/\bigl((\cosh(2\pi t)-1)|2+2it|^2\bigr)<0$ for $t\ne0$.  So for $\sigma\le\tfrac14$ the right side of
+item~1 is $\le0$ on the core.  If $G\in\mathcal{D}(M_\sigma)$, choose $G_n$ in the core with $G_n\to G$ and $M_\sigma G_n\to M_\sigma G$ in
+$L^2_\sigma$; the inequality $\operatorname{Re}\langle M_\sigma G_n,G_n\rangle\le-2\sigma\|G_n\|^2$ passes to the limit.  For
+$G\in\mathcal{D}(M_\sigma)$, $\frac{d}{d\tau}\|S(\tau)G\|^2=2\operatorname{Re}\langle M_\sigma S(\tau)G,S(\tau)G\rangle\le-4\sigma\|S(\tau)G\|^2$, so
+$\|S(\tau)\|\le e^{-2\sigma\tau}$; with $C_*\ge1$ from Theorem~\ref{thm:conjugation} this gives $C_*(\sigma)=1$.
+
+\emph{Item 3.}  Let $\sigma>\tfrac14$, $x:=\sigma+\tfrac14\in(\tfrac12,\tfrac34)$ and $q(t):=\operatorname{Re}c(x+it)\,|N(x+it)|^2$.  Then $q$ is
+continuous and polynomially bounded, and $q(0)=c(x)N(x)^2>0$ ($c(x)>0$ on $(\tfrac12,1)$, Lean: \texttt{cRe\_pos}; $N(x)\ne0$).
+Fix a real $\eta\in C_c^\infty$, $\eta\not\equiv0$, and put $k_R(z):=e^{xz}\eta(z/R)$, so $\widehat{k_R}(x+it)=R\,\widehat{\eta}_0(Rt)$ with
+$\widehat{\eta}_0(t)=\int\eta(z)e^{-itz}dz$.  By item~1 and dominated convergence,
+\[
+\operatorname{Re}\langle(M_\sigma+2\sigma)\mathcal{N}k_R,\mathcal{N}k_R\rangle_{L^2_\sigma}
+=\frac{R}{2\pi}\int q(t/R)\,|\widehat{\eta}_0(t)|^2\,dt=\frac{R}{2\pi}\bigl(q(0)\|\widehat{\eta}_0\|_{L^2}^2+o(1)\bigr)>0
+\]
+for $R$ large.  For such $G=\mathcal{N}k_R\in\mathcal{D}(M_\sigma)$ the function $f(\tau):=e^{4\sigma\tau}\|S(\tau)G\|^2$ has
+$f'(0)=2\operatorname{Re}\langle(M_\sigma+2\sigma)G,G\rangle>0$, so $e^{2\sigma\tau}\|S(\tau)G\|>\|G\|$ for small $\tau>0$ and $C_*(\sigma)>1$.
+Since $\|S(\tau)\|=C_*e^{-2\sigma\tau}\to C_*>1$ as $\tau\to0^+$, no bound $\|S(\tau)\|\le e^{\omega\tau}$ can hold. \hfill$\square$
 
 \paragraph{Closed-form test family.}
 For $k_0=u^ae^{-bu}$ ($a>0$, $\operatorname{Re}b>0$), $\widehat{k_0}(s)=2\Gamma(2s+a)b^{-2s-a}$ and

@@ -190,9 +190,32 @@ What the second review changed or added:
 
 Referee scripts: `validate/review_2026_11_21_w3/referee_chk{1,2,3}.py`.
 
+## 6c. Energy form: contraction exactly for σ ≤ ¼ (same day)
+
+Manuscript Proposition `prop:energy_form`, proof in Appendix `app:conj`. Tier: proved on paper; independent
+referee result recorded in the ledger entry LEM-10.
+
+- **Identity.** On the core `𝒩C_c^∞`:
+  `Re⟨(M_σ+2σ)G,G⟩_σ = (1/2π)∫ Re c(σ+¼+it)|Ĝ(σ+¼+it)|² dt`. Proof: write the form on `Re s = σ` as the integral
+  of `J(s) = −N(s)k̂(s+½)·conj(Ĝ(2σ−s̄))`, which is analytic on the strip, and move the line to `σ−¼`; there
+  `J = c(w)|Ĝ(w)|²`, `w = σ+¼+it`, by the symbol identity. Writing `J` through `N(s)k̂(s+½)` means no pole of `c`
+  is ever met, for any `σ`.
+- **`σ ≤ ¼`:** `Re c ≤ 0` on the line, so `Re⟨M_σG,G⟩ ≤ −2σ‖G‖²` on `D(M_σ)`, `‖S(τ)‖ = e^{−2στ}`, `C* = 1`.
+- **`σ > ¼`:** data `k_R = e^{(σ+¼)z}η(z/R)` give a positive form for large `R`, so `C* > 1` and no bound
+  `e^{ωτ}` holds.
+- **Probe:** WC-4 (formula for `Re c`, 8.4e-14, signs) and WC-5 (identity on the two lines, 1.6e-14;
+  form/‖G‖² = −0.396, −0.024, −0.111, +0.021, +0.144 at σ = 0.1, 0.2, 0.25, 0.3, 0.4).
+- **Lean:** `reC_numerator_pos`, `reC_denominator_pos` (sign factors for `0 < x < ½`); the formula for `Re c`
+  and the form identity are not formalized.
+- **Consequence for the repo record.** "No exponential weight admits an energy estimate" was wrong for
+  `σ ≤ ¼`. Lemma C of `convective_weight_spectrum.md` sampled only `σ ≥ 0.27`. Corrections added there, in
+  LEM-09, LEM-06, the ledger README and HANDOFF. The bounded-at-edge weight class (`edge_layer_estimate.md`,
+  OBS-03) is a different family and was not re-examined.
+- **What this does not give:** a route around the edge problem (N1) or the Gauge-(a) operator.
+
 ## 7. Reproducing
 
-- `python3 validate/edge_w3_conjugation_check.py` — WC-1 identity (1.5e-14), WC-2 ladder equation
+- `python3 validate/edge_w3_conjugation_check.py` — WC-4 and WC-5 as in section 6c; WC-1 identity (1.5e-14), WC-2 ladder equation
   (4.3e-9), WC-3 closed form against `expm(τM_GG)`: 4.8e-4 at N = 1500, 2.4e-4 at N = 3000, against
   6.7e-2 for transport alone.
 - Reviewer scripts: `validate/review_2026_11_21_w3/` (`a1` symbol; `a4*` operator-norm probe;

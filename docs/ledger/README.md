@@ -74,3 +74,7 @@ edited on 2026-07-16 and stay as they are; this paragraph records what has chang
   LEM-06 stays `conjectured` under the no-self-certification rule; what remains for its linear half is the list of
   open items in LEM-10. LEM-10 also restricts LEM-09 (C) to `σ > ¼` and replaces "spectrum = the line" by the closed
   half-plane `Re λ ≤ −2σ` for the maximal realization. THR-01 unchanged.
+- **Energy no-go corrected (2026-11-21, LEM-10 / manuscript Proposition `prop:energy_form`):** for `σ ≤ ¼` the plain
+  `L²_σ` energy inequality `Re⟨M_σG,G⟩ ≤ −2σ‖G‖²` holds and `‖S(τ)‖ = e^{−2στ}`; for `σ > ¼` it fails and `C*(σ) > 1`.
+  The LEM-09 (C) row above and the phrases "energy route dead" in LEM-06 / HANDOFF refer to `σ > ¼` only (and, for
+  OBS-03, to the separate bounded-at-edge weight class).

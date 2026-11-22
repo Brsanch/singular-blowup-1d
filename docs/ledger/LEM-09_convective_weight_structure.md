@@ -24,6 +24,11 @@ lean_ref: none
 tags: [track2, convective-weight, resolvent, LEM-06-attack]
 ---
 
+**CORR 2026-11-21 (LEM-10):** part (C) holds only for `σ > ¼`. `Re c(σ+¼) > 0 ∀σ∈(0,½)` in the title is
+wrong (`c < 0` on `(0,½)`; the sampled values all have `σ ≥ 0.27`). For `σ ≤ ¼` the `L²_σ` energy estimate
+closes with rate `2σ` (manuscript Proposition `prop:energy_form`). The title is left as written for the record.
+Also superseded: "spectrum = the line" (it is the closed half-plane `Re λ ≤ −2σ`, LEM-10).
+
 Full derivations + proofs: `docs/desk/convective_weight_spectrum.md` (2026-07-15). One honest
 conditional: **(E) rests on Lemma E′** (edge bootstrap: an `L²_σ` eigenfunction has no
 `e^{−λz/2}` homogeneous branch, hence is strip-regular — the continuum form of the repo's

@@ -97,7 +97,7 @@ adversarially checked; confidence 0.60 → 0.75.
 edge-weight wall is NOT a wall for the *spectral* problem.** Working directly in the convective
 space `L²_σ = L²(e^{−2σz}dz)`, `σ∈(0,½)`: (i) the ε-similarity makes `M` unitarily scale-free in
 the forcing, so the `cap_scaffold` FoV divergence was a truncation artifact *as a spectral
-diagnostic* — while the energy route stays dead for a now-PROVEN reason (the exact `w=e^{−z/4}u`
+diagnostic* — while the energy route stays dead **[CORR 2026-11-21: only for `σ > ¼`; for `σ ≤ ¼` the `L²_σ` energy estimate closes — LEM-10]** for a now-PROVEN reason (the exact `w=e^{−z/4}u`
 diagonalization has a positive multiplier band at `σ+¼`, realized by the resonant tail
 `e^{(σ+¼)z}`); (ii) the far-field transport line `{Re λ = −2σ} ⊆ σ_ess` caps the gap at `2σ`
 (sup `1⁻` over the family); (iii) point spectrum right of the line is EMPTY (mod the named

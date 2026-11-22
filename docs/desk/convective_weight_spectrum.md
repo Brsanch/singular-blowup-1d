@@ -79,6 +79,19 @@ scale), so the **supremum gap available from this family is `2σ → 1⁻`**.
 
 ## 3. Lemma C (energy no-go, artifact-free, with exact mechanism)
 
+> **CORRECTION 2026-11-21 (LEM-10, manuscript Proposition `prop:energy_form`).** The statement below that
+> `Re c(σ+¼) > 0` for **every** `σ ∈ (0,½)` is wrong: `c(x) = −tan(πx)/(2x+1)` is negative on `(0,½)` and
+> positive on `(½,1)` (Lean: `cRe_neg`, `cRe_pos`), and the sampled values below all have `σ+¼ ≥ 0.52`, i.e.
+> `σ ≥ 0.27`. With `Re c(x+it) = −[(2x+1)sin 2πx + 2t sinh 2πt]/[(cos 2πx + cosh 2πt)|2(x+it)+1|²] < 0` for
+> all `t` when `0 < x ≤ ½` (`t ≠ 0` at `x = ½`), the form identity of this section gives
+> `Re⟨M G,G⟩_σ ≤ −2σ‖G‖²` on `D(M_σ)` for **`σ ≤ ¼`**: the plain `L²_σ` energy estimate CLOSES there, with the
+> sharp rate `2σ`, and the semigroup is `e^{−2στ}`-contractive. The no-go holds exactly for `σ > ¼`
+> (positive window on the line `σ+¼`; `C*(σ) > 1`). "No pure-exponential weight is dissipative" and "the
+> energy route is closed for the full exponential family" are therefore false; read every such sentence in
+> this repo as "for `σ > ¼`". (The bounded-at-edge weight class of `edge_layer_estimate.md` / OBS-03 is a
+> different family and is not affected by this correction.) Tier: proved on paper, independent review in
+> progress at the time of writing — see `docs/ledger/LEM-10_w3_conjugation_damped_transport.md`.
+
 Conjugate to flat space: `Ṽ: L²_σ → L²`, `M̃ = −2∂_z − 2σ + K̃`, `K̃ = e^{−z/2}T_{c(σ+·)}`.
 Substituting `w = e^{−z/4}u` **diagonalizes the K-quadratic form exactly**:
 

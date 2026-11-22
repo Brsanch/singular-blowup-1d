@@ -11,6 +11,9 @@ Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasur
 > independent Claude adversarial pass did not break it; Lean checks the identities only (`ConjugationSymbol.lean`, ledger `LEM-10`); not expert-reviewed, no upper
 > bound on `C*`. In the manuscript as Theorem `thm:conjugation` + Appendix `app:conj` (written proof refereed by a second independent Claude). Does not touch the Gauge-(a) operator or review item N1.
 > The block below still says "W3 withdrawn"; that refers to the Laplace-inversion route.
+> **Energy no-go corrected:** for `σ ≤ ¼` the plain `L²_σ` energy estimate closes (`‖S(τ)‖ = e^{−2στ}`); it fails
+> exactly for `σ > ¼` (manuscript Proposition `prop:energy_form`). Every "energy route dead / no exponential weight is
+> dissipative" sentence below (items 2, 5, the 07-15 block) is true only for `σ > ¼` or for bounded-at-edge weights.
 >
 > ---
 > ## Prior (2026-11-21) — **manuscript rewritten after review; W3 withdrawn; Gauge-(a) eigenmodes**

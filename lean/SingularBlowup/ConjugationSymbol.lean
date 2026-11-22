@@ -17,6 +17,8 @@ are identities about explicit functions:
 5. `norm_flow_le` — the damping factor is at most 1 for `τ ≥ 0`.
 6. `cRe_neg`, `cRe_pos` — on the real axis `c < 0` on `(0, ½)` and `c > 0` on `(½, 1)`, so
    `c(σ+¼) > 0` only for `σ > ¼` (correction to Lemma C of `convective_weight_spectrum.md`).
+7. `reC_numerator_pos`, `reC_denominator_pos` — the sign factors of `Re c(x+it)` for `0 < x < ½`
+   and every `t` (the closed formula for `Re c` itself is not formalized).
 
 SCOPE. Nothing here is an operator statement. Not formalized: the two-sided bound
 `|N(σ+it)| ≍ (1+|t|)^{2σ+3/2}`, the isomorphism `𝒩 : H^p_σ → L²_σ`, the domain identification
@@ -167,6 +169,42 @@ theorem cRe_pos {x : ℝ} (h0 : 1 / 2 < x) (h1 : x < 1) : 0 < cRe x := by
   unfold cRe
   rw [hper]
   exact div_pos (by linarith) (by linarith)
+
+/-! ### Sign of `Re c(x+it)` off the real axis
+
+`Re c(x+it) = −[(2x+1) sin(2πx) + 2t sinh(2πt)] / [(cos 2πx + cosh 2πt) |2(x+it)+1|²]`
+(the identity itself is checked numerically, probe WC-4, not here). The two lemmas below give
+the sign of the numerator and of the first denominator factor for `0 < x < ½`, hence
+`Re c(x+it) < 0` for every `t` there. With `x = σ + ¼` this is the dissipative range `σ < ¼`. -/
+
+theorem mul_sinh_nonneg (t : ℝ) {a : ℝ} (ha : 0 < a) : 0 ≤ t * Real.sinh (a * t) := by
+  rcases le_total 0 t with ht | ht
+  · exact mul_nonneg ht (Real.sinh_nonneg_iff.mpr (mul_nonneg ha.le ht))
+  · exact mul_nonneg_of_nonpos_of_nonpos ht
+      (Real.sinh_nonpos_iff.mpr (mul_nonpos_of_nonneg_of_nonpos ha.le ht))
+
+/-- Numerator of `−Re c(x+it)` is positive for `0 < x < ½`, every `t`. -/
+theorem reC_numerator_pos {x : ℝ} (h0 : 0 < x) (h1 : x < 1 / 2) (t : ℝ) :
+    0 < (2 * x + 1) * Real.sin (2 * Real.pi * x) + 2 * t * Real.sinh (2 * Real.pi * t) := by
+  have hpi := Real.pi_pos
+  have hsin : 0 < Real.sin (2 * Real.pi * x) :=
+    Real.sin_pos_of_pos_of_lt_pi (by positivity) (by nlinarith)
+  have hsh : 0 ≤ t * Real.sinh (2 * Real.pi * t) := mul_sinh_nonneg t (by positivity)
+  have h1' : 0 < (2 * x + 1) * Real.sin (2 * Real.pi * x) := mul_pos (by linarith) hsin
+  linarith
+
+/-- `cos(2πx) + cosh(2πt) > 0` for `0 < x < ½`, every `t`. -/
+theorem reC_denominator_pos {x : ℝ} (h0 : 0 < x) (h1 : x < 1 / 2) (t : ℝ) :
+    0 < Real.cos (2 * Real.pi * x) + Real.cosh (2 * Real.pi * t) := by
+  have hpi := Real.pi_pos
+  have hcos : 0 < Real.cos (Real.pi * x) :=
+    Real.cos_pos_of_mem_Ioo ⟨by nlinarith, by nlinarith⟩
+  have h2 : Real.cos (2 * Real.pi * x) = 2 * Real.cos (Real.pi * x) ^ 2 - 1 := by
+    rw [show 2 * Real.pi * x = 2 * (Real.pi * x) by ring, Real.cos_two_mul]
+  have hch : 1 ≤ Real.cosh (2 * Real.pi * t) := Real.one_le_cosh _
+  have hsq : 0 < Real.cos (Real.pi * x) ^ 2 := by positivity
+  rw [h2]
+  linarith
 
 end
 

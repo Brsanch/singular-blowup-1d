@@ -16,6 +16,12 @@ Checks (exit 0 iff all pass):
   WC-1  the symbol identity, at complex s.
   WC-2  the closed form satisfies the ladder equation
         d/dtau Ghat(s) = -2 s Ghat(s) + c(s+1/2) Ghat(s+1/2)   (finite difference in tau).
+  WC-4  the closed formula for Re c(x+it), negative for 0 < x <= 1/2 and positive near t = 0
+        for 1/2 < x < 1.
+  WC-5  the energy-form identity
+        Re<(M+2 sigma)G, G>_sigma = (1/2pi) int Re c(sigma+1/4+it) |Ghat(sigma+1/4+it)|^2 dt,
+        left side on the line Re s = sigma, right side on Re s = sigma + 1/4; non-positive for
+        sigma <= 1/4, positive for suitable data when sigma > 1/4.
   WC-3  the closed form agrees with expm(tau * M_GG) built from the repo's real-space
         discretization (src/stability_edge_z.py; p.v. Hilbert quadrature, no Mellin input),
         and the error falls when N doubles.  Transport alone is far off, as a contrast.
@@ -95,6 +101,52 @@ def main():
     p3 = errs[1500] < 1e-3 and errs[3000] < 0.7 * errs[1500]
     ok &= p3
     print(f"WC-3 real-space discretization   {errs[1500]:.2e} -> {errs[3000]:.2e}   {'PASS' if p3 else 'FAIL'}")
+
+    # WC-4: closed formula for Re c(x+it) and its sign on 0 < x <= 1/2.
+    def re_c_formula(x, t):
+        num = (2 * x + 1) * np.sin(2 * np.pi * x) + 2 * t * np.sinh(2 * np.pi * t)
+        den = (np.cos(2 * np.pi * x) + np.cosh(2 * np.pi * t)) * np.abs(2 * (x + 1j * t) + 1) ** 2
+        return -num / den
+
+    tt = np.linspace(-6.0, 6.0, 2400)          # even count: t = 0 is not a node
+    e4, sign_ok = 0.0, True
+    for x in (0.05, 0.2, 0.35, 0.45, 0.5, 0.6, 0.7):
+        direct = c_sym(x + 1j * tt).real
+        e4 = max(e4, np.max(np.abs(direct - re_c_formula(x, tt)) / (1 + np.abs(direct))))
+        if x <= 0.5:
+            sign_ok &= bool(np.all(direct <= 1e-13))
+        else:
+            sign_ok &= bool(direct[np.argmin(np.abs(tt))] > 0)
+    p4 = e4 < 1e-9 and sign_ok
+    ok &= p4
+    print(f"WC-4 Re c formula and sign       max err {e4:.2e}  sign {'ok' if sign_ok else 'BAD'}   {'PASS' if p4 else 'FAIL'}")
+
+    # WC-5: energy-form identity
+    #   Re <(M+2 sigma) G, G>_sigma = (1/2pi) int Re c(sigma+1/4+it) |Ghat(sigma+1/4+it)|^2 dt
+    # with the left side computed on the line Re s = sigma from (MG)^ = N(s)(-2s khat(s) - khat(s+1/2)).
+    def k_hat(s, ell, s0):
+        return np.exp(ell * (s - s0) ** 2)
+
+    t5 = np.linspace(-30.0, 30.0, 24000)
+    d5 = t5[1] - t5[0]
+    e5, signs = 0.0, []
+    for sig, ell, s0 in ((0.1, 4.0, 0.3), (0.2, 20.0, 0.45), (0.25, 6.0, 0.5), (0.3, 20.0, 0.55), (0.4, 20.0, 0.65)):
+        sl = sig + 1j * t5
+        g = N_sym(sl) * k_hat(sl, ell, s0)
+        mg = N_sym(sl) * (-2 * sl * k_hat(sl, ell, s0) - k_hat(sl + 0.5, ell, s0))
+        lhs = (np.sum(mg * np.conj(g)).real + 2 * sig * np.sum(np.abs(g) ** 2)) * d5 / (2 * np.pi)
+        w = sig + 0.25 + 1j * t5
+        gw = N_sym(w) * k_hat(w, ell, s0)
+        rhs = np.sum(c_sym(w).real * np.abs(gw) ** 2) * d5 / (2 * np.pi)
+        nrm = np.sum(np.abs(g) ** 2) * d5 / (2 * np.pi)
+        e5 = max(e5, abs(lhs - rhs) / max(abs(rhs), 1e-300))
+        signs.append((sig, rhs / nrm))
+    neg_ok = all(v <= 0 for sg, v in signs if sg <= 0.25)
+    pos_seen = any(v > 0 for sg, v in signs if sg > 0.25)
+    p5 = e5 < 1e-6 and neg_ok and pos_seen
+    ok &= p5
+    print("     form/||G||^2: " + ", ".join(f"sigma={sg}: {v:+.4f}" for sg, v in signs))
+    print(f"WC-5 energy-form identity        max rel err {e5:.2e}   {'PASS' if p5 else 'FAIL'}")
 
     print("ALL PASS" if ok else "FAILED")
     return 0 if ok else 1

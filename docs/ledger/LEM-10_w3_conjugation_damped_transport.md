@@ -45,6 +45,10 @@ Consequences recorded here, each at the tier stated:
   maximal realization.
 - **Not quasi-contractive for σ > ¼** (numerical lower bounds): `‖S(τ)‖` jumps to `C* > 1` at
   `τ = 0⁺`. Matches the instant weighted transient of review item E1.
+- **Energy form (manuscript Proposition `prop:energy_form`; proved on paper).** On `D(M_σ)`:
+  `Re⟨M_σG,G⟩_σ ≤ −2σ‖G‖²` iff `σ ≤ ¼`. So `C*(σ) = 1` and `‖S(τ)‖ = e^{−2στ}` for `σ ≤ ¼`, and
+  `C*(σ) > 1` (not quasi-contractive) for `σ > ¼`. Probe WC-4, WC-5; Lean `reC_numerator_pos`,
+  `reC_denominator_pos` for the sign factors only.
 - **LEM-09 (C) needs a range restriction.** On the real axis `c < 0` on `(0,½)` and `c > 0` on
   `(½,1)` (Lean: `cRe_neg`, `cRe_pos`), so `Re c(σ+¼) > 0` at `t = 0` only for `σ > ¼`; LEM-09's
   sampled values all have `σ ≥ 0.27`. The reviewer reports `sup_t Re c(σ+¼+it) < 0` for
