@@ -30,3 +30,4 @@ import SingularBlowup.LinearStrictGapClosure
 import SingularBlowup.NonlinearComoving
 import SingularBlowup.NonlinearBootstrap
 import SingularBlowup.CoupledHSector
+import SingularBlowup.ConjugationSymbol

@@ -5,7 +5,9 @@
 **Review form:** independent — one Claude reviewer with fresh context, given the claim and told to break
 it; own derivations and own numerics (scripts kept unedited in `validate/review_2026_11_21_w3/`; the
 implementer has not re-run them). The implementer is a different Claude session. Not expert review.
-Nothing here is machine-checked in Lean.
+Lean (`lean/SingularBlowup/ConjugationSymbol.lean`, ledger `LEM-10`) checks the identities only:
+the symbol identity, `N(½) = 0`, the semigroup law and characteristic ODE of the explicit flow, the
+pointwise damping bound, and the sign of `c` on the real axis. No operator statement is formalized.
 **Tier:** proved-on-paper (short argument, sections 1–2) + one independent adversarial pass that did
 not break it. No ledger status is changed by this note.
 **Does not claim:** anything about the Gauge-(a) operator `−2∂_z + ½Q̃_op` that the manuscript's
@@ -149,7 +151,7 @@ that is a hypothesis.
 
 Moves: the linear strict gap for the constrained operator (the essential half of LEM-06) from
 "W1, W2 on paper, W3 withdrawn" to "one short conjugation argument, independently attacked once".
-A ledger entry and a Lean statement of the symbol identity are natural next items.
+Ledger entry: `docs/ledger/LEM-10_w3_conjugation_damped_transport.md`.
 
 Does not move: review item N1 and section 2 of the adversarial review. The nonlinear Theorem 2 lives in
 Gauge (a), whose operator acts through `c` on `Re s ∈ (½, 3/2)`; conjugating it would need `1/N` across
