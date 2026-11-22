@@ -67,3 +67,9 @@ edited on 2026-07-16 and stay as they are; this paragraph records what has chang
   (`d/dτ H[g](1) = −H[g](1) − c₁/3`), so the weak edge relation `B = A²` is not kept by any nontrivial solution in the
   manuscript's ansatz at linear order; and the weighted-norm transient of `M_GG` grows with edge depth (peak 12.7 at
   γ = 0.75, `z_min = −14`), which the OBS rows above do not record. No ledger status changes.
+- **Review of Theorem 3 (`ef0eaea`, 2026-11-21):** `docs/findings_session_2026_11_21_theorem3_review.md`, probe
+  `validate/theorem3_review_2026_11_21_probe.py`. Relevant to this ledger: the repo's discrete `Q_op` keeps the edge
+  value `H[g](1)`, so every grid run built on `M_GG` is a run of the Theta-balance operator; the discretised
+  Gauge-(a) operator `M_GG − ½·1⊗h1` has one growing eigenvalue (+35 at `z_min = −10`, +102 at `z_min = −12`) and
+  carries the OBS-09 modes to 3–4%. This extends OBS-09 from the continuum to the grid. No ledger status changes;
+  the manuscript's Theorem 3 has no ledger entry.
