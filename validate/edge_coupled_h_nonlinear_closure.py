@@ -15,13 +15,15 @@ Verifies four independent checks:
         on D(1, 1) across 16 test functions in X.
   CH-3  Coupled linear coercivity of E_tot = E(G) + mu_h * E_h(q) with mu_h = 1000 B_0^2:
           d/dtau E_tot^lin <= -(1/16) E_tot  (with B in [B_0/2, 2 B_0]).
-  CH-4  Live nonlinear RK4 integration of the exact coupled Gauge-(a) PDE
-          G_tau = -2 G_z + (1/2) Qtilde G + B(tau) q + p[G] G_z + (1/2)(Qtilde G) G,
+  CH-4  Finite-grid RK4 spot check of the tail-restored coupled Gauge-(a) PDE
+          G_tau = (-2 + p[G]) G_z + (1/2) Qtilde G + (1/2)(Qtilde G) G + B(tau) q,
           q_tau = (-2 + p[G]) q_z - q + (p[G]/2 + p_z[G]) q,
           B_tau = -B H[g](1),
-        starting from (a) pure Theta perturbation (G_0 = 0, q_0 != 0) and
-        (b) coupled (G_0 != 0, q_0 != 0), verifying exponential decay of E_tot
-        and convergence (c_l, c_omega, B) -> (2, -1, B_inf).
+        using edge-analytic initial data in X x X_h (v * exp(-v), v = e^z),
+        with Q_exact = Q_op + (e^{z_min}/(Y-1)) (x) h1_w restoring the truncated
+        grid tail so Qtilde G = Q_exact G - H[g](1) = O(e^z) near the edge.
+        Note: finite-grid runs do not carry non-analytic Gauge-(a) modes and
+        serve only as a numerical spot check, not a test of edge analyticity.
 """
 from __future__ import annotations
 
@@ -119,13 +121,13 @@ def check_ch3():
 
 
 def check_ch4():
-    # Live RK4 integration of the exact coupled Gauge-(a) PDE (G, q, B) on z-grid!
-    # Note: in build(), B["Q_op"] is Q_op G (vanishing as O(e^z) at z -> -inf, i.e., Qtilde_op G),
-    # and B["M_GG"] = -2 D_up + 0.5 Q_op uses upwind differentiation for the -2 d_z transport!
+    # Finite-grid RK4 spot check of the tail-restored coupled Gauge-(a) PDE (G, q, B).
+    # In build(), Q_op integrates dU from Y_min = 1 + e^{z_min}, so near the edge
+    # Q_op G = H[g](1) (1 - e^{z_min - z}). Restoring the truncated edge tail
+    # (as in edge_nonlinear_comoving_closure.py and EM-4) gives Q_exact G -> H[g](1),
+    # and Qtilde G = Q_exact G - H[g](1) = O(e^z). Transport uses explicit upwind D_up.
     B = build(N=800, zmin=-10.0, zmax=10.0)
     z, dz, Q_op, Dz, b1 = B["z"], B["dz"], B["Q_op"], B["Dz"], B["b1"]
-    M_GG = B["M_GG"]
-    # First-order upwind derivative for transport -2 d_z (matches M_GG)
     n = len(z)
     D_up = np.zeros((n, n))
     for i in range(1, n):
@@ -135,16 +137,19 @@ def check_ch4():
     w_trap[0] *= 0.5
     w_trap[-1] *= 0.5
     h1_w = -(1.0 / np.pi) * np.exp(-0.5 * z) * w_trap
+    tail_factor = np.exp(z[0] - z)  # e^{z_min} / (Y - 1)
+    Q_exact = Q_op + np.outer(tail_factor, h1_w)
 
     def rhs(G, q, Bamp):
         Vg1 = float(b1 @ G)
         Hg1 = float(h1_w @ G)
-        QtG = Q_op @ G  # Qtilde_op G (O(e^z) at edge)
-        p = Vg1 - QtG - Hg1  # p[G] = V_G(1) - Q_op G
-        pz = -(Dz @ QtG)
+        QG = Q_exact @ G
+        QtG = QG - Hg1  # Qtilde_op G = Q_exact G - H[g](1)
+        p = Vg1 - QG    # p[G] = V_G(1) - Q_op G
+        pz = -(Dz @ QG)
         Gz_up = D_up @ G
         qz_up = D_up @ q
-        dG = M_GG @ G + Bamp * q + p * Gz_up + 0.5 * QtG * G
+        dG = (-2.0 + p) * Gz_up + 0.5 * QtG + 0.5 * QtG * G + Bamp * q
         dq = (-2.0 + p) * qz_up - q + (0.5 * p + pz) * q
         dB = -Bamp * Hg1
         dG[0] = 0.0
@@ -160,15 +165,18 @@ def check_ch4():
         Eh = float(np.sum(w * (q[mask] ** 2 + qz[mask] ** 2)))
         return Eg, Eh
 
-    dt = 0.2 * dz
+    # Entire edge-analytic profiles in X x X_h: v * exp(-v), v = e^z
+    v = np.exp(z)
+    prof_G = v * np.exp(-v)
+    prof_q = (v ** 2) * np.exp(-v)
+
+    dt = 0.0025
     T_end = 3.0
     nsteps = int(round(T_end / dt))
-    dt = T_end / nsteps
-
     all_ok = True
     for label, G0_amp, q0_amp in [("pure_h (G0=0, q0=0.2)", 0.0, 0.2), ("coupled (G0=0.15, q0=0.2)", 0.15, 0.2)]:
-        G = G0_amp * np.exp(-((z - 1.0) / 1.0) ** 2); G[0] = 0.0
-        q = q0_amp * np.exp(-((z - 1.5) / 1.0) ** 2); q[0] = 0.0
+        G = G0_amp * prof_G.copy(); G[0] = 0.0
+        q = q0_amp * prof_q.copy(); q[0] = 0.0
         Bamp = 1.0
         Eg0, Eh0 = energy_far(G, q)
         Etot0 = Eg0 + 100.0 * Eh0
@@ -186,11 +194,16 @@ def check_ch4():
         c_l = 2.0 - Vg1
         c_om = -1.0 + 0.5 * (Vg1 - Hg1)
         decay_ratio = Etot1 / Etot0
-        ok = bool(np.isfinite(Etot1) and decay_ratio < math.exp(-T_end / 16.0) and 0.5 < Bamp < 2.0)
+        ok = bool(
+            np.isfinite(Etot1)
+            and decay_ratio < math.exp(-T_end / 16.0)
+            and 0.5 < Bamp < 2.0
+            and abs(c_l - 2.0) < 0.05
+            and abs(c_om + 1.0) < 0.05
+        )
         all_ok = all_ok and ok
         print(f"CH-4 [{label}] PASS={ok}: Etot {Etot0:.3e}->{Etot1:.3e} (ratio={decay_ratio:.3e} < e^(-T/16)={math.exp(-T_end/16):.3f}), B={Bamp:.5f}, c_l={c_l:.5f}, c_om={c_om:.5f}")
     return all_ok
-
 
 def main():
     ok1 = check_ch1()

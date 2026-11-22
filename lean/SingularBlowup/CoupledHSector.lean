@@ -1,7 +1,7 @@
 /-
 # CoupledHSector.lean — Algebraic & Analytic Backbone for Coupled (G, h) Nonlinear Stability
 
-Formalizes the load-bearing inequalities that upgrade Remark B.1 (`rem:h_sector`)
+Formalizes the load-bearing inequalities that upgrade Theorem 3 (`thm:coupled_h`)
 in `paper/stability_spectra_singular_houluo.tex` from linear-only coercivity to
 full coupled (G, h) nonlinear asymptotic stability in X × X_h with ZERO extra
 derivatives on G:

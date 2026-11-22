@@ -44,7 +44,7 @@ $L^2_\gamma(\mathbb{R}, e^{-2\gamma z}\,dz)$, we compute numerical stability spe
 (Numerical Theorem~\ref{numthm:main}): $\#\{\operatorname{Re}\lambda>0\}=0$ across two
 independent discretizations (edge-resolved $z$-grid with inflow BC $G(z_{\min})=0$ and cell-centered
 equispaced build), a convective decay rate $\approx 2\gamma$, no transient amplification for the tested smooth bumps in the unweighted $L^2(dz)$ and cutoff-$W$
-norms on $\tau\in[0,6]$ ($G=1.000$, whereas in $L^2_\gamma$ on $z\ge z_{\min}$ the nonzero edge
+norms on $\tau\in[0,5]$ ($G=1.000$, whereas in $L^2_\gamma$ on $z\ge z_{\min}$ the nonzero edge
 trace $Q_{\mathrm{op}}G\to H[g](1)\ne 0$ drives a short-time weighted transient peak $\approx 1.17$
 at $\gamma=0.5$ before the $2\gamma$ decay), a negative continuum-IBP cutoff surrogate
 ($\mu_{\mathrm{an}}<0$, whereas the unclosed discrete principal submatrix is non-contractive), finite-amplitude decay up to
@@ -253,7 +253,7 @@ Unweighted norms stay nearly flat (marginal).  Full coupled $(G,h)$ inherits the
 gap by block-triangular structure~\cite{findings_theta}.
 
 \paragraph{No transient growth (physical).}
-In the unweighted $L^2(dz)$ norm on $\tau\in[0,6]$, the tested smooth bulk and near-edge Gaussian bumps
+In the unweighted $L^2(dz)$ norm on $\tau\in[0,5]$, the tested smooth bulk and near-edge Gaussian bumps
 have amplification factor $G=1.000$ at all tested resolutions (\texttt{transient\_growth.py}, four
 $(N,z_{\min})$ grids; in the convective weighted norm $L^2_\gamma$ on $z\ge z_{\min}$, the nonzero edge
 trace $Q_{\mathrm{op}}G\to H[g](1)\ne 0$ produces the short-time weighted transient peak of Section~\ref{sec:nonlin}
@@ -700,10 +700,10 @@ Moreover, the subspace $\{H[g](1)=0\}$ is \emph{not} invariant under~\eqref{eq:c
 
 \paragraph{Numerical gates and Lean~4 algebraic/ODE verification.}
 Standalone Python gates spot-check the nonlinear algebraic identities, symbol norms, linear block constants, and static regularized weak-edge jump integral:
-\texttt{edge\_nonlinear\_comoving\_closure.py} (\texttt{NL-1..NL-6 PASS}),
-\texttt{edge\_nonlinear\_bootstrap\_closure.py} (\texttt{NB-1..NB-6 PASS}), and
-\texttt{edge\_coupled\_h\_nonlinear\_closure.py} (\texttt{CH-1..CH-4 PASS}).
-The companion Lean~4 modules (\texttt{NonlinearComoving.lean}, \texttt{NonlinearBootstrap.lean}, and
+\texttt{edge\_nonlinear\_\allowbreak comoving\_\allowbreak closure.py} (\texttt{NL-1..NL-6 PASS}),
+\texttt{edge\_nonlinear\_\allowbreak bootstrap\_\allowbreak closure.py} (\texttt{NB-1..NB-6 PASS}), and
+\texttt{edge\_coupled\_\allowbreak h\_nonlinear\_\allowbreak closure.py} (\texttt{CH-1..CH-4 PASS}; finite-grid spot checks only, not testing edge analyticity).
+The companion Lean~4 modules (\texttt{Nonlinear\allowbreak Comoving.lean}, \texttt{Nonlinear\allowbreak Bootstrap.lean}, and
 \texttt{CoupledHSector.lean}; \texttt{0~sorry}, \texttt{0~axioms} across all 9 modules in
 \texttt{lean/SingularBlowup/})
 machine-check the algebraic Gauge-(a) cancellations, rational symbol and telescoping series bounds,
@@ -783,8 +783,10 @@ gCLM $a$-family, are left for future work.
 \item \emph{Coupled $(G,h)$ block.}
   The coupled spectrum retains the convective gap, the $\Theta\to G$ resolvent gain saturates $O(1)$,
   and full coupled $(G,h)$ nonlinear asymptotic stability in $\mathcal{X}\times\mathcal{X}_h$ is proved
-  analytically in Theorem~\ref{thm:coupled_h} (with zero extra derivatives on $G$, verified by
-  \texttt{edge\_coupled\_h\_nonlinear\_closure.py}, \texttt{CH-1..CH-4 PASS}).
+  analytically in Theorem~\ref{thm:coupled_h} with zero extra derivatives on $G$ (cross-checked by four
+  standalone spot checks in \texttt{edge\_coupled\_\allowbreak h\_nonlinear\_\allowbreak closure.py},
+  \texttt{CH-1..CH-4 PASS}; finite-grid runs do not carry non-analytic Gauge-(a) modes and do not test
+  the edge-analyticity hypothesis).
 \end{enumerate}
 
 %--------------------------------------------------------------------------
@@ -1437,25 +1439,30 @@ exponentially at rate $e^{-\tau/32}$ with $B_\infty>0$.
 Let $q := e^{-z/2}h_z$ so that on $D(1,1)$, $h(1+v)=\sum_{k=1}^\infty d_k v^{k+1/2}$ gives
 $q(1+v)=\sum_{m=1}^\infty \tilde{d}_m v^m$ with $\tilde{d}_m := (m+\tfrac12)d_m$.
 Define the $h$-energy space $\mathcal{X}_h$ by the norm squared
-\[
-\mathcal{E}_h(q) := X_h + Y_h + Z_{h,\mathrm{disk}},\qquad
-X_h := \|q\|_{L^2_{1/4}([-\ln 2,\infty))}^2,\quad
-Y_h := \|q_z\|_{L^2_{1/4}([-\ln 2,\infty))}^2,\quad
+\begin{align*}
+\mathcal{E}_h(q) &:= X_h + Y_h + Z_{h,\mathrm{disk}}, \\
+X_h := \|q\|_{L^2_{1/4}([-\ln 2,\infty))}^2,\qquad
+Y_h &:= \|q_z\|_{L^2_{1/4}([-\ln 2,\infty))}^2,\qquad
 Z_{h,\mathrm{disk}} := \sum_{m=1}^\infty m^2|\tilde{d}_m|^2,
-\]
+\end{align*}
 and for any $B_0 := B(0) > 0$ set $\mu_h := 1000\,B_0^2$ and
 $\mathcal{E}_{\mathrm{tot}}(G,q) := \mathcal{E}(G) + \mu_h\,\mathcal{E}_h(q)$.
-Then there exists a constant $C_{\mathrm{tot}} = C_{\mathrm{tot}}(B_0) > 0$ such that for all initial data
+Then there exists an absolute constant $C_{\mathrm{tot}} > 0$ (independent of $B_0$) such that for all initial data
 $(G_0, q_0) \in \mathcal{X} \times \mathcal{X}_h$ with $\mathcal{E}_{\mathrm{tot}}(G_0, q_0) < (32\,C_{\mathrm{tot}})^{-2}$,
 the full coupled Gauge-(a) system~\eqref{eq:comoving_exact} admits a unique global mild/characteristic
-solution $(G, q) \in C([0,\infty); \mathcal{X}\times\mathcal{X}_h)$ with zero analyticity-radius shrinkage,
-$B(\tau) \in [\tfrac12 B_0, 2 B_0]$ for all $\tau\ge 0$, and
+solution $(G, q) \in C([0,\infty); \mathcal{X}\times\mathcal{X}_h)$ in $\{\mathcal{E}_{\mathrm{tot}} < (32\,C_{\mathrm{tot}})^{-2}\}$
+with zero analyticity-radius shrinkage, $B(\tau) \in [\tfrac12 B_0, 2 B_0]$ for all $\tau\ge 0$, satisfying the closed Riccati inequality
 \[
-\frac{d}{d\tau}\mathcal{E}_{\mathrm{tot}} \le -\frac{1}{16}\,\mathcal{E}_{\mathrm{tot}} + C_{\mathrm{tot}}\,\mathcal{E}_{\mathrm{tot}}^{3/2},
-\qquad
-\mathcal{E}_{\mathrm{tot}}(\tau) \le \mathcal{E}_{\mathrm{tot}}(0)\,e^{-\tau/32},
+\frac{d}{d\tau}\mathcal{E}_{\mathrm{tot}} \le -\frac{1}{16}\,\mathcal{E}_{\mathrm{tot}} + C_{\mathrm{tot}}\,\mathcal{E}_{\mathrm{tot}}^{3/2}
 \]
-together with $|c_l(\tau)-2| + |c_\omega(\tau)+1| + |B(\tau)-B_\infty| \le C\sqrt{\mathcal{E}_{\mathrm{tot}}(0)}\,e^{-\tau/64}$.
+(in differential form on the truncated/mollified approximations below and in the integrated form
+$\mathcal{E}_{\mathrm{tot}}(\tau)-\mathcal{E}_{\mathrm{tot}}(s)\le\int_s^\tau(-\frac{1}{16}\mathcal{E}_{\mathrm{tot}}+C_{\mathrm{tot}}\mathcal{E}_{\mathrm{tot}}^{3/2})\,d\tau'\le -\frac{1}{32}\int_s^\tau\mathcal{E}_{\mathrm{tot}}\,d\tau'$
+for all $0\le s\le\tau<\infty$), and decaying exponentially for all $\tau\ge 0$:
+\[
+\mathcal{E}_{\mathrm{tot}}(\tau) \le \mathcal{E}_{\mathrm{tot}}(0)\,e^{-\tau/32},
+\qquad
+|c_l(\tau)-2| + |c_\omega(\tau)+1| + |B(\tau)-B_\infty| \le C\sqrt{\mathcal{E}_{\mathrm{tot}}(0)}\,e^{-\tau/64}.
+\]
 In particular, no extra far-field derivative on $G$ is required.
 \end{thm}
 \begin{proof}
@@ -1470,14 +1477,17 @@ while the $G$-equation in~\eqref{eq:comoving_exact} gains only the linear forcin
 Because $\|\cdot\|_{\mathcal{X}}^2 = 20 X_{\mathrm{far}} + Y_{\mathrm{far}} + 20 Z_{\mathrm{disk}}$,
 we have $\|q\|_{\mathcal{X}}^2 \le 20\,\mathcal{E}_h(q)$.
 
-\emph{Step 1 (Unweighted 1-derivative smoothing of $Q_{\mathrm{op}}$).}
-In Mellin variables $s=\sigma+i\tau$, $\mathcal{M}[\partial_z^k(Q_{\mathrm{op}}G)](s) = m_k(s)\,\widehat{\partial_z G}(s+\tfrac12)$
-for $k=2$ and $\mathcal{M}[\partial_z(Q_{\mathrm{op}}W)](s) = m_1(s)\,\widehat{W}(s+\tfrac12)$ for $k=1$, where on the
-unweighted line $s=i\tau$ ($\sigma=0$) the simple pole of $\coth(\pi\tau)$ at $\tau=0$ cancels:
+\emph{Step 1 (Unweighted 1-derivative smoothing of $\tfrac12 Q_{\mathrm{op}}$ and $Q_{\mathrm{op}}$).}
+By $\mathcal{M}[\tfrac12 Q_{\mathrm{op}}G](s) = c(s+\tfrac12)\widehat{G}(s+\tfrac12)$, the Mellin multipliers
+of $\tfrac12\partial_z^2(Q_{\mathrm{op}}G)$ acting on $\widehat{\partial_z G}(s+\tfrac12)$ and of
+$\tfrac12\partial_z(Q_{\mathrm{op}}W)$ acting on $\widehat{W}(s+\tfrac12)$ on the unweighted line
+$s=i\tau$ ($\operatorname{Re} s = 0$) are
 \[
 m_2(i\tau) = \frac{i\tau^2\coth(\pi\tau)}{(\tfrac12+i\tau)(2+2i\tau)},\qquad
-m_1(i\tau) = \frac{-\tau\coth(\pi\tau)}{2+2i\tau}.
+m_1(i\tau) = \frac{\tau\coth(\pi\tau)}{2+2i\tau}
 \]
+(where the simple pole of $\coth(\pi\tau)$ at $\tau=0$ cancels, with $m_1(0) = +\frac{1}{2\pi}$ and $2m_1(0)=+\frac{1}{\pi}$).
+The full operator $Q_{\mathrm{op}}$ has multipliers $2m_2$ and $2m_1$.
 Since $\sinh x \ge x$ for all $x>0$ implies $\coth^2(\pi\tau) = 1 + \sinh^{-2}(\pi\tau) \le 1 + (\pi\tau)^{-2}$,
 we obtain
 \[
@@ -1486,26 +1496,28 @@ we obtain
 \qquad
 |m_1(i\tau)|^2 \le \frac{\tau^2 + \pi^{-2}}{4(1+\tau^2)} < \frac{1}{4}
 \]
-for all $\tau\in\mathbb{R}$ (Lean: \texttt{CoupledHSector.m2\_re0\_sq\_lt\_quarter},
-\texttt{m1\_re0\_sq\_lt\_quarter}).  By Plancherel's theorem and the $L^2_{1/2}$-to-$\mathcal{X}$ embedding,
+for all $\tau\in\mathbb{R}$ (Lean: \texttt{CoupledHSector.\allowbreak m2\_re0\_sq\_lt\_quarter},
+\texttt{m1\_re0\_sq\_lt\_quarter}), so $|2m_2(i\tau)| < 1$ and $|2m_1(i\tau)| < 1$.
+By Plancherel's theorem and the embedding $\|G_z\|_{L^2_{1/2}(\mathbb{R})}^2 \le \frac{2}{3}Z_{\mathrm{disk}} + \sqrt{2}\,Y_{\mathrm{far}} \le \sqrt{2}\,\mathcal{E}(G)$,
 \[
 \|\partial_z^2(Q_{\mathrm{op}}G)\|_{L^2_0(\mathbb{R})} \le \|\partial_z G\|_{L^2_{1/2}(\mathbb{R})}
   \le 2^{1/4}\sqrt{\mathcal{E}(G)},
 \qquad
 \|\partial_z(Q_{\mathrm{op}}W)\|_{L^2_0(\mathbb{R})} \le \|W\|_{L^2_{1/2}(\mathbb{R})}.
 \]
-Since $p[G] = \tfrac12 V_g(1) - \tfrac12\widetilde{Q}_{\mathrm{op}}G - \tfrac12 H[g](1)$ differs from
-$-\tfrac12 Q_{\mathrm{op}}G$ by constants, $\|p_{zz}\|_{L^2_0(\mathbb{R})} \le \tfrac12\cdot 2^{1/4}\sqrt{\mathcal{E}(G)}$
+Since $p[G] = V_G(1) - Q_{\mathrm{op}}G$ differs from $-Q_{\mathrm{op}}G$ by a spatial constant,
+$\|p_{zz}\|_{L^2_0(\mathbb{R})} \le 2^{1/4}\sqrt{\mathcal{E}(G)}$
 with zero extra derivatives on $G$ and zero weight loss at $+\infty$.
 
 \emph{Step 2 (Far-field $q$-energy and quasilinear commutator).}
 Testing the $q$- and $q_z$-equations against $e^{-z/2}q$ and $e^{-z/2}q_z$ on $[z_0,\infty)$ ($z_0=-\ln 2$)
-gives linear damping $-3(X_h+Y_h)$ with boundary inflow at $z_0$ bounded by $2\sqrt{2}/3 < 1$
-(Lean: \texttt{CoupledHSector.coupled\_q\_inflow\_lt\_one}), which is absorbed by the disk dissipation
-$D_{h,\mathrm{disk}} := \sum_{m=1}^\infty m^3|\tilde{d}_m|^2$ below.
+gives linear damping $-3(X_h+Y_h)$ with boundary inflow at $z_0$ bounded jointly by
+$(2\sqrt{2}\,\mathrm{Li}_2(\tfrac14) + 2\sqrt{2}/3)\,Z_{h,\mathrm{disk}} \le 1.70\,Z_{h,\mathrm{disk}}$
+(using $2\sqrt{2}/3 < 1$; Lean: \texttt{CoupledHSector.\allowbreak coupled\_q\_inflow\_lt\_one}), which is absorbed by
+the disk dissipation $D_{h,\mathrm{disk}} := \sum_{m=1}^\infty m^3|\tilde{d}_m|^2$ below.
 In the $Y_h$-estimate, the only term involving $p_{zz}$ is the quasilinear commutator
-$2\int_{z_0}^\infty e^{-z/2} q_z\, p_{zz}\, q\,dz$; by Step~1 and the 1D Sobolev bound
-$\|e^{-z/4}q\|_{L^\infty([z_0,\infty))}^2 \le \tfrac32(X_h + Y_h)$,
+$2\int_{z_0}^\infty e^{-z/2} q_z\, p_{zz}\, q\,dz$; by Step~1, the 1D Sobolev bound
+$\|e^{-z/4}q\|_{L^\infty([z_0,\infty))}^2 \le \tfrac32(X_h + Y_h)$, and $2\sqrt{3/2} < 3$,
 \[
 \left|2\int_{z_0}^\infty e^{-z/2} q_z\, p_{zz}\, q\,dz\right|
   \le 2\,\|e^{-z/4}q\|_{L^\infty}\|q_z\|_{L^2_{1/4}}\|p_{zz}\|_{L^2_0}
@@ -1514,18 +1526,30 @@ $\|e^{-z/4}q\|_{L^\infty([z_0,\infty))}^2 \le \tfrac32(X_h + Y_h)$,
 All remaining nonlinear terms involve only $p$ and $p_z$, which are already controlled in $L^\infty$
 by $C\sqrt{\mathcal{E}(G)}$ via Lemma~\ref{lem:embeddings}.
 
-\emph{Step 3 (Disk $q$-energy and convolution split).}
-On $D(1,1)$, $q(1+v)=\sum_{m\ge 1}\tilde{d}_m v^m$ satisfies
-$\partial_\tau\tilde{d}_m + (2m+1)\tilde{d}_m = \sum_{j+k=m} (k + j + \tfrac12) q_j\tilde{d}_k$,
-so testing against $m^2\tilde{d}_m$ yields linear dissipation $-4 D_{h,\mathrm{disk}} - 2 Z_{h,\mathrm{disk}}$.
-Splitting $\sqrt{m}\le\sqrt{j}+\sqrt{k}$ for $j+k=m$ (Lean: \texttt{CoupledHSector.coupled\_disk\_sqrt\_split})
-and applying Young's convolution inequality with
+\emph{Step 3 (Disk $q$-energy, $v=1$ boundary cancellation, and convolution split).}
+With $p(1+v) = p_0 - \sum_{j\ge 1} q_j v^j$ (Lemma~\ref{lem:embeddings}), the Taylor coefficients
+$q_j = q_j^{\mathrm{disk}} + q_j^{\mathrm{far}}$ individually carry $O(G(0)/j^2)$ boundary terms at $v=1$
+that cancel identically upon summing $q_j^{\mathrm{disk}}$ and $q_j^{\mathrm{far}}$ (after one integration by parts
+on $[0,\infty)$ for $q_j^{\mathrm{far}}$ and the discrete Hilbert commutator on $q_j^{\mathrm{disk}}$), giving
+$\|j^2 q_j\|_{\ell^2} \le \sqrt{Z_{\mathrm{disk}}} + \sqrt{Y_{\mathrm{far}}/\pi}$ and hence
+$\|j^{3/2} q_j\|_{\ell^2},\, \|j q_j\|_{\ell^1} \le C\sqrt{\mathcal{E}(G)}$.
+On $D(1,1)$, $q(1+v)=\sum_{m\ge 1}\tilde{d}_m v^m$ satisfies the exact coefficient ODE
+\[
+\partial_\tau\tilde{d}_m + (2m+1)\tilde{d}_m
+  = (m+\tfrac12)p_0\,\tilde{d}_m - (m+\tfrac12)\sum_{j+k=m,\,j\ge 1} q_j\tilde{d}_k.
+\]
+Testing against $m^2\tilde{d}_m$ yields linear dissipation $-4 D_{h,\mathrm{disk}} - 2 Z_{h,\mathrm{disk}}$,
+leaving at least $1.3\,D_{h,\mathrm{disk}}$ after absorbing the $\le 1.70\,Z_{h,\mathrm{disk}}$ far-field
+inflow and reserving rate $-3\,Z_{h,\mathrm{disk}}$ for $\mathcal{E}_h$.
+The $p_0$-term is bounded by $3|p_0| D_{h,\mathrm{disk}} \le C\sqrt{\mathcal{E}(G)}\,D_{h,\mathrm{disk}}$,
+and splitting $\sqrt{m}\le\sqrt{j}+\sqrt{k}$ for $j+k=m$
+(Lean: \texttt{CoupledHSector.\allowbreak coupled\_disk\_sqrt\_split}) with Young's convolution inequality against
 $\|j^{3/2}q_j\|_{\ell^2}, \|j q_j\|_{\ell^1} \le C\sqrt{\mathcal{E}(G)}$ bounds every nonlinear disk
-term by $C\sqrt{\mathcal{E}(G)}\,D_{h,\mathrm{disk}}$, giving
+term by $C\sqrt{\mathcal{E}(G)}\,D_{h,\mathrm{disk}}$.  Hence
 $\dot{\mathcal{E}}_h \le -3\,\mathcal{E}_h + C_h\sqrt{\mathcal{E}(G)}\,\mathcal{E}_h$ once
-$C\sqrt{\mathcal{E}(G)} \le 2$.
+$C\sqrt{\mathcal{E}(G)} \le 1$.
 
-\emph{Step 4 (Coupled coercivity, $B(\tau)$-trapping, and LWP).}
+\emph{Step 4 (Coupled coercivity, $B(\tau)$-trapping, and coupled LWP in $\mathcal{X}\times\mathcal{X}_h$).}
 By Cauchy--Schwarz on $\mathcal{X}$, the forcing $B(\tau)q$ contributes at most
 $2 B(\tau)\sqrt{\mathcal{E}(G)}\,\|q\|_{\mathcal{X}} \le 2 B(\tau)\sqrt{20\,\mathcal{E}(G)\,\mathcal{E}_h(q)}$
 to $\dot{\mathcal{E}}(G)$.  Under the bootstrap hypothesis $B(\tau) \le 2 B_0$, with $\mu_h = 1000 B_0^2$
@@ -1534,16 +1558,38 @@ the quadratic Young inequality
 -\frac{1}{8}\mathcal{E} + 4 B_0\sqrt{20\,\mathcal{E}\,\mathcal{E}_h} - 3\mu_h\mathcal{E}_h
   \le -\frac{1}{16}\bigl(\mathcal{E} + \mu_h\mathcal{E}_h\bigr)
 \]
-(Lean: \texttt{CoupledHSector.coupled\_h\_linear\_coercivity}) yields
-$\dot{\mathcal{E}}_{\mathrm{tot}} \le -\frac{1}{16}\mathcal{E}_{\mathrm{tot}} + C_{\mathrm{tot}}\mathcal{E}_{\mathrm{tot}}^{3/2}$.
-By the Riccati barrier trapping lemma, $\mathcal{E}_{\mathrm{tot}}(0) < (32 C_{\mathrm{tot}})^{-2}$ implies
-$\mathcal{E}_{\mathrm{tot}}(\tau) \le \mathcal{E}_{\mathrm{tot}}(0) e^{-\tau/32}$, and choosing
-$C_{\mathrm{tot}}$ large enough that $\int_0^\infty |H[g](1)|\,d\tau \le C\sqrt{\mathcal{E}_{\mathrm{tot}}(0)} \le \ln 2$
-closes $B(\tau) \in [\tfrac12 B_0, 2 B_0]$ globally with $B(\tau) \to B_\infty > 0$.
-Finally, local well-posedness in $\mathcal{X}\times\mathcal{X}_h$ follows by the same Kato--Majda
-frozen-velocity iteration as Proposition~\ref{prop:lwp}, with weak-norm contraction in
-$\mathcal{W}\times\mathcal{W}_h$ closed by the unweighted $m_1$ bound
-$\|\partial_z(Q_{\mathrm{op}}W)\|_{L^2_0} \le \|W\|_{L^2_{1/2}} \le C\|W\|_{\mathcal{W}}$ from Step~1.
+(Lean: \texttt{CoupledHSector.\allowbreak coupled\_h\_linear\_coercivity}) yields
+\[
+\dot{\mathcal{E}}_{\mathrm{tot}}
+  \le -\frac{1}{16}\mathcal{E}_{\mathrm{tot}}
+    + C_{\mathrm{nl}}\mathcal{E}^{3/2} + \mu_h C_h\sqrt{\mathcal{E}}\,\mathcal{E}_h
+  \le -\frac{1}{16}\mathcal{E}_{\mathrm{tot}} + C_{\mathrm{tot}}\mathcal{E}_{\mathrm{tot}}^{3/2}
+\]
+with $C_{\mathrm{tot}} := \max(C_{\mathrm{nl}}, C_h, C_B)$ independent of $B_0$, where $C_B$ is chosen so that
+$\mathcal{E}_{\mathrm{tot}}(0) < (32 C_{\mathrm{tot}})^{-2}$ implies
+$\int_0^\infty |H[g](1)|\,d\tau \le C\sqrt{\mathcal{E}_{\mathrm{tot}}(0)} \le \ln 2$, closing
+$B(\tau) \in [\tfrac12 B_0, 2 B_0]$ globally with $B(\tau) \to B_\infty > 0$.
+
+Finally, local well-posedness and uniqueness in $\{\mathcal{E}_{\mathrm{tot}} < (32 C_{\mathrm{tot}})^{-2}\}$
+follow by extending the Kato--Majda frozen-velocity iteration of Proposition~\ref{prop:lwp} to $(G^{(n)}, q^{(n)}, B^{(n)})$:
+for frozen $(G^{(n)}, B^{(n)})$, the linear $q^{(n+1)}$-transport equation
+$\partial_\tau q^{(n+1)} + (2-p[G^{(n)}])\partial_z q^{(n+1)} + (1-\tfrac12 p[G^{(n)}]-p_z[G^{(n)}])q^{(n+1)} = 0$
+propagates along the same zero-shrinkage characteristic flow $\Phi_{\mathbb{R}}/\Phi_{\mathrm{disk}}$ of
+Proposition~\ref{prop:lwp} (preserving $v$-analyticity on $D(1,1)$ since $q_0(1)=0$), and $B^{(n)} q^{(n+1)}$
+enters the linear $G^{(n+1)}$-Duhamel map as a bounded forcing in $\mathcal{X}$.
+Uniform strong-norm trapping $\mathcal{E}_{\mathrm{tot}}(G^{(n+1)}, q^{(n+1)}) \le \mathcal{E}_{\mathrm{tot}}(0)e^{-\tau/32}$
+follows by finite-mode disk truncation $M\to\infty$ and spatial Friedrichs mollification $J_\varepsilon$
+(for the $q_z$ commutator $[J_\varepsilon, p_z]\partial_z q$, Friedrichs' lemma applies directly since
+$p_{zz}\in L^2_0$ and $q_z\in L^2_{1/4}$), passing to the integrated Riccati inequality as $M\to\infty, \varepsilon\downarrow 0$.
+Define the weak $q$-space $\mathcal{W}_h$ by
+$\|r\|_{\mathcal{W}_h}^2 := \|r\|_{L^2_{1/4}(\mathbb{R})}^2 + \sum_{m=1}^\infty |\tilde{r}_m|^2$.
+For differences $(W^{(n)}, R^{(n)}) := (G^{(n+1)}-G^{(n)}, q^{(n+1)}-q^{(n)})$, the forcing in the $R^{(n)}$-equation
+is $p[W^{(n-1)}]q_z^{(n)} + (\tfrac12 p[W^{(n-1)}] + p_z[W^{(n-1)}])q^{(n)}$; using Step~1,
+$\|p_z[W^{(n-1)}]\|_{L^2_0(\mathbb{R})} \le \|W^{(n-1)}\|_{L^2_{1/2}(\mathbb{R})} \le C\|W^{(n-1)}\|_{\mathcal{W}}$,
+so $\|p_z[W^{(n-1)}] q^{(n)}\|_{L^2_{1/4}} \le \|e^{-z/4} q^{(n)}\|_{L^\infty}\|p_z[W^{(n-1)}]\|_{L^2_0} \le C\sqrt{R_0}\|W^{(n-1)}\|_{\mathcal{W}}$,
+while on $D(1,1)$ the $\mathcal{H}^0$ convolution bound closes against $\|q^{(n)}\|_{\mathcal{X}_h}\le\sqrt{R_0/\mu_h}$.
+Hence $(G^{(n)}, q^{(n)}, B^{(n)})$ is a strict contraction in $C([0,T_0];\mathcal{W}\times\mathcal{W}_h\times\mathbb{R})$,
+yielding existence, uniqueness in $\{\mathcal{E}_{\mathrm{tot}} < (32 C_{\mathrm{tot}})^{-2}\}$, and global continuation.
 \end{proof}
 
 %==========================================================================
