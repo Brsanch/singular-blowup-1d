@@ -14,6 +14,10 @@ Checks (all pass => exit 0):
           verified directly on the complex strip |Im z| <= rho = 0.5.
   TB-4  Lemma 4: Horizon regularity V_G(r^2) = (2/3) c_1 r^2 + O(r^3 |ln r|) as r -> 0+
         for curved G in X_rho^0 (a(G) = 0, c_1 != 0), confirming C^1 transversal crossing.
+  TB-5  Small-data solve of (1.2) on s in [0, 2]: finite trajectory, sup_(0,2] ||G(s)||_{X_1/4} <= ||G(0)||_{X_1/2},
+        quadratic scaling of the nonlinear defect, and PDE residuals at bulk points (linear part also with Q_real).
+Note: the IBP half of TB-1 is an integration-by-parts identity that holds for ANY Q; it is the
+real-space Q_real comparison that makes TB-1 sensitive to Q.
 """
 from __future__ import annotations
 
@@ -257,8 +261,24 @@ def check_tb4() -> bool:
 
 
 def check_tb5() -> bool:
-    """Small-data strip-norm check in the theorem's own norm: max|G_0| = 0.002
-    (||G_0||_{X_{0.5}} ~ 0.24 < 1) with tanh end-sponge, verifying sup_s ||G(s)||_{X_{0.25}}/||G(0)||_{X_{0.5}} <= 1."""
+    """Small-data solve of the s-clock equation (1.2) on s in [0, 2], checked in the theorem's own norm
+    and against an independent real-space Q.
+
+    Repaired 2026-11-22 (review of b92611c): the old TB-5 took its sup at s = 0, so its ratio was a
+    property of the initial data alone (identical under P -> 0, 30P, G^2, or a wrong linear rate), and
+    its builtin-max accumulator dropped NaN, so a blown-up run passed. Now:
+      (a) every strip norm on the trajectory is finite (NaN/inf fails);
+      (b) sup_{0 < s <= 2} ||G(s)||_{X_{1/4}} <= ||G(0)||_{X_{1/2}} (the Cε bound, rho_1 = rho_0/2). At this
+          amplitude the sup sits at the first step s = ds, so (b) does not discriminate wrong dynamics;
+          the discriminating checks are (c) and (d);
+      (c) the nonlinear defect d(eps) = sup_s ||G_eps(s) - S_g(s) eps G_0||_{X_{1/4}} is nonzero and
+          scales quadratically: d(2 eps)/d(eps) in [3.6, 4.4];
+      (d) residuals at bulk points (s = 1), coded independently of the solver's right-hand side:
+          linear flow  dG_lin/ds - (1/2) Q G_lin  (< 1e-3; and < 3e-3 with the real-space Q_real) — G_lin is
+                       built analytically, so this checks the generator identity and Q, not the solver; and
+          defect       d(delta)/ds - (1/2) Q delta - P(G)  (delta = G - G_lin; < 1e-3 relative to |P|).
+          Q is the spectral Q that TB-1 ties to the real-space quadrature.
+    The strip norm keeps |xi| <= 18 (float64 noise floor); it is a truncated norm."""
     Nz = 4096
     zmin, zmax = -64.0, 64.0
     L = zmax - zmin
@@ -281,12 +301,12 @@ def check_tb5() -> bool:
     sponge = 0.5 * (1.0 + np.tanh((z - (zmin + 10.0)) / 1.5)) * 0.5 * (1.0 - np.tanh((z - (zmax - 10.0)) / 1.5))
 
     h0 = np.where(u < 200.0, (u**3) * np.exp(-u), 0.0)
-    G0 = Ng(h0)
-    sc = float(np.max(np.abs(G0[(z > -12) & (z < 12)])))
-    eps = 0.002
-    h = eps * h0 / sc
+    # Grid-independent normalisation: max|N_g(u^3 e^{-u})| (attained near z = -3.84), fixed literal
+    # computed at Nz = 131072 on [-64, 64]; a grid max would make the data depend on the grid.
+    sc = 1.08696008
 
     keep = np.abs(xi) <= 18.0
+
     def strip_norm(G_prof, rho_val):
         gh1 = np.fft.fft(w1 * G_prof) * dz
         gh2 = np.fft.fft(w2 * G_prof) * dz
@@ -294,31 +314,78 @@ def check_tb5() -> bool:
         n2 = math.sqrt(float(np.sum(np.exp(2 * rho_val * np.abs(xi[keep])) * np.abs(gh2[keep]) ** 2) * dxi / (2 * math.pi)))
         return n1 + n2
 
-    n0_rho0 = strip_norm(Ng(h), 0.5)
-    S_max, Ns = 1.2, 240
+    S_max, Ns = 2.0, 400
     ds = S_max / Ns
     x = u * ds
     ex = np.exp(-x)
     phi1 = np.where(x < 1e-4, 1.0 - 0.5 * x + x**2 / 6.0 - x**3 / 24.0, (1.0 - ex) / x)
     phi2 = np.where(x < 1e-4, 0.5 - x / 6.0 + x**2 / 24.0 - x**3 / 120.0, (1.0 - phi1) / x)
 
+    def P_of(Gc, Qc):
+        return -Qc * Dg(Gc) + 0.5 * Qc * Gc
+
     def rhs_f(hc):
         Gc = Ng(hc)
-        Qc = Q(Gc)
-        return sponge * NgI(-Qc * Dg(Gc) + 0.5 * Qc * Gc)
+        return sponge * NgI(P_of(Gc, Q(Gc)))
 
-    max_rho1 = strip_norm(Ng(h), 0.25)
-    for _ in range(Ns):
-        f0 = rhs_f(h)
-        f1 = rhs_f(ex * h + ds * phi1 * f0)
-        h = ex * h + ds * (phi1 - phi2) * f0 + ds * phi2 * f1
-        max_rho1 = max(max_rho1, strip_norm(Ng(h), 0.25))
+    def solve(eps):
+        h = eps * h0 / sc
+        hs = [h.copy()]
+        for _ in range(Ns):
+            f0 = rhs_f(h)
+            f1 = rhs_f(ex * h + ds * phi1 * f0)
+            h = ex * h + ds * (phi1 - phi2) * f0 + ds * phi2 * f1
+            hs.append(h.copy())
+        return hs
 
-    ratio = max_rho1 / n0_rho0
-    ok = bool(n0_rho0 < 0.5 and ratio < 1.0)
+    eps = 0.002
+    s_grid = np.arange(Ns + 1) * ds
+    hs1 = solve(eps)
+    hs2 = solve(2.0 * eps)
+    G_lin1 = [Ng(np.exp(-u * s) * (eps * h0 / sc)) for s in s_grid]
+    G_lin2 = [Ng(np.exp(-u * s) * (2.0 * eps * h0 / sc)) for s in s_grid]
+    G1 = [Ng(h) for h in hs1]
+    G2 = [Ng(h) for h in hs2]
+
+    n0_rho0 = strip_norm(G1[0], 0.5)
+    traj = np.array([strip_norm(g, 0.25) for g in G1[1:]])
+    d1 = np.array([strip_norm(g - gl, 0.25) for g, gl in zip(G1, G_lin1)])
+    d2 = np.array([strip_norm(g - gl, 0.25) for g, gl in zip(G2, G_lin2)])
+    finite = bool(np.all(np.isfinite(traj)) and np.all(np.isfinite(d1)) and np.all(np.isfinite(d2)) and math.isfinite(n0_rho0))
+    sup_traj = float(np.max(traj)) if finite else float("nan")
+    D1, D2 = float(np.max(d1)), float(np.max(d2))
+    q_ratio = D2 / D1 if (finite and D1 > 0.0) else float("nan")
+
+    # (d) residuals at bulk points z in {-3,-1,1,3}, s = 1, coded independently of the solver's rhs:
+    #     the spectral Q is the one TB-1 ties to the real-space quadrature; in addition the linear
+    #     residual is re-evaluated with Q_real itself ([-40, 40], M = 8192; its own error is ~1.5e-3).
+    z_pts = np.array([-3.0, -1.0, 1.0, 3.0])
+    j = Ns // 2
+    at = lambda F: np.interp(z_pts, z, F)
+    dGlin_ds = (at(G_lin1[j + 1]) - at(G_lin1[j - 1])) / (2.0 * ds)
+    res_lin = float(np.max(np.abs(dGlin_ds - 0.5 * at(Q(G_lin1[j])))) / np.max(np.abs(dGlin_ds)))
+    QlinR = q_real_eval(lambda t: np.interp(t, z, G_lin1[j]), z_pts, -40.0, 40.0, 8192)
+    res_lin_real = float(np.max(np.abs(dGlin_ds - 0.5 * QlinR)) / np.max(np.abs(dGlin_ds)))
+    delta = [g - gl for g, gl in zip(G1, G_lin1)]
+    ddel_ds = (at(delta[j + 1]) - at(delta[j - 1])) / (2.0 * ds)
+    QG_j = Q(G1[j])
+    P_chk = at(-QG_j * Dg(G1[j]) + 0.5 * QG_j * G1[j])
+    res_def = float(np.max(np.abs(ddel_ds - 0.5 * at(Q(delta[j])) - P_chk)) / np.max(np.abs(P_chk)))
+
+    ok = bool(
+        finite
+        and n0_rho0 < 0.5
+        and sup_traj <= n0_rho0
+        and D1 > 0.0
+        and 3.6 <= q_ratio <= 4.4
+        and math.isfinite(res_lin) and res_lin < 1e-3
+        and math.isfinite(res_lin_real) and res_lin_real < 3e-3
+        and math.isfinite(res_def) and res_def < 1e-3
+    )
     print(
-        f"TB-5 Small-data strip norm X_rho PASS={ok}: "
-        f"||G(0)||_{{X_0.5}}={n0_rho0:.4f}, sup||G(s)||_{{X_0.25}}={max_rho1:.4f}, ratio={ratio:.4f}"
+        f"TB-5 Small-data solve s<=2 in X_rho PASS={ok}: "
+        f"||G(0)||_{{X_0.5}}={n0_rho0:.4f}, sup_(0,2]||G(s)||_{{X_0.25}}={sup_traj:.4f}, "
+        f"defect d(2eps)/d(eps)={q_ratio:.3f}, res_lin={res_lin:.2e} (Q_real: {res_lin_real:.2e}), res_defect={res_def:.2e} (s=1)"
     )
     return ok
 

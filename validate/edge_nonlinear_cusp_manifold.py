@@ -22,20 +22,51 @@ Checks (all pass => exit 0):
         (c) Zero-initial-data Duhamel W(s) = int_0^s S(s-s') N_2 ds' solves W_s - (1/2) Q W = N_2
             with automatic weak-edge balance (1/2) Q W(0, s) + N_2(0) = 0 (< 1e-6).
   NM-3  Full nonlinear conjugated Picard fixed-point iteration on s in [0, 1.2] (> s_inf ~ 1.0)
-        for G_0(w) = w/(2+w)^2, eps = 0.05 (with unmodified linear initial cusp W(w, 0) = 0):
-        (a) Geometric convergence ||dG|| < 1e-10, ||dW|| < 1e-10.
-        (b) Full nonlinear s-clock PDE residuals < 2e-5 and |a(s) + D(s)| < 1e-6.
-        (c) Physical-time reconstruction (r(s) = sqrt(lambda), tau(s) -> +inf as s -> s_inf-)
-            verifies BOTH original physical-time nonlinear PDEs (*) and |a(tau) + D(tau)| < 1e-6
-            across tau in {0.2, 0.6, 1.5, 3.0}.
+        for G_0(w) = w/(2+w)^2, eps = 0.08, N_s = 128, domain [-64, 64], Nz = 4096 (one cell; no domain or
+        resolution scan in this gate), with unmodified linear initial cusp W(w, 0) = 0:
+        (a) all iterates finite; Picard ||dG|| < 1e-10, ||dW|| < 1e-10 (loop stops at 1e-11 or 24 iterations).
+        (b) s-clock PDE residuals res_G, res_H < 1e-6 on the bulk, |a(s) + D(s)| < 1e-6 at z = -18,
+            and the scalar edge law D(1.2) = -a0/(1 + a0*1.2/2) to < 1e-7.
+        (c) Physical-time reconstruction (r(s) = sqrt(lambda), tau(s) -> +inf as s -> s_inf-), |s_inf - 1| < 0.05,
+            at tau in {0.2, 0.6}, v in {0.2, 1, 4}: both physical-time PDEs (*) to < 1e-5 and
+            |a(tau) + D(tau)| < 1e-6. V_G in (*) comes from an INDEPENDENT adaptive quadrature of its definition
+            on the reconstructed physical profile (not the z-grid functional that drives the horizon ODE);
+            |V_ODE - V_indep| < 1e-8, quadrature error < 1e-9.
+        (d) V_G control: rerunning the reconstruction with V -> 3V, -V, 0 in the ODE path (the only place the
+            reconstruction uses V) must raise res_G(*) >= 50x.
+        Not checked: a wrong V_G formula coded identically in both implementations (no self-consistency check
+        can see that).
+All thresholds fail on NaN/inf (no builtin max/min accumulators).
 """
 from __future__ import annotations
 
 import math
+import warnings
+
 import mpmath as mp
 import numpy as np
+from scipy.integrate import IntegrationWarning, quad
 from scipy.interpolate import make_interp_spline
 from scipy.special import loggamma
+
+
+def _isfin(*xs) -> bool:
+    return all(bool(np.all(np.isfinite(x))) for x in xs)
+
+
+def _lt(x, tol) -> bool:
+    """x < tol, and False for NaN/inf (never NaN-blind)."""
+    return bool(np.isfinite(float(x)) and float(x) < tol)
+
+
+def _gt(x, tol) -> bool:
+    return bool(np.isfinite(float(x)) and float(x) > tol)
+
+
+def _nanmax(vals) -> float:
+    """max that PROPAGATES NaN (builtin max silently drops it); NaN for an empty input."""
+    arr = np.asarray([float(v) for v in vals], dtype=float)
+    return float(np.max(arr)) if arr.size else float("nan")
 
 
 def check_nm1() -> bool:
@@ -65,7 +96,7 @@ def check_nm1() -> bool:
         )
 
     # (a) Exact V_{G_1}(tau) vs quadrature (confirming V_{G_1}(tau) != e^{-tau} V_{G_0})
-    max_v_err = mp.mpf(0)
+    v_errs = []
     for tau in (mp.mpf("0.0"), mp.mpf("0.5"), mp.mpf("1.5")):
         et = mp.exp(-tau)
         v_quad = -(mp.exp(tau) / mp.pi) * mp.quad(
@@ -73,8 +104,9 @@ def check_nm1() -> bool:
             [0, et / 4, et, 1, 10, mp.inf],
         )
         v_exact = -2 + 2 * mp.sqrt(b) * mp.exp(tau) * mp.log(1 + et / mp.sqrt(b))
-        max_v_err = max(max_v_err, abs(v_quad - v_exact))
+        v_errs.append(abs(v_quad - v_exact))
 
+    max_v_err = mp.mpf(_nanmax(v_errs)) if all(mp.isfinite(e) for e in v_errs) else mp.nan
     v0 = -2 + 2 * mp.sqrt(b) * mp.log(1 + 1 / mp.sqrt(b))
     v_half = -2 + 2 * mp.sqrt(b) * mp.exp(mp.mpf("0.5")) * mp.log(1 + mp.exp(-mp.mpf("0.5")) / mp.sqrt(b))
     non_exp_gap = abs(v_half - mp.exp(-mp.mpf("0.5")) * v0)
@@ -128,11 +160,11 @@ def check_nm1() -> bool:
     slope_ratio = abs(s2 / s1 - 1)
 
     ok = bool(
-        max_v_err < 1e-20
-        and non_exp_gap > 1e-2
-        and err_r1_edge < 1e-30
-        and err_r22_edge < 1e-30
-        and slope_ratio < 0.05
+        _lt(max_v_err, 1e-20)
+        and _gt(non_exp_gap, 1e-2)
+        and _lt(err_r1_edge, 1e-30)
+        and _lt(err_r22_edge, 1e-30)
+        and _lt(slope_ratio, 0.05)
     )
     print(
         f"NM-1 30-digit s-clock & O(eps^3) PASS={ok}: "
@@ -228,12 +260,12 @@ def check_nm2() -> bool:
     edge_bal = float(abs(0.5 * QW2[idx_edge] + N2[idx_edge]))
 
     ok = bool(
-        conj_err < 1e-8
-        and bound_exp <= 1.0 + 1e-12
-        and bound_us <= th_us + 1e-12
-        and bound_l1 <= th_l1 + 1e-12
-        and pde_res < 2e-5
-        and edge_bal < 1e-6
+        _lt(conj_err, 1e-8)
+        and _lt(bound_exp, 1.0 + 2e-12)
+        and _lt(bound_us, th_us + 2e-12)
+        and _lt(bound_l1, th_l1 + 2e-12)
+        and _lt(pde_res, 2e-5)
+        and _lt(edge_bal, 1e-6)
     )
     print(
         f"NM-2 Conjugation & strip bounds  PASS={ok}: "
@@ -245,7 +277,7 @@ def check_nm2() -> bool:
 
 
 def check_nm3() -> bool:
-    # Clean domain [-64, 64] (eliminates C2 wraparound) + explicit V_G -> -V_G mutation control (fixes C3)
+    # Clean domain [-64, 64], Nz = 4096 (filtered spectral operators); eps = 0.08, N_s = 128.
     eps = 0.08
     S_max = 1.2
     Ns = 128
@@ -309,24 +341,25 @@ def check_nm3() -> bool:
     for j in range(Ns):
         H[j + 1] = H[j] + 0.5 * ds * (rhs_H[j] + rhs_H[j + 1])
 
-    max_s_res_G = 0.0
-    max_s_res_H = 0.0
-    max_s_compat = 0.0
+    res_G_list, res_H_list, compat_list = [], [], []
     for j in range(1, Ns):
         G_s = (G[j + 1] - G[j - 1]) / (2.0 * ds)
         H_s = (H[j + 1] - H[j - 1]) / (2.0 * ds)
         res_G = G_s + QG_all[j] * ops["D_g"](G[j]) - 0.5 * QG_all[j] * (1.0 + G[j]) - ops["half_plus_D_r"](H[j])
         res_H = H_s + QG_all[j] * ops["half_plus_D_r"](H[j])
-        max_s_res_G = max(max_s_res_G, float(np.max(np.abs(res_G[bulk]))))
-        max_s_res_H = max(max_s_res_H, float(np.max(np.abs(res_H[bulk]))))
-        max_s_compat = max(max_s_compat, float(abs(QG_all[j, idx_edge] + H[j, idx_edge])))
+        res_G_list.append(np.max(np.abs(res_G[bulk])))
+        res_H_list.append(np.max(np.abs(res_H[bulk])))
+        compat_list.append(abs(QG_all[j, idx_edge] + H[j, idx_edge]))
+    max_s_res_G = _nanmax(res_G_list)
+    max_s_res_H = _nanmax(res_H_list)
+    max_s_compat = _nanmax(compat_list)
 
     a0 = float(QG_all[0, idx_edge])
     D_end_err = abs(float(H[-1, idx_edge]) - (-a0) / (1.0 + 0.5 * a0 * S_max))
 
-    # Reconstruct physical clock r(s) = sqrt(lambda(s)), tau(s) = int_0^s ds'/r(s')
-    # V_G(r^2, s) = -(1/(pi * r)) * int_0^inf w^{-1/2} ln(1 + r^2 / w) G(w, s) dw
-    #             = -(1/(pi * r)) * int_{-inf}^{inf} e^{z/2} ln(1 + r^2 e^{-z}) G(e^z, s) dz
+    # Physical clock r(s) = sqrt(lambda(s)), tau(s) = int_0^s ds'/r(s'), from dr/ds = -1 + V_G/2, r(0) = 1.
+    # "ODE path" functional (z-grid sum):
+    # V_G(r^2, s) = -(1/(pi * r)) * int_{-inf}^{inf} e^{z/2} ln(1 + r^2 e^{-z}) G(e^z, s) dz
     def compute_VG(G_prof, r_val):
         if r_val <= 1e-12:
             return 0.0
@@ -336,32 +369,45 @@ def check_nm3() -> bool:
         ig = np.exp(0.5 * z) * ln_term * G_prof
         return float(-(1.0 / (math.pi * r_val)) * np.sum(ig) * dz)
 
-    # RK2 integration of dr/ds = -1 + (1/2) V_G(r^2, s), r(0) = 1
-    r_arr = np.zeros(Ns + 1)
-    VG_arr = np.zeros(Ns + 1)
-    r_arr[0] = 1.0
-    VG_arr[0] = compute_VG(G[0], 1.0)
-    s_inf_idx = Ns
-    for j in range(Ns):
-        k1 = -1.0 + 0.5 * VG_arr[j]
-        r_mid = r_arr[j] + 0.5 * ds * k1
-        if r_mid <= 0.0:
-            s_inf_idx = j
-            break
-        G_mid = 0.5 * (G[j] + G[j + 1])
-        k2 = -1.0 + 0.5 * compute_VG(G_mid, r_mid)
-        r_next = r_arr[j] + ds * k2
-        if r_next <= 0.0:
-            s_inf_idx = j
-            break
-        r_arr[j + 1] = r_next
-        VG_arr[j + 1] = compute_VG(G[j + 1], r_next)
+    # The physical-time residual uses V_G computed INDEPENDENTLY of the ODE path: adaptive quadrature of
+    #   V_G(tau) = -(1/pi) int_0^inf y^{-1/2} ln(1 + 1/y) G(y, tau) dy = -(2/pi) int_0^inf ln(1 + t^-2) G(t^2, tau) dt
+    # on the reconstructed physical profile. Control: rerun the reconstruction with V -> 3V, -V, 0 in the ODE
+    # path (the only place the reconstruction uses V); the residual must rise >= 50x.
+    # Limit: a wrong V_G formula coded identically in BOTH implementations cannot be detected here.
+    def lagrange_weights(s_val, ss):
+        Lw = []
+        for m in range(4):
+            L_m = 1.0
+            for q_m in range(4):
+                if q_m != m:
+                    L_m *= (s_val - ss[q_m]) / (ss[m] - ss[q_m])
+            Lw.append(L_m)
+        return Lw
 
-    # True physical-time V_G test (fixes C2!): compute V_phys directly from reconstructed G_phys
-    # and mutate V_G EVERYWHERE in the horizon ODE (-V_G and 3 V_G)!
-    def compute_V_phys(G_phys_grid):
-        ln_term = np.where(z < -30.0, -z + np.log1p(np.exp(z)), np.log1p(np.exp(-z)))
-        return float(-(1.0 / math.pi) * np.sum(np.exp(0.5 * z) * ln_term * G_phys_grid) * dz)
+    def V_indep(G_sp_l, j0, Lw, r0):
+        lr2 = 2.0 * math.log(r0)
+        z_lo, z_hi = float(z[0]) + 1.0, float(z[-1])
+
+        def ig(t):
+            y = t * t
+            if y <= 0.0:
+                return 0.0
+            zz = math.log(y) + lr2
+            if zz < z_lo or zz > z_hi:
+                return 0.0
+            g = sum(Lw[m] * float(G_sp_l[j0 + m](zz)) for m in range(4))
+            return math.log1p(1.0 / y) * g if g != 0.0 else 0.0
+
+        brk = [0.0, 1e-4, 1e-2, 0.1, 0.3, 1.0, 3.0, 10.0, 100.0, 1e4, 1e7]
+        tot, err = 0.0, 0.0
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", IntegrationWarning)
+            for lo, hi in zip(brk[:-1], brk[1:]):
+                val, e = quad(ig, lo, hi, limit=400, epsabs=1e-15, epsrel=1e-11)
+                tot += val
+                err += e
+            val, e = quad(ig, brk[-1], np.inf, limit=400, epsabs=1e-15, epsrel=1e-11)
+        return -(2.0 / math.pi) * (tot + val), err + e
 
     def eval_nm3_phys(v_scale: float):
         r_loc = np.zeros(Ns + 1)
@@ -391,43 +437,31 @@ def check_nm3() -> bool:
         H_sp_l = [make_interp_spline(z, H[j], k=3) for j in range(idx_end + 1)]
         QG_sp_l = [make_interp_spline(z, QG_all[j], k=3) for j in range(idx_end + 1)]
 
+        def j0_of(s_val):
+            return min(max(int(s_val / ds) - 1, 0), idx_end - 3)
+
         def eval_f(splines_list, w_val, s_val):
             zw = math.log(w_val)
-            j0 = min(max(int(s_val / ds) - 1, 0), idx_end - 3)
-            ss = s_sub_l[j0 : j0 + 4]
-            vals = np.array([float(splines_list[j0 + m](zw)) for m in range(4)])
-            res = 0.0
-            for m in range(4):
-                L_m = 1.0
-                for q_m in range(4):
-                    if q_m != m:
-                        L_m *= (s_val - ss[q_m]) / (ss[m] - ss[q_m])
-                res += vals[m] * L_m
-            return res
+            j0 = j0_of(s_val)
+            Lw = lagrange_weights(s_val, s_sub_l[j0 : j0 + 4])
+            return sum(Lw[m] * float(splines_list[j0 + m](zw)) for m in range(4))
 
         dtau = 1e-4
         dv_rel = 1e-4
-        mG, mE, mC = 0.0, 0.0, 0.0
+        lG, lE, lC, lV, lQ = [], [], [], [], []
         for tau_val in (0.2, 0.6):
             s0 = float(tau_to_s_l(tau_val))
             r0 = float(r_sp_l(s0))
             a_tau = r0 * eval_f(QG_sp_l, math.exp(-18.0), s0)
             D_tau = r0 * eval_f(H_sp_l, math.exp(-18.0), s0)
-            mC = max(mC, abs(a_tau + D_tau))
+            lC.append(abs(a_tau + D_tau))
 
-            j0 = min(max(int(s0 / ds) - 1, 0), idx_end - 3)
-            ss = s_sub_l[j0 : j0 + 4]
-            z_shift = z + 2.0 * math.log(r0)
-            z_clip = np.clip(z_shift, z[0], z[-1])
-            Gp_full = np.zeros_like(z)
-            for m in range(4):
-                L_m = 1.0
-                for q_m in range(4):
-                    if q_m != m:
-                        L_m *= (s0 - ss[q_m]) / (ss[m] - ss[q_m])
-                Gp_full += L_m * G_sp_l[j0 + m](z_clip)
-            Gp_full[z_shift < z[0] + 1.0] = 0.0
-            Vp = compute_V_phys(Gp_full)
+            j0 = j0_of(s0)
+            Lw = lagrange_weights(s0, s_sub_l[j0 : j0 + 4])
+            Vp, qerr = V_indep(G_sp_l, j0, Lw, r0)
+            G_s0 = sum(Lw[m] * G[j0 + m] for m in range(4))
+            lV.append(abs(v_scale * compute_VG(G_s0, r0) - Vp))
+            lQ.append(qerr)
 
             for v0 in (0.2, 1.0, 4.0):
                 def G_phys(vv, tt):
@@ -448,35 +482,39 @@ def check_nm3() -> bool:
                 G_val = G_phys(v0, tau_val)
                 QG_val = r0 * eval_f(QG_sp_l, r0 * r0 * v0, s0)
 
-                mG = max(mG, abs(G_t + (2.0 - Vp + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val) - math.sqrt(v0) * eta_v))
-                mE = max(mE, abs(eta_t + (2.0 - Vp + QG_val) * v0 * eta_v))
-        return s_inf_loc, float(tau_loc[-1]), mG, mE, mC
+                lG.append(abs(G_t + (2.0 - Vp + QG_val) * v0 * G_v - 0.5 * QG_val * (1.0 + G_val) - math.sqrt(v0) * eta_v))
+                lE.append(abs(eta_t + (2.0 - Vp + QG_val) * v0 * eta_v))
+        return s_inf_loc, float(tau_loc[-1]), _nanmax(lG), _nanmax(lE), _nanmax(lC), _nanmax(lV), _nanmax(lQ)
 
-    s_inf, tau_max, max_phys_G, max_phys_eta, max_phys_compat = eval_nm3_phys(1.0)
-    _, _, max_phys_G_neg, _, _ = eval_nm3_phys(-1.0)
-    _, _, max_phys_G_3x, _, _ = eval_nm3_phys(3.0)
-    vg_ratio = min(max_phys_G_neg, max_phys_G_3x) / max(max_phys_G, 1e-30)
+    s_inf, tau_max, max_phys_G, max_phys_eta, max_phys_compat, vdiff, qerr = eval_nm3_phys(1.0)
+    ctrl = {lab: eval_nm3_phys(vs)[2] for lab, vs in (("3V", 3.0), ("-V", -1.0), ("0", 0.0))}
+    ctrl_min = float(np.min(np.asarray(list(ctrl.values()), dtype=float)))  # NaN-propagating
+    vg_ratio = ctrl_min / max_phys_G if (np.isfinite(max_phys_G) and max_phys_G > 0.0) else float("nan")
 
     ok = bool(
-        diff_G < 1e-10
-        and diff_W < 1e-10
-        and max_s_res_G < 1e-6
-        and max_s_res_H < 1e-6
-        and max_s_compat < 1e-6
-        and D_end_err < 1e-7
-        and abs(s_inf - 1.0) < 0.05
-        and max_phys_G < 1e-5
-        and max_phys_eta < 1e-5
-        and max_phys_compat < 1e-6
-        and vg_ratio > 50.0
+        _isfin(G, W, H)
+        and _lt(diff_G, 1e-10)
+        and _lt(diff_W, 1e-10)
+        and _lt(max_s_res_G, 1e-6)
+        and _lt(max_s_res_H, 1e-6)
+        and _lt(max_s_compat, 1e-6)
+        and _lt(D_end_err, 1e-7)
+        and _lt(abs(s_inf - 1.0), 0.05)
+        and _lt(max_phys_G, 1e-5)
+        and _lt(max_phys_eta, 1e-5)
+        and _lt(max_phys_compat, 1e-6)
+        and _lt(vdiff, 1e-8)
+        and _lt(qerr, 1e-9)
+        and _gt(vg_ratio, 50.0)
     )
     print(
         f"NM-3 Full nonlinear Picard & (*) PASS={ok}:\n"
         f"     Picard conv: ||dG||={diff_G:.2e}, ||dW||={diff_W:.2e}\n"
         f"     s-clock PDE: res_G={max_s_res_G:.2e}, res_H={max_s_res_H:.2e}, |a+D|={max_s_compat:.2e}, D_end_err={D_end_err:.2e}\n"
         f"     Phys time  : s_inf={s_inf:.6f} (tau_max={tau_max:.2f}), "
-        f"res_G(*)={max_phys_G:.2e} (full-ODE mut -V_G,3V_G: {max_phys_G_neg:.2e},{max_phys_G_3x:.2e}, {vg_ratio:.1f}x), "
-        f"res_eta(*)={max_phys_eta:.2e}, |a(tau)+D(tau)|={max_phys_compat:.2e}"
+        f"res_G(*)={max_phys_G:.2e} with independent-quadrature V_G (|V_ODE-V_indep|={vdiff:.1e}), "
+        f"res_eta(*)={max_phys_eta:.2e}, |a(tau)+D(tau)|={max_phys_compat:.2e}\n"
+        f"     V_G control: ODE/reconstruction V->3V,-V,0: res_G(*)=({ctrl['3V']:.2e}, {ctrl['-V']:.2e}, {ctrl['0']:.2e}) ({vg_ratio:.1f}x)"
     )
     return ok
 

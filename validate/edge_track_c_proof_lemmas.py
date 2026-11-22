@@ -18,6 +18,11 @@ Checks (all pass => exit 0):
          is strictly > 0.5 (proving coercivity for every v in H^4 at every z!).
   TCB-5  Lemma C5: Parabolic operator L coercivity on sigma in {1/4, 5/8} and lower-norm
          (H^2_{1/4,hier}, H^3_{5/8,hier}) phase-cancellation boundedness for b barely in H^2.
+         Scope: the symbol check of L is algebra. b is normalised to unit H^2 norm on each grid, so the
+         test checks ||sym|| <= C ||b||_{H^2}; it is one-sided and also passes for b outside H^2 (whose
+         normalised copy shrinks under refinement). What it does detect is a loss of phase cancellation
+         (no symmetrisation, or a weight order mismatched to the multiplier: both fail).
+All TCB checks act on Fourier-side model operators (symbols, kernels); none solves the PDE.
 """
 from __future__ import annotations
 

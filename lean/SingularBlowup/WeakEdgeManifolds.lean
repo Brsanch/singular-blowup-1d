@@ -22,8 +22,11 @@ Machine-checked (zero-sorry) theorems in this file:
      coercivity for `∂_z^m(u v)` (`u = e^{-z/2}`, `∂_z u = -u/2`) with weights `c_m = 4^{3-m}`
      on `H³` and `c_m = 6^{4-m}` on `H⁴`:
        `∑_{m=0}^k c_m u ((∂_z - 1/2)^m v) (∂_z^m v) ≥ (1/2) ∑_{m=0}^k c_m u (∂_z^m v)²`.
-  5. `nishida_contraction_bound` — explicit parameter choice `γ = 1 / (20 C_T M_G)`,
-     `a = 40 ε / γ` closing the coupled Nishida–Ovsyannikov contraction factor `< 1/2`.
+  5. `nishida_contraction_bound` — an ARITHMETIC fact only: with `γ = 1 / (20 C_T M_G)` and
+     `a = 40 ε / γ`, a three-term expression is `< 1/2`. It does not prove any estimate, and its
+     parametrisation (cone speed `a ∝ ε`, `2√2`) differs from Lemma A3 of
+     `docs/theorem_track_a_cusp_weak_edge.md` (`a ∈ [ρ₀/12, ρ₀/6]`, `γ = 1/(40 C_rem M_G)`, `4√2`).
+     Lemma A3's contraction has a gap (2026-11-22 post-f5106e9 review): its norm does not close.
 
 SCOPE. Operator-level Plancherel/Mellin bounds, the Nishida iteration in Banach scales, and
 distributional PDE equivalence across `X = 1` remain on paper (`[D]`) and in the Python
@@ -269,9 +272,10 @@ theorem hierarchical_u_dissipation_H4 (u v₀ v₁ v₂ v₃ v₄ : ℝ) (hu : 0
 
 /-! ### 5. Nishida–Ovsyannikov Contraction Closure (Track A, §3) -/
 
-/-- Explicit parameter choice `γ = 1 / (20 C_T M_G)`, `a = 40 ε / γ` closing the coupled
-Nishida–Ovsyannikov contraction factor strictly below `1/2` (assuming the `O(ε/a)` lower-order
-coefficient `C_rem / 800 ≤ 1/10`). -/
+/-- Arithmetic only: with `γ = 1 / (20 C_T M_G)` and `a = 40 ε / γ`, the expression
+`2ε/(γa) + 2√2 γ C_T M_G + C_rem ε/a` is `< 1/2` (assuming `C_rem / (800 C_T M_G) ≤ 1/10`).
+This does NOT verify the coupled Nishida–Ovsyannikov estimate of Track A Lemma A3, whose weighted
+norm does not close (2026-11-22 post-f5106e9 review), and its parametrisation differs from that lemma's. -/
 theorem nishida_contraction_bound (ε C_T M_G C_rem : ℝ)
     (hε : 0 < ε) (hCT : 0 < C_T) (hMG : 0 < M_G)
     (hrem : C_rem / (800 * C_T * M_G) ≤ (1 / 10 : ℝ)) :
