@@ -4,6 +4,13 @@ Read this + `README.md` + `docs/findings_*.md` first. The next step is named at
 the bottom ("THE NEXT CHIP"). Repo: github.com/Brsanch/singular-blowup-1d (private).
 Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasure loop.
 
+> **Review on file (2026-11-22):** `docs/findings_session_2026_11_21_weak_edge_hostile_review.md` — hostile review of
+> the weak-edge nonlinear manifold notes (NM / PM / FS). Claim 1 holds; the cusp contraction and the finite-Sobolev
+> closure are NOT established as stated; several gate numbers do not measure what the notes say. Those notes and
+> gates have not been revised in response.
+> **Operator fix (2026-11-22):** `docs/findings_session_2026_11_22_qop_edge_tail.md` — `build_blocks_z` now includes the
+> exact edge tail and a consistent Hilbert diagonal by default.
+>
 > ## ⚑ LATEST (2026-11-21, later) — **W3 candidate: `M_σ` is conjugate to damped transport**
 > `docs/findings_session_2026_11_21_w3_conjugation.md`; probe `validate/edge_w3_conjugation_check.py`.
 > With `N(s) = cos(πs)Γ(2s+2)/π`: `N(s+½)c(s+½) = −N(s)`, so `M_σ = 𝒩(−2∂_z − e^{−z/2})𝒩⁻¹` on `L²_σ`,
