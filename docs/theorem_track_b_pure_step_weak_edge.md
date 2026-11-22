@@ -25,7 +25,7 @@ $$\mathcal{X}_\rho^0 := \bigl\{G \in \mathcal{X}_\rho : a(G) = -\tfrac{1}{\pi}\w
 
 ### Theorem 1 (Global Nonlinear Pure-Step Weak-Edge Compatible Manifold)
 Let $\rho_0 \in (0, \frac{\pi}{2}]$. There exists $\varepsilon_0 = \varepsilon_0(\rho_0) > 0$ such that for every initial profile $G_0 \in \mathcal{X}_{\rho_0}^0$ with $\|G_0\|_{\mathcal{X}_{\rho_0}} \le 1$ and every $0 < \varepsilon \le \varepsilon_0$:
-1. **(Autonomous $s$-clock solution):** On $s \in [0, 2]$ and $\rho_1 := \frac{1}{2}\rho_0$, there exists a unique mild (and classical on $(0, \infty) \times (0, 2]$) solution $\widetilde G \in C([0, 2]; \mathcal{X}_{\rho_1}^0)$ of the autonomous $s$-clock equation
+1. **(Autonomous $s$-clock solution):** On $s \in [0, 2]$ and $\rho_1 := \frac{1}{2}\rho_0$, there exists a mild (and classical on $(0, \infty) \times (0, 2]$) solution $\widetilde G \in C([0, 2]; \mathcal{X}_{\rho_1}^0)$ — unique within the shrinking-cone strip-analytic scale $\{\mathcal{X}_\rho^0\}_{\rho < \rho_0 - a_\infty s}$ — of the autonomous $s$-clock equation
    $$\widetilde G_s - \tfrac{1}{2} Q\widetilde G = \mathcal{P}(\widetilde G) := -(Q\widetilde G)D\widetilde G + \tfrac{1}{2}(Q\widetilde G)\widetilde G, \qquad \widetilde G(\cdot, 0) = \varepsilon G_0, \tag{1.2}$$
    satisfying $\sup_{s \in [0,2]} \|\widetilde G(s)\|_{\mathcal{X}_{\rho_1}} \le 2 C_S \varepsilon$, $a(\widetilde G(s)) \equiv 0$, and the exact nonlinear edge-slope relation $c_1(\widetilde G(s)) = 3\,a(\mathcal{P}(\widetilde G(s))) = -\frac{3}{\pi}J(\widetilde G(s))$ for all $s \in (0, 2]$, where $J(G) := -\pi a(\mathcal{P}(G))$.
 2. **(Global physical-time reconstruction):** The scalar horizon ODE
