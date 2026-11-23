@@ -94,12 +94,25 @@ for every $\operatorname{Re}\lambda>-2\sigma$ whose edge Taylor series
 $\sum_{m\ge 1}(-1)^{m+1}\Gamma(2m+\lambda)\Gamma(2m+2)v^m$ diverges factorially ($r_0=0$), so
 $G_\lambda\notin\mathcal{H}^1(D(1,1))$.  The Gauge-(a) linearization therefore has exponentially
 growing solutions $e^{\lambda\tau}G_\lambda$ in every finite-order $C^k([1,2])$ edge class, so a
-finite-regularity result would need a modified gauge or constraint; the global transition from smooth
-degenerate initial data on $\mathbb{R}$ to the singular profile remains open.
+finite-regularity result would need a modified gauge or constraint.
+Both the global weak-edge compatibility obstruction and the edge-analyticity restriction are resolved
+in Appendix~\ref{app:weak_edge_manifolds} by passing to the autonomous finite-horizon $s$-clock
+($w=\lambda(\tau)v$, $ds=\sqrt{\lambda}\,d\tau$, eliminating $V_G(\tau)$ identically) and exact
+Mellin conjugation $\tfrac12 Q(\mathcal{N}_g h)=-\mathcal{N}_r(u h)$: in the pure-step ($h\equiv 0$)
+ansatz, we prove global weak-edge compatible ($B(\tau)\equiv A(\tau)^2=1$, $a(\tau)\equiv 0$, zero
+$\delta(X-1)$ defect) nonlinear stability both in strip-analytic spaces $\mathcal{X}_\rho^0$
+(Theorem~\ref{thm:track_b}) and in non-analytic finite Sobolev space $H^3_{1/4}\cap H^4_{5/8}$
+(Theorem~\ref{thm:track_c}, via exact Stirling phase cancellation, hierarchical $u$-dissipation,
+and parabolic regularization); for arbitrary edge-analytic data with $a(G_0)\ne 0$, an explicit
+$\sqrt{v}$ $\Theta$-cusp with $O(\varepsilon^2 e^{-1/\sqrt{v}})$ smoothing closes a time-dependent
+analytic \emph{a priori} energy bound (Proposition~\ref{prop:track_a}; existence/uniqueness open).
+The Stage~1 transition from smooth degenerate initial data on $\mathbb{R}$ to the
+$(X-1)^{-1/2}\mathbf{1}_{X>1}$ support edge remains open.
 The algebraic cancellations, exponent/symbol inequalities, finite telescoping bounds, rational
-arithmetic combinations, and the real-analytic Riccati ODE trapping theorem are machine-checked
-in Lean~4 (9~modules, \texttt{0~sorry}, \texttt{0~axioms}), while all continuous PDE, operator-norm,
-and Gamma-function estimates are proved analytically in Appendices~\ref{app:w123}--\ref{app:conj}
+arithmetic combinations, pointwise phase-cancellation and $H^3/H^4$ hierarchical $u$-dissipation
+identities, and the real-analytic Riccati ODE trapping theorem are machine-checked
+in Lean~4 (10~modules, \texttt{0~sorry}, standard axioms only), while all continuous PDE, operator-norm,
+and Gamma-function estimates are proved analytically in Appendices~\ref{app:w123}--\ref{app:weak_edge_manifolds}
 and cross-checked by standalone Python gates.
 \end{abstract}
 
@@ -153,17 +166,18 @@ global nonlinear asymptotic stability for the support-interior ($X>1$) Gauge-(a)
 reduction (in the invariant sector $h\equiv 0$) of singular-edge perturbations
 $\Omega=(X-1)^{-1/2}(1+G)\mathbf{1}_{X>1}$ in the hybrid edge-analytic space
 $\mathcal{X}=\mathcal{H}^1(D(1,1))\cap H^1_{1/4}([-\ln 2,\infty))$.
-Three questions remain open for the full global smooth-data conjecture of~\cite{chen2026houluo}:
-enforcing the distributional weak-edge jump balance $B(\tau)\equiv A(\tau)^2$ across $X=1$
-(where the uncoupled $h\equiv 0$, $A\equiv 1$ Gauge-(a) flow leaves the point-mass defect
-$\tfrac{\pi}{2}(B(\tau)-1)\delta(X-1)$ whenever $B(\tau)\ne 1$, and $\{H[g](1)=0\}$ is not
-invariant under the flow because $\frac{d}{d\tau}H[g](1)=-H[g](1)-\tfrac13 c_1$ at linear order;
-Remark~\ref{rem:weak_edge_jump}),
-replacing edge analyticity $\mathcal{H}^1(D(1,1))$ by finite-order $C^k([1,2])$ regularity
-(which in Gauge~(a) encounters the explicit factorially divergent $C^\infty$ continuum modes
-$G_\lambda$ of Remark~\ref{rem:w3_scope} and therefore requires an alternative gauge or
-codimension-1 constraint), and analyzing how smooth degenerate initial data on $\mathbb{R}$
-develop the $(X-1)^{-1/2}\mathbf{1}_{X>1}$ support edge.
+In addition, (iv)~Appendix~\ref{app:weak_edge_manifolds} resolves both the global weak-edge jump
+balance $B(\tau)\equiv A(\tau)^2=1$ (zero $\delta(X-1)$ defect) and the finite-regularity
+restriction in the pure-step ($h\equiv 0$) ansatz via the autonomous finite-horizon $s$-clock and
+exact Mellin conjugation: Theorem~\ref{thm:track_b} constructs a strip-analytic global weak-edge
+compatible manifold in $\mathcal{X}_\rho^0$, Theorem~\ref{thm:track_c} removes analyticity
+completely in finite Sobolev space $H^3_{1/4}\cap H^4_{5/8}$, and
+Proposition~\ref{prop:track_a} closes a time-dependent analytic \emph{a priori} energy bound for
+arbitrary edge-analytic data with $a(G_0)\ne 0$ via an explicit $\sqrt{v}$ $\Theta$-cusp
+(existence/uniqueness for the cusp extension remain open).
+The remaining open problem for the full smooth-data conjecture of~\cite{chen2026houluo} is
+Stage~1: analyzing how smooth degenerate initial data on $\mathbb{R}$ dynamically form the
+$(X-1)^{-1/2}\mathbf{1}_{X>1}$ support edge before entering Stage~2.
 
 %--------------------------------------------------------------------------
 \section{Setup}
@@ -785,14 +799,17 @@ $L^2_{\sigma_-}((-\infty,0])$).  As shown in Remark~\ref{rem:weak_edge_jump}, wh
 the uncoupled $A(\tau)\equiv 1$, $\dot B/B=-H[g](1)$ gauge solves~\eqref{eq:dyn} in the mild/strong
 Sobolev sense on $X>1$ (and trivially on $X<1$) and distributionally for $\Theta$ on $\mathbb{R}$, but leaves the distributional
 point-mass defect $\tfrac{\pi}{2}(B(\tau)-1)\delta(X-1)$ in the $\Omega$-equation at $X=1$
-(with $B(\tau)\to B_\infty$); and since $\{H[g](1)=0\}$ is not invariant ($\frac{d}{d\tau}H[g](1)=-H[g](1)-\tfrac13 c_1$ at linear order), closing the global weak-edge jump relation $B(\tau)\equiv A(\tau)^2$ across $X=1$ requires extending the ansatz at the edge and remains open.  Because the unconstrained Gauge-(a) linearization admits the factorially divergent $C^\infty$
-eigenmodes $G_\lambda=O(v)$ of Remark~\ref{rem:w3_scope} for every $\operatorname{Re}\lambda>0$,
-the linearization has exponentially growing solutions $e^{\lambda\tau}G_\lambda$ in every finite-order
-$C^k([1,2])$ edge class within unconstrained Gauge~(a), so edge analyticity $\mathcal{H}^1(D(1,1))$
-cannot simply be lowered there; a finite-regularity result would require an alternative gauge or
-codimension-1 condition (such as the normalization $U_X(0,\tau)\equiv U_X(0,0)$ that leads
-to~\cite[eq.~(3.2)]{chen2026houluo}).
-How smooth degenerate initial data on $\mathbb{R}$ transition to the singular
+(with $B(\tau)\to B_\infty$).  Within the edge-analytic Gauge~(a) class $\mathcal{H}^1(D(1,1))$,
+$\{H[g](1)=0\}$ is not invariant ($\frac{d}{d\tau}H[g](1)=-H[g](1)-\tfrac13 c_1$ at linear order),
+and the unconstrained Gauge-(a) linearization admits the factorially divergent $C^\infty$
+eigenmodes $G_\lambda=O(v)$ of Remark~\ref{rem:w3_scope} for every $\operatorname{Re}\lambda>0$.
+Passing to the autonomous finite-horizon $s$-clock and exact Mellin conjugation in
+Appendix~\ref{app:weak_edge_manifolds} resolves both limitations in the pure-step ($h\equiv 0$)
+ansatz with inflow boundary condition $G(0,\tau)=0$ (Theorems~\ref{thm:track_b}--\ref{thm:track_c}),
+while Proposition~\ref{prop:track_a} establishes a closed analytic \emph{a priori} energy bound for
+general edge-analytic data with $a(G_0)\ne 0$ via a $\sqrt{v}$ $\Theta$-cusp (existence/uniqueness
+for Proposition~\ref{prop:track_a} remain open).
+How smooth degenerate initial data on $\mathbb{R}$ undergo the Stage~1 transition to the singular
 $(X-1)^{-1/2}\mathbf{1}_{X>1}$ support boundary, as well as the 2D Boussinesq analogue and
 gCLM $a$-family, are left for future work.
 
@@ -1936,6 +1953,135 @@ For $k_0=u^ae^{-bu}$ ($a>0$, $\operatorname{Re}b>0$), $\widehat{k_0}(s)=2\Gamma(
 $T(\tau)k_0=e^{a\tau}u^a\exp(-(b+x(\tau))e^{\tau}u)$, so
 $\widehat{S(\tau)\mathcal{N}k_0}(s)=N(s)\,e^{-2s\tau}\,2\Gamma(2s+a)\,(b+1-e^{-\tau})^{-2s-a}$.
 This is the datum compared with $\exp(\tau M_{GG})$ in \texttt{edge\_w3\_conjugation\_check.py}.
+
+%--------------------------------------------------------------------------
+\section{Global Weak-Edge Compatible Manifolds via Autonomous $s$-Clock and Conjugation}\label{app:weak_edge_manifolds}
+%--------------------------------------------------------------------------
+
+To enforce the global distributional weak-edge balance $B(\tau)\equiv A(\tau)^2=1$ across $X=1$
+(Remark~\ref{rem:weak_edge_jump}, corresponding to Stage~2 of~\cite{chen2026houluo}) without leaving
+a $\delta(X-1)$ defect, set $A\equiv B\equiv\xi\equiv 1$, $c_l(\tau)=2-V_G(\tau)$,
+$c_\omega(\tau)=-c_l(\tau)/2$ ($c_l+2c_\omega\equiv 0$), and introduce the comoving dilation scale
+and autonomous finite-horizon $s$-clock:
+\[
+\lambda(\tau):=\exp\!\left(-\int_0^\tau(2-V_G(\tau'))\,d\tau'\right),\qquad
+s(\tau):=\int_0^\tau\sqrt{\lambda(\tau')}\,d\tau'\in[0,s_\infty),\qquad
+w:=\lambda(\tau)v.
+\]
+By exact dilation covariance $Q[\widetilde G(\lambda\cdot)](v)=\sqrt{\lambda}\,(Q\widetilde G)(\lambda v)$,
+dividing~\eqref{eq:dyn} by $\sqrt{\lambda(\tau)}>0$ eliminates $V_G(\tau)$ identically.
+In the pure-step ($\eta\equiv 0$, $\Theta\equiv\tfrac{\pi}{2}\mathbf{1}_{X>1}$) ansatz,
+$\widetilde G(w,s):=G(v,\tau)$ satisfies the autonomous equation
+\begin{equation}\label{eq:s_clock_pure_step}
+\widetilde G_s-\tfrac12 Q\widetilde G=\mathcal{P}(\widetilde G):=-(Q\widetilde G)D\widetilde G+\tfrac12(Q\widetilde G)\widetilde G,\qquad D:=w\partial_w=\partial_z,
+\end{equation}
+and the physical scale $r(s):=\sqrt{\lambda(s)}$ is reconstructed \emph{a posteriori} from
+$dr/ds=-1+\tfrac12 V_{\widetilde G(\cdot,s)}(r^2)$, $r(0)=1$, $\tau(s)=\int_0^s ds'/r(s')$.
+Under the Mellin conjugation $\widetilde G=\mathcal{N}_g h$ ($N(m)=\frac{\cos(\pi m)\Gamma(2m+2)}{\pi}$,
+$u=w^{-1/2}=e^{-z/2}$, $\tfrac12 Q(\mathcal{N}_g h)=-\mathcal{N}_r(u h)$),~\eqref{eq:s_clock_pure_step}
+becomes $h_s+u h=\mathcal{N}_{1/4}^{-1}\mathcal{P}(\widetilde G)$ with exact propagator
+$S_g(t)=\mathcal{N}_{1/4}e^{-ut}\mathcal{N}_{1/4}^{-1}$.  As in Remark~\ref{rem:weak_edge_jump},
+working in the weighted spaces below imposes the inflow boundary condition $G(0,\tau)=0$.
+
+\begin{thm}[Strip-analytic global pure-step weak-edge manifold; Track~B]\label{thm:track_b}
+Fix $\rho_0\in(0,\frac{\pi}{2}]$ and set $\mathcal{X}_\rho:=H^2_\rho(\tfrac14)\cap H^2_\rho(\tfrac58)$,
+$\mathcal{X}_\rho^0:=\{G\in\mathcal{X}_\rho : a(G)=-\tfrac{1}{\pi}\widehat G(\tfrac12)=0\}$.
+There exists $\varepsilon_0=\varepsilon_0(\rho_0)>0$ such that for every $G_0\in\mathcal{X}_{\rho_0}^0$
+with $\|G_0\|_{\mathcal{X}_{\rho_0}}\le 1$ and every $0<\varepsilon\le\varepsilon_0$:
+\begin{enumerate}
+\item On $s\in[0,2]$ and $\rho_1:=\tfrac12\rho_0$,~\eqref{eq:s_clock_pure_step} admits a mild
+  (and classical on $(0,\infty)\times(0,2]$) solution $\widetilde G\in C([0,2];\mathcal{X}_{\rho_1}^0)$
+  with $\widetilde G(\cdot,0)=\varepsilon G_0$---unique within the shrinking-cone strip-analytic scale
+  $\{\mathcal{X}_\rho^0\}_{\rho<\rho_0-a_\infty s}$ ($a_\infty=\rho_0/6$)---satisfying
+  $\sup_{s\in[0,2]}\|\widetilde G(s)\|_{\mathcal{X}_{\rho_1}}\le 2C_S\varepsilon$,
+  $a(\widetilde G(s))\equiv 0$, and $c_1(\widetilde G(s))=3a(\mathcal{P}(\widetilde G(s)))$ for $s\in(0,2]$.
+\item The horizon ODE $dr/ds=-1+\tfrac12 V_{\widetilde G(\cdot,s)}(r^2)$, $r(0)=1$, satisfies
+  $V_{\widetilde G}(r^2)=O(\varepsilon r^{5/4})$ and $\partial_r V_{\widetilde G}(r^2)=O(\varepsilon r^{1/4})$
+  as $r\to 0^+$ and has a unique transversal zero $s_\infty=1+O(\varepsilon)\in(\frac12,\frac32)$.
+  Reconstructing $G(v,\tau):=\widetilde G(\lambda(\tau)v,s(\tau))$ yields a global classical pure-step
+  solution of~\eqref{eq:dyn} on $(0,\infty)\times(0,\infty)$ with exact global weak-edge compatibility
+  $a(\tau)\equiv 0$ ($B(\tau)\equiv A(\tau)^2=1$) and decay
+  $\|G(\cdot,\tau)\|_{L^2_\sigma}\le C\varepsilon e^{-2\sigma\tau}$ for $\sigma\in[\tfrac14,\tfrac58]$.
+\end{enumerate}
+\end{thm}
+
+\begin{proof}[Proof architecture (full details in \texttt{docs/theorem\_track\_b\_pure\_step\_weak\_edge.md})]
+(1)~On $\mathcal{X}_\rho^0$, $\widehat G(\tfrac12)=0$ cancels the $\zeta=0$ pole of $\cot(\pi\zeta)/(\zeta+1)$,
+giving $\|QG\|_{H^\infty(\mathbb{S}_\rho)}\le C_Q\|G\|_{\mathcal{X}_\rho}$, and integration by parts
+gives $a(\mathcal{P}(G))=-\tfrac{1}{\pi}\int_{\mathbb{R}} e^{-z/2}D(QG)G\,dz$ with zero derivative loss.
+(2)~Splitting $\widehat F/N$ at its unique simple pole $m=\tfrac12$ via the explicit holomorphic basis
+$\phi_*(z)=\frac{1}{2\cosh(z/2)}=\frac{u}{u^2+1}$ ($\operatorname{Res}_{1/2}\widehat{\phi_*}=-1$) yields
+$\|S_g(t)F\|_{\mathcal{X}_\rho}\le C_S\|F\|_{\mathcal{X}_\rho}+C_* t^{-1/4}|a(F)|$ (integrable in $t$).
+(3)~The $s$-scaled Nishida norm $\sup_{(s,\rho)\in\Omega_a}(d_a(\rho,s)/s)^{1/2}\|\delta\hat G(s)\|_{\mathcal{X}_\rho}$
+on $a_j\uparrow a_\infty=\rho_0/6$ cancels all $s\to 0^+$ factors identically and contracts on $[0,2]$.
+(4)~Pointwise Hardy bounds $|G(w)|\le C\varepsilon\min(w^{5/8},w^{1/4})$ with $a(G)=0$ give
+$V_G(r^2)=O(\varepsilon r^{5/4})$ and transversal horizon crossing $s_\infty=1+O(\varepsilon)$.
+Verified by \texttt{validate/edge\_track\_b\_proof\_lemmas.py} (\texttt{TB-1..5}) and
+\texttt{edge\_pure\_step\_nonlinear\_manifold.py} (\texttt{PM-1..3}).
+\end{proof}
+
+\begin{thm}[Finite-Sobolev non-analytic global pure-step weak-edge manifold; Track~C]\label{thm:track_c}
+Let $H^k_\sigma$ denote the weighted Sobolev space with norm
+$\|f\|_{H^k_\sigma}^2=\frac{1}{2\pi}\int_{\mathbb{R}}(1+\xi^2)^k|\widehat f(\sigma+i\xi)|^2\,d\xi$
+(no strip-analyticity assumed).  There exist universal constants $\varepsilon_0,C_0>0$ such that for
+every $h_0\in H^3_{1/4}\cap H^4_{5/8}$ with $\|h_0\|_{H^3_{1/4}}+\|h_0\|_{H^4_{5/8}}\le 1$ and
+every $0<\varepsilon\le\varepsilon_0$:
+\begin{enumerate}
+\item There exists a unique solution
+  $h\in C([0,2];H^2_{1/4}\cap H^3_{5/8})\cap C_w([0,2];H^3_{1/4}\cap H^4_{5/8})\cap C_R([0,2];H^3_{1/4}\cap H^4_{5/8})$
+  of $h_s+u h=\mathcal{N}_{1/4}^{-1}\mathcal{P}(\mathcal{N}_{1/4}h)$ with $h(\cdot,0)=\varepsilon h_0$,
+  satisfying $\sup_{s\in[0,2]}(\|h(s)\|_{H^3_{1/4}}+\|\tilde h(s)\|_{H^4_{5/8}})\le 2C_0\varepsilon$ and
+  $\sup_{s\in[0,2]}\|h_{\mathrm{rk1}}(s)\|_{H^5_{5/8}}\le C_1\varepsilon^2$, where
+  $h=h_{\mathrm{rk1}}+\tilde h$ with $h_{\mathrm{rk1}}(u,s)=-\tfrac{\pi}{2}\int_0^s e^{-u(s-s')}a(\mathcal{P}(\widetilde G(s')))\phi_*(u)\,ds'$.
+\item Setting $\widetilde G=\mathcal{N}_{1/4}h$, the horizon ODE has a unique transversal zero
+  $s_\infty=1+O(\varepsilon)\in(\frac12,\frac32)$, yielding a unique global physical-time pure-step
+  solution $G(v,\tau)=\widetilde G(\lambda(\tau)v,s(\tau))$ on $\tau\in[0,\infty)$ with
+  $a(\tau)\equiv 0$ ($B(\tau)\equiv A(\tau)^2=1$) and $\|G(\cdot,\tau)\|_{L^2_\sigma}\le C\varepsilon e^{-2\sigma\tau}$
+  for $\sigma\in[\tfrac14,\tfrac58]$.
+\end{enumerate}
+\end{thm}
+
+\begin{proof}[Proof architecture (full details in \texttt{docs/theorem\_track\_c\_finite\_sobolev\_pure\_step.md})]
+(1)~$h\in H^3_{1/4}\cap H^4_{5/8}$ implies $a(\widetilde G)=0$ and controls unweighted
+$\|b\|_{H^2(\mathbb{R})}\le C(\|h\|_{H^3_{1/4}}+\|h\|_{H^4_{5/8}})$ ($b:=Q\widetilde G$), while
+shifting the Mellin contour across $m=\tfrac12$ yields the exact identity
+$\mathcal{N}_{1/4}^{-1}F+\tfrac{\pi}{2}a(F)\phi_*=\mathcal{N}_{5/8}^{-1}F+\tfrac{\pi}{2}a(F)\psi_{5/8}$
+with $\psi_{5/8}(z)=-e^{3z/2}/(1+e^z)\in H^\infty_{5/8}$.
+(2)~In the symmetric part of $A_b^{(\sigma)}=\mathcal{N}_\sigma^{-1}(b(\sigma+\partial_z))\mathcal{N}_\sigma$,
+the Stirling log-phase $\Phi(\xi)\sim 2\xi\ln(2|\xi|)$ cancels identically
+(Lean~4: \texttt{WeakEdgeManifolds.phase\_cancellation\_norm}), leaving amplitude kernel
+$|K_{1/4,3}(\xi,\eta)|\le C(1+|\eta|)$ and $|K_{5/8,4}(\xi,\eta)|\le C(1+|\eta|^{5/4})$, both
+controlled by $\|b\|_{H^2(\mathbb{R})}$ with a $\tfrac14$-derivative margin.
+(3)~Hierarchical $u$-dissipation $\sum_{m=0}^k c_m^{(k)}\operatorname{Re}\langle\partial_z^m(u v),\partial_z^m v\rangle_{L^2}\ge\tfrac12\sum_{m=0}^k c_m^{(k)}\int u|\partial_z^m v|^2 dz$
+holds for $k=3$ ($c_m^{(3)}=4^{3-m}$) and $k=4$ ($c_m^{(4)}=6^{4-m}$; both machine-checked with zero
+\texttt{sorry} in Lean~4: \texttt{WeakEdgeManifolds.hierarchical\_u\_dissipation\_H3/H4}), closing the
+$H^3_{1/4}\cap H^4_{5/8}$ energy bootstrap.
+(4)~Adding the commuting Mellin-parabolic regularization $\delta L:=\delta(-(\partial_z-\tfrac14)(\partial_z-\tfrac58)+\tfrac14)$
+($\operatorname{Re}\widehat L(\sigma+i\xi)=\xi^2+\tfrac14>0$ on $\sigma\in\{\tfrac14,\tfrac58\}$) yields
+$\delta$-uniform solutions via a single-unknown Lions parabolic fixed point, strong Cauchy convergence
+in $C([0,2];H^2_{1/4}\cap H^3_{5/8})$, unconditional uniqueness in $L^\infty([0,2];H^3_{1/4}\cap H^4_{5/8})$,
+and autonomy-restarted strong right-continuity.
+Verified by \texttt{validate/edge\_track\_c\_proof\_lemmas.py} (\texttt{TCB-1..5}) and
+\texttt{edge\_pure\_step\_finite\_sobolev.py} (\texttt{FS-1..3}).
+\end{proof}
+
+\begin{prop}[Closed analytic \emph{a priori} energy bound for the $\sqrt{v}$ $\Theta$-cusp extension; Track~A]\label{prop:track_a}
+For arbitrary small strip-analytic data $G_0\in\mathcal{X}_{\rho_0}:=H^2_{\rho_0}(\tfrac14)\cap H^{1/4}_{L^2,\rho_0}(\tfrac58)$
+(allowing $a(G_0)\ne 0$), equip the coupled $(G,\eta)$ system~\eqref{eq:dyn} with the explicit modified
+initial $\Theta$-cusp
+$\eta_0^{(\varepsilon)}(v)=-\frac{\varepsilon}{2}\int_0^v y^{-1/2}(QG_0)(y)\,dy+\varepsilon^2\pi c_0(G_0)\int_0^v y^{-1/2}\Phi_*(y)\,dy$,
+where $\Phi_*(w)=\mathcal{N}_g[\frac{u}{u^2+1}](w)=\frac{1}{2w}e^{-1/\sqrt{w}}$ cancels the $s\to 0^+$
+singularity in the defect $W=(\tfrac12+D)\widetilde H+\tfrac12 Q\widetilde G$.
+Along any smooth solution on $s\in[0,2]$, the time-dependent analytic energy on the strictly positive
+shrinking strip $\rho(s)=\rho_0-a s\ge\tfrac12\rho_0$ ($a=\rho_0/4$) closes the \emph{a priori} bound
+$\sup_{s\in[0,2]}\|\widetilde G(s)\|_{\mathcal{X}_{\rho(s)}}^2+a\int_0^2\|\langle D\rangle^{1/2}\widetilde G\|_{\mathcal{X}_{\rho(s)}}^2 ds+\int_0^2\|\langle D\rangle^{-1/2}W\|_{\mathcal{X}_{\rho(s)}}^2 ds\le 2C_0\varepsilon^2$,
+preserving $a(\tau)+D(\tau)\equiv 0$ with exact cusp amplitude
+$D(\tau)=-a(\tau)=\frac{-r(s(\tau))\varepsilon a(G_0)}{1+\frac12\varepsilon a(G_0)s(\tau)}$
+(Lean~4: \texttt{WeakEdgeManifolds.hasDerivAt\_scalarEdgeD}; gates \texttt{TA-1..5}, \texttt{NM-1..3};
+full details in \texttt{docs/theorem\_track\_a\_cusp\_weak\_edge.md}).
+Constructing a regularization that preserves both nonlocal $m=0$ and $m=\tfrac12$ cancellations
+(existence/uniqueness for this cusp extension) remains open.
+\end{prop}
 
 \begin{thebibliography}{99}
 
