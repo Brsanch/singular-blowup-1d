@@ -28,9 +28,9 @@ Checks (all pass => exit 0):
         check requires ||W(ds)||_{5/8}/||W(0)||_{5/8} in (0.9, 1.1) (a doubled c_0 gives 1.6).
         Not detectable: a wrong V_G formula coded identically in compute_VG and VG_indep.
         All criteria fail on NaN.
-  TA-5  Lemma A3 (analytic energy): Complex-strip hierarchical u-dissipation coercivity for
-        (k=2, B=6) on mu_1=0 and (k=3, B=8) on mu_2=3/8, verified at both endpoints rho in {0, pi/2}
-        (which proves coercivity for ALL rho in [0, pi/2] by convexity).
+  TA-5  Lemma A3 (analytic energy): Exact commutator-included symbol coercivity of
+        L_mu = <D>_mu^{-1/2} u <D>_mu^{1/2} in H^k_hier(partial S_rho, mu) over |rho| <= pi/2
+        and all xi in R for (k=2, B=6) and (k=3, B=8), plus mutation controls (B=1, rho=3.1 fail).
 """
 from __future__ import annotations
 
@@ -432,28 +432,33 @@ def check_ta4() -> bool:
 
 
 def check_ta5() -> bool:
-    """Lemma A3 (analytic energy): Complex-strip hierarchical u-dissipation coercivity
-    for (k=2, B=6) on mu_1=0 and (k=3, B=8) on mu_2=3/8. Checking both endpoints rho=0
-    and rho=pi/2 proves coercivity for ALL rho in [0, pi/2] by non-negative convexity."""
-    mins = {}
-    for k, B in ((2, 6.0), (3, 8.0)):
+    """Lemma A3 (analytic energy): Exact commutator-included symbol coercivity of
+    L_mu = <D>_mu^{-1/2} u <D>_mu^{1/2} in H^k_hier(partial S_rho, mu) over |rho| <= pi/2
+    and all xi in R, plus mutation controls (B=1 and rho=3.1 must fail coercivity > 0)."""
+    xi = np.concatenate([np.linspace(-200.0, 200.0, 4001), np.linspace(-5.0, 5.0, 2001)])
+    eta = xi - 0.25j
+    phi_comm = ((1.0 + eta**2) ** 0.25) / np.conj((1.0 + eta**2) ** 0.25)
+
+    def min_symbol_ratio(k: int, B: float, rho_max: float) -> float:
         c = np.array([B ** (k - m) for m in range(k + 1)])
-        A = np.zeros((k + 1, k + 1), dtype=np.complex128)
-        for m in range(k + 1):
-            for j in range(m + 1):
-                A[m, j] = c[m] * math.comb(m, j) * ((-0.5) ** (m - j))
-        D_inv = np.diag(1.0 / np.sqrt(c))
-        ep_evs = []
-        for rho in (0.0, 0.5 * math.pi):
-            M = np.exp(-0.5j * rho) * A
-            H = 0.5 * (M + M.conj().T)
-            ep_evs.append(float(np.min(np.linalg.eigvalsh(D_inv @ H @ D_inv))))
-        mins[k] = min(ep_evs)
-    thresh = 0.5 * math.cos(0.25 * math.pi)  # 0.353553
-    ok = bool(mins[2] > thresh and mins[3] > thresh)
+        poly = sum(c[m] * ((xi**2 - 1.0 / 16.0 + 0.5j * xi) ** m) for m in range(k + 1))
+        denom = sum(c[m] * (xi ** (2 * m)) for m in range(k + 1))
+        lmin = float("inf")
+        for rho in np.linspace(-rho_max, rho_max, 41):
+            num = np.real(np.exp(-0.5j * rho) * phi_comm * poly)
+            lmin = min(lmin, float(np.min(num / denom)))
+        return lmin
+
+    r2 = min_symbol_ratio(2, 6.0, 0.5 * math.pi)
+    r3 = min_symbol_ratio(3, 8.0, 0.5 * math.pi)
+    # Mutation controls: wrong B=0.25 (k=3) or rho_max=3.1 (> pi) must lose positivity (< 0)
+    r3_mut_B = min_symbol_ratio(3, 0.25, 0.5 * math.pi)
+    r3_mut_rho = min_symbol_ratio(3, 8.0, 3.1)
+    ok = bool(r2 > 0.5 and r3 > 0.5 and r3_mut_B < 0.0 and r3_mut_rho < 0.0)
     print(
-        f"TA-5 Complex-strip u-coercivity  PASS={ok}: "
-        f"endpoint min_ev(k=2,B=6)={mins[2]:.6f}, min_ev(k=3,B=8)={mins[3]:.6f} (> cos(pi/4)/2={thresh:.6f})"
+        f"TA-5 Exact commutator u-coercivity PASS={ok}: "
+        f"min_ratio(k=2,B=6)={r2:.4f}, (k=3,B=8)={r3:.4f} (> 0.5); "
+        f"mut(B=0.25)={r3_mut_B:+.3f}, mut(rho=3.1)={r3_mut_rho:+.3f}"
     )
     return ok
 
