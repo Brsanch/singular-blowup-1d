@@ -678,8 +678,11 @@ For any profile supported on $X\ge 1$ with leading edge behavior
 $\Omega(X,\tau)\sim A(\tau)(X-1)^{-1/2}\mathbf{1}_{X>1}$ and
 $\Theta(X,\tau)\sim B(\tau)\tfrac{\pi}{2}\mathbf{1}_{X>1}$ as $X\to 1^+$, we have
 $U_X(X,\tau)=H(\Omega)(X,\tau)\sim -A(\tau)(1-X)^{-1/2}\mathbf{1}_{X<1}+A(\tau)H[g](1)\mathbf{1}_{X>1}$,
-so squaring the upper-half-plane analytic extension $(\Omega+i U_X)(z)\sim A(\tau)(z-1)^{-1/2}$
-gives the distributional singular product $-[U_X\Omega]_{\delta(X-1)}=\tfrac{\pi}{2}A(\tau)^2\delta(X-1)$.
+so squaring the upper-half-plane analytic extension $F(z)=(\Omega+i U_X)(z)\sim A(\tau)(z-1)^{-1/2}$
+($\operatorname{Im}z>0$) defines the canonical Hardy-space/Poisson-regularized weak product
+$U_X\Omega:=\tfrac12\operatorname{Im}[F(\cdot+i0)^2]=\lim_{\delta\to 0^+}H(P_\delta*\Omega)(P_\delta*\Omega)$
+in $\mathcal{D}'(\mathbb{R})$, agreeing with the classical product wherever $\Omega$ is smooth and
+giving the distributional singular product $-[U_X\Omega]_{\delta(X-1)}=\tfrac{\pi}{2}A(\tau)^2\delta(X-1)$.
 In the weak divergence form $\Omega_\tau+\partial_X((U+c_l X)\Omega)-(U_X+c_l)\Omega=c_\omega\Omega+\Theta_X$
 on $\mathbb{R}$, matching this against $[\Theta_X]_{\delta(X-1)}=\tfrac{\pi}{2}B(\tau)\delta(X-1)$
 requires the weak-edge jump relation $B(\tau)\equiv A(\tau)^2$.
@@ -2005,19 +2008,52 @@ with $\|G_0\|_{\mathcal{X}_{\rho_0}}\le 1$ and every $0<\varepsilon\le\varepsilo
 \end{enumerate}
 \end{thm}
 
-\begin{proof}[Proof architecture (full details in \texttt{docs/theorem\_track\_b\_pure\_step\_weak\_edge.md})]
-(1)~On $\mathcal{X}_\rho^0$, $\widehat G(\tfrac12)=0$ cancels the $\zeta=0$ pole of $\cot(\pi\zeta)/(\zeta+1)$,
-giving $\|QG\|_{H^\infty(\mathbb{S}_\rho)}\le C_Q\|G\|_{\mathcal{X}_\rho}$, and integration by parts
-gives $a(\mathcal{P}(G))=-\tfrac{1}{\pi}\int_{\mathbb{R}} e^{-z/2}D(QG)G\,dz$ with zero derivative loss.
-(2)~Splitting $\widehat F/N$ at its unique simple pole $m=\tfrac12$ via the explicit holomorphic basis
-$\phi_*(z)=\frac{1}{2\cosh(z/2)}=\frac{u}{u^2+1}$ ($\operatorname{Res}_{1/2}\widehat{\phi_*}=-1$) yields
-$\|S_g(t)F\|_{\mathcal{X}_\rho}\le C_S\|F\|_{\mathcal{X}_\rho}+C_* t^{-1/4}|a(F)|$ (integrable in $t$).
-(3)~The $s$-scaled Nishida norm $\sup_{(s,\rho)\in\Omega_a}(d_a(\rho,s)/s)^{1/2}\|\delta\hat G(s)\|_{\mathcal{X}_\rho}$
-on $a_j\uparrow a_\infty=\rho_0/6$ cancels all $s\to 0^+$ factors identically and contracts on $[0,2]$.
-(4)~Pointwise Hardy bounds $|G(w)|\le C\varepsilon\min(w^{5/8},w^{1/4})$ with $a(G)=0$ give
-$V_G(r^2)=O(\varepsilon r^{5/4})$ and transversal horizon crossing $s_\infty=1+O(\varepsilon)$.
-Verified by \texttt{validate/edge\_track\_b\_proof\_lemmas.py} (\texttt{TB-1..5}) and
-\texttt{edge\_pure\_step\_nonlinear\_manifold.py} (\texttt{PM-1..3}).
+\begin{proof}[Complete proof of Theorem~\ref{thm:track_b}]
+We prove the result in four self-contained steps (Lemmas~1--4 of \texttt{docs/theorem\_track\_b\_pure\_step\_weak\_edge.md}, verified by \texttt{validate/edge\_track\_b\_proof\_lemmas.py}, \texttt{TB-1..5}, and \texttt{edge\_pure\_step\_nonlinear\_manifold.py}, \texttt{PM-1..3}).
+
+\emph{Step 1 (Closedness of $\mathcal{X}_\rho^0$, pole-free $Q$-smoothing, and zero-loss $a(\mathcal{P})$).}
+For any $G\in\mathcal{X}_\rho$, $\widehat G(m)$ is holomorphic on $\tfrac14<\operatorname{Re}m<\tfrac58$ with $L^2$ boundary traces on $\operatorname{Re}m\in\{\tfrac14,\tfrac58\}$, so Cauchy's integral formula gives $|a(G)|=\tfrac{1}{\pi}|\widehat G(\tfrac12)|\le C_0\|G\|_{\mathcal{X}_\rho}$; hence $\mathcal{X}_\rho^0$ is closed in $\mathcal{X}_\rho$.
+Since $\mathcal{M}[QG](\zeta)=\frac{\cot(\pi\zeta)}{\zeta+1}\widehat G(\zeta+\tfrac12)$, the condition $\widehat G(\tfrac12)=0$ cancels the simple pole of $\cot(\pi\zeta)$ at $\zeta=0$ identically.  Because $|\cot(\pi(\zeta_0+i\xi))/(\zeta_0+1+i\xi)|\le C\langle\xi\rangle^{-1}$ on $\zeta_0\in\{-\tfrac14,\tfrac18\}$, we obtain $\|QG\|_{\rho,-1/4}+\|D(QG)\|_{\rho,-1/4}\le C_1\|G\|_{\rho,1/4}$ and $\|QG\|_{\rho,1/8}+\|D(QG)\|_{\rho,1/8}\le C_1\|G\|_{\rho,5/8}$.  By Cauchy--Schwarz in $\xi$, $|(QG)(e^{x+iy})|\le C_2\min(e^{-x/4},e^{x/8})\|G\|_{\mathcal{X}_\rho}$ on $\mathbb{S}_\rho$, so $\|QG\|_{H^\infty(\mathbb{S}_\rho)}\le C_Q\|G\|_{\mathcal{X}_\rho}$.  Combining this with the Cauchy estimate $\|DG\|_{\mathcal{X}_{\rho'}}\le C_D(\rho-\rho')^{-1}\|G\|_{\mathcal{X}_\rho}$ ($0<\rho'<\rho\le\rho_0$) and Hardy--Paley--Wiener equivalence yields
+\begin{equation}\label{eq:tb_bilin}
+\|\mathcal{P}(G_1)-\mathcal{P}(G_2)\|_{\mathcal{X}_{\rho'}}
+\le \frac{C_{\mathcal{P}}}{\rho-\rho'}\bigl(\|G_1\|_{\mathcal{X}_\rho}+\|G_2\|_{\mathcal{X}_\rho}\bigr)\|G_1-G_2\|_{\mathcal{X}_\rho}.
+\end{equation}
+Furthermore, since $G(w)=O(w^{5/8})$, $(QG)(w)=O(w^{1/8})$ as $w\to 0^+$ and $G(w)=O(w^{1/4})$, $(QG)(w)=O(w^{-1/4})$ as $w\to\infty$, integrating $w^{-1/2}(QG)G'$ by parts (both boundary terms vanish) gives the zero-derivative-loss identity
+\begin{equation}\label{eq:tb_aP}
+a(\mathcal{P}(G))=-\frac{1}{\pi}\int_{\mathbb{R}} e^{-z/2}D(QG)(e^z)\,G(e^z)\,dz,\qquad
+|a(\mathcal{P}(G_1))-a(\mathcal{P}(G_2))|\le C_a\bigl(\|G_1\|_{\mathcal{X}_\rho}+\|G_2\|_{\mathcal{X}_\rho}\bigr)\|G_1-G_2\|_{\mathcal{X}_\rho}
+\end{equation}
+(splitting $\mathbb{R}=(-\infty,0]\cup[0,\infty)$ with $e^{-z/2}\le e^{z/4}e^{-z/4}$ on $z\ge 0$ and $e^{-z/2}\le e^{-z/8}e^{-5z/8}$ on $z\le 0$).
+
+\emph{Step 2 (Exact propagator $S_g(t)$ and integrable $t^{-1/4}$ second-line bound).}
+For $F\in\mathcal{X}_\rho$ and $t>0$, $S_g(t)F:=\mathcal{N}_{1/4}(e^{-ut}\mathcal{N}_{1/4}^{-1}F)$ satisfies $a(S_g(t)F)=0$ because $e^{-ut}\mathcal{N}_{1/4}^{-1}F$ decays exponentially as $u\to\infty$ and $N(\tfrac12)=0$.  On $\mathbb{S}_\rho$ ($\rho\le\rho_0\le\tfrac{\pi}{2}$), $\operatorname{Re}(u)=e^{-x/2}\cos(y/2)\ge\frac{1}{\sqrt{2}}e^{-x/2}>0$, so $|\partial_z^k(e^{-ut})|\le C_k(\rho_0)$ uniformly in $t\ge 0$ (Lean~4: \texttt{WeakEdgeManifolds.strip\_norm\_exp\_le\_one}, \texttt{strip\_norm\_us\_exp\_le}).  Since $|N(\tfrac14+i\xi)|\asymp\langle\xi\rangle^2$, multiplication by $e^{-ut}$ is uniformly bounded on $H^2_{\mathrm{Sob},\rho}(\tfrac14)$, giving $\|S_g(t)F\|_{\rho,1/4}\le C_{S,1}\|F\|_{\rho,1/4}$.
+Between $\operatorname{Re}m=\tfrac14$ and $\operatorname{Re}m=\tfrac58$, the unique zero of $N(m)$ is the simple zero at $m=\tfrac12$ ($N'(\tfrac12)=-2$), so $\widehat f(m)=\widehat F(m)/N(m)$ has a simple pole at $m=\tfrac12$ with residue $+\tfrac{\pi}{2}a(F)$.  Setting $\phi_*(z):=\frac{1}{2\cosh(z/2)}=\frac{u}{u^2+1}$ ($\widehat{\phi_*}(m)=\frac{\pi}{\cos(\pi m)}$ on $|\operatorname{Re}m|<\tfrac12$, $\operatorname{Res}_{1/2}\widehat{\phi_*}=-1$), the pole-free remainder $\tilde f:=f+\tfrac{\pi}{2}a(F)\phi_*$ is holomorphic on $\tfrac14\le\operatorname{Re}m\le\tfrac58$ with $\|\tilde f\|_{H^{11/4}_{\mathrm{Sob},\rho}(5/8)}\le C_3'\|F\|_{\mathcal{X}_\rho}$ (as $|\widehat{\phi_*}(\tfrac58+i\xi)|\le C e^{-\pi|\xi|}$ decays faster than $e^{-\rho_0|\xi|}$).  Complex interpolation between integer orders $k=2,3$ gives $\|\mathcal{N}_{5/8}(e^{-ut}\tilde f)\|_{\rho,5/8}\le C_{S,2}\|F\|_{\mathcal{X}_\rho}$.  For the rank-1 piece $e^{-ut}\phi_*$, since $|N(\tfrac58+i\xi)|\le C\langle\xi\rangle^3$, Plancherel and the substitution $r=e^{-x/2}$, $v=rt$ on $x\le 0$ give
+\[
+\int_{-\infty}^0 e^{-5x/4}e^x(1+(rt)^j)^2 e^{-2c_0 r t}\,dx
+=2t^{-1/2}\int_t^\infty v^{-1/2}(1+v^j)^2 e^{-2c_0 v}\,dv\le C_j t^{-1/2}
+\qquad(j\in\{0,1,2,3\}),
+\]
+while $x\ge 0$ is $O(1)$.  Taking the square root yields
+\begin{equation}\label{eq:tb_Sg}
+\|S_g(t)F\|_{\mathcal{X}_\rho}\le C_S\|F\|_{\mathcal{X}_\rho}+C_* t^{-1/4}|a(F)|
+\qquad(F\in\mathcal{X}_\rho,\;t>0).
+\end{equation}
+
+\emph{Step 3 ($s$-scaled Nishida--Ovsyannikov contraction on $[0,2]$ and $c_1=3a(\mathcal{P})$).}
+Write $\widetilde G=\varepsilon\hat G$, $\Phi(\hat G)(s):=S_g(s)G_0+\varepsilon\int_0^s S_g(s-s')\mathcal{P}(\hat G(s'))\,ds'$, $M:=2C_S$, $a_\infty:=\rho_0/6$, and for $a\in[\rho_0/12,\rho_0/6]$ define $d_a(\rho,s):=\rho_0-\rho-as$ on $\Omega_a:=\{(s,\rho):0<s\le 2,\;0<\rho<\rho_0-as\}$ with Nishida's $s$-scaled norm $\|\delta\hat G\|_{*,a}:=\sup_{(s,\rho)\in\Omega_a}(d_a(\rho,s)/s)^{1/2}\|\delta\hat G(s)\|_{\mathcal{X}_\rho}$.
+Applying~\eqref{eq:tb_Sg} to $F=\mathcal{P}(\hat G_1)-\mathcal{P}(\hat G_2)$ with $\rho'(s'):=\rho+\tfrac12 d_a(\rho,s')$ in~\eqref{eq:tb_bilin} and~\eqref{eq:tb_aP} directly at $\rho$ gives
+\[
+\|\Phi(\hat G_1)-\Phi(\hat G_2)\|_{*,a}\le \kappa(\varepsilon)\|\hat G_1-\hat G_2\|_{*,a},\qquad
+\kappa(\varepsilon):=\left(\frac{96\sqrt{2}\,C_S C_{\mathcal{P}} M}{\rho_0}+\frac{8\cdot 2^{3/4}}{3}C_* C_a M\right)\varepsilon.
+\]
+Running Nishida's shrinking-cone sequence $a_0=\rho_0/12$, $a_{j+1}-a_j=\frac{\rho_0}{2\pi^2(j+1)^2}$ ($a_j\uparrow a_\infty=\rho_0/6$) from $\hat G^{(0)}(s)=S_g(s)G_0$: AM--GM gives $\|\hat G^{(1)}-\hat G^{(0)}\|_{*,a_0}\le C_0'\varepsilon$, and on $\Omega_{a_{j+1}}$ we have $d_{a_j}(\rho,s)\ge(a_{j+1}-a_j)s$, so the $s$-factors cancel identically:
+$\|\hat G^{(j+1)}(s)-\hat G^{(j)}(s)\|_{\mathcal{X}_\rho}\le C_0''(j+1)\kappa(\varepsilon)^j\varepsilon$ uniformly on $\Omega_{a_{j+1}}$ (including $s\to 0^+$).
+For $\varepsilon\le\varepsilon_0(\rho_0)$ with $\kappa(\varepsilon)\le\tfrac14$ and $\sum_{j\ge 0}C_0''(j+1)4^{-j}\varepsilon\le\tfrac{M}{2}$, the iterates stay in the ball $\|\hat G^{(j)}\|_{\mathcal{X}_\rho}\le M$ and converge to a unique fixed point $\hat G\in C([0,2];\mathcal{X}_{\rho_1}^0)$ (with strict interior margin $d_{a_\infty}(\rho_1,2)=\rho_0/6>0$).
+On any inner radius $\rho_2<\rho_1$, strip-analyticity and~\eqref{eq:tb_Sg} give $\widetilde G\in C^{0,3/4}((0,2];\mathcal{X}_{\rho_2}^0)$ (since $\int_{s_1}^{s_2}(s_2-s')^{-1/4}ds'=\tfrac43(s_2-s_1)^{3/4}$ and $\|S_g(s_2-s')-S_g(s_1-s')\|_{\mathcal{X}_{\rho_1}\to\mathcal{X}_{\rho_2}}\le C(s_2-s_1)^{3/4}(s_1-s')^{-3/4}$), so $\alpha(s):=a(\mathcal{P}(\widetilde G(s)))\in C^{0,3/4}((0,2])$ by~\eqref{eq:tb_aP}.
+Hence for $s>0$, $h(u,s)=e^{-us}\varepsilon h_0(u)+\int_0^s e^{-u(s-s')}f_{\mathcal{P}}(u,s')\,ds'$ splits into $-\tfrac{\pi}{2}\alpha(s)u^{-2}+O(u^{-9/4})$ (using $\int_0^s e^{-u(s-s')}(\alpha(s')-\alpha(s))ds'=O(u^{-7/4})$ and $\tilde f_{\mathcal{P}}=O(u^{-5/4})$), so $\widehat{\widetilde G}(m,s)=N(m)\widehat h(m,s)$ continues meromorphically to $\operatorname{Re}m<\tfrac98$ with a single simple pole at $m=1$ ($N(1)=-6/\pi$), yielding $c_1(\widetilde G(s))=3a(\mathcal{P}(\widetilde G(s)))$ and classical solvability on $(0,\infty)\times(0,2]$.
+
+\emph{Step 4 (Transversal horizon crossing and physical-time reconstruction).}
+Writing $\ln(1+r^2/w)=r^2/w-R(r^2/w)$ with $0\le R(x):=x-\ln(1+x)\le\min(\tfrac12 x^2,x)$, the condition $a(G)=0$ cancels the $O(r)$ term in $V_G(r^2)=-\frac{1}{\pi r}\int_0^\infty w^{-1/2}\ln(1+r^2/w)G(w)\,dw$ identically, leaving $V_G(r^2)=\frac{1}{\pi r}\int_0^\infty w^{-1/2}R(r^2/w)G(w)\,dw$.  Splitting at $w=r^2$ and using $|G(w)|\le C\varepsilon\min(w^{5/8},w^{1/4})$ gives $|V_{\widetilde G}(r^2)|\le C\varepsilon r^{5/4}$ and $|\partial_r V_{\widetilde G}(r^2)|\le C\varepsilon r^{1/4}$ uniformly on $s\in[0,2]$.  Thus $dr/ds=-1+\tfrac12 V_{\widetilde G}(r^2)\le-\tfrac12$ is $C^1$ on $r\ge 0$ and crosses $0$ transversally at a unique $s_\infty=1+O(\varepsilon)\in(\tfrac12,\tfrac32)$, giving $\tau(s)=\int_0^s ds'/r(s')\in[0,\infty)$, $\lambda(\tau)=r(s(\tau))^2\sim c^2 e^{-2\tau}$, and $\|G(\cdot,\tau)\|_{L^2_\sigma}=\lambda(\tau)^\sigma\|\widetilde G(\cdot,s(\tau))\|_{L^2_\sigma}\le C\varepsilon e^{-2\sigma\tau}$.
 \end{proof}
 
 \begin{thm}[Finite-Sobolev non-analytic global pure-step weak-edge manifold; Track~C]\label{thm:track_c}
@@ -2041,28 +2077,51 @@ every $0<\varepsilon\le\varepsilon_0$:
 \end{enumerate}
 \end{thm}
 
-\begin{proof}[Proof architecture (full details in \texttt{docs/theorem\_track\_c\_finite\_sobolev\_pure\_step.md})]
-(1)~$h\in H^3_{1/4}\cap H^4_{5/8}$ implies $a(\widetilde G)=0$ and controls unweighted
-$\|b\|_{H^2(\mathbb{R})}\le C(\|h\|_{H^3_{1/4}}+\|h\|_{H^4_{5/8}})$ ($b:=Q\widetilde G$), while
-shifting the Mellin contour across $m=\tfrac12$ yields the exact identity
-$\mathcal{N}_{1/4}^{-1}F+\tfrac{\pi}{2}a(F)\phi_*=\mathcal{N}_{5/8}^{-1}F+\tfrac{\pi}{2}a(F)\psi_{5/8}$
-with $\psi_{5/8}(z)=-e^{3z/2}/(1+e^z)\in H^\infty_{5/8}$.
-(2)~In the symmetric part of $A_b^{(\sigma)}=\mathcal{N}_\sigma^{-1}(b(\sigma+\partial_z))\mathcal{N}_\sigma$,
-the Stirling log-phase $\Phi(\xi)\sim 2\xi\ln(2|\xi|)$ cancels identically
-(Lean~4: \texttt{WeakEdgeManifolds.phase\_cancellation\_norm}), leaving amplitude kernel
-$|K_{1/4,3}(\xi,\eta)|\le C(1+|\eta|)$ and $|K_{5/8,4}(\xi,\eta)|\le C(1+|\eta|^{5/4})$, both
-controlled by $\|b\|_{H^2(\mathbb{R})}$ with a $\tfrac14$-derivative margin.
-(3)~Hierarchical $u$-dissipation $\sum_{m=0}^k c_m^{(k)}\operatorname{Re}\langle\partial_z^m(u v),\partial_z^m v\rangle_{L^2}\ge\tfrac12\sum_{m=0}^k c_m^{(k)}\int u|\partial_z^m v|^2 dz$
-holds for $k=3$ ($c_m^{(3)}=4^{3-m}$) and $k=4$ ($c_m^{(4)}=6^{4-m}$; both machine-checked with zero
-\texttt{sorry} in Lean~4: \texttt{WeakEdgeManifolds.hierarchical\_u\_dissipation\_H3/H4}), closing the
-$H^3_{1/4}\cap H^4_{5/8}$ energy bootstrap.
-(4)~Adding the commuting Mellin-parabolic regularization $\delta L:=\delta(-(\partial_z-\tfrac14)(\partial_z-\tfrac58)+\tfrac14)$
-($\operatorname{Re}\widehat L(\sigma+i\xi)=\xi^2+\tfrac14>0$ on $\sigma\in\{\tfrac14,\tfrac58\}$) yields
-$\delta$-uniform solutions via a single-unknown Lions parabolic fixed point, strong Cauchy convergence
-in $C([0,2];H^2_{1/4}\cap H^3_{5/8})$, unconditional uniqueness in $L^\infty([0,2];H^3_{1/4}\cap H^4_{5/8})$,
-and autonomy-restarted strong right-continuity.
-Verified by \texttt{validate/edge\_track\_c\_proof\_lemmas.py} (\texttt{TCB-1..5}) and
-\texttt{edge\_pure\_step\_finite\_sobolev.py} (\texttt{FS-1..3}).
+\begin{proof}[Complete proof of Theorem~\ref{thm:track_c}]
+We prove the result in five self-contained steps (Lemmas~C1--C5 of \texttt{docs/theorem\_track\_c\_finite\_sobolev\_pure\_step.md}, verified by \texttt{validate/edge\_track\_c\_proof\_lemmas.py}, \texttt{TCB-1..5}, and \texttt{edge\_pure\_step\_finite\_sobolev.py}, \texttt{FS-1..3}).
+
+\emph{Step 1 (Unweighted $\|b\|_{H^2(\mathbb{R})}$ control and exact contour shift).}
+For $h\in H^3_{1/4}\cap H^4_{5/8}$, $\widehat h(m)$ is holomorphic on $\tfrac14<\operatorname{Re}m<\tfrac58$ and $N(\tfrac12)=0$, so $\widetilde G=\mathcal{N}_{1/4}h=\mathcal{N}_{5/8}h\in H^1_{1/4}\cap H^{5/4}_{5/8}$ satisfies $a(\widetilde G)=0$.  Hence $b:=Q\widetilde G$ has no pole at $\zeta=0$ and satisfies $\|e^{z/4}b\|_{H^2(\mathbb{R})}\le C_1\|h\|_{H^3_{1/4}}$ and $\|e^{-z/8}b\|_{H^{9/4}(\mathbb{R})}\le C_2\|h\|_{H^4_{5/8}}$.  Splitting $\mathbb{R}=(-\infty,0]\cup[0,\infty)$ and applying the product rule to $e^{-z/4}(e^{z/4}b)$ on $z\ge 0$ and $e^{z/8}(e^{-z/8}b)$ on $z\le 0$ yields
+\begin{equation}\label{eq:tc_bH2}
+\|b\|_{H^2(\mathbb{R})}\le C_b\bigl(\|h\|_{H^3_{1/4}}+\|h\|_{H^4_{5/8}}\bigr).
+\end{equation}
+For $F:=\mathcal{P}(\widetilde G)\in L^2_{1/4}\cap L^2_{5/8}$, $\widehat F(m)/N(m)+\tfrac{\pi}{2}a(F)\widehat{\phi_*}(m)$ has its $m=\tfrac12$ pole cancelled identically; shifting the Mellin inversion contour from $\operatorname{Re}m=\tfrac14$ to $\operatorname{Re}m=\tfrac58$ gives the exact identity
+\begin{equation}\label{eq:tc_shift}
+\mathcal{N}_{1/4}^{-1}F+\tfrac{\pi}{2}a(F)\phi_*=\mathcal{N}_{5/8}^{-1}F+\tfrac{\pi}{2}a(F)\psi_{5/8},\qquad
+\psi_{5/8}(z):=-\frac{e^{3z/2}}{1+e^z}=-\frac{1}{u(u^2+1)}\in H^\infty_{5/8}.
+\end{equation}
+Subtracting $(\partial_s+u)h_{\mathrm{rk1}}=-\tfrac{\pi}{2}a(\mathcal{P}(\widetilde G))\phi_*$ from $h_s+u h=\mathcal{N}_{1/4}^{-1}\mathcal{P}(\widetilde G)$ yields the exact PDE for $\tilde h:=h-h_{\mathrm{rk1}}$:
+\begin{equation}\label{eq:tc_htilde}
+\tilde h_s+u\tilde h=\mathcal{N}_{5/8}^{-1}\bigl[-b D(\mathcal{N}_{5/8}\tilde h)-b D(\mathcal{N}_{5/8}h_{\mathrm{rk1}})+\tfrac12 b\widetilde G\bigr]+\tfrac{\pi}{2}a(\mathcal{P}(\widetilde G))\psi_{5/8}.
+\end{equation}
+
+\emph{Step 2 ($H^5_{5/8}$ rank-1 estimate).}
+By Sobolev embedding $H^1_\sigma\hookrightarrow C_{0,\sigma}$, the boundary terms in~\eqref{eq:tb_aP} vanish, giving $|a(\mathcal{P}(\widetilde G))|\le C_a(\|h\|_{H^3_{1/4}}+\|h\|_{H^4_{5/8}})^2$.  By the $r=e^{-x/2}, v=rt$ integral bound of Theorem~\ref{thm:track_b} Step~2 for $j=0,\dots,5$, $\|e^{-ut}\phi_*\|_{H^5_{5/8}}\le C_5(1+t^{-1/4})$, so
+\begin{equation}\label{eq:tc_rk1}
+\|h_{\mathrm{rk1}}(s)\|_{H^5_{5/8}}\le C_5' s^{3/4}\sup_{0\le s'\le s}\bigl(\|h(s')\|_{H^3_{1/4}}+\|h(s')\|_{H^4_{5/8}}\bigr)^2.
+\end{equation}
+
+\emph{Step 3 (Exact Stirling phase cancellation in $H^3_{1/4}$ and $H^4_{5/8}$).}
+For $\sigma\in\{\tfrac14,\tfrac58\}$ and any positive polynomial weight $W_k(\xi)=(\sum_{m=0}^k c_m^{(k)}\xi^{2m})^{1/2}\asymp\langle\xi\rangle^k$, write $N(\sigma+i\xi)=A_\sigma(\xi)e^{i\Phi_\sigma(\xi)}$ ($A_\sigma\asymp\langle\xi\rangle^{p_\sigma}$, $p_{1/4}=2$, $p_{5/8}=\tfrac{11}{4}$) and $A_{\sigma,k}(\xi):=A_\sigma(\xi)/W_k(\xi)\asymp\langle\xi\rangle^{p_\sigma-k}$.  In the symmetric part of $A_b^{(\sigma)}:=\mathcal{N}_\sigma^{-1}(b(\sigma+\partial_z))\mathcal{N}_\sigma$, the oscillatory phase $e^{i(\Phi_\sigma(\xi-\eta)-\Phi_\sigma(\xi))}$ factors out identically with modulus~$1$ (Lean~4: \texttt{WeakEdgeManifolds.phase\_cancellation\_norm}), leaving kernel magnitude
+\[
+|K_{\sigma,k}(\xi,\eta)|=\left|(\xi-\eta)\frac{A_{\sigma,k}(\xi-\eta)}{A_{\sigma,k}(\xi)}-\xi\frac{A_{\sigma,k}(\xi)}{A_{\sigma,k}(\xi-\eta)}\right|
+\le\begin{cases} C(1+|\eta|) & (\sigma,k)=(\tfrac14,3),\\ C(1+|\eta|^{5/4}) & (\sigma,k)=(\tfrac58,4). \end{cases}
+\]
+Since $\int_{\mathbb{R}}(1+|\eta|^{5/4})|\widehat b(\eta)|\,d\eta\le C\|b\|_{H^2(\mathbb{R})}$ (with a $\tfrac14$-derivative margin since $\tfrac54+\tfrac12=\tfrac74<2$), Schur's test gives $|\operatorname{Re}\langle A_b^{(1/4)}v,v\rangle_{H^3_{\mathrm{hier}}}|\le C\|b\|_{H^2}\|h\|_{H^3_{1/4}}^2$, $|\operatorname{Re}\langle A_b^{(5/8)}\tilde v,\tilde v\rangle_{H^4_{\mathrm{hier}}}|\le C\|b\|_{H^2}\|\tilde h\|_{H^4_{5/8}}^2$, $\|\mathcal{N}_{5/8}^{-1}(b D(\mathcal{N}_{5/8}h_{\mathrm{rk1}}))\|_{H^4_{5/8}}\le C\|b\|_{H^2}\|h_{\mathrm{rk1}}\|_{H^5_{5/8}}$, and $\|\mathcal{N}_\sigma^{-1}(b\widetilde G)\|_{H^{k_\sigma}_\sigma}\le C\|b\|_{H^2}\|h\|_{H^{k_\sigma}_\sigma}$.
+
+\emph{Step 4 (Hierarchical $u$-dissipation and closed energy bootstrap).}
+With $c_m^{(3)}=4^{3-m}$ ($k=3$) and $c_m^{(4)}=6^{4-m}$ ($k=4$), pointwise sum-of-squares coercivity (Lean~4: \texttt{WeakEdgeManifolds.hierarchical\_u\_dissipation\_H3/H4}, zero \texttt{sorry}) gives
+\begin{equation}\label{eq:tc_udiss}
+\sum_{m=0}^k c_m^{(k)}\operatorname{Re}\langle\partial_z^m(u v),\partial_z^m v\rangle_{L^2}
+\ge \frac12\sum_{m=0}^k c_m^{(k)}\int_{\mathbb{R}} u|\partial_z^m v|^2\,dz\ge 0 \qquad(k\in\{3,4\}).
+\end{equation}
+For $E(s):=\|h(s)\|_{H^3_{1/4,\mathrm{hier}}}^2+\|\tilde h(s)\|_{H^4_{5/8,\mathrm{hier}}}^2$ and $Y(s):=\sup_{0\le s'\le s}\sqrt{E(s')}$, combining~\eqref{eq:tc_bH2}--\eqref{eq:tc_udiss} gives $\frac{d}{ds}E(s)\le C'(Y+Y^2)(E+Y^4)\le C''\varepsilon Y(s)^2$ under $Y(s)\le 2C_0\varepsilon$.  Integrating on $[0,2]$ closes $Y(2)\le\sqrt{2E(0)}\le 2C_0\varepsilon$ for $\varepsilon\le\varepsilon_0:=(4C'')^{-1}$.
+
+\emph{Step 5 (Parabolic regularization, unconditional uniqueness, and strong right-continuity).}
+Define the commuting Mellin-parabolic operator $L:=-(\partial_z-\tfrac14)(\partial_z-\tfrac58)+\tfrac14$, whose symbol satisfies $\operatorname{Re}\widehat L(\sigma+i\xi)=\xi^2+\tfrac14>0$ on $\sigma\in\{\tfrac14,\tfrac58\}$, giving $\operatorname{Re}\langle Lf,f\rangle_{H^k_{\sigma,\mathrm{hier}}}\ge c_k\|f\|_{H^{k+1}_\sigma}^2$.
+For $\delta\in(0,1]$, solve $h^\delta_s+u h^\delta+\delta L h^\delta=\mathcal{N}_{1/4}^{-1}\mathcal{P}(\widetilde G^\delta)$ via a single-unknown fixed point $\Phi(h):=\tilde h+h_{\mathrm{rk1}}[h]$ on $C([0,T_\delta];H)$, where $H:=H^3_{1/4,\mathrm{hier}}\cap H^4_{5/8,\mathrm{hier}}$ ($\langle\cdot,\cdot\rangle_H:=\langle\cdot,\cdot\rangle_{H^3_{1/4,\mathrm{hier}}}+\langle\cdot,\cdot\rangle_{H^4_{5/8,\mathrm{hier}}}$), $V:=\{f\in H^4_{1/4}\cap H^5_{5/8} : u^{1/2}f\in H\}$, and $\tilde h\in C([0,T_\delta];H)\cap L^2([0,T_\delta];V)$ is the unique Lions parabolic solution of $(\partial_s+u+\delta L)\tilde h=\mathcal{F}_\delta[h]$ on the single intersection Gelfand triple $V\hookrightarrow H\hookrightarrow V^*$ (using~\eqref{eq:tc_shift} so the $\tfrac14$- and $\tfrac58$-line forcings coincide identically).  Banach's fixed-point theorem gives a unique local solution $h^\delta$ on $[0,T_\delta]$ ($T_\delta\asymp\delta/M^2$).  Integrating one derivative by parts on $\delta|\langle L h_{\mathrm{rk1}}^\delta,\tilde h^\delta\rangle_{H^4_{5/8,\mathrm{hier}}}|\le\tfrac{c_4\delta}{2}\|\tilde h^\delta\|_{H^5_{5/8}}^2+C'\delta\|h_{\mathrm{rk1}}^\delta\|_{H^5_{5/8}}^2$ absorbs the extra term into the $+\delta c_4\|\tilde h^\delta\|_{H^5_{5/8}}^2$ dissipation, closing Step~4 uniformly in $\delta\in(0,1]$ on $[0,2]$.
+For any two solutions $h_1,h_2\in L^\infty([0,2];H^3_{1/4}\cap H^4_{5/8})$ with viscosities $\delta_1,\delta_2\in[0,1]$ and bounds $M_i$, $w:=h_1-h_2$ satisfies $w_s+u w\in L^\infty([0,2];H^2_{1/4}\cap H^3_{5/8})$, so Lions--Magenes pairing on the lower intersection triple $V_{\mathrm{low}}\hookrightarrow H^2_{1/4,\mathrm{hier}}\cap H^3_{5/8,\mathrm{hier}}\hookrightarrow V_{\mathrm{low}}^*$ (using phase cancellation at $(\tfrac14,2)$ and $(\tfrac58,3)$, $k=2,3$ hierarchical $u$-dissipation, $\|\delta b\|_{H^1}\le C(\|w\|_{H^2_{1/4}}+\|w\|_{H^3_{5/8}})$, and one IBP on $\delta_i L$) yields $Y_{\mathrm{low}}^2\le E_{\mathrm{low}}(s_0)+C M\Delta s\,Y_{\mathrm{low}}^2+C(\delta_1+\delta_2)M^2$ on subintervals of length $\Delta s=\min(2,(4CM)^{-1})$.
+Chaining across $[0,2]$ gives unconditional uniqueness in $L^\infty([0,2];H^3_{1/4}\cap H^4_{5/8})$ ($\delta_1=\delta_2=0$) and Cauchy convergence of $\{h^\delta\}$ in $C([0,2];H^2_{1/4}\cap H^3_{5/8})$ at rate $O(\sqrt{\delta_1+\delta_2})$ to $h\in C([0,2];H^2_{1/4}\cap H^3_{5/8})\cap C_w([0,2];H^3_{1/4}\cap H^4_{5/8})$.  Restarting the $\delta$-flow at any $s_0\in[0,2)$ by autonomy and passing $\delta\to 0^+$ gives $\limsup_{s\to s_0^+}E_{s_0}(s)\le E_{s_0}(s_0)$, which with weak continuity yields strong right-continuity $h\in C_R([0,2];H^3_{1/4}\cap H^4_{5/8})$.  Horizon crossing follows identically from Theorem~\ref{thm:track_b} Step~4.
 \end{proof}
 
 \begin{prop}[Closed analytic \emph{a priori} energy bound for the $\sqrt{v}$ $\Theta$-cusp extension; Track~A]\label{prop:track_a}
