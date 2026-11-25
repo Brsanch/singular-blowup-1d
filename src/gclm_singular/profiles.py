@@ -21,6 +21,7 @@ Theorem 3 (half-line explicit singular family, a < 0):
 
 import numpy as np
 from scipy.integrate import quad
+from scipy.special import gamma as gamma_fn
 
 
 def mu_of_a(a: float) -> float:
@@ -202,3 +203,109 @@ def conjugation_N_am1(s):
     """
     s = np.asarray(s, dtype=complex)
     return np.sin(np.pi * s) / (2.0 * s - 1.0)
+
+
+# ============================================================================
+# Branch II: Universal beta = 1/2 exact singular profile family for ALL a < 0
+# ============================================================================
+
+def branch2_scaling_exponents(a: float, unit_H0: bool = False):
+    """Return (c_l, c_omega, gamma) for the universal beta = 1/2 Branch II family.
+
+    Standard scaling (c_omega = -1):
+        Omega_II(X) = (1 / a) * (X - 1)^{-1/2} * 1_{X > 1},
+        c_l = 2,   c_omega = -1,   gamma = 2,   H(Omega_II)(0) = 1 / |a|.
+
+    Unit-H(0) scaling (unit_H0=True, matching Case 2.2 H(Omega)(0) = 1):
+        Omega_II(X) = -(X - 1)^{-1/2} * 1_{X > 1},
+        c_l = -2*a,   c_omega = a,   gamma = 2,   H(Omega_II)(0) = 1.
+    """
+    a = float(a)
+    if a >= 0.0:
+        raise ValueError(f"Expected a < 0; got a={a}")
+    if unit_H0:
+        return -2.0 * a, a, 2.0
+    return 2.0, -1.0, 2.0
+
+
+def branch2_omega_bar(X, a: float, unit_H0: bool = False):
+    """Exact Branch II singular profile: (1/a)*(X-1)^{-1/2}*1_{X>1} (or -(X-1)^{-1/2} if unit_H0)."""
+    a = float(a)
+    if a >= 0.0:
+        raise ValueError(f"Expected a < 0; got a={a}")
+    X = np.asarray(X, dtype=float)
+    amp = -1.0 if unit_H0 else (1.0 / a)
+    out = np.zeros_like(X, dtype=float)
+    mask = X > 1.0
+    out[mask] = amp * (X[mask] - 1.0) ** (-0.5)
+    return out
+
+
+def branch2_Ux_bar(X, a: float, unit_H0: bool = False):
+    """Exact Hilbert transform H(Omega_II)(X) = amp_H * (1 - X)^{-1/2} * 1_{X < 1} (ZERO on X > 1!)."""
+    a = float(a)
+    if a >= 0.0:
+        raise ValueError(f"Expected a < 0; got a={a}")
+    X = np.asarray(X, dtype=float)
+    amp_H = 1.0 if unit_H0 else (-1.0 / a)
+    out = np.zeros_like(X, dtype=float)
+    left = X < 1.0
+    out[left] = amp_H * (1.0 - X[left]) ** (-0.5)
+    out[X == 1.0] = np.nan
+    return out
+
+
+def branch2_U_bar(X, a: float, unit_H0: bool = False):
+    """Exact velocity U_II(X) = int_0^X H(Omega_II) dY: constant 2*amp_H on X >= 1."""
+    a = float(a)
+    if a >= 0.0:
+        raise ValueError(f"Expected a < 0; got a={a}")
+    X = np.asarray(X, dtype=float)
+    amp_H = 1.0 if unit_H0 else (-1.0 / a)
+    out = np.empty_like(X, dtype=float)
+    left = X <= 1.0
+    out[left] = amp_H * (2.0 - 2.0 * np.sqrt(1.0 - X[left]))
+    out[~left] = 2.0 * amp_H
+    return out
+
+
+def branch2_steady_residual(X, a: float, unit_H0: bool = False):
+    """Pointwise steady residual of Branch II on X > 1."""
+    c_l, c_w, _ = branch2_scaling_exponents(a, unit_H0=unit_H0)
+    X = np.asarray(X, dtype=float)
+    Om = branch2_omega_bar(X, a, unit_H0=unit_H0)
+    amp = -1.0 if unit_H0 else (1.0 / a)
+    OmX = np.zeros_like(X, dtype=float)
+    mask = X > 1.0
+    OmX[mask] = -0.5 * amp * (X[mask] - 1.0) ** (-1.5)
+    U = branch2_U_bar(X, a, unit_H0=unit_H0)
+    Ux = branch2_Ux_bar(X, a, unit_H0=unit_H0)
+    return -(c_l * X + a * U) * OmX + (c_w + Ux) * Om
+
+
+def branch2_mellin_symbol_hl(r, a: float):
+    """Exact Branch II Mellin shift symbol in Hou-Luo convention f_hat(s) = int e^{-sz} f dz:
+
+        tilde_c_{II,a}(r) = -((2*r + 1 + a) / (a * (2*r + 1))) * tan(pi * r).
+
+    Reduces to tilde_c_{-1}(r) = 2*r*tan(pi*r)/(2*r+1) at a = -1,
+    and to Hou-Luo c_HL(r) = -tan(pi*r)/(2*r+1) as a -> -infinity.
+    """
+    a = float(a)
+    r = np.asarray(r, dtype=complex)
+    return -((2.0 * r + 1.0 + a) / (a * (2.0 * r + 1.0))) * np.tan(np.pi * r)
+
+
+def branch2_conjugation_NL_hl(s, a: float):
+    """Exact 2-Gamma Mellin conjugation multiplier for Branch II (ALL a < 0, Hou-Luo convention):
+
+        N_{L,II}(s; a) = sin(pi * s) * |a|^{-2*s} * Gamma(2*s + 2 + a) / Gamma(2*s + 2),
+
+    satisfying N_{L,II}(s; a) * tilde_c_{II,a}(s + 1/2) = -N_{L,II}(s + 1/2; a),
+    which conjugates M_{II,a}^{bulk} to -2 d_z - e^{-z/2}.
+    """
+    a = float(a)
+    if a >= 0.0:
+        raise ValueError(f"Expected a < 0; got a={a}")
+    s = np.asarray(s, dtype=complex)
+    return np.sin(np.pi * s) * ((-a) ** (-2.0 * s)) * gamma_fn(2.0 * s + 2.0 + a) / gamma_fn(2.0 * s + 2.0)

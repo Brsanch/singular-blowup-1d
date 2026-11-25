@@ -13,13 +13,22 @@ from .profiles import (
     hilbert_omega_bar_quad,
     mellin_symbol_c,
     conjugation_N_am1,
+    branch2_scaling_exponents,
+    branch2_omega_bar,
+    branch2_Ux_bar,
+    branch2_U_bar,
+    branch2_steady_residual,
+    branch2_mellin_symbol_hl,
+    branch2_conjugation_NL_hl,
 )
 from .operator import (
     build_operator_z,
     build_operator_zeta,
+    build_operator_branch2_z,
     nonlinear_rhs_z,
     spectrum,
 )
+from .dns import run_case22_dns
 
 __all__ = [
     "mu_of_a",
@@ -34,8 +43,17 @@ __all__ = [
     "hilbert_omega_bar_quad",
     "mellin_symbol_c",
     "conjugation_N_am1",
+    "branch2_scaling_exponents",
+    "branch2_omega_bar",
+    "branch2_Ux_bar",
+    "branch2_U_bar",
+    "branch2_steady_residual",
+    "branch2_mellin_symbol_hl",
+    "branch2_conjugation_NL_hl",
     "build_operator_z",
     "build_operator_zeta",
+    "build_operator_branch2_z",
     "nonlinear_rhs_z",
     "spectrum",
+    "run_case22_dns",
 ]

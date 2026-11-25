@@ -528,3 +528,86 @@ def spectrum(M: np.ndarray):
     vals, vecs = np.linalg.eig(M)
     idx = np.argsort(-vals.real)
     return vals[idx], vecs[:, idx]
+
+
+def build_operator_branch2_z(
+    a: float,
+    N: int = 500,
+    zmin: float = -14.0,
+    zmax: float = 12.0,
+    beta: float = 0.0,
+    gauge: str = "a",
+    edge_bc: bool = True,
+    advection_scheme: str = "upwind2",
+) -> dict:
+    """Assemble the linearized operator M_{II,a} around Branch II (universal beta = 1/2):
+
+        Omega_{II,a}(X) = (1 / a) * (X - 1)^{-1/2} * 1_{X > 1},   c_l = 2,   c_omega = -1.
+
+    In z = ln(X - 1), with g = (1 / a) * v^{-1/2} * G:
+        M_{II,a}^{bulk} G = -2 d_z G + (1 / a) H_+[v^{-1/2} G] + (1 / 2) Q_+[v^{-1/2} G].
+
+    Reduces to M_{-1}^{bulk} at a = -1, and to 1D Hou-Luo (-2 d_z + (1/2) Q_+) as a -> -inf.
+    """
+    a = float(a)
+    if a >= 0.0:
+        raise ValueError(f"Expected a < 0; got a={a}")
+
+    z = np.linspace(zmin, zmax, N)
+    dz = z[1] - z[0]
+    v = np.exp(z)
+    X = 1.0 + v
+    v_right = v[-1] + 0.5 * (v[-1] - v[-2])
+
+    if advection_scheme == "central":
+        Dz = _d1_central(N, dz)
+    elif advection_scheme == "upwind2":
+        Dz = _d1_upwind2(N, dz, np.full(N, 2.0))
+    else:
+        raise ValueError(f"Unknown advection_scheme={advection_scheme!r}")
+
+    Hv = hilbert_support_nonuniform(v, v, dz, v_left=0.0, v_right=v_right, grid_support=True)
+    # g = (1 / a) * v^{-1/2} * G
+    Hg_op = Hv * ((1.0 / a) * (v ** -0.5))[None, :]
+
+    EA = np.zeros((N, N))
+    for i in range(1, N):
+        w_ea = np.exp(z[: i + 1] - z[i])
+        tw = np.full(i + 1, dz)
+        tw[0] *= 0.5
+        tw[i] *= 0.5
+        EA[i, : i + 1] = w_ea * tw
+
+    # edge_tail_row_z(z, 0.5) is built for g = -v^{-1/2}*G; rescale by (-1/a) for g = (1/a)*v^{-1/2}*G
+    t_row = (-1.0 / a) * edge_tail_row_z(z, 0.5)
+    Q_op = EA @ Hg_op + np.outer(np.exp(-z), t_row)
+
+    M_bulk = -2.0 * Dz + Hg_op + (0.5 * a) * Q_op
+
+    w_z = np.full(N, dz)
+    w_z[0] *= 0.5
+    w_z[-1] *= 0.5
+    l0_row = (1.0 / np.pi) * (v ** 0.5) / (1.0 + v) * w_z  # H_+[g](0) / H_+[Om_II](0)
+
+    if gauge == "a":
+        M = M_bulk.copy()
+    elif gauge == "b":
+        M = M_bulk - np.outer(np.ones(N), (l0_row / np.sum(l0_row)) @ M_bulk)
+    else:
+        raise ValueError(f"Unknown gauge={gauge!r}")
+
+    if beta != 0.0:
+        w_vec = np.exp(beta * z)
+        wi_vec = np.exp(-beta * z)
+        M = (w_vec[:, None] * M) * wi_vec[None, :]
+
+    if edge_bc:
+        M = M[1:, 1:]
+        z_out, v_out, X_out = z[1:], v[1:], X[1:]
+    else:
+        z_out, v_out, X_out = z, v, X
+
+    return dict(
+        M=M, z=z_out, v=v_out, X=X_out, dz=dz, a=a, beta=beta,
+        gauge=gauge, edge_bc=edge_bc, advection_scheme=advection_scheme,
+    )

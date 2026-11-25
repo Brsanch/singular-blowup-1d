@@ -6,6 +6,7 @@
 **Gates:**
 - Gate 1 (`validate/gclm_verify_singular_steady.py`): **PASS**
 - Gate 2 (`validate/gclm_linear_stability.py`): **PASS**
+- Gate 3 (`validate/gclm_branch2_and_dns_probe.py`): **PASS**
 
 ---
 
@@ -84,7 +85,45 @@ $$\mathcal{M}[M_a^{\mathrm{bulk}} G](s) = \frac{s}{\mu}\,\widehat{G}(s) + c_a(s)
 
 ---
 
-## 5. Natural Next Steps
-1. **Nonlinear dynamic-rescaling DNS for $a < -1$** (e.g. $a = -1.5, -2.0$): test whether smooth degenerate half-line initial data still converge to $\bar\Omega_a$ despite the interior stagnation point $X_* > 1$ and the steeper-singularity $L^1_{\mathrm{loc}}$ mode $\lambda_*(a) = |a| - 1 > 0$, or whether a new profile/singularity exponent takes over for $a < -1$.
-2. **Rigorous functional-analytic proof for $-1 < a < 0$** in the exact characteristic coordinate $\zeta = \ln(1 + v^\mu/|\cos\pi\mu|)$ (where transport is $-\partial_\zeta$ with finite-time inflow at $\zeta = 0$ and the spectral gap in Gauge (b) is uniformly $\approx 1$ across all $-1 < a < 0$), and **slit-plane Hardy-space nonlinear closure at $a = -1$** via $\mathcal{N}_L M_{-1}^{\mathrm{bulk}} \mathcal{N}_L^{-1} = -2\partial_z - e^{-z/2}$.
-3. **Odd-symmetric singular profiles ($a < 0$):** compute the numerical steady states of Section 5.1 (`arXiv:2603.25104`, Table 1) and run the analogous desingularized spectral analysis on $(-1,1)^c$.
+## 5. Discovery of Branch II (Universal $\beta = \frac{1}{2}$ Family) & Nonlinear DNS Probe for $a < -1$ (Gate 3)
+
+### 5.1 Second Exact Singular Branch (Unpublished in `arXiv:2603.25104`)
+Solving the general power-law ansatz $\bar\Omega(X) = -\sin(\pi\beta)(X-1)^{-\beta}\mathbf{1}_{\{X>1\}}$ in the gCLM steady profile equation yields $\cos(\pi\beta)\big(-\frac{a\beta}{1-\beta} - 1\big) = 0$, which admits **two** exact singular branches for every $a < 0$ intersecting transcritically at $a = -1$:
+- **Branch I** (`arXiv:2603.25104` Thm. 3): $\beta = \mu = \frac{1}{1-a}$, $\bar c_l = 1-a$, $\bar c_\omega = -1$, $\bar\gamma = 1-a$.
+- **Branch II (new):** $\beta \equiv \frac{1}{2}$ (universal Hou–Luo shape!) for **every** $a < 0$:
+  $$\bar\Omega_{\mathrm{II},a}(X) = \frac{1}{a}\,(X-1)^{-1/2}\,\mathbf{1}_{\{X>1\}}, \qquad \bar c_{l,\mathrm{II}} = 2, \qquad \bar c_{\omega,\mathrm{II}} = -1, \qquad \bar\gamma_{\mathrm{II}} = 2$$
+  (or equivalently $\bar\Omega_{\mathrm{II}} = -(X-1)^{-1/2}\mathbf{1}_{\{X>1\}}$, $\bar c_l = -2a$, $\bar c_\omega = a$ under unit normalization $H(\bar\Omega)(0) = 1$). Its Hilbert transform vanishes identically on $X > 1$, so $\bar A_{\mathrm{II}}(1+v) = 2v > 0$ is **strictly outgoing for all $a < 0$**.
+
+#### Exact 2-Gamma Conjugation & Exchange of Stability for Branch II (All $a < 0$)
+Linearizing around Branch II gives
+$$M_{\mathrm{II},a}^{\mathrm{bulk}} G = -2\partial_z G + \frac{1}{a}\,H_+[v^{-1/2} G] + \frac{1}{2}\,Q_+[v^{-1/2} G],$$
+which interpolates continuously between $M_{-1}^{\mathrm{bulk}}$ (at $a = -1$) and the 1D Hou–Luo operator $-2\partial_z + \frac{1}{2}Q_+$ (as $a \to -\infty$)! Its Hou–Luo Mellin shift symbol is the pure rational–trig product
+$$\tilde c_{\mathrm{II},a}(r) = -\frac{2r + 1 + a}{a(2r + 1)}\tan(\pi r),$$
+admitting an **exact 2-Gamma conjugation for every $a < 0$** (verified to `< 3.3e-15` in Gate 3):
+$$N_{L,\mathrm{II}}(s; a) := \sin(\pi s)\,|a|^{-2s}\,\frac{\Gamma(2s + 2 + a)}{\Gamma(2s + 2)} \quad \Longrightarrow \quad \mathcal{N}_{L,\mathrm{II}}\,M_{\mathrm{II},a}^{\mathrm{bulk}}\,\mathcal{N}_{L,\mathrm{II}}^{-1} = -2\partial_z - e^{-z/2},$$
+with exact algebraic eigenmode $G_{\mathrm{II},*}(1+v) = (X-1)^{-(1+a)/2}$ at $\lambda_{\mathrm{II},*}(a) = 1 + a$ — the **exact transcritical partner** of Branch I's $\lambda_{\mathrm{I},*}(a) = -(1+a)$:
+- For $a \le -1$: $\lambda_{\mathrm{II},*}(a) = -(|a|-1) \le 0$ (stable, smooth at $X=1^+$); `#Re(lambda) > 0 == 0` in Gate 3.
+- For $-1 < a < 0$: $\lambda_{\mathrm{II},*}(a) = +(1+a) > 0$ crosses into the unstable half-plane (with steeper edge singularity $v^{-(1+a)/2}$).
+
+### 5.2 Nonlinear Dynamic-Rescaling DNS Probe for $a < -1$ (`src/gclm_singular/dns.py`, Gate 3)
+To determine whether smooth degenerate half-line initial data for $a < -1$ converge to Branch I (despite $X_* > 1$ and the steeper $L^1_{\mathrm{loc}}$ mode $\lambda_{\mathrm{I},*} = |a|-1 > 0$) or switch to Branch II ($\gamma = 2$), we evolved the Case 2.2 nonlinear dynamic-rescaling PDE using WENO5 + SSP-RK3 + exact log-kernel $J(v)$ on an exponentially stretched grid $v(\rho) = 10^{-4}(e^\rho - 1)$ reaching $v_{\max} \approx 4\times 10^8$:
+
+| $a$ | Initial datum | $\gamma_{\mathrm{DNS}}$ | Branch I ($1-a$) | $X_{*,\mathrm{DNS}}$ | $X_{*,\mathrm{exact}}$ | $\max\text{rel}|\Omega-\bar\Omega_{\mathrm{I}}|$ | Bulk residual |
+|---:|---|---:|---:|---:|---:|---:|---:|
+| $-1.50$ | Case 2.2 ($-X^{-3}e^{-1/(X-1)}$) | $2.482$ | $2.50$ | $1.0680$ | $1.0531$ | $6.43\times 10^{-3}$ | $3.8\times 10^{-9}$ |
+| $-2.00$ | Case 2.2 ($-X^{-3}e^{-1/(X-1)}$) | $2.964$ | $3.00$ | $1.1271$ | $1.1250$ | $1.18\times 10^{-2}$ | $1.6\times 10^{-9}$ |
+| $-2.00$ | Poly-exp ($-(X-1)^4 e^{-(X-1)}$) | $2.964$ | $3.00$ | $1.1271$ | $1.1250$ | $1.18\times 10^{-2}$ | $2.8\times 10^{-8}$ |
+| $-2.00$ | Reg. Branch II ($-(X-1+10^{-3})^{-1/2}$) | $2.964$ | $3.00$ | $1.1271$ | $1.1250$ | $1.18\times 10^{-2}$ | $7.7\times 10^{-9}$ |
+| $-2.50$ | Case 2.2 ($-X^{-3}e^{-1/(X-1)}$) | $3.461$ | $3.50$ | $1.1909$ | $1.1914$ | $1.69\times 10^{-2}$ | $4.9\times 10^{-10}$ |
+
+**Definitive conclusion for $a < -1$:**
+1. **Universal convergence to Branch I:** Smooth degenerate initial data—and even regularized Branch II data—universally converge to **Branch I** ($\bar\Omega_{\mathrm{I},a}$, $\gamma = 1-a$, $\beta = \frac{1}{1-a}$), spontaneously forming the predicted interior repelling stagnation point $X_* = 1 + (\cos\pi\mu)^{1/\mu}$ (`0.04%`–`1.4%` error) and matching $\bar\Omega_{\mathrm{I},a}$ pointwise to `0.6%`–`1.7%` over three decades $X - 1 \in [0.05, 50]$.
+2. **$L^2$ criticality explains the full picture:**
+   - For $a < -1$, $\mu = \frac{1}{1-a} < \frac{1}{2}$, so $\bar\Omega_{\mathrm{I},a} \in L^2_{\mathrm{loc}}([1,\infty))$, the edge flux $\bar A_{\mathrm{I}}\bar\Omega_{\mathrm{I}} \sim (X-1)^{1-2\mu} \to 0$ vanishes, the IBP normalization identity $c_\omega H(\Omega)(0) = \frac{1+a}{\pi}\int\frac{U_X\Omega}{X} - \frac{a}{\pi}\int\frac{U\Omega}{X^2} = -1$ converges absolutely (verified to `< 1e-12`), and the unstable $L^1_{\mathrm{loc}}$ mode $g_* \sim (X-1)^{-(1-\mu)} \notin L^2_{\mathrm{loc}}$ is never excited by smooth data.
+   - For $-1 < a < 0$, $\mu > \frac{1}{2}$ so $\bar\Omega_{\mathrm{I},a} \notin L^2_{\mathrm{loc}}$ and the edge flux $\bar A_{\mathrm{I}}\bar\Omega_{\mathrm{I}} \sim -(X-1)^{1-2\mu} \to -\infty$ must be supplied by the two-scale inner traveling wave across $X = 1$. On a fixed half-line cutoff mesh ($X > 1$ wall) that truncates this non-$L^2$ inner flux, the Case 2.2 evolution at $a = -0.5$ cleanly locks onto **Branch II** ($c_l \approx 1.00$, $c_\omega \approx -0.51$, $\gamma \approx 1.96$, $\beta \approx 0.509$ — the exact $L^2$ threshold!).
+
+---
+
+## 6. Natural Next Steps
+1. **Rigorous linear + nonlinear stability proof** for Branch I at $a = -1$ (slit-plane Hardy-space closure via $\mathcal{N}_L M_{-1} \mathcal{N}_L^{-1} = -2\partial_z - e^{-z/2}$), for Branch II at all $a \in (-2, 0)$ (via the exact 2-Gamma conjugator $N_{L,\mathrm{II}}(s;a)$), and for Branch I at $-1 < a < 0$ (in the exact characteristic coordinate $\zeta$).
+2. **Odd-symmetric singular profiles ($a < 0$):** compute the numerical steady states of Section 5.1 (`arXiv:2603.25104`, Table 1) and extend the stability spectrum $\lambda(a)$ to the odd branch.
