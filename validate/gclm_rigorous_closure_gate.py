@@ -26,6 +26,10 @@ operator norm, and nonlinear Lyapunov closure step in docs/proof_gclm_singular_s
      uniform boundedness of B(tau), and (c_l, c_w) -> (2, -1).
   5. Branch I (-1 < a < 0): Full (N-1)-dimensional restricted semigroup operator norm
      ||e^{tau M_a}|_{ker L_0}||_{L^2_{1/2}(d zeta)} * e^{0.5*tau} <= 1 via weighted SVD.
+  6. Theorem 4 (Branch I, ALL a in [-1, 0)): Raw nonlinear gCLM FD verification of Gauge-(c)
+     operator M_{I,c} (< 1e-10), independent physical-space vs Mellin-symbol M_{I,c} check
+     (non-circular), AND Plancherel H^1_{sigma_-} cap H^1_{sigma_+} coercivity verification
+     across a in {-0.25, -0.50, -0.75, -1.00}.
 """
 
 from fractions import Fraction
@@ -38,6 +42,8 @@ from scipy.linalg import expm, null_space
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from gclm_singular.profiles import (  # noqa: E402
     mu_of_a,
+    Ux_bar,
+    mellin_symbol_c,
     branch2_mellin_symbol_hl,
     branch2_conjugation_NL_hl,
 )
@@ -500,6 +506,124 @@ def check_branch1_zeta_contraction():
     return ok
 
 
+def check_theorem4_branch1_coercivity():
+    print("\n  [6] Theorem 4: Branch I (-1 <= a < 0) Gauge-(c) raw FD & H^1_{sigma_-} cap H^1_{sigma_+} coercivity:")
+    ok = True
+
+    # (a) Raw nonlinear PDE finite-difference & non-circular physical-space vs Mellin verification of M_{I,c}
+    N = 600
+    z = np.linspace(-10.0, 12.0, N)
+    dz = z[1] - z[0]
+    v = np.exp(z)
+    Hv = hilbert_support_nonuniform(v, v, dz, v_left=0.0, v_right=v[-1] + 0.5 * (v[-1] - v[-2]), grid_support=True)
+    EA = np.zeros((N, N))
+    for i in range(1, N):
+        tw = np.full(i + 1, dz)
+        tw[0] *= 0.5
+        tw[i] *= 0.5
+        EA[i, : i + 1] = np.exp(z[: i + 1] - z[i]) * tw
+    EA[:, 0] += 0.5 * np.exp(z[0] - z)
+    w_z = np.full(N, dz)
+    w_z[0] *= 0.5
+    w_z[-1] *= 0.5
+    G_fd = np.exp(-0.5 * (z - 1.0) ** 2) * np.cos(0.7 * z)
+    dG_fd = np.real(np.fft.ifft(1j * 2.0 * np.pi * np.fft.fftfreq(N, d=dz) * np.fft.fft(G_fd)))
+    m_fd = (z >= -3.0) & (z <= 8.0)
+
+    # (b) Spectral Plancherel H^1_{sigma_-} cap H^1_{sigma_+} coercivity verification on L=128
+    N2 = 4096
+    L2 = 128.0
+    z2 = np.linspace(-L2 / 2.0, L2 / 2.0, N2, endpoint=False)
+    dz2 = z2[1] - z2[0]
+    xi2 = 2.0 * np.pi * np.fft.fftfreq(N2, d=dz2)
+    dxi2 = 2.0 * np.pi / L2
+    G2 = np.exp(-0.5 * (z2 - 0.3) ** 2) * (1.0 + 0.4 * np.cos(1.7 * z2))
+
+    for a in [-0.25, -0.50, -0.75, -1.00]:
+        mu = mu_of_a(a)
+        kappa = -np.cos(np.pi * mu)
+        sinpm = np.sin(np.pi * mu)
+        Om_bar = -sinpm * (v ** (-mu))
+        ux_b = Ux_bar(1.0 + v, a)
+        A_bar = (1.0 - a) * (v + kappa * (v ** (1.0 - mu)))
+        Ht_I = (Hv * Om_bar[None, :]) @ G_fd
+        ht_edge = float(((sinpm / np.pi) * np.exp(-mu * z) * w_z) @ G_fd)
+        V_I = float(((a * sinpm / np.pi) * np.exp((1.0 - mu) * z) * np.log1p(np.exp(-z)) * w_z) @ G_fd)
+        # Cancellation-free subtracted kernel Ht_{I,0} = -sin(pi*mu) * v * H_+[v^{-1-mu} G]
+        Ht_I0 = -sinpm * ((v[:, None] * Hv) * (v ** (-1.0 - mu))[None, :]) @ G_fd
+        Qt_I0 = EA @ Ht_I0
+        Qt_I = Qt_I0 + ht_edge
+
+        def raw_rhs(eps):
+            g = eps * G_fd
+            dg = eps * dG_fd
+            c_l = (1.0 - a) - eps * V_I
+            c_w = -mu * c_l - mu * eps * ht_edge
+            A_tot = A_bar + v * eps * (-V_I + a * Qt_I)
+            return (c_w + ux_b + eps * (Ht_I0 + ht_edge)) * (1.0 + g) - (A_tot / v) * (-mu * (1.0 + g) + dg)
+
+        fd = (raw_rhs(1e-4) - raw_rhs(-1e-4)) / 2e-4
+        Mc_G = -(A_bar / v) * dG_fd + Ht_I0 - (1.0 - mu) * Qt_I0
+        fd_err = float(np.max(np.abs(fd[m_fd] - Mc_G[m_fd])) / np.max(np.abs(Mc_G[m_fd])))
+
+        # Independent non-circular physical-space PV Hilbert check of Ht_{I,0}[G_fd](z0) vs Mellin symbol
+        idx0 = int(np.argmin(np.abs(z2 - 0.7)))
+        z0 = float(z2[idx0])
+
+        def _G_an(zv):
+            return float(np.exp(-0.5 * (zv - 1.0) ** 2) * np.cos(0.7 * zv))
+
+        def _htI0_integrand(u):
+            if u < 1e-10:
+                return 0.0
+            t1 = np.exp(-mu * u) * _G_an(z0 + u) / (-np.expm1(u))
+            t2 = np.exp(mu * u) * _G_an(z0 - u) / (-np.expm1(-u))
+            return -(sinpm / np.pi) * np.exp(-mu * z0) * (t1 + t2)
+
+        HtI0_phys, _ = quad(_htI0_integrand, 0.0, 20.0, epsabs=1e-11, epsrel=1e-11, limit=200)
+        # Mellin inverse on Re r = sig1_chk = mu + 0.35 (well inside (mu, 1+mu), zero aliasing!)
+        sig1_chk = mu + 0.35
+        r_chk = sig1_chk + 1j * xi2
+        G_an_grid = np.exp(-0.5 * (z2 - 1.0) ** 2) * np.cos(0.7 * z2)
+        G_an_hat = np.fft.fft(np.exp(-sig1_chk * z2) * G_an_grid) * dz2
+        sym_htI0 = sinpm / np.tan(np.pi * (mu - r_chk))
+        HtI0_mellin_grid = np.real(np.exp((sig1_chk - mu) * z2) * np.fft.ifft(sym_htI0 * G_an_hat / dz2))
+        HtI0_mellin = float(HtI0_mellin_grid[idx0])
+        phys_vs_mellin_err = abs(HtI0_phys - HtI0_mellin) / abs(HtI0_mellin)
+
+        max_pl_err = 0.0
+        min_ratio = np.inf
+        for sig in [0.75 * mu, 0.25 + 0.75 * mu]:
+            sig1 = sig + 0.5 * mu
+            r = sig1 + 1j * xi2
+            G2_hat = np.fft.fft(np.exp(-sig1 * z2) * G2) * dz2
+            dG2 = np.real(np.exp(sig1 * z2) * np.fft.ifft(r * G2_hat / dz2))
+            ca_val = mellin_symbol_c(mu - r, a)
+            Mc2 = -(1.0 - a) * dG2 + np.real(np.exp((sig1 - mu) * z2) * np.fft.ifft(ca_val * G2_hat / dz2))
+            dMc2 = -(1.0 - a) * np.real(np.exp(sig1 * z2) * np.fft.ifft((r ** 2) * G2_hat / dz2)) + np.real(
+                np.exp((sig1 - mu) * z2) * np.fft.ifft((r - mu) * ca_val * G2_hat / dz2)
+            )
+            w = np.exp(-2.0 * sig * z2)
+            lhs0 = float(np.sum(w * Mc2 * G2) * dz2)
+            norm0 = float(np.sum(w * G2 ** 2) * dz2)
+            rhs0 = -(1.0 - a) * sig * norm0 + float(np.sum(np.real(ca_val) * (np.abs(G2_hat) ** 2)) * dxi2 / (2.0 * np.pi))
+            lhs1 = float(np.sum(w * dMc2 * dG2) * dz2)
+            norm1 = float(np.sum(w * dG2 ** 2) * dz2)
+            rhs1 = -(1.0 - a) * sig * norm1 + float(
+                np.sum(np.real((r - mu) * np.conj(r) * ca_val) * (np.abs(G2_hat) ** 2)) * dxi2 / (2.0 * np.pi)
+            )
+            max_pl_err = max(max_pl_err, abs(lhs0 - rhs0) / abs(rhs0), abs(lhs1 - rhs1) / abs(rhs1))
+            min_ratio = min(min_ratio, lhs0 / (-(1.0 - a) * sig * norm0), lhs1 / (-(1.0 - a) * sig * norm1))
+
+        case_ok = (fd_err < 1e-10) and (phys_vs_mellin_err < 1e-10) and (max_pl_err < 1e-6) and (min_ratio > 1.0)
+        ok = ok and case_ok
+        print(
+            f"      a={a:+5.2f} (mu={mu:.3f}): raw_FD={fd_err:.2e}, HtI0_phys_vs_Mellin={phys_vs_mellin_err:.2e}, "
+            f"Plancherel={max_pl_err:.2e}, min(diss/trans)={min_ratio:.3f} (>1), ok={case_ok}"
+        )
+    return ok
+
+
 def main():
     print("=" * 78)
     print("  GATE 4: RIGOROUS LINEAR & NONLINEAR CLOSURE VERIFICATION (TARGET B)")
@@ -509,12 +633,13 @@ def main():
     ok3 = check_lemma23_bounds()
     ok4 = check_theorem3_nonlinear_closure()
     ok5 = check_branch1_zeta_contraction()
+    ok6 = check_theorem4_branch1_coercivity()
 
-    verdict = ok1 and ok2 and ok3 and ok4 and ok5
+    verdict = ok1 and ok2 and ok3 and ok4 and ok5 and ok6
     print("\n" + "-" * 78)
     print(
-        f"  [1] Thm 1 Conj: {ok1} | [2] Lem 2.2 Cert: {ok2} | [3] Lem 2.3 Bounds: {ok3} | "
-        f"[4] Thm 3 NL: {ok4} | [5] Br I OpNorm: {ok5}"
+        f"  [1] Thm 1: {ok1} | [2] Lem 2.2: {ok2} | [3] Lem 2.3: {ok3} | "
+        f"[4] Thm 3: {ok4} | [5] Br I OpNorm: {ok5} | [6] Thm 4: {ok6}"
     )
     print("\n  VERDICT:", "PASS -- Gate 4 certified" if verdict else "FAIL")
     print("=" * 78)

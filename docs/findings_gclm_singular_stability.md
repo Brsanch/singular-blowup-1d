@@ -111,13 +111,13 @@ To determine whether smooth degenerate half-line initial data for $a < -1$ conve
 | $a$ | Initial datum | $\gamma_{\mathrm{DNS}}$ | Branch I ($1-a$) | $X_{*,\mathrm{DNS}}$ | $X_{*,\mathrm{exact}}$ | $\max\text{rel}|\Omega-\bar\Omega_{\mathrm{I}}|$ | Bulk residual |
 |---:|---|---:|---:|---:|---:|---:|---:|
 | $-1.50$ | Case 2.2 ($-X^{-3}e^{-1/(X-1)}$) | $2.482$ | $2.50$ | $1.0680$ | $1.0531$ | $6.43\times 10^{-3}$ | $3.8\times 10^{-9}$ |
-| $-2.00$ | Case 2.2 ($-X^{-3}e^{-1/(X-1)}$) | $2.964$ | $3.00$ | $1.1271$ | $1.1250$ | $1.18\times 10^{-2}$ | $1.6\times 10^{-9}$ |
-| $-2.00$ | Poly-exp ($-(X-1)^4 e^{-(X-1)}$) | $2.964$ | $3.00$ | $1.1271$ | $1.1250$ | $1.18\times 10^{-2}$ | $2.8\times 10^{-8}$ |
-| $-2.00$ | Reg. Branch II ($-(X-1+10^{-3})^{-1/2}$) | $2.964$ | $3.00$ | $1.1271$ | $1.1250$ | $1.18\times 10^{-2}$ | $7.7\times 10^{-9}$ |
-| $-2.50$ | Case 2.2 ($-X^{-3}e^{-1/(X-1)}$) | $3.461$ | $3.50$ | $1.1909$ | $1.1914$ | $1.69\times 10^{-2}$ | $4.9\times 10^{-10}$ |
+| $-2.00$ | Case 2.2 ($-X^{-3}e^{-1/(X-1)}$) | $2.959$ | $3.00$ | $1.1298$ | $1.1250$ | $1.41\times 10^{-2}$ | $1.6\times 10^{-9}$ |
+| $-2.00$ | Poly-exp ($-(X-1)^4 e^{-(X-1)}$) | $2.959$ | $3.00$ | $1.1298$ | $1.1250$ | $1.41\times 10^{-2}$ | $2.7\times 10^{-8}$ |
+| $-2.00$ | Reg. Branch II ($-(X-1+10^{-3})^{-1/2}$) | $2.959$ | $3.00$ | $1.1298$ | $1.1250$ | $1.41\times 10^{-2}$ | $7.3\times 10^{-9}$ |
+| $-2.50$ | Case 2.2 ($-X^{-3}e^{-1/(X-1)}$) | $3.456$ | $3.50$ | $1.1793$ | $1.1914$ | $1.89\times 10^{-2}$ | $4.0\times 10^{-10}$ |
 
 **Definitive conclusion for $a < -1$:**
-1. **Universal convergence to Branch I:** Smooth degenerate initial data—and even regularized Branch II data—universally converge to **Branch I** ($\bar\Omega_{\mathrm{I},a}$, $\gamma = 1-a$, $\beta = \frac{1}{1-a}$), spontaneously forming the predicted interior repelling stagnation point $X_* = 1 + (\cos\pi\mu)^{1/\mu}$ (`0.04%`–`1.4%` error) and matching $\bar\Omega_{\mathrm{I},a}$ pointwise to `0.6%`–`1.7%` over three decades $X - 1 \in [0.05, 50]$.
+1. **Universal convergence to Branch I:** Smooth degenerate initial data—and even regularized Branch II data—universally converge to **Branch I** ($\bar\Omega_{\mathrm{I},a}$, $\gamma = 1-a$, $\beta = \frac{1}{1-a}$), spontaneously forming the predicted interior repelling stagnation point $X_* = 1 + (\cos\pi\mu)^{1/\mu}$ (`0.4%`–`1.4%` error) and matching $\bar\Omega_{\mathrm{I},a}$ pointwise to `0.6%`–`1.9%` over three decades $X - 1 \in [0.05, 50]$.
 2. **$L^2$ criticality explains the full picture:**
    - For $a < -1$, $\mu = \frac{1}{1-a} < \frac{1}{2}$, so $\bar\Omega_{\mathrm{I},a} \in L^2_{\mathrm{loc}}([1,\infty))$, the edge flux $\bar A_{\mathrm{I}}\bar\Omega_{\mathrm{I}} \sim (X-1)^{1-2\mu} \to 0$ vanishes, the IBP normalization identity $c_\omega H(\Omega)(0) = \frac{1+a}{\pi}\int\frac{U_X\Omega}{X} - \frac{a}{\pi}\int\frac{U\Omega}{X^2} = -1$ converges absolutely (verified to `< 1e-12`), and the unstable $L^1_{\mathrm{loc}}$ mode $g_* \sim (X-1)^{-(1-\mu)} \notin L^2_{\mathrm{loc}}$ is never excited by smooth data.
    - For $-1 < a < 0$, $\mu > \frac{1}{2}$ so $\bar\Omega_{\mathrm{I},a} \notin L^2_{\mathrm{loc}}$ and the edge flux $\bar A_{\mathrm{I}}\bar\Omega_{\mathrm{I}} \sim -(X-1)^{1-2\mu} \to -\infty$ must be supplied by the two-scale inner traveling wave across $X = 1$. On a fixed half-line cutoff mesh ($X > 1$ wall) that truncates this non-$L^2$ inner flux, the Case 2.2 evolution at $a = -0.5$ cleanly locks onto **Branch II** ($c_l \approx 1.00$, $c_\omega \approx -0.51$, $\gamma \approx 1.96$, $\beta \approx 0.509$ — the exact $L^2$ threshold!).
