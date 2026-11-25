@@ -443,7 +443,7 @@ theorem thm3_block2_denom_bounds {P E δ : ℝ} (hP : 0 ≤ P) (hE : 0 ≤ E) (h
     nlinarith [Real.sqrt_nonneg P]
 
 /-- Strict factor-of-2 bootstrap trapping in Theorem 3:
-    for `K = 2 + C₀ + 3(C₄ + C₅)/λ₀` and `M = 2(1 + K)`, initial data `√E₀ + B₀ ≤ ε₀`
+    for `K = 1 + √2 + C₀ + 3(C₄' + C₅')/λ₀` and `M = 2(1 + K)`, initial data `√E₀ + B₀ ≤ ε₀`
     implies `B₀ + K √E₀ ≤ (M/2) ε₀ < M ε₀`. -/
 theorem thm3_bootstrap_trapping {K ε₀ sE₀ B₀ : ℝ}
     (hK : 0 < K) (hε : 0 < ε₀) (hsE : 0 ≤ sE₀) (hB : 0 ≤ B₀) (hinit : sE₀ + B₀ ≤ ε₀) :
@@ -457,6 +457,91 @@ theorem thm3_bootstrap_trapping {K ε₀ sE₀ B₀ : ℝ}
     linarith
   · have hM : 0 < M := by dsimp [M]; linarith
     nlinarith
+
+/-- Theorem 3 (Appendix A, Step 1): Exact Plancherel coercivity of the weighted viscous regularizer
+    `-e^{-z/2}(∂_z² - 1)` for all seven `(σ₁, k)` pairs at `σ₁ ∈ {5/8, 7/8}` (where `R_k > 0` and
+    `I_k ≥ 0` by `lem22_cert_58_k0..2` and `lem22_cert_78_k0..3`; note at `σ₁ = 1/2, k = 2`,
+    `R_2` changes sign and is handled separately in `thm3_sigma14_viscous_lower_bound`):
+    for `P_k(ξ) = R + i ξ I` and `-r² + 1 = (ξ² + 1 - σ₁²) - 2 i σ₁ ξ`, the real part equals
+    `(ξ² + 1 - σ₁²) R + 2 σ₁ ξ² I > 0`. -/
+theorem thm3_weighted_viscous_coercive {σ₁ ξ R I : ℝ}
+    (hσ1 : 0 < σ₁) (hσ2 : σ₁ < 1) (hR : 0 < R) (hI : 0 ≤ I) :
+    0 < (ξ ^ 2 + 1 - σ₁ ^ 2) * R + 2 * σ₁ * ξ ^ 2 * I := by
+  have h1 : 0 < 1 - σ₁ ^ 2 := by nlinarith
+  have hx : 0 ≤ ξ ^ 2 := sq_nonneg ξ
+  have ht1 : 0 < (ξ ^ 2 + 1 - σ₁ ^ 2) * R := mul_pos (by linarith) hR
+  have ht2 : 0 ≤ 2 * σ₁ * ξ ^ 2 * I := by positivity
+  linarith
+
+/-- Theorem 3 (Appendix A, Step 2): Exact shifted-weight Plancherel coercivity of the Riesz
+    bilinear form `B_{1/4}(w, η) = ⟨e^{z/4} w, e^{-z/4} η⟩_H` on `σ = 3/8` (`K = 2`) and
+    `σ = 5/8` (`K = 3`), linked directly via `ring` to `∑_{k=0}^K Re[(r + 1/4)^k (r̄ - 1/4)^k]`
+    with `r = σ + i ξ` (`x = ξ² ≥ 0`). -/
+theorem thm3_riesz_shifted_coercive (ξ : ℝ) :
+    let x := ξ ^ 2
+    let p38 := 1 + ((3 / 8 : ℝ) ^ 2 - (1 / 4 : ℝ) ^ 2 + x) +
+      (((3 / 8 : ℝ) ^ 2 - (1 / 4 : ℝ) ^ 2 + x) ^ 2 - (2 * (1 / 4 : ℝ) * ξ) ^ 2)
+    let p58 := 1 + ((5 / 8 : ℝ) ^ 2 - (1 / 4 : ℝ) ^ 2 + x) +
+      (((5 / 8 : ℝ) ^ 2 - (1 / 4 : ℝ) ^ 2 + x) ^ 2 - (2 * (1 / 4 : ℝ) * ξ) ^ 2) +
+      (((5 / 8 : ℝ) ^ 2 - (1 / 4 : ℝ) ^ 2 + x) ^ 3 -
+        3 * ((5 / 8 : ℝ) ^ 2 - (1 / 4 : ℝ) ^ 2 + x) * (2 * (1 / 4 : ℝ) * ξ) ^ 2)
+    (p38 = x ^ 2 + (29 / 32 : ℝ) * x + (4441 / 4096 : ℝ)) ∧
+    (p58 = x ^ 3 + (79 / 64 : ℝ) * x ^ 2 + (6075 / 4096 : ℝ) * x + (385645 / 262144 : ℝ)) ∧
+    0 < p38 ∧ 0 < p58 := by
+  intro x p38 p58
+  have hx : 0 ≤ x := sq_nonneg ξ
+  have h1 : p38 = x ^ 2 + (29 / 32 : ℝ) * x + (4441 / 4096 : ℝ) := by
+    dsimp only [p38, x]; ring
+  have h2 : p58 = x ^ 3 + (79 / 64 : ℝ) * x ^ 2 + (6075 / 4096 : ℝ) * x +
+      (385645 / 262144 : ℝ) := by
+    dsimp only [p58, x]; ring
+  refine ⟨h1, h2, ?_, ?_⟩
+  · rw [h1]; positivity
+  · rw [h2]; positivity
+
+/-- Theorem 3 (Appendix A, Step 2): Exact `ν₀ = λ₀/(16 σ₊²) = 3/25` arithmetic guaranteeing the
+    `(5/4) λ₀` coercivity margin in the Kato–Majda energy inequality (eq. `km_block1`). -/
+theorem thm3_nu0_arithmetic {ν Ca Cb Mε : ℝ}
+    (hν : ν ≤ (3 / 25 : ℝ)) (hCa : 0 ≤ Ca) (hCb : 0 ≤ Cb) (hMε : 0 ≤ Mε)
+    (hsmall : (2 * Ca + 2 * Cb) * Mε ≤ (3 / 4 : ℝ) / 2) :
+    let lam₀ : ℝ := 3 / 4
+    let σ_p : ℝ := 5 / 8
+    (5 / 4 : ℝ) * lam₀ ≤ 2 * lam₀ - 4 * σ_p ^ 2 * ν - (2 * Ca + Cb) * Mε ∧
+    Cb * Mε ≤ (1 / 4 : ℝ) * lam₀ := by
+  intro lam₀ σ_p
+  dsimp only [lam₀, σ_p]
+  constructor
+  · nlinarith
+  · nlinarith
+
+/-- Theorem 3 (Appendix A, Step 2): Exact integrating-factor identity for the Kato–Majda iteration
+    `d/dτ E^{(n+1)} + (5/4) λ₀ E^{(n+1)} ≤ (1/4) λ₀ E₀ e^{-λ₀ τ}` preserves
+    `E^{(n+1)}(τ) ≤ E₀ e^{-λ₀ τ}` identically with zero constant loss. -/
+theorem thm3_picard_decay_preserving {E₀ lam₀ τ : ℝ} :
+    (E₀ + E₀ * (Real.exp ((1 / 4) * lam₀ * τ) - 1)) * Real.exp (-(5 / 4) * lam₀ * τ) =
+    E₀ * Real.exp (-lam₀ * τ) := by
+  have h1 : E₀ + E₀ * (Real.exp ((1 / 4) * lam₀ * τ) - 1) = E₀ * Real.exp ((1 / 4) * lam₀ * τ) := by ring
+  rw [h1, mul_assoc, ← Real.exp_add]
+  congr 2
+  ring
+
+/-- Theorem 3 (Appendix A, Step 5): Exact weighted-viscous lower bound at `σ = 1/4, σ₁ = 1/2, k = 2`:
+    `Re[P₂(ξ)(-r² + 1)] = x³ + (3/2) x² - (3/16) x ≥ -(3/16) x` for all `x = ξ² ≥ 0`, isolating
+    the sole negative viscous band into `O(ν) E_{3/8}(0) e^{-3τ/4}`. -/
+theorem thm3_sigma14_viscous_lower_bound (ξ : ℝ) :
+    let x := ξ ^ 2
+    let R₂ := x ^ 2 - (1 / 4 : ℝ) * x
+    let I₂ := x
+    let val := (x + 1 - (1 / 2 : ℝ) ^ 2) * R₂ + 2 * (1 / 2 : ℝ) * x * I₂
+    val = x ^ 3 + (3 / 2 : ℝ) * x ^ 2 - (3 / 16 : ℝ) * x ∧ -(3 / 16 : ℝ) * x ≤ val := by
+  intro x R₂ I₂ val
+  have hx : 0 ≤ x := sq_nonneg ξ
+  have h1 : val = x ^ 3 + (3 / 2 : ℝ) * x ^ 2 - (3 / 16 : ℝ) * x := by
+    dsimp only [val, R₂, I₂, x]; ring
+  refine ⟨h1, ?_⟩
+  rw [h1]
+  have hpos : 0 ≤ x ^ 3 + (3 / 2 : ℝ) * x ^ 2 := by positivity
+  linarith
 
 /-! ## 5. Theorem 4: Branch I (`a ∈ [-1, 0)`) Unconditional `H¹_σ` Coercivity -/
 
