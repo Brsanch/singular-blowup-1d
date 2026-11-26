@@ -9,7 +9,7 @@ This directory contains an offline-verifiable cryptographic priority record for 
   - `validate/gclm_{verify_singular_steady,linear_stability,branch2_and_dns_probe,rigorous_closure_gate}.py` (Gates 1–4, all PASS)
   - `docs/proof_gclm_singular_stability.md` & `docs/findings_gclm_singular_stability.md`
 - **`CHECKSUMS_TARGET_B.sha256.tsq`** — RFC 3161 SHA-256 timestamp query generated from `CHECKSUMS_TARGET_B.sha256`.
-- **`CHECKSUMS_TARGET_B.freetsa.tsr`** (with `freetsa_tsa.crt` and `freetsa_cacert.pem`) — RFC 3161 Trusted Timestamping Authority response signed by FreeTSA.org on **2026-11-25 22:56:43 GMT**.
+- **`CHECKSUMS_TARGET_B.freetsa.tsr`** (with `freetsa_tsa.crt` and `freetsa_cacert.pem`) — RFC 3161 Trusted Timestamping Authority response signed by FreeTSA.org on **2026-11-26 00:40:07 GMT**.
 - **`CHECKSUMS_TARGET_B.digicert.tsr`** — Independent backup RFC 3161 timestamp response signed by DigiCert TSA.
 
 ## Offline Verification Commands

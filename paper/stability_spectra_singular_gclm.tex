@@ -18,8 +18,8 @@
 Zero-Analyticity Finite-Sobolev Nonlinear Closure for the\\
 Singular Self-Similar Profiles of the Generalized CLM Model}
 \author{
-  Bryan Sanchez\\
-  \small Companion Python gates and Lean~4 backbone: \texttt{singular-blowup-1d} (\texttt{gclm/singular-stability})
+  Bryan Sanchez\thanks{Independent Researcher. E-mail: \texttt{bryansanchez.bas@gmail.com}; ORCID: \href{https://orcid.org/0009-0000-6080-5407}{\texttt{0009-0000-6080-5407}}.}\\
+  \small Independent Researcher
 }
 \date{November 2026}
 
@@ -51,6 +51,9 @@ Third, exploiting the free vorticity-scaling parameter $c_\omega(\tau)$ in gCLM,
 
 Fourth, nonlinear WENO5/SSP-RK3 dynamic-rescaling DNS with exact logarithmic-kernel Hilbert integration reveals an \textbf{$L^2$-criticality selection mechanism} across $a = -1$: for $a < -1$, smooth degenerate and regularized-Branch-II initial data universally converge to Branch~I ($\gamma \to 1-a$, interior repelling stagnation point $X_* = 1+(\cos\pi\mu)^{1/\mu}$, universality spread $3.3\times 10^{-8}$) because $\bar\Omega_{\mathrm{I},a} \in L^2_{\mathrm{loc}}$ supports zero edge flux and an exact Beta-integral IBP identity $c_\omega = -1$, whereas for $-1 < a < 0$ fixed-cutoff $X > 1$ DNS locks onto Branch~II ($\beta = \frac{1}{2}, \gamma = 2$). All algebraic positivity certificates, weight-splitting identities, and bootstrap inequalities are machine-checked in Lean~4 (\texttt{lean/GclmSingularBackbone.lean}, \texttt{0~sorry}, standard axioms only), and all continuous PDE, spectral, and DNS claims are verified by four standalone Python gates (\texttt{validate/gclm\_*.py}).
 \end{abstract}
+
+\noindent\textbf{MSC 2020:} 35B44, 35B35, 35C06, 35Q35, 76B03.\\
+\textbf{Keywords:} generalized Constantin--Lax--Majda model; singular self-similar blowup; linear stability spectrum; Mellin transform; Carleman--Mellin conjugation; finite-Sobolev nonlinear stability; Lean~4 formalization.
 
 \tableofcontents
 \vspace{0.5em}
@@ -640,6 +643,13 @@ Integrating over $[0,\infty)$ yields $\sup_{\tau \ge 0}\mathcal{W}(\tau)^2 \le C
 
 \paragraph{Step 5: Extension to $\sigma_- = \frac{1}{4}$ ($\lambda_0 = \frac{1}{2}$) for $a \in [-\frac{8}{5}, 0)$.}
 Suppose $a \in [-\frac{8}{5}, 0)$ and $G_0 \in H^2_{1/4}(\mathbb{R})\cap H^3_{5/8}(\mathbb{R})$ with $\sqrt{\mathcal{E}_{1/4}(0)} + \mathcal{B}(0) \le \varepsilon_0$. Because $e^{-3z/4} \le e^{-z/2} + e^{-5z/4}$ on $\mathbb{R}$, $\mathcal{E}_{3/8}(0) \le 2\mathcal{E}_{1/4}(0)$, so Steps~1--3 construct the global viscous family $G^\nu$ ($\nu \in (0,\nu_0]$) satisfying $\mathcal{E}_{3/8}(G^\nu(\tau)) \le \mathcal{E}_{3/8}(0)e^{-3\tau/4}$, $\sqrt{\mathcal{E}_{3/8}(G^\nu)} + \mathcal{B}(G^\nu) \le \frac{M}{2}\varepsilon_0$, and $G^\nu \in L^\infty([0,\infty); H^2_{1/4}(\mathbb{R})) \cap L^2_{\mathrm{loc}}([0,\infty); H^3_{1/4}(\mathbb{R}))$ (combining $H^3_{3/8}((-\infty,0]) \hookrightarrow H^3_{1/4}((-\infty,0])$ with $G^\nu \in L^\infty([0,\infty))$ and $\partial_z G^\nu \in L^\infty(H^1([0,\infty))) \cap L^2_{\mathrm{loc}}(H^2([0,\infty)))$). Testing the viscous PDE for $G^\nu$ in $H^2_{1/4}\cap H^3_{5/8}$: at $\sigma = \frac{1}{4}$ ($\sigma_1 = \frac{1}{2}$), $\operatorname{Re}[P_k(\xi)(-r^2+1)]$ equals $x + \frac{3}{4} > 0$ ($k=0$), $x^2 + \frac{7}{4}x \ge 0$ ($k=1$), and $x^3 + \frac{3}{2}x^2 - \frac{3}{16}x \ge -\frac{3}{16}x$ ($k=2$; Lean~4: \texttt{thm3\_sigma14\_viscous\_lower\_bound}). The sole negative viscous piece is therefore bounded by $\frac{3}{16}\nu\|(\partial_z - \frac{1}{2})G^\nu\|_{L^2_{1/2}}^2 \le C\nu\mathcal{E}_{3/8}(G^\nu(\tau)) \le C\nu\mathcal{E}_{3/8}(0)e^{-3\tau/4}$ (using $e^{-z} \le e^{-3z/4} + e^{-5z/4}$), while Theorem~\ref{thm:sobolev_coerc} at $\sigma = \frac{1}{4}$ and the $\sigma_- = \frac{3}{8}$ bounds give $\frac{d}{d\tau}\mathcal{E}_{1/4}(G^\nu) + \frac{1}{2}\mathcal{E}_{1/4}(G^\nu) \le C_1\nu\mathcal{E}_{3/8}(0)e^{-3\tau/4}$. Multiplying by $e^{\tau/2}$ and integrating yields $\mathcal{E}_{1/4}(G^\nu(\tau)) \le (\mathcal{E}_{1/4}(0) + 4C_1\nu\mathcal{E}_{3/8}(0))e^{-\tau/2}$; sending $\nu \to 0^+$ recovers the exact decay $\mathcal{E}_{1/4}(G(\tau)) \le \mathcal{E}_{1/4}(0)e^{-\tau/2}$ by weak lower semicontinuity. Finally, running the Step~4 difference estimate for $W = G^{\nu_1} - G^{\nu_2}$ in $L^2_{1/4}\cap L^2_{5/8}$ (using Theorem~\ref{thm:sobolev_coerc}(1) at $\sigma = \frac{1}{4}$ and $|\nu_i\langle(\partial_z^2-1)G^{\nu_i}, W\rangle_{L^2_{1/2}}| \le C\nu_i\mathcal{E}_{3/8}(0)e^{-3\tau/4}$) proves $G^\nu \to G$ strongly in $C([0,\infty); H^1_{1/4}(\mathbb{R})\cap H^2_{5/8}(\mathbb{R}))$ with $G \in C_w([0,\infty); H^2_{1/4}(\mathbb{R})\cap H^3_{5/8}(\mathbb{R}))$. $\square$
+
+\section*{Declarations}
+\paragraph{Data and Code Availability.}
+All Python verification gates (\texttt{validate/\allowbreak gclm\_*.py}), source modules (\texttt{src/\allowbreak gclm\_singular/}), figure scripts (\texttt{paper/\allowbreak scripts/\allowbreak make\_gclm\_figures.py}), the Lean~4.29 / Mathlib formalization (\texttt{lean/\allowbreak GclmSingularBackbone.lean}), and SHA-256 / RFC~3161 reproducibility records are archived in the repository \url{https://github.com/Brsanch/singular-blowup-1d} (branch \texttt{gclm/singular-stability}).
+
+\paragraph{Funding and Competing Interests.}
+This research received no external funding. The author declares no competing financial or non-financial interests.
 
 \begin{thebibliography}{9}
 \bibitem{CLM1985}
