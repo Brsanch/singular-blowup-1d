@@ -1,0 +1,53 @@
+\documentclass[10.5pt,letterpaper]{article}
+\usepackage[margin=0.85in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlist{nosep, leftmargin=1.5em}
+
+\begin{document}
+
+\textbf{Bryan Sanchez}\\
+Independent Researcher\\
+ORCID: \href{https://orcid.org/0009-0000-6080-5407}{\texttt{0009-0000-6080-5407}}\\
+E-mail: \texttt{bryansanchez.bas@gmail.com}
+
+\vspace{0.5em}
+November 25, 2026
+
+\vspace{0.5em}
+Dear Editors of the \emph{Journal of Nonlinear Science},
+
+Please find enclosed the manuscript \emph{``Stability Spectra and Nonlinear Co-Moving Bootstrap for the Singular Self-Similar Profile of the 1D Hou--Luo Model''} for consideration as an Original Article in the \emph{Journal of Nonlinear Science}.
+
+Following the recent discovery by Chen--Huang--Li (\texttt{arXiv:2604.01868}, 2026) of an explicit singular unbounded self-similar blowup profile for the 1D Hou--Luo model ($\bar\Omega(X) = (X-1)^{-1/2}\mathbf{1}_{\{X>1\}}$, $\bar\Theta(X) = \frac{\pi}{2}\mathbf{1}_{\{X>1\}}$, $(c_l, c_\omega) = (2, -1)$), the spectral and nonlinear stability of this singular profile remained open. In this manuscript we:
+\begin{enumerate}
+  \item Compute the convective linear stability spectra in singularity-adapted logarithmic coordinates across two independent discretizations, certifying $\#\{\operatorname{Re}\lambda > 0\} = 0$ and finite-amplitude relaxation to $(\bar\Omega, c_l = 2, c_\omega = -1)$.
+  \item Prove a linear spectral gap, uniform vertical-line resolvent bounds on $L^2_\sigma(\mathbb{R})$ ($\sigma \in (0, \frac{1}{2})$) via a 4-Gamma ladder multiplier, and an exact Mellin--Carleman conjugation $M_\sigma = \mathcal{N}(-2\partial_z - e^{-z/2})\mathcal{N}^{-1}$ yielding an explicit $C_0$-semigroup with exact spectrum $\{\operatorname{Re}\lambda \le -2\sigma\}$ and exact contractivity threshold $\sigma \le \frac{1}{4}$.
+  \item Prove a small-data nonlinear co-moving stability theorem under the edge-stagnation gauge (Gauge~(a)) for both the invariant $\Theta$-sector and the full coupled $(G, h)$ system, diagnose the edge point-mass defect and factorial edge divergence of unconstrained eigenmodes, and resolve both obstructions in the pure-step ansatz via an autonomous finite-horizon $s$-clock—proving global weak-edge compatible (zero $\delta(X-1)$ defect) nonlinear stability in both strip-analytic spaces and non-analytic finite Sobolev space $H^3_{1/4} \cap H^4_{5/8}$.
+\end{enumerate}
+
+All finite algebraic cancellations, symbol inequalities, hierarchical $u$-dissipation identities, and ODE trapping bounds are machine-checked in Lean~4 (10~modules, \texttt{0~sorry}, standard axioms only), and all continuous spectral, operator, and nonlinear PDE claims are cross-checked by standalone Python verification gates archived at \url{https://github.com/Brsanch/singular-blowup-1d}.
+
+This manuscript is original, has not been published previously, and is not under consideration at any other journal. (A distinct companion paper studying the generalized Constantin--Lax--Majda model is being submitted separately.)
+
+\textbf{Suggested referees} (no conflicts of interest):
+\begin{itemize}
+  \item De Huang, Peking University (\texttt{dhuang@math.pku.edu.cn})
+  \item Jiajie Chen, Courant Institute, New York University
+  \item Thomas Y. Hou, California Institute of Technology
+  \item In-Jee Jeong, Seoul National University
+  \item Pavel M. Lushnikov, University of New Mexico
+\end{itemize}
+
+Thank you for your time and consideration.
+
+\vspace{0.5em}
+Sincerely,\\[0.3em]
+\textbf{Bryan Sanchez}\\
+Independent Researcher
+
+\end{document}
