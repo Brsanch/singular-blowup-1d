@@ -1,8 +1,14 @@
 # HANDOFF — singular-blowup-1d
 
-Read this + `README.md` + `docs/findings_*.md` first. The next step is named at
-the bottom ("THE NEXT CHIP"). Repo: github.com/Brsanch/singular-blowup-1d (private).
+Read this + `README.md` + `docs/findings_*.md` first. Repo: `https://github.com/Brsanch/singular-blowup-1d` (**public** as of 2026-11-25).
 Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasure loop.
+
+> ## ⚑ LATEST (2026-11-25) — **Target A & Target B SUBMITTED; repo PUBLIC & merged to `main`; dual RFC 3161 timestamped**
+> - **Target A (1D Hou–Luo):** *Stability Spectra and Nonlinear Co-Moving Bootstrap for the Singular Self-Similar Profile of the 1D Hou–Luo Model* (`paper/stability_spectra_singular_houluo.pdf`; zero-warning submission zip `paper/submission_houluo/houluo_jns_latex.zip`, 37 pp) — **submitted to *Journal of Nonlinear Science* on 25 Nov 2026**. Lean 4 (`lean/SingularBlowup/`, 10 modules): `0 sorry`.
+> - **Target B (gCLM, `arXiv:2603.25104v4`):** *Stability Spectra, Exact Two-Gamma Conjugation, and Zero-Analyticity Finite-Sobolev Nonlinear Closure for the Singular Self-Similar Profiles of the Generalized CLM Model* (`paper/stability_spectra_singular_gclm.pdf`, 21 pp, 0 LaTeX warnings; double-anonymous PDF in `paper/submission_gclm/stability_spectra_singular_gclm_ANONYMOUS.pdf`) — **submitted for double-anonymous peer review on 25 Nov 2026**. Unconditional global existence (Theorem 3 & Appendix A), 3 independent hostile audits (`memnet: off`) passed, Gates 1–4 (`validate/gclm_*.py`) ALL PASS, Lean 4 (`lean/GclmSingularBackbone.lean`) `0 sorry`, standard axioms only.
+> - **Priority timestamps:** Dual RFC 3161 TSA tokens (FreeTSA offline-verified + DigiCert backup) covering both papers, Lean 4 backbone, and Gates 1–4 in `docs/timestamps/VERIFY.md`.
+> - **Git & visibility:** `Brsanch/singular-blowup-1d` is **PUBLIC** (HTTP 200), tags `v1.0-gclm-singular-stability` (`8c53b94`) and `v1.1-gclm-submission-ready` (`4ae0465`), with `gclm/singular-stability` merged cleanly into `main`.
+> - **Next:** Await referee reports for both submissions. (Hold off on minting a public Zenodo DOI for Target B until after double-anonymous peer review completes.)
 
 > **Review on file (2026-11-22):** `docs/findings_session_2026_11_21_weak_edge_hostile_review.md` — hostile review of
 > the weak-edge nonlinear manifold notes (NM / PM / FS). Claim 1 holds; the cusp contraction and the finite-Sobolev

@@ -1,121 +1,128 @@
 # singular-blowup-1d
 
 Self-similar **finite-time blowup** of 1D nonlocal active-scalar models
-(Constantin–Lax–Majda / De Gregorio / generalized-CLM / Hou–Luo), with a focus
-on the **singular-profile** scenarios discovered in 2026 and the rigorous /
-computer-assisted certification of their profiles and **linear stability**.
+(Constantin–Lax–Majda / De Gregorio / generalized CLM / 1D Hou–Luo), focusing on
+**singular (unbounded) self-similar profiles**, their exact Mellin stability
+spectra, two-Gamma conjugations, zero-analyticity finite-Sobolev nonlinear
+closures, and machine-checked **Lean 4** + Python verification.
 
-## The bet (why this, and why now)
+Author: **Bryan Sanchez** (Independent Researcher, ORCID [`0009-0000-6080-5407`](https://orcid.org/0009-0000-6080-5407))
 
-Years of work on Navier–Stokes / SQG / Euler **global regularity** hit a hard
-math wall: every local geometric-depletion route collapses to Type-I /
-KNSS–Liouville rigidity — a statement equivalent to the conclusion, not a
-measurable gap. This repo **inverts that wall**. Instead of trying to *rule out*
-blowup on the true equation, we *certify* blowup on toy models where blowup is
-the answer. These are 1D, so extreme spatial resolution is cheap, and the
-profile ODEs are the cleanest computer-assisted-proof (CAP) / Lean targets in
-the whole program. None of the listed dead ends apply: a 1D model is not 3D
-Euler regularity, not Type-I rigidity, not undecidable.
+---
 
-## Verified landscape (June 2026)
+## Papers & Current Status (2026-11-25)
 
-The phenomenon class was opened in the last few months by **De Huang's group**:
+| Target | Manuscript | Status | Lean 4 (`0 sorry`) | Verification Gates |
+| :--- | :--- | :--- | :--- | :--- |
+| **Target A** (1D Hou–Luo) | *Stability Spectra and Nonlinear Co-Moving Bootstrap for the Singular Self-Similar Profile of the 1D Hou–Luo Model* ([PDF](paper/stability_spectra_singular_houluo.pdf), companion to Chen–Huang–Li, `arXiv:2604.01868`) | **Submitted** to *Journal of Nonlinear Science* (25 Nov 2026) | 10 modules in [`lean/SingularBlowup/`](lean/SingularBlowup/) | `validate/` suite PASS |
+| **Target B** (generalized CLM) | *Stability Spectra, Exact Two-Gamma Conjugation, and Zero-Analyticity Finite-Sobolev Nonlinear Closure for the Singular Self-Similar Profiles of the Generalized CLM Model* ([PDF](paper/stability_spectra_singular_gclm.pdf), companion to Huang–Tong–Wang, `arXiv:2603.25104v4`) | **Submitted** for peer review (25 Nov 2026) | [`lean/GclmSingularBackbone.lean`](lean/GclmSingularBackbone.lean) | Gates 1–4 (`validate/gclm_*.py`) ALL PASS |
 
-- **arXiv:2603.25104** (Huang, Tong, Wang — Mar 2026), *Self-similar finite-time
-  blowups with singular profiles of the generalized CLM model*. For the gCLM
-  family `ω_t + a u ω_x = u_x ω`, `u_x = H[ω]`: for `a>0`, one-scale self-similar
-  blowups with **regular** profiles (new); for `a≤0`, a **two-scale** scenario
-  whose **outer profile converges to a singular (unbounded) function**.
-  Explicit singular profiles constructed for `a<0`; the `a=0` (CLM) outer-profile
-  convergence is **proven** rigorously; inner traveling wave existence via a
-  fixed-point method.
-- **arXiv:2604.01868** (Chen, Huang, Li — Apr 2026), *Novel self-similar
-  finite-time blowups with singular profiles of the 1D Hou–Luo model and the 2D
-  Boussinesq equations: a numerical investigation*. A **two-stage** blowup
-  (local `L∞` blowup at `T̃`, then weak continuation to a local `Lᵖ` blowup at
-  `T>T̃`), with an **unbounded `(X−1)^{−1/2}` self-similar profile** and measured
-  exponents `(c_l=2, c_ω=−1, γ=2)`, `1/√X` far-field decay. **Numerical only —
-  no rigorous existence of these singular profiles.**
+### Cryptographic Priority Timestamps
+Both manuscripts, the Lean 4 backbone, and the standalone Python verification
+gates are locked under dual independent **RFC 3161** trusted timestamps
+(FreeTSA.org offline-verified + DigiCert TSA backup). See
+[`docs/timestamps/VERIFY.md`](docs/timestamps/VERIFY.md).
 
-**The gap.** Existing CAP frameworks (Chen–Hou, *Stable nearly self-similar
-blowup … II: rigorous numerics*) certify **smooth** profiles. The new **singular
-(unbounded)** profiles have, for the Hou–Luo / 2D-Boussinesq case, *no* rigorous
-existence proof and (for the whole family) *no published linear-stability
-spectrum*. Stability governs which profile is dynamically realized and how hard
-a CAP is (instability order controls viscous-perturbation feasibility — cf.
-DeepMind arXiv:2509.14185).
+---
 
-**Honest scoop risk.** De Huang's group is driving this hard and owns the CAP
-machinery. The robust, hard-to-scoop contributions are (1) **independent
-numerical confirmation** of a ~2-month-old single-group claim, and (2) the
-**linear-stability spectra**, which the construction papers do not report.
+## Key Verified Results
 
-## Candidate targets (the cluster — one solver serves all)
+### Target A — 1D Hou–Luo Singular Profile (`arXiv:2604.01868`)
+- Independent certification of the closed-form singular profile
+  $\bar{\Omega}(X) = (X-1)^{-1/2}\mathbf{1}_{X>1}$,
+  $\bar{\Theta}(X) = \frac{\pi}{2}\mathbf{1}_{X>1}$ with $(c_l, c_\omega) = (2, -1)$
+  and steady residual $\approx 2 \times 10^{-16}$.
+- Edge-resolved moving-frame stability spectra in $z = \ln(Y-1)$ identifying the
+  spurious fixed-grid edge artifact and resolving the convective weighted
+  spectral gap $2\sigma$ modulo symmetry modes.
+- Exact Mellin conjugation $\mathcal{M}_\sigma = \mathcal{N}(-2\partial_z - e^{-z/2})\mathcal{N}^{-1}$
+  via $N(s) = \cos(\pi s)\Gamma(2s+2)/\pi$, yielding an explicit $C_0$-semigroup
+  and vertical-line resolvent bounds on the constrained domain $\widehat{G}(\tfrac{1}{2}) = 0$.
+- Co-moving nonlinear bootstrap and self-consistent dynamic-rescaling relaxation
+  confirmed numerically and paired with 10 `0 sorry` Lean 4.29 modules under
+  `lean/SingularBlowup/`.
 
-| | target | open? | scoop risk | CAP cleanliness |
-|---|---|---|---|---|
-| **A** | Hou–Luo singular `(X−1)^{−1/2}` profile: confirm + stability spectrum + desingularized profile-ODE → CAP existence | profile numerical-only; stability unpublished | **high** (freshest, Huang's turf) | needs singularity-adapted basis |
-| **B** | gCLM `a`-family: singular-profile transition + **stability spectra λ(a)** across `a` | profiles known (a<0 explicit, a=0 proven); **stability open** | medium | clean 1D profile ODE |
-| **C** | De Gregorio `a=1`: spectral gap of the linearization about `A·sin` (regularity-window sub-target) | open; headline near equivalent-to-conclusion | low | cleanest CAP target |
+### Target B — Generalized CLM Singular Profiles (`arXiv:2603.25104v4`)
+- **Branch I exact Mellin symbol & spectrum:** For Huang–Tong–Wang's Branch I
+  profile $\bar{\Omega}_{I,a}$ ($a < 0$), the exact Mellin symbol $c_a(s)$ has
+  zero non-real zeros in $0 < \operatorname{Re} s < 1$, real roots $s = \mu$
+  ($\lambda = 0$) and $s = 1 - \mu$ ($\lambda_{I,*} = -(1+a)$), and zero
+  unstable eigenvalues in Gauges (a, b) across $a \in [-2.5, -0.1]$.
+- **New Branch II family & transcritical exchange:** Closed-form singular family
+  $\bar{\Omega}_{II,a}(X) = \frac{1}{a}(X-1)^{-1/2}\mathbf{1}_{X>1}$
+  ($c_l = 2, c_\omega = -1, \gamma = 2$, valid for all $a < 0$) intersecting
+  Branch I transcritically at $a = -1$ and interpolating to 1D Hou–Luo as
+  $a \to -\infty$.
+- **Gauge (c) exact two-Gamma conjugation (Theorem 1):** Edge-amplitude pinning
+  eliminates the $\delta(X-1)$ distributional defect globally and yields an exact
+  two-Gamma Mellin conjugation $\mathcal{N}_{L,II}$ of $\mathcal{M}_c$ to
+  $-2\partial_z - e^{-z/2}$ on $\mathcal{H}_{\sigma,a}$ with exact spectrum
+  $\{\operatorname{Re}\lambda \le -2\sigma\}$.
+- **Computer-free finite-Sobolev coercivity (Theorems 2 & 4):** Rational-polynomial
+  $H^2_{\sigma_-} \cap H^3_{5/8}$ coercivity for Branch II across all $a \in [-2,0)$
+  and 3-line $H^1_{\sigma_-} \cap H^1_{\sigma_+}$ coercivity for Branch I across
+  all $a \in [-1,0)$, machine-checked in Lean 4 (`0 sorry`, standard axioms only).
+- **Unconditional zero-analyticity nonlinear closure (Theorem 3 & Appendix A):**
+  Global existence, uniqueness in
+  $\mathcal{X}_{\mathrm{gCLM}} \cap L^2([0,\infty); H^{5/2}_{7/8}(\mathbb{R}))$,
+  exponential stability, and conservative distributional finite-time blowup via
+  a Mellin-compatible weighted viscous regularizer and $O(\sqrt{\nu})$ vanishing
+  viscosity.
+- **$L^2$-criticality selection (DNS):** WENO5/SSP-RK3 dynamic-rescaling DNS
+  demonstrates Branch I selection for $a < -1$ and Branch II locking at
+  $a = -0.5$ across the $L^2$-threshold $\beta = \tfrac{1}{2}$.
 
-The headline-regularity slices (De Gregorio "all smooth data", supercritical SQG)
-are **off-limits for solo closure** — stay on profile / stability / CAP
-sub-targets and hand the closure leap off.
+---
 
-## Validation gates (no result trusted until these pass)
+## Reproducing the Verification
 
-1. **CLM exact-solution gate — `validate/validate_clm.py` — PASSED.**
-   The engine (`a=0, ν=0`, `ω₀=sin x`) reproduces the closed form
-   `ω = 4ω₀/((2−t·Hω₀)² + t²ω₀²)` to **2×10⁻¹⁰** relative `L∞` error, with
-   measured `t*=2.000000`, `x*=π` exact. Spatial error saturated below the RK4
-   time-floor at N=1024/2048/4096.
-2. **Hou–Luo physical-DNS — PARTIAL (c_ω confirmed).** `src/houluo.py` reproduces
-   finite-time focusing blowup with **`c_ω=−1` to <0.4%** (matches 2308.01528;
-   see `docs/findings_houluo_physical.md`). `c_l` is **not** obtainable from
-   physical DNS — the self-similar core `(T−t)^{c_l}`, `c_l>1`, goes sub-grid
-   almost immediately. ⇒ need dynamic rescaling.
-3. **Singular steady state (Thm 2.3) — CERTIFIED.** `validate/verify_singular_steady.py`:
-   closed-form `U(X)=2√(1−X)−2 (X<1), −2 (X>1)` ⇒ **`U(1)=−2` exactly**, steady
-   residual of eq 2.4 = **2e-16** on X>1; ℝ-Hilbert tool validated vs Lorentzian
-   to 1.4e-6. Independent confirmation of arXiv:2604.01868 Thm 2.3. The ~15%
-   error in the *numeric* Hilbert of the singular profile is far-field truncation
-   of the `1/√X` tail → mapped grid / desingularization needed for stability.
-   See `docs/findings_singular_steady_verified.md`.
-4. **Linear-stability spectrum (Conjecture 2.4) — PARTIAL + frontier stated.**
-   `src/stability.py`: 2N×2N linearized operator (frozen `μ=ν=0`), closed-form
-   `Ū`. No-coupling spectrum validated stable (`0,−1,−2,…`). Coupled: the
-   **resolved/physical spectrum is stable** (`max Re λ≈−0.71/−0.89` at N=1400/1900,
-   and those are far-field box modes — none on the profile) → numerical evidence
-   **consistent with stability**. The leading apparent unstable mode is a
-   **free-boundary edge artifact** (`(X−1)^{−3/2}` regularized → `δ^{−3/2}`,
-   grid-scale, δ-divergent), correctly identified by the convergence study, *not*
-   reported as an instability. Definitive verdict needs the **desingularized
-   free-boundary formulation** (edge-displacement DOF + regular shape in a
-   weighted space) — stated at max resolution in `docs/findings_stability_spectrum.md`.
-   The scaling/symmetry modes (`μ,ν`) are the other piece to add.
-5. **(parallel) Dynamic-rescaling DNS** of the nonlinear two-stage scenario from
-   degenerate ICs — the saddle structure means this needs a stabilized
-   normalization (`docs/findings_dynamic_rescaling.md`).
-
-## Dead ends recorded (don't redo)
-- Forward time-marching of eq 2.4 to reach the smooth profiles: they are saddles
-  (nonlinear via `U=H(Ω)`), forward marching diverges/decays. Use Newton/BVP.
-- Naive regularized eigenvalues of the singular operator: leading modes are
-  δ-divergent edge artifacts. Use the desingularized free-boundary formulation.
-
-## Layout
-
-```
-src/gclm.py          unified gCLM/De Gregorio engine (Hilbert, 2/3-dealias, RK4, adaptive dt)
-src/clm_exact.py     CLM closed-form solution + blowup-time locator (self-contained derivation)
-validate/            falsification gates (gate #1 = CLM exact, PASSED)
-results/  docs/       run outputs and notes
+### Python Gates (Target B — gCLM)
+```bash
+python3 validate/gclm_verify_singular_steady.py   # Gate 1: Branch I & II profiles, residuals
+python3 validate/gclm_linear_stability.py         # Gate 2: Mellin symbols, spectra, Gauges (a,b,c)
+python3 validate/gclm_branch2_and_dns_probe.py    # Gate 3: Branch II transcritical & WENO5 DNS
+python3 validate/gclm_rigorous_closure_gate.py    # Gate 4: Coercivity, conjugation, Branch I check
 ```
 
-## Method
+### Lean 4 Formalization (Lean v4.29.0 + Mathlib)
+```bash
+cd lean
+lake build                                        # Target A: 10 modules in SingularBlowup/
+lake env lean GclmSingularBackbone.lean           # Target B: gCLM coercivity & Appendix A backbone
+```
 
-Measure → mechanism → remeasure. Dynamic-rescaling measures the singular-point
-exponents; a desingularizing change of variables turns the singular profile into
-a bounded fixed point and states the exact functional-analytic obstruction the
-smooth-profile CAP framework fails at; interval-arithmetic / Lean closes it or
-hands off the obstruction at maximum resolution.
+### RFC 3161 Timestamp Verification
+```bash
+shasum -a 256 -c docs/timestamps/CHECKSUMS_TARGET_B.sha256
+openssl ts -verify \
+  -in docs/timestamps/CHECKSUMS_TARGET_B.freetsa.tsr \
+  -data docs/timestamps/CHECKSUMS_TARGET_B.sha256 \
+  -CAfile docs/timestamps/freetsa_cacert.pem \
+  -untrusted docs/timestamps/freetsa_tsa.crt
+```
+
+---
+
+## Repository Layout
+
+```text
+paper/
+  stability_spectra_singular_houluo.{tex,pdf}   Target A manuscript (1D Hou–Luo)
+  stability_spectra_singular_gclm.{tex,pdf}     Target B manuscript (gCLM, 21 pp)
+  figures/  figures_gclm/  scripts/             Publication figures & plotting scripts
+  submission_houluo/  submission_gclm/          Self-contained journal & archive bundles
+lean/
+  SingularBlowup/                               Target A Lean 4.29 modules (10 files, 0 sorry)
+  GclmSingularBackbone.lean                     Target B Lean 4.29 backbone (0 sorry)
+src/
+  gclm.py  houluo.py  rescaled.py  stability*   Target A numerical engines
+  gclm_singular/                                Target B profiles, operators, WENO5 DNS
+validate/
+  gclm_*.py                                     Target B standalone Gates 1–4
+  verify_singular_steady.py  edge_*.py  ...     Target A validation gates & probes
+docs/
+  proof_gclm_singular_stability.md              Full analytic proof notes (Target B)
+  findings_gclm_singular_stability.md           Summary of verified Target B findings
+  ledger/                                       Target A proof-obligation ledger
+  timestamps/                                   SHA-256 manifest + FreeTSA & DigiCert RFC 3161 tokens
+```
