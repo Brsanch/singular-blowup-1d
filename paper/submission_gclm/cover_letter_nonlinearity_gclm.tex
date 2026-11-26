@@ -1,0 +1,45 @@
+\documentclass[10.5pt,letterpaper]{article}
+\usepackage[margin=0.85in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlist{nosep, leftmargin=1.5em}
+
+\begin{document}
+
+\textbf{Bryan Sanchez}\\
+Independent Researcher\\
+ORCID: \href{https://orcid.org/0009-0000-6080-5407}{\texttt{0009-0000-6080-5407}}\\
+E-mail: \texttt{bryansanchez.bas@gmail.com}
+
+\vspace{0.3em}
+November 25, 2026
+
+\vspace{0.3em}
+Dear Editors of \emph{Nonlinearity},
+
+Please find enclosed the anonymized manuscript \emph{``Stability Spectra, Exact Two-Gamma Conjugation, and Zero-Analyticity Finite-Sobolev Nonlinear Closure for the Singular Self-Similar Profiles of the Generalized CLM Model''} for consideration as a Research Paper in \emph{Nonlinearity} under double-anonymous peer review.
+
+Following the classic introduction of the generalized Constantin--Lax--Majda (gCLM) model in \emph{Nonlinearity} (Okamoto--Sakajo--Wunsch, 2008) and the recent construction of explicit half-line outer singular self-similar blowup profiles for $a < 0$ by Huang--Tong--Wang (\texttt{arXiv:2603.25104v4}, 2026), the linear stability spectra, Mellin--Carleman operator structure, and nonlinear stability of these singular profiles remained open. In this manuscript we:
+\begin{enumerate}
+  \item Uncover a second explicit half-line singular family (\emph{Branch~II}), $\bar\Omega_{\mathrm{II},a}(X) = \frac{1}{a}(X-1)^{-1/2}\mathbf{1}_{\{X>1\}}$, valid for every $a < 0$ with $(\bar c_l, \bar c_\omega, \gamma) = (2,-1,2)$, which intersects Huang--Tong--Wang's Branch~I transcritically at $a = -1$ with an exact exchange of partner eigenmodes and interpolates continuously to the singular 1D Hou--Luo profile as $a \to -\infty$.
+  \item Compute the linear stability spectra $\lambda(a)$ across $a \in [-2.5, -0.1]$ in singularity-adapted logarithmic and characteristic coordinates using second-order upwind discretization, certifying $\#\{\operatorname{Re}\lambda > 0\} = 0$ for smooth relative perturbations and diagnosing spurious central-difference Nyquist edge artifacts.
+  \item Introduce an edge-amplitude-pinning dynamic-rescaling gauge (\emph{Gauge~(c)}) that eliminates the $\delta(X-1)$ distributional defect identically and yields four rigorous theorems: exact two-Gamma Mellin conjugation on slit-plane Hardy space (Theorem~1), computer-free rational-polynomial $H^2_{\sigma_-}\cap H^3_{5/8}$ coercivity for all $a \in [-2,0)$ (Theorem~2), unconditional global existence, uniqueness, and exponential stability in pure finite Sobolev space requiring zero analyticity via weighted viscous regularization (Theorem~3 and Appendix~A), and an elementary three-line $H^1_{\sigma_-}\cap H^1_{\sigma_+}$ coercivity proof for Huang--Tong--Wang's Branch~I across all $a \in [-1,0)$ (Theorem~4).
+  \item Explain nonlinear branch selection across $a = -1$ via an $L^2$-criticality edge-flux mechanism confirmed by WENO5/SSP-RK3 dynamic-rescaling DNS.
+\end{enumerate}
+
+All finite algebraic positivity certificates, weight-splitting identities, and Appendix~A bootstrap inequalities are machine-checked in Lean~4.29 / Mathlib (\texttt{0~sorry}, standard axioms only), and all continuous spectral, PDE, and DNS claims are reproduced by four standalone Python verification gates openly archived (for editorial inspection and upon publication) at \url{https://github.com/Brsanch/singular-blowup-1d} (branch \texttt{gclm/singular-stability}, tag \texttt{v1.1-gclm-submission-ready}).
+
+This manuscript is original, has not been published previously, and is not under consideration at any other journal. (A distinct companion manuscript studying the 1D Hou--Luo model is under separate consideration elsewhere.) The author declares no competing interests and received no external funding.
+
+Thank you for your time and consideration.
+
+\vspace{0.3em}
+Sincerely,\\[0.2em]
+\textbf{Bryan Sanchez}\\
+Independent Researcher
+
+\end{document}
