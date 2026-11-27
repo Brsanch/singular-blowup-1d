@@ -68,6 +68,14 @@ edited on 2026-07-16 and stay as they are; this paragraph records what has chang
   (`d/dτ H[g](1) = −H[g](1) − c₁/3`), so the weak edge relation `B = A²` is not kept by any nontrivial solution in the
   manuscript's ansatz at linear order; and the weighted-norm transient of `M_GG` grows with edge depth (peak 12.7 at
   γ = 0.75, `z_min = −14`), which the OBS rows above do not record. No ledger status changes.
+- **Review of Theorem 3 (`ef0eaea`, 2026-11-21):** `docs/findings_session_2026_11_21_theorem3_review.md`, probe
+  `validate/theorem3_review_2026_11_21_probe.py`. Relevant to this ledger: the repo's discrete `Q_op` is the
+  unsubtracted operator cut at the grid edge, `Q_op G = H[g](1)(1 − e^{z_min − z})` there, so every grid run built
+  on `M_GG` alone is a run of the Theta-balance operator. A Gauge-(a) discretisation must restore the tail
+  (`Q_exact = Q_op + (e^{z_min}/(Y−1))⊗h1`, as `edge_nonlinear_comoving_closure.py` and `EM-4` do); with it the
+  operator is stable on the grid and does not carry the OBS-09 modes, without it a spurious eigenvalue
+  `~e^{|z_min|/2}` appears (+35, +102 at `z_min = −10, −12`). OBS-09's statement that the truncated grid does not
+  carry the modes stands. No ledger status changes; the manuscript's Theorem 3 has no ledger entry.
 - **LEM-10 (2026-11-21, later):** a conjugation proof of the W3 step, independent of the withdrawn Laplace-inversion
   route. `proved-on-paper`; the Lean file `ConjugationSymbol.lean` checks the symbol identity, `N(½)=0`, the semigroup
   law and characteristic ODE of the explicit flow, and the sign of `c` on the real axis — no operator statement.

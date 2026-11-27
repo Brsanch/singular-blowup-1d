@@ -51,6 +51,14 @@ Started 2026-06-05. Single-researcher + AI; tight measure→mechanism→remeasur
 > theorem; two numerical-evidence claims are wrong (E1 weighted-norm peak, E2 edge-conditioned growth);
 > no nontrivial solution of Theorem 2 is shown to solve the system across \(X=1\) (N1); five proof
 > steps are unsupported as written (P1, P2, L1, L2, N2).
+> **Review of Theorem 3 (2026-11-21, of commit `ef0eaea`, coupled \((G,h)\)):**
+> `docs/findings_session_2026_11_21_theorem3_review.md`; probe
+> `validate/theorem3_review_2026_11_21_probe.py` (Q1–Q5). The estimates hold when re-derived; the gate check
+> `CH-4` integrates the Theta-balance operator, not the Gauge-(a) system it names (C1); the Gauge-(a) system,
+> discretised with the truncation tail `Q_exact`, also decays on that grid, with different \(B\), \(c_l\); coupled
+> well-posedness is asserted, not proved (C3); two constants in Step 1 are off by a factor 2 (C4).
+> A first version of that note claimed a grid blow-up of the Gauge-(a) system; that was an artifact of omitting
+> the tail and is retracted there (Correction).
 > **Not verified by anyone yet:** the implicit domain of \(M_\sigma\); the W2 gluing step; the local
 > well-posedness appendix; the nonlinear constants; the \(h\not\equiv0\) nonlinear terms.
 > **Lean:** the 2026-11-20/21 files check arithmetic and one ODE lemma; operator bounds are
